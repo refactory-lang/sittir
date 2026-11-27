@@ -2,12 +2,14 @@ import type * as V from '../../types/src/vocabulary/index.ts';
 import type * as T from '../src/types.ts';
 import type * as TS from '../../typescript/src/types.ts';
 import type { PythonMap } from '../src/portable/map.ts';
+import { TSKindId as PyKindId } from '../src/kinds.ts';
 
 type Expect<X extends true> = X;
 type Getter = V.BuildInput<PythonMap, 'declaration.member.property.getter'>;
 
 export type GetterFlagsAdmitAsync = Expect<'async' extends NonNullable<Getter['$flags']>[number] ? true : false>;
 export type GetterFlagsAdmitOverride = Expect<'override' extends NonNullable<Getter['$flags']>[number] ? true : false>;
+export type GetterTakesNoParameters = Expect<'parameters' extends keyof Getter ? false : true>;
 
 declare const statement: T.ImportStatement.Bound;
 declare const foreign: TS.StatementBlock.Bound;
@@ -97,6 +99,18 @@ type Returned = V.BuildInput<PythonMap, 'statement.return'>['expression'];
 export const integerReturned: Returned = 1;
 export const floatReturned: Returned = 1.5;
 export const bigintReturned: Returned = 10n;
+export const trueReturned: Returned = true;
+export const falseReturned: Returned = false;
+// @ts-expect-error a function's name holds no boolean path, so no build takes a bare boolean there
+export const booleanName: V.BuildInput<PythonMap, 'declaration.function'>['name'] = true;
 export const orReturned: Returned = { $path: 'expression.binary.bitwise.or', left: 'a', right: 'b' };
 // @ts-expect-error expression.binary has no arm in python's build table, so no build takes it
 export const familyReturned: Returned = { $path: 'expression.binary', left: 'a', right: 'b' };
+
+export const addTail: Returned = { $path: 'add', left: 'a', right: 'b' };
+
+type ImportedNames = V.Read<PythonMap, 'statement.import.from'>['argument'];
+
+// @ts-expect-error a fixed word reads as its text, never as a bare kind id
+export const wildcardKindId: ImportedNames = PyKindId.WildcardImport;
+export const wildcardText: ImportedNames = '*';

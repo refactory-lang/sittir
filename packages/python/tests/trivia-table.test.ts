@@ -4,6 +4,7 @@ import { sidesOf } from '@sittir/common/utils';
 import python from '../src/index.ts';
 
 const engine = await createEngine(python);
+const adopting = await createEngine(python);
 const { build } = engine;
 type Root = ReturnType<typeof engine.parse>;
 type Block = ReturnType<typeof bodyAt>;
@@ -52,8 +53,8 @@ describe.each([
 	['the accessors', viaAccessors],
 	['a query', viaQuery]
 ])('a write on a block reached through %s', (_, reach) => {
-	it('keeps a deeper-indented comment in the block', () => {
-		const root = engine.parse('if a:\n  b\n    # four\n  c\n');
+	it('keeps a deeper-indented comment in the block, in the adopted style', () => {
+		const root = adopting.parse('if a:\n  b\n    # four\n  c\n', { adoptStyle: true });
 		reach(root).$trivia.leading('# lead');
 		rendersAs(root, 'if a:\n  # lead\n  b\n    # four\n  c\n');
 	});

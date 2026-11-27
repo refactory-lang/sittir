@@ -253,6 +253,60 @@ describe('a commit scope under record construction', () => {
 		const parsed = blockOf(records);
 		expect(scope.keep(parsed)).toBe(parsed);
 	});
+
+	it('releases a parse made inside it when it closes', () => {
+		let root: unknown;
+		{
+			using _scope = records.scope();
+			root = records.parse(source);
+			expect(rendered(records, root)).toBe(source);
+		}
+		expect(() => rendered(records, root)).toThrow(/was released/);
+	});
+
+	it('leaves a parsed root it keeps rendering past its close', () => {
+		let root: unknown;
+		{
+			using scope = records.scope();
+			root = scope.keep(records.parse(source));
+		}
+		expect(rendered(records, root)).toBe(source);
+		records.release(root as never);
+		expect(() => rendered(records, root)).toThrow(/was released/);
+	});
+
+	it('hands a parsed root it keeps to the enclosing scope, which releases it unless it keeps it too', () => {
+		let movedOut: unknown;
+		let keptTwice: unknown;
+		{
+			using outer = records.scope();
+			{
+				using inner = records.scope();
+				movedOut = inner.keep(records.parse(source));
+				keptTwice = outer.keep(inner.keep(records.parse(source)));
+			}
+			expect(rendered(records, movedOut)).toBe(source);
+		}
+		expect(() => rendered(records, movedOut)).toThrow(/was released/);
+		expect(rendered(records, keptTwice)).toBe(source);
+		records.release(keptTwice as never);
+	});
+
+	it('passes over a parsed root released inside it', () => {
+		const scope = records.scope();
+		records.release(records.parse(source) as never);
+		expect(() => scope[Symbol.dispose]()).not.toThrow();
+	});
+
+	it('leaves a parse made before it opened to its caller', () => {
+		const root = records.parse(source);
+		{
+			using _scope = records.scope();
+			records.parse(source);
+		}
+		expect(rendered(records, root)).toBe(source);
+		records.release(root as never);
+	});
 });
 
 describe('a commit scope under object construction', () => {

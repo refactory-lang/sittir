@@ -3,22 +3,22 @@ import { BLANK_KIND_ID } from './blank-arm.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import type { RecordWords } from './read.ts';
 
+export type CellSite = readonly [word: number, item: number];
+
 /** The record codec's constants as an addon built with the `arena` feature exports them. */
 export interface RecordCodecConstants {
 	readonly CELL_TAG_ABSENT: number;
 	readonly CELL_TAG_NODE: number;
 	readonly CELL_TAG_UNIT: number;
 	readonly CELL_TAG_TEXT: number;
-	readonly CELL_TAG_INLINE: number;
 	readonly CELL_FORM_NODE: number;
 	readonly CELL_FORM_UNIT: number;
 	readonly CELL_FORM_TEXT: number;
-	readonly CELL_FORM_INLINE: number;
 	readonly CELL_FORM_BLANK: number;
-	readonly CELL_LEAF_BIT: number;
 	readonly CELL_BLANK_UNIT: number;
 	readonly KIND_BITS: number;
 	readonly RECORD_FLAG_LINK: number;
+	readonly RECORD_FLAG_BITS: number;
 	readonly LINK_RECORD_WORDS: number;
 	readonly RECORD_HEADER_WORDS: number;
 	readonly COUNT_OWNED: number;
@@ -38,10 +38,18 @@ export interface RecordCodecConstants {
 	readonly SIDE_WORDS_SIDES: number;
 	readonly SIDE_FIELD_CHANGED_LEADING: number;
 	readonly SIDE_FIELD_CHANGED_TRAILING: number;
-	readonly SIDE_FIELD_SEPARATOR: number;
-	readonly SIDE_WORDS_SEPARATOR: number;
 	readonly SIDE_FIELD_DELIMITER: number;
 	readonly SIDE_FIELD_SEPARATOR_KIND: number;
+	readonly NODE_ID_HOLDER_BITS: number;
+	readonly NODE_ID_ITEM_BITS: number;
+	readonly NODE_ID_WORD_BITS: number;
+}
+
+/** The bits a node's key gives its holder's address, its item and its slot word, the lowest. */
+export interface NodeIdFormat {
+	readonly holderBits: number;
+	readonly itemBits: number;
+	readonly wordBits: number;
 }
 
 /** A side record field before a list's delimiters setting: its mask bit and its words. */
@@ -55,7 +63,6 @@ export interface CellForms {
 	readonly node: number;
 	readonly unit: number;
 	readonly text: number;
-	readonly inline: number;
 	/** Not a form: the slot admits a choice's blank arm, which a read takes for no child, so a tagless unit cell of 0 is that arm. */
 	readonly blank: number;
 }
@@ -63,23 +70,23 @@ export interface CellForms {
 /** The cell tags and address packing a record's words are read with. */
 export interface CellFormat {
 	/** The tag word a parsed cell opens with when its slot holds more than one form. */
-	readonly tag: { readonly absent: number; readonly node: number; readonly unit: number; readonly text: number; readonly inline: number };
+	readonly tag: { readonly absent: number; readonly node: number; readonly unit: number; readonly text: number };
 	readonly forms: CellForms;
-	/** The bit a node cell's span end carries for a leaf. */
-	readonly leafBit: number;
 	/** The chunk-0 offset a built blank arm's cell names: apart from word 0, an unset slot, and from every unit's kind. */
 	readonly blankUnit: number;
 	/** The bits a kind field takes, packed with its word's neighbours, in either arena. */
 	readonly kindBits: number;
 	/** The flag above a link record's kind field. */
 	readonly linkFlag: number;
+	/** The bits a record header's flags take above its kind field. */
+	readonly flagBits: number;
 	readonly linkWords: number;
 	readonly headerWords: number;
 	readonly countOwned: number;
 	readonly countSaturated: number;
 	readonly held: { readonly record: number; readonly run: number; readonly side: number; readonly text: number };
 	readonly chunkShift: number;
-	/** The side record's `at`, its first field: a parsed node's row, its subtree's end and its byte span. */
+	/** The side record's `at`, its first field: a parsed node's coordinate kind and its byte span. */
 	readonly sideAt: SideField;
 	/** The fields a side record holds before a list's delimiters setting, in its order, `at` first. */
 	readonly sideBeforeDelimiter: readonly SideField[];
@@ -89,26 +96,24 @@ export interface CellFormat {
 	readonly sideChanged: { readonly leading: number; readonly trailing: number };
 	/** The mask bit of a list's chosen separator, the one word after its delimiters setting. */
 	readonly sideSeparatorKind: number;
+	readonly nodeId: NodeIdFormat;
 }
 
-/** A parsed node's place as its record's side record stamps it. */
+/** What a parsed node's coordinate names, as its record's side record stamps it. */
 export interface SideRow {
-	readonly index: number;
-	readonly end: number;
+	readonly kind: number;
 	readonly span: ByteSpan;
 }
 
 /** One slot's cell, decoded. */
 export type RecordCell =
 	| { readonly form: 'absent' }
-	| { readonly form: 'coordinate'; readonly kind: number; readonly index: number; readonly span: ByteSpan }
 	| { readonly form: 'parsedLeaf'; readonly kind: number; readonly span: ByteSpan; readonly row: number }
 	| { readonly form: 'parsedText'; readonly span: ByteSpan }
 	| {
 			readonly form: 'child';
 			readonly kind: number;
 			readonly at: number;
-			readonly link: number | undefined;
 			readonly changed: { readonly leading: boolean; readonly trailing: boolean };
 	  }
 	| { readonly form: 'unit'; readonly kind: number; readonly row: number | undefined }
@@ -124,9 +129,8 @@ export type RecordCell =
 			readonly form: 'linkedLeaf';
 			readonly kind: number;
 			readonly at: number;
-			readonly tree: number;
-			readonly row: number;
-			readonly end: number;
+			readonly holder: number;
+			readonly site: CellSite | undefined;
 			readonly span: ByteSpan;
 			readonly changed: { readonly leading: boolean; readonly trailing: boolean };
 	  };
@@ -142,16 +146,14 @@ const CODEC_KEYS = [
 	'CELL_TAG_NODE',
 	'CELL_TAG_UNIT',
 	'CELL_TAG_TEXT',
-	'CELL_TAG_INLINE',
 	'CELL_FORM_NODE',
 	'CELL_FORM_UNIT',
 	'CELL_FORM_TEXT',
-	'CELL_FORM_INLINE',
 	'CELL_FORM_BLANK',
-	'CELL_LEAF_BIT',
 	'CELL_BLANK_UNIT',
 	'KIND_BITS',
 	'RECORD_FLAG_LINK',
+	'RECORD_FLAG_BITS',
 	'LINK_RECORD_WORDS',
 	'RECORD_HEADER_WORDS',
 	'COUNT_OWNED',
@@ -171,11 +173,17 @@ const CODEC_KEYS = [
 	'SIDE_WORDS_SIDES',
 	'SIDE_FIELD_CHANGED_LEADING',
 	'SIDE_FIELD_CHANGED_TRAILING',
-	'SIDE_FIELD_SEPARATOR',
-	'SIDE_WORDS_SEPARATOR',
 	'SIDE_FIELD_DELIMITER',
-	'SIDE_FIELD_SEPARATOR_KIND'
+	'SIDE_FIELD_SEPARATOR_KIND',
+	'NODE_ID_HOLDER_BITS',
+	'NODE_ID_ITEM_BITS',
+	'NODE_ID_WORD_BITS'
 ] as const satisfies readonly (keyof RecordCodecConstants)[];
+
+/** Why a list slot holding a leaf at `item` is refused in arena storage: past the leaf items a list slot holds there. */
+export function leafItemPastNames(item: number, format: NodeIdFormat): string {
+	return `a list slot holds a leaf at item ${item}, past the ${2 ** format.itemBits} leaf items a list slot holds in arena storage, whose node names give an item ${format.itemBits} bits; object storage holds the list`;
+}
 
 /** The cell format of `native`, `undefined` for an addon built without the record codec. */
 export function cellFormatOf(native: object): CellFormat | undefined {
@@ -183,12 +191,12 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 	if (!CODEC_KEYS.every((key) => typeof exported[key] === 'number')) return undefined;
 	const codec = exported as RecordCodecConstants;
 	return {
-		tag: { absent: codec.CELL_TAG_ABSENT, node: codec.CELL_TAG_NODE, unit: codec.CELL_TAG_UNIT, text: codec.CELL_TAG_TEXT, inline: codec.CELL_TAG_INLINE },
-		forms: { node: codec.CELL_FORM_NODE, unit: codec.CELL_FORM_UNIT, text: codec.CELL_FORM_TEXT, inline: codec.CELL_FORM_INLINE, blank: codec.CELL_FORM_BLANK },
-		leafBit: codec.CELL_LEAF_BIT,
+		tag: { absent: codec.CELL_TAG_ABSENT, node: codec.CELL_TAG_NODE, unit: codec.CELL_TAG_UNIT, text: codec.CELL_TAG_TEXT },
+		forms: { node: codec.CELL_FORM_NODE, unit: codec.CELL_FORM_UNIT, text: codec.CELL_FORM_TEXT, blank: codec.CELL_FORM_BLANK },
 		blankUnit: codec.CELL_BLANK_UNIT,
 		kindBits: codec.KIND_BITS,
 		linkFlag: codec.RECORD_FLAG_LINK,
+		flagBits: codec.RECORD_FLAG_BITS,
 		linkWords: codec.LINK_RECORD_WORDS,
 		headerWords: codec.RECORD_HEADER_WORDS,
 		countOwned: codec.COUNT_OWNED,
@@ -200,13 +208,13 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 			{ bit: codec.SIDE_FIELD_AT, words: codec.SIDE_WORDS_AT },
 			{ bit: codec.SIDE_FIELD_EDGES, words: codec.SIDE_WORDS_EDGES },
 			{ bit: codec.SIDE_FIELD_SPAN, words: codec.SIDE_WORDS_SPAN },
-			{ bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
-			{ bit: codec.SIDE_FIELD_SEPARATOR, words: codec.SIDE_WORDS_SEPARATOR }
+			{ bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES }
 		],
 		sideDelimiter: codec.SIDE_FIELD_DELIMITER,
 		sideSides: { bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
 		sideChanged: { leading: codec.SIDE_FIELD_CHANGED_LEADING, trailing: codec.SIDE_FIELD_CHANGED_TRAILING },
-		sideSeparatorKind: codec.SIDE_FIELD_SEPARATOR_KIND
+		sideSeparatorKind: codec.SIDE_FIELD_SEPARATOR_KIND,
+		nodeId: { holderBits: codec.NODE_ID_HOLDER_BITS, itemBits: codec.NODE_ID_ITEM_BITS, wordBits: codec.NODE_ID_WORD_BITS }
 	};
 }
 
@@ -225,10 +233,15 @@ export function withKind(kind: number, bits: number): number {
 	return kind;
 }
 
+export function headerOf(word: number, format: Pick<CellFormat, 'kindBits' | 'flagBits'>): { readonly kind: number; readonly flags: number } {
+	return { kind: kindField(word, format.kindBits), flags: (word >>> format.kindBits) & (2 ** format.flagBits - 1) };
+}
+
 /** The kind a record header word names, refusing a header with flags: a link record's, which names a node of another tree. */
-export function headerKind(word: number, bits: number): number {
-	if (word >>> bits !== 0) throw new Error(`a record header holds flags ${word >>> bits}: a link record is no record of its own arena`);
-	return kindField(word, bits);
+export function headerKind(word: number, format: Pick<CellFormat, 'kindBits' | 'flagBits'>): number {
+	const { kind, flags } = headerOf(word, format);
+	if (flags !== 0) throw new Error(`a record header holds flags ${flags}: a link record is no record of its own arena`);
+	return kind;
 }
 
 /** The chunk a packed address names. */
@@ -261,8 +274,6 @@ function taggedForm(tag: number, at: number, format: CellFormat): number {
 			return forms.unit;
 		case tags.text:
 			return forms.text;
-		case tags.inline:
-			return forms.inline;
 		default:
 			throw new Error(`word ${at} holds cell tag ${tag}, which no record writer writes`);
 	}
@@ -278,15 +289,15 @@ function packed(word: number, at: number, format: CellFormat): { readonly kind: 
 function parsedRecord(first: number, address: number, end: number, at: number, format: CellFormat): RecordCell {
 	const kind = kindField(first, format.kindBits);
 	if (kind === BLANK_KIND_ID || kind === ERROR_KIND_ID || address === 0 || end !== 0) throw new Error(`word ${at} names record ${address} of kind ${kind}, which no parsed cell holds`);
-	return { form: 'child', kind, at: address, link: undefined, changed: { leading: false, trailing: false } };
+	return { form: 'child', kind, at: address, changed: { leading: false, trailing: false } };
 }
 
 /**
- * The parsed cell of a slot of `forms` whose words start at `at` in `words`, as the native hydration writes it. A bounded child's embedded record is read where it lies: `address` is the cell's own address, and `inline` the words its slot stamps for it.
+ * The parsed cell of a slot of `forms` whose words start at `at` in `words`, as the native hydration writes it.
  *
  * @throws When the cell holds a tag or a form its slot does not, a kind or row no parsed cell holds, or runs past `words`.
  */
-export function decodeParsedCell(words: ArrayLike<number>, at: number, forms: number, format: CellFormat, inline = 0, address = 0): RecordCell {
+export function decodeParsedCell(words: ArrayLike<number>, at: number, forms: number, format: CellFormat): RecordCell {
 	const first = words[at];
 	if (first === undefined) throw new Error(`no cell at word ${at}`);
 	const tagged = isTagged(forms, format);
@@ -305,29 +316,16 @@ export function decodeParsedCell(words: ArrayLike<number>, at: number, forms: nu
 		case format.forms.node: {
 			if (word(0) >>> format.kindBits === 0) return parsedRecord(word(0), word(1), word(2), at, format);
 			const { kind, row } = packed(word(0), at, format);
-			const end = word(2);
-			const span = { start: word(1), end: (end & ~format.leafBit) >>> 0 };
-			return (end & format.leafBit) === 0 ? { form: 'coordinate', kind, index: row, span } : { form: 'parsedLeaf', kind, span, row };
+			return { form: 'parsedLeaf', kind, span: { start: word(1), end: word(2) }, row };
 		}
-		case format.forms.unit:
-			return { form: 'unit', ...packed(word(0), at, format) };
+		case format.forms.unit: {
+			if (word(0) >>> format.kindBits !== 0) return { form: 'unit', ...packed(word(0), at, format) };
+			const kind = kindField(word(0), format.kindBits);
+			if (kind === BLANK_KIND_ID || kind === ERROR_KIND_ID) throw new Error(`word ${at} holds unit kind ${kind}, which no parsed cell holds`);
+			return { form: 'unit', kind, row: undefined };
+		}
 		case format.forms.text: {
-			const end = word(1);
-			if ((end & format.leafBit) !== 0) throw new Error(`a text cell at word ${at} ends at ${end >>> 0}, which no span does`);
-			return { form: 'parsedText', span: { start: word(0) - 1, end } };
-		}
-		case format.forms.inline: {
-			const offset = start - at;
-			if (address === 0 || inline < format.headerWords || start + inline > words.length || wordOf(address, format) + offset + inline > 2 ** format.chunkShift) {
-				throw new Error(`inline cell at word ${at} exceeds its stamped capacity ${inline}`);
-			}
-			return {
-				form: 'child',
-				kind: headerKind(word(0), format.kindBits),
-				at: addressOf(chunkOf(address, format), wordOf(address, format) + offset, format),
-				link: undefined,
-				changed: { leading: false, trailing: false }
-			};
+			return { form: 'parsedText', span: { start: word(0) - 1, end: word(1) } };
 		}
 		default:
 			throw new Error(`a slot of forms ${forms} names no form a parsed cell holds`);
@@ -358,7 +356,7 @@ export function decodeSideRow(words: ArrayLike<number>, at: number, format: Cell
 		if (value === undefined) throw new Error(`a side record's row ends at word ${at + n}`);
 		return value;
 	};
-	return { index: word(1), end: word(2), span: { start: word(3), end: word(4) } };
+	return { kind: word(1), span: { start: word(2), end: word(3) } };
 }
 
 export function decodeSideDelimiter(words: ArrayLike<number>, at: number, format: CellFormat): number | undefined {

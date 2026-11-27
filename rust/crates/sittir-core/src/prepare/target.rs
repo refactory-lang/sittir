@@ -9,16 +9,16 @@
 
 use std::borrow::Cow;
 
-use super::{fill_seated_gaps, fill_slot_gaps, slot_separators, EdgeItem, EdgeItems, Prepare, RenderContext, SeatTarget, SnapshotEdge};
+use super::{fill_seated_gaps, fill_slot_gaps, EdgeItem, EdgeItems, Prepare, RenderContext, SeatTarget, SnapshotEdge};
 use crate::layout::{Layout, NodeLayout, SlotLayout};
 use crate::options::Edges;
 use crate::render::{Render, RenderError, RenderResult, RenderSink};
-use crate::slot::{NodeCoordinate, SlotValue};
+use crate::slot::SlotValue;
 use crate::trivia::TriviaSeam;
 use crate::types::{KindId, SiteId};
 
-/// A node's layout as its prepare reads and writes it: prepared, its edges
-/// filled, and given a list slot's per-item separators (`SlotLayout::tokens`).
+/// A node's layout as its prepare reads and writes it: prepared and its edges
+/// filled.
 /// A read takes the overlay too, and its answer borrows from the layout
 /// alone: a native layout lends what it holds, and a record's answers an
 /// owned copy of what the overlay holds.
@@ -32,12 +32,10 @@ pub trait LayoutTarget<O> {
     fn prepare(&mut self, overlay: &mut O, ctx: &RenderContext<'_>) -> Result<(), RenderError>;
     /// The node's own edges, for prepare to fill.
     fn edges_mut<'s>(&'s mut self, overlay: &'s mut O) -> &'s mut Edges;
-    /// Store `tokens` as the per-item separators of list slot `slot`.
-    fn set_slot_tokens(&mut self, overlay: &mut O, slot: &str, tokens: Vec<Option<KindId>>);
     /// The stored layout of the node's list slot `slot` (`Layout::slot`).
     fn slot(&self, overlay: &O, slot: &str) -> Option<Cow<'_, SlotLayout>>;
     /// The node a built node was rebuilt from (`Layout::sides`).
-    fn sides(&self, overlay: &O) -> Option<Cow<'_, NodeCoordinate>>;
+    fn sides(&self, overlay: &O) -> Option<crate::slot::NodeIdOrOwnedCoordinate>;
     /// `Layout::snapshot_edge`.
     fn snapshot_edge(&self, overlay: &O) -> Option<SnapshotEdge>;
     /// `Layout::inner_item`.
@@ -55,16 +53,12 @@ impl<T: Prepare + TriviaSeam + 'static> LayoutTarget<()> for Option<Box<NodeLayo
         Layout::edges_mut(self)
     }
 
-    fn set_slot_tokens(&mut self, (): &mut (), slot: &str, tokens: Vec<Option<KindId>>) {
-        crate::layout::slot_entry(self, slot).tokens = tokens;
-    }
-
     fn slot(&self, (): &(), slot: &str) -> Option<Cow<'_, SlotLayout>> {
         Layout::slot(self, slot).map(Cow::Borrowed)
     }
 
-    fn sides(&self, (): &()) -> Option<Cow<'_, NodeCoordinate>> {
-        Layout::sides(self).map(Cow::Borrowed)
+    fn sides(&self, (): &()) -> Option<crate::slot::NodeIdOrOwnedCoordinate> {
+        Layout::sides(self).cloned().map(crate::slot::NodeIdOrOwnedCoordinate::Coordinate)
     }
 
     fn snapshot_edge(&self, (): &()) -> Option<SnapshotEdge> {
@@ -89,15 +83,11 @@ impl<O, L: LayoutTarget<O> + ?Sized> LayoutTarget<O> for &mut L {
         (**self).edges_mut(overlay)
     }
 
-    fn set_slot_tokens(&mut self, overlay: &mut O, slot: &str, tokens: Vec<Option<KindId>>) {
-        (**self).set_slot_tokens(overlay, slot, tokens);
-    }
-
     fn slot(&self, overlay: &O, slot: &str) -> Option<Cow<'_, SlotLayout>> {
         (**self).slot(overlay, slot)
     }
 
-    fn sides(&self, overlay: &O) -> Option<Cow<'_, NodeCoordinate>> {
+    fn sides(&self, overlay: &O) -> Option<crate::slot::NodeIdOrOwnedCoordinate> {
         (**self).sides(overlay)
     }
 
@@ -115,8 +105,7 @@ impl<O, L: LayoutTarget<O> + ?Sized> LayoutTarget<O> for &mut L {
 }
 
 /// A slot as its holder's prepare writes it: its values prepared, the gaps
-/// between its present items given its stored layout, and its items' own
-/// separators read. A single slot is a slot of at most one item.
+/// between its present items given its stored layout. A single slot is a slot of at most one item.
 pub trait SlotTarget<O>: EdgeItems<O> {
     /// Prepare every value the slot holds.
     ///
@@ -127,8 +116,6 @@ pub trait SlotTarget<O>: EdgeItems<O> {
     /// Give the gaps between the slot's present items the classes its stored
     /// layout holds (`prepare::fill_slot_gaps`).
     fn fill_gaps(&mut self, overlay: &mut O, slot: Option<&SlotLayout>);
-    /// The slot's items' own separators (`prepare::slot_separators`).
-    fn separators(&self, overlay: &O, kind_of: fn(KindId) -> Option<KindId>, ctx: &RenderContext<'_>) -> Option<Vec<Option<KindId>>>;
 }
 
 /// A slot a composite's prepare renders on its own, as its render would
@@ -184,11 +171,6 @@ macro_rules! slot_target {
                 let $s = self;
                 fill_slot_gaps($items_mut, slot);
             }
-
-            fn separators(&self, (): &(), kind_of: fn(KindId) -> Option<KindId>, ctx: &RenderContext<'_>) -> Option<Vec<Option<KindId>>> {
-                let $r = self;
-                slot_separators($items, kind_of, ctx)
-            }
         }
 
         impl<T: Prepare + SeatTarget, const ADJACENT: bool> SeatSlot<()> for $ty {
@@ -240,10 +222,6 @@ impl<O, S: SlotTarget<O> + ?Sized> SlotTarget<O> for &mut S {
 
     fn fill_gaps(&mut self, overlay: &mut O, slot: Option<&SlotLayout>) {
         (**self).fill_gaps(overlay, slot);
-    }
-
-    fn separators(&self, overlay: &O, kind_of: fn(KindId) -> Option<KindId>, ctx: &RenderContext<'_>) -> Option<Vec<Option<KindId>>> {
-        (**self).separators(overlay, kind_of, ctx)
     }
 }
 

@@ -6,21 +6,21 @@
 export const RECORD_HEADER_WORDS = 2;
 
 export const records = {
-	PatternNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	PatternNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
 	AlternationNode: { words: 3, builtWords: 3, terms: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	TermNode: { words: 3, builtWords: 3, term_group: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
-	LookaroundAssertionNode: { words: 10, builtWords: 3, content: { word: 2, width: 8, inline: 8, forms: 8, built: 2 } },
+	LookaroundAssertionNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
 	LookaheadAssertionNode: {
-		words: 8,
+		words: 6,
 		builtWords: 4,
 		operator: { word: 2, width: 1, forms: 2, built: 2 },
-		pattern: { word: 3, width: 5, inline: 5, forms: 8, built: 3 }
+		pattern: { word: 3, width: 3, forms: 1, built: 3 }
 	},
 	LookbehindAssertionNode: {
-		words: 8,
+		words: 6,
 		builtWords: 4,
 		operator: { word: 2, width: 1, forms: 2, built: 2 },
-		pattern: { word: 3, width: 5, inline: 5, forms: 8, built: 3 }
+		pattern: { word: 3, width: 3, forms: 1, built: 3 }
 	},
 	PatternCharacterNode: { words: 2, builtWords: 2 },
 	CharacterClassNode: {
@@ -34,49 +34,41 @@ export const records = {
 	PosixCharacterClassNode: { words: 5, builtWords: 3, posix_class_name: { word: 2, width: 3, forms: 1, built: 2 } },
 	PosixClassNameNode: { words: 2, builtWords: 2 },
 	ClassRangeNode: {
-		words: 40,
+		words: 10,
 		builtWords: 4,
-		start: { word: 2, width: 19, inline: 18, forms: 11, built: 2 },
-		end: { word: 21, width: 19, inline: 18, forms: 11, built: 3 }
+		start: { word: 2, width: 4, forms: 3, built: 2 },
+		end: { word: 6, width: 4, forms: 3, built: 3 }
 	},
 	ClassCharacterNode: { words: 2, builtWords: 2 },
-	AnonymousCapturingGroupNode: {
-		words: 7,
-		builtWords: 3,
-		pattern: { word: 2, width: 5, inline: 5, forms: 8, built: 2 }
-	},
+	AnonymousCapturingGroupNode: { words: 5, builtWords: 3, pattern: { word: 2, width: 3, forms: 1, built: 2 } },
 	NamedCapturingGroupNode: {
-		words: 11,
+		words: 9,
 		builtWords: 5,
 		operator: { word: 2, width: 1, forms: 2, built: 2 },
 		group_name: { word: 3, width: 3, forms: 1, built: 3 },
-		pattern: { word: 6, width: 5, inline: 5, forms: 8, built: 4 }
+		pattern: { word: 6, width: 3, forms: 1, built: 4 }
 	},
-	NonCapturingGroupNode: { words: 7, builtWords: 3, pattern: { word: 2, width: 5, inline: 5, forms: 8, built: 2 } },
+	NonCapturingGroupNode: { words: 5, builtWords: 3, pattern: { word: 2, width: 3, forms: 1, built: 2 } },
 	FlagsNode: { words: 2, builtWords: 2 },
 	ZeroOrMoreNode: { words: 3, builtWords: 3, lazy: { word: 2, bit: 0 } },
 	OneOrMoreNode: { words: 3, builtWords: 3, lazy: { word: 2, bit: 0 } },
 	OptionalNode: { words: 3, builtWords: 3, lazy: { word: 2, bit: 0 } },
 	CountQuantifierNode: {
-		words: 14,
+		words: 6,
 		builtWords: 4,
-		content: { word: 3, width: 11, inline: 10, forms: 9, built: 3 },
+		content: { word: 3, width: 3, forms: 1, built: 3 },
 		lazy: { word: 2, bit: 0 }
 	},
 	BackreferenceEscapeNode: { words: 5, builtWords: 3, group_name: { word: 2, width: 3, forms: 1, built: 2 } },
 	NamedGroupBackreferenceNode: { words: 5, builtWords: 3, group_name: { word: 2, width: 3, forms: 1, built: 2 } },
 	DecimalEscapeNode: { words: 2, builtWords: 2 },
-	CharacterClassEscapeNode: {
-		words: 18,
-		builtWords: 3,
-		content: { word: 2, width: 16, inline: 15, forms: 9, built: 2 }
-	},
+	CharacterClassEscapeNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
 	UnicodeCharacterEscapeNode: { words: 2, builtWords: 2 },
 	UnicodePropertyValueExpressionNode: {
-		words: 10,
+		words: 8,
 		builtWords: 4,
-		unicode_property_value_expression_group: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		unicode_property_value: { word: 7, width: 3, forms: 1, built: 3 }
+		unicode_property_value_expression_group: { word: 2, width: 3, forms: 1, built: 2 },
+		unicode_property_value: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	UnicodePropertyValueNode: { words: 2, builtWords: 2 },
 	ControlEscapeNode: { words: 2, builtWords: 2 },
@@ -90,23 +82,23 @@ export const records = {
 	GroupNameNode: { words: 2, builtWords: 2 },
 	DecimalDigitsNode: { words: 2, builtWords: 2 },
 	TermGroupNode: {
-		words: 35,
+		words: 9,
 		builtWords: 4,
-		content: { word: 2, width: 19, inline: 18, forms: 11, built: 2 },
-		quantifier: { word: 21, width: 14, inline: 14, forms: 8, built: 3 }
+		content: { word: 2, width: 4, forms: 3, built: 2 },
+		quantifier: { word: 6, width: 3, forms: 1, built: 3 }
 	},
 	CountQuantifierGroupNode: { words: 5, builtWords: 3, decimal_digits: { word: 2, width: 3, forms: 1, built: 2 } },
 	CountQuantifierArmNode: {
-		words: 10,
+		words: 8,
 		builtWords: 4,
 		decimal_digits: { word: 2, width: 3, forms: 1, built: 2 },
-		count_quantifier_group: { word: 5, width: 5, inline: 5, forms: 8, built: 3 }
+		count_quantifier_group: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	CharacterClassEscapeArmNode: {
-		words: 15,
+		words: 8,
 		builtWords: 4,
 		character_class_escape_text2: { word: 2, width: 3, forms: 1, built: 2 },
-		unicode_property_value_expression: { word: 5, width: 10, inline: 10, forms: 8, built: 3 }
+		unicode_property_value_expression: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	UnicodePropertyValueExpressionGroupNode: {
 		words: 5,
@@ -116,22 +108,22 @@ export const records = {
 	CharacterClassEscapeText1Node: { words: 2, builtWords: 2 },
 	CharacterClassEscapeText2Node: { words: 2, builtWords: 2 },
 	InlineFlagsGroupEnableNode: {
-		words: 10,
+		words: 8,
 		builtWords: 4,
 		enabled: { word: 2, width: 3, forms: 1, built: 2 },
-		pattern: { word: 5, width: 5, inline: 5, forms: 8, built: 3 }
+		pattern: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	InlineFlagsGroupToggleNode: {
-		words: 13,
+		words: 11,
 		builtWords: 5,
 		enabled: { word: 2, width: 3, forms: 1, built: 2 },
 		disabled: { word: 5, width: 3, forms: 1, built: 3 },
-		pattern: { word: 8, width: 5, inline: 5, forms: 8, built: 4 }
+		pattern: { word: 8, width: 3, forms: 1, built: 4 }
 	},
 	InlineFlagsGroupDisableNode: {
-		words: 10,
+		words: 8,
 		builtWords: 4,
 		disabled: { word: 2, width: 3, forms: 1, built: 2 },
-		pattern: { word: 5, width: 5, inline: 5, forms: 8, built: 3 }
+		pattern: { word: 5, width: 3, forms: 1, built: 3 }
 	}
 } as const;

@@ -62,7 +62,7 @@ import {
 	restItems,
 	blankArmRead,
 	blankArmStored,
-	isNodeOfKind,
+	toElement,
 	admitAliasContent,
 	coerceKindEnumStorage,
 	kindIdStorage,
@@ -1342,7 +1342,11 @@ function buildUnionItem$with(node: Held, setter: string, args: readonly unknown[
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.UnionItem.Config>['typeParameters']>) =>
 									buildUnionItem({ ...config, typeParameters: value })
@@ -1389,7 +1393,11 @@ function buildUnionItem$with(node: Held, setter: string, args: readonly unknown[
 									kind: TSKindId.FieldDeclarationList as const,
 									optional: false,
 									make: buildFieldDeclarationList,
-									element: { keys: ['attributeItems', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
+									element: {
+										keys: ['attributeItems', 'fieldDeclaration'],
+										make: buildAttributedFieldDeclaration,
+										wrapper: { kind: TSKindId.AttributedFieldDeclaration, content: 'fieldDeclaration' }
+									}
 								},
 								(value: Admit<NonNullable<T.UnionItem.Config>['body']>) => buildUnionItem({ ...config, body: value })
 							)
@@ -1570,7 +1578,11 @@ function buildEnumItem$with(node: Held, setter: string, args: readonly unknown[]
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.EnumItem.Config>['typeParameters']>) =>
 									buildEnumItem({ ...config, typeParameters: value })
@@ -1617,7 +1629,11 @@ function buildEnumItem$with(node: Held, setter: string, args: readonly unknown[]
 									kind: TSKindId.EnumVariantList as const,
 									optional: false,
 									make: buildEnumVariantList,
-									element: { keys: ['attributeItems', 'enumVariant'], make: buildAttributedEnumVariant }
+									element: {
+										keys: ['attributeItems', 'enumVariant'],
+										make: buildAttributedEnumVariant,
+										wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant' }
+									}
 								},
 								(value: Admit<NonNullable<T.EnumItem.Config>['body']>) => buildEnumItem({ ...config, body: value })
 							)
@@ -1773,7 +1789,11 @@ function buildEnumVariantList$with(node: Held, setter: string, args: readonly un
 									kind: TSKindId.EnumVariantListElements as const,
 									optional: true,
 									make: buildEnumVariantListElements,
-									element: { keys: ['attributeItems', 'enumVariant'], make: buildAttributedEnumVariant }
+									element: {
+										keys: ['attributeItems', 'enumVariant'],
+										make: buildAttributedEnumVariant,
+										wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant' }
+									}
 								},
 								(value?: Admit<NonNullable<T.EnumVariantListElements>>) => _buildEnumVariantList(value)
 							)
@@ -2031,7 +2051,11 @@ function buildFieldDeclarationList$with(node: Held, setter: string, args: readon
 									kind: TSKindId.FieldDeclarationListElements as const,
 									optional: true,
 									make: buildFieldDeclarationListElements,
-									element: { keys: ['attributeItems', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
+									element: {
+										keys: ['attributeItems', 'fieldDeclaration'],
+										make: buildAttributedFieldDeclaration,
+										wrapper: { kind: TSKindId.AttributedFieldDeclaration, content: 'fieldDeclaration' }
+									}
 								},
 								(value?: Admit<NonNullable<T.FieldDeclarationListElements>>) => _buildFieldDeclarationList(value)
 							)
@@ -2281,7 +2305,11 @@ function buildOrderedFieldDeclarationList$with(node: Held, setter: string, args:
 									kind: TSKindId.OrderedFieldDeclarationListElements as const,
 									optional: true,
 									make: buildOrderedFieldDeclarationListElements,
-									element: { keys: ['attributeItems', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
+									element: {
+										keys: ['attributeItems', 'visibilityModifier', 'type'],
+										make: buildAttributedOrderedField,
+										wrapper: { kind: TSKindId.AttributedOrderedField, content: 'type' }
+									}
 								},
 								(value?: Admit<NonNullable<T.OrderedFieldDeclarationListElements>>) =>
 									_buildOrderedFieldDeclarationList(value)
@@ -2808,7 +2836,11 @@ function buildTypeItem$with(node: Held, setter: string, args: readonly unknown[]
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.TypeItem.Config>['typeParameters']>) =>
 									buildTypeItem({ ...config, typeParameters: value })
@@ -3035,7 +3067,11 @@ function buildFunctionItem$with(node: Held, setter: string, args: readonly unkno
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.FunctionItem.Config>['typeParameters']>) =>
 									buildFunctionItem({ ...config, typeParameters: value })
@@ -3064,7 +3100,11 @@ function buildFunctionItem$with(node: Held, setter: string, args: readonly unkno
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+					element: {
+						keys: ['attributeItem', 'content'],
+						make: buildAttributedParameter,
+						wrapper: { kind: TSKindId.AttributedParameter, content: 'content' }
+					},
 					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
@@ -3291,7 +3331,11 @@ function buildFunctionSignatureItem$with(node: Held, setter: string, args: reado
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.FunctionSignatureItem.Config>['typeParameters']>) =>
 									buildFunctionSignatureItem({ ...config, typeParameters: value })
@@ -3320,7 +3364,11 @@ function buildFunctionSignatureItem$with(node: Held, setter: string, args: reado
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+					element: {
+						keys: ['attributeItem', 'content'],
+						make: buildAttributedParameter,
+						wrapper: { kind: TSKindId.AttributedParameter, content: 'content' }
+					},
 					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
@@ -3834,7 +3882,11 @@ function buildTraitItem$with(node: Held, setter: string, args: readonly unknown[
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.TraitItem.Config>['typeParameters']>) =>
 									buildTraitItem({ ...config, typeParameters: value })
@@ -4037,7 +4089,11 @@ function buildAssociatedType$with(node: Held, setter: string, args: readonly unk
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.AssociatedType.Config>['typeParameters']>) =>
 									buildAssociatedType({ ...config, typeParameters: value })
@@ -4224,7 +4280,11 @@ function buildHigherRankedTraitBound$with(node: Held, setter: string, args: read
 									kind: TSKindId.TypeParameters as const,
 									optional: false,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value: Admit<NonNullable<T.HigherRankedTraitBound.Config>['typeParameters']>) =>
 									buildHigherRankedTraitBound({ ...config, typeParameters: value })
@@ -4423,7 +4483,11 @@ function buildTypeParameters$with(node: Held, setter: string, args: readonly unk
 									kind: TSKindId.TypeParametersElements as const,
 									optional: false,
 									make: buildTypeParametersElements,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value: Admit<NonNullable<T.TypeParametersElements>>) => _buildTypeParameters(value)
 							)
@@ -6139,7 +6203,11 @@ function buildFunctionType$with(node: Held, setter: string, args: readonly unkno
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+					element: {
+						keys: ['attributeItem', 'content'],
+						make: buildAttributedParameter,
+						wrapper: { kind: TSKindId.AttributedParameter, content: 'content' }
+					},
 					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
@@ -6388,7 +6456,11 @@ function buildGenericFunction$with(node: Held, setter: string, args: readonly un
 									kind: TSKindId.TypeArguments as const,
 									optional: false,
 									make: buildTypeArguments,
-									element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+									element: {
+										keys: ['content', 'traitBounds'],
+										make: buildTypeArgument,
+										wrapper: { kind: TSKindId.TypeArgument, content: 'content' }
+									}
 								},
 								(value: Admit<NonNullable<T.GenericFunction.Config>['typeArguments']>) =>
 									buildGenericFunction({ ...config, typeArguments: value })
@@ -6488,7 +6560,11 @@ function buildGenericType$with(node: Held, setter: string, args: readonly unknow
 									kind: TSKindId.TypeArguments as const,
 									optional: false,
 									make: buildTypeArguments,
-									element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+									element: {
+										keys: ['content', 'traitBounds'],
+										make: buildTypeArgument,
+										wrapper: { kind: TSKindId.TypeArgument, content: 'content' }
+									}
 								},
 								(value: Admit<NonNullable<T.GenericType.Config>['typeArguments']>) =>
 									buildGenericType({ ...config, typeArguments: value })
@@ -6591,7 +6667,11 @@ function buildGenericTypeWithTurbofish$with(node: Held, setter: string, args: re
 									kind: TSKindId.TypeArguments as const,
 									optional: false,
 									make: buildTypeArguments,
-									element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+									element: {
+										keys: ['content', 'traitBounds'],
+										make: buildTypeArgument,
+										wrapper: { kind: TSKindId.TypeArgument, content: 'content' }
+									}
 								},
 								(value: Admit<NonNullable<T.GenericTypeWithTurbofish.Config>['typeArguments']>) =>
 									buildGenericTypeWithTurbofish({ ...config, typeArguments: value })
@@ -6938,7 +7018,11 @@ function buildTypeArguments$with(node: Held, setter: string, args: readonly unkn
 									kind: TSKindId.TypeArgumentsElements as const,
 									optional: false,
 									make: buildTypeArgumentsElements,
-									element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+									element: {
+										keys: ['content', 'traitBounds'],
+										make: buildTypeArgument,
+										wrapper: { kind: TSKindId.TypeArgument, content: 'content' }
+									}
 								},
 								(value: Admit<NonNullable<T.TypeArgumentsElements>>) => _buildTypeArguments(value)
 							)
@@ -7045,7 +7129,11 @@ function buildTypeBinding$with(node: Held, setter: string, args: readonly unknow
 									kind: TSKindId.TypeArguments as const,
 									optional: true,
 									make: buildTypeArguments,
-									element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+									element: {
+										keys: ['content', 'traitBounds'],
+										make: buildTypeArgument,
+										wrapper: { kind: TSKindId.TypeArgument, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.TypeBinding.Config>['typeArguments']>) =>
 									buildTypeBinding({ ...config, typeArguments: value })
@@ -7230,7 +7318,11 @@ function buildAbstractType$with(node: Held, setter: string, args: readonly unkno
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.AbstractType.Config>['typeParameters']>) =>
 									buildAbstractType({ ...config, typeParameters: value })
@@ -8168,7 +8260,11 @@ function buildCallExpression$with(node: Held, setter: string, args: readonly unk
 									kind: TSKindId.Arguments as const,
 									optional: false,
 									make: buildArguments,
-									element: { keys: ['attributeItems', 'expression'], make: buildArgument }
+									element: {
+										keys: ['attributeItems', 'expression'],
+										make: buildArgument,
+										wrapper: { kind: TSKindId.Argument, content: 'expression' }
+									}
 								},
 								(value: Admit<NonNullable<T.CallExpression.Config>['arguments']>) =>
 									buildCallExpression({ ...config, arguments: value })
@@ -8314,7 +8410,11 @@ function buildArguments$with(node: Held, setter: string, args: readonly unknown[
 									kind: TSKindId.ArgumentsElements as const,
 									optional: true,
 									make: buildArgumentsElements,
-									element: { keys: ['attributeItems', 'expression'], make: buildArgument }
+									element: {
+										keys: ['attributeItems', 'expression'],
+										make: buildArgument,
+										wrapper: { kind: TSKindId.Argument, content: 'expression' }
+									}
 								},
 								(value?: Admit<NonNullable<T.ArgumentsElements>>) => _buildArguments(value)
 							)
@@ -10695,7 +10795,11 @@ function buildGenericPattern$with(node: Held, setter: string, args: readonly unk
 									kind: TSKindId.TypeArguments as const,
 									optional: false,
 									make: buildTypeArguments,
-									element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+									element: {
+										keys: ['content', 'traitBounds'],
+										make: buildTypeArgument,
+										wrapper: { kind: TSKindId.TypeArgument, content: 'content' }
+									}
 								},
 								(value: Admit<NonNullable<T.GenericPattern.Config>['typeArguments']>) =>
 									buildGenericPattern({ ...config, typeArguments: value })
@@ -11935,11 +12039,10 @@ function _buildEnumVariantListElements(
 	currentHandle()?.admit(TSKindId.EnumVariantListElements, elements);
 	const _mapped = elements.map(
 		(e): T.AttributedEnumVariant =>
-			(isNodeOfKind(e, TSKindId.AttributedEnumVariant)
-				? (e as unknown)
-				: buildAttributedEnumVariant({ enumVariant: e } as Parameters<
-						typeof buildAttributedEnumVariant
-					>[0])) as T.AttributedEnumVariant
+			toElement(e, {
+				make: buildAttributedEnumVariant,
+				wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant' }
+			}) as T.AttributedEnumVariant
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -12017,7 +12120,12 @@ function buildEnumVariantListElements$with(node: Held, setter: string, args: rea
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
-						{ slot: 'items', keys: ['attributeItems', 'enumVariant'], make: buildAttributedEnumVariant },
+						{
+							slot: 'items',
+							keys: ['attributeItems', 'enumVariant'],
+							make: buildAttributedEnumVariant,
+							wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant' }
+						},
 						(...vs: NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>) =>
 							buildEnumVariantListElements(options, ...vs)
 					)
@@ -12076,11 +12184,10 @@ function _buildFieldDeclarationListElements(
 	currentHandle()?.admit(TSKindId.FieldDeclarationListElements, elements);
 	const _mapped = elements.map(
 		(e): T.AttributedFieldDeclaration =>
-			(isNodeOfKind(e, TSKindId.AttributedFieldDeclaration)
-				? (e as unknown)
-				: buildAttributedFieldDeclaration({ fieldDeclaration: e } as Parameters<
-						typeof buildAttributedFieldDeclaration
-					>[0])) as T.AttributedFieldDeclaration
+			toElement(e, {
+				make: buildAttributedFieldDeclaration,
+				wrapper: { kind: TSKindId.AttributedFieldDeclaration, content: 'fieldDeclaration' }
+			}) as T.AttributedFieldDeclaration
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -12158,7 +12265,12 @@ function buildFieldDeclarationListElements$with(node: Held, setter: string, args
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
-						{ slot: 'items', keys: ['attributeItems', 'fieldDeclaration'], make: buildAttributedFieldDeclaration },
+						{
+							slot: 'items',
+							keys: ['attributeItems', 'fieldDeclaration'],
+							make: buildAttributedFieldDeclaration,
+							wrapper: { kind: TSKindId.AttributedFieldDeclaration, content: 'fieldDeclaration' }
+						},
 						(...vs: NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>) =>
 							buildFieldDeclarationListElements(options, ...vs)
 					)
@@ -12220,11 +12332,10 @@ function _buildOrderedFieldDeclarationListElements(
 	currentHandle()?.admit(TSKindId.OrderedFieldDeclarationListElements, elements);
 	const _mapped = elements.map(
 		(e): T.AttributedOrderedField =>
-			(isNodeOfKind(e, TSKindId.AttributedOrderedField)
-				? (e as unknown)
-				: buildAttributedOrderedField({ type: e } as Parameters<
-						typeof buildAttributedOrderedField
-					>[0])) as T.AttributedOrderedField
+			toElement(e, {
+				make: buildAttributedOrderedField,
+				wrapper: { kind: TSKindId.AttributedOrderedField, content: 'type' }
+			}) as T.AttributedOrderedField
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -12305,7 +12416,8 @@ function buildOrderedFieldDeclarationListElements$with(node: Held, setter: strin
 						{
 							slot: 'items',
 							keys: ['attributeItems', 'visibilityModifier', 'type'],
-							make: buildAttributedOrderedField
+							make: buildAttributedOrderedField,
+							wrapper: { kind: TSKindId.AttributedOrderedField, content: 'type' }
 						},
 						(...vs: NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>) =>
 							buildOrderedFieldDeclarationListElements(options, ...vs)
@@ -12485,11 +12597,10 @@ function _buildTypeParametersElements(
 	currentHandle()?.admit(TSKindId.TypeParametersElements, elements);
 	const _mapped = elements.map(
 		(e): T.AttributedTypeParameter =>
-			(isNodeOfKind(e, TSKindId.AttributedTypeParameter)
-				? (e as unknown)
-				: buildAttributedTypeParameter({ content: e } as Parameters<
-						typeof buildAttributedTypeParameter
-					>[0])) as T.AttributedTypeParameter
+			toElement(e, {
+				make: buildAttributedTypeParameter,
+				wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+			}) as T.AttributedTypeParameter
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -12569,7 +12680,12 @@ function buildTypeParametersElements$with(node: Held, setter: string, args: read
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
-						{ slot: 'items', keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter },
+						{
+							slot: 'items',
+							keys: ['attributeItems', 'content'],
+							make: buildAttributedTypeParameter,
+							wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+						},
 						(
 							...vs: NonEmptyArray<
 								Admit<
@@ -12861,11 +12977,10 @@ function _buildParametersElements(
 	currentHandle()?.admit(TSKindId.ParametersElements, elements);
 	const _mapped = elements.map(
 		(e): T.AttributedParameter =>
-			(isNodeOfKind(e, TSKindId.AttributedParameter)
-				? (e as unknown)
-				: buildAttributedParameter({ content: e } as Parameters<
-						typeof buildAttributedParameter
-					>[0])) as T.AttributedParameter
+			toElement(e, {
+				make: buildAttributedParameter,
+				wrapper: { kind: TSKindId.AttributedParameter, content: 'content' }
+			}) as T.AttributedParameter
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -12947,7 +13062,12 @@ function buildParametersElements$with(node: Held, setter: string, args: readonly
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
-						{ slot: 'items', keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+						{
+							slot: 'items',
+							keys: ['attributeItem', 'content'],
+							make: buildAttributedParameter,
+							wrapper: { kind: TSKindId.AttributedParameter, content: 'content' }
+						},
 						(
 							...vs: NonEmptyArray<
 								Admit<
@@ -13367,9 +13487,10 @@ function _buildTypeArgumentsElements(
 	currentHandle()?.admit(TSKindId.TypeArgumentsElements, elements);
 	const _mapped = elements.map(
 		(e): T.TypeArgument =>
-			(isNodeOfKind(e, TSKindId.TypeArgument)
-				? (e as unknown)
-				: buildTypeArgument({ content: e } as Parameters<typeof buildTypeArgument>[0])) as T.TypeArgument
+			toElement(e, {
+				make: buildTypeArgument,
+				wrapper: { kind: TSKindId.TypeArgument, content: 'content' }
+			}) as T.TypeArgument
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -13449,7 +13570,12 @@ function buildTypeArgumentsElements$with(node: Held, setter: string, args: reado
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
-						{ slot: 'items', keys: ['content', 'traitBounds'], make: buildTypeArgument },
+						{
+							slot: 'items',
+							keys: ['content', 'traitBounds'],
+							make: buildTypeArgument,
+							wrapper: { kind: TSKindId.TypeArgument, content: 'content' }
+						},
 						(
 							...vs: NonEmptyArray<
 								Admit<
@@ -13506,9 +13632,7 @@ function _buildArgumentsElements(
 	currentHandle()?.admit(TSKindId.ArgumentsElements, elements);
 	const _mapped = elements.map(
 		(e): T.Argument =>
-			(isNodeOfKind(e, TSKindId.Argument)
-				? (e as unknown)
-				: buildArgument({ expression: e } as Parameters<typeof buildArgument>[0])) as T.Argument
+			toElement(e, { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'expression' } }) as T.Argument
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -13586,7 +13710,12 @@ function buildArgumentsElements$with(node: Held, setter: string, args: readonly 
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
-						{ slot: 'items', keys: ['attributeItems', 'expression'], make: buildArgument },
+						{
+							slot: 'items',
+							keys: ['attributeItems', 'expression'],
+							make: buildArgument,
+							wrapper: { kind: TSKindId.Argument, content: 'expression' }
+						},
 						(...vs: NonEmptyArray<Admit<T.Argument | T.Expression>>) => buildArgumentsElements(options, ...vs)
 					)
 				)
@@ -16184,7 +16313,11 @@ function buildImplItemBody$with(node: Held, setter: string, args: readonly unkno
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.ImplItemBody.Config>['typeParameters']>) =>
 									buildImplItemBody({ ...config, typeParameters: value })
@@ -16368,7 +16501,11 @@ function buildImplItemSemi$with(node: Held, setter: string, args: readonly unkno
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.ImplItemSemi.Config>['typeParameters']>) =>
 									buildImplItemSemi({ ...config, typeParameters: value })
@@ -19292,7 +19429,11 @@ function buildStructItemBrace$with(node: Held, setter: string, args: readonly un
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.StructItemBrace.Config>['typeParameters']>) =>
 									buildStructItemBrace({ ...config, typeParameters: value })
@@ -19339,7 +19480,11 @@ function buildStructItemBrace$with(node: Held, setter: string, args: readonly un
 									kind: TSKindId.FieldDeclarationList as const,
 									optional: false,
 									make: buildFieldDeclarationList,
-									element: { keys: ['attributeItems', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
+									element: {
+										keys: ['attributeItems', 'fieldDeclaration'],
+										make: buildAttributedFieldDeclaration,
+										wrapper: { kind: TSKindId.AttributedFieldDeclaration, content: 'fieldDeclaration' }
+									}
 								},
 								(value: Admit<NonNullable<T.StructItemBrace.Config>['body']>) =>
 									buildStructItemBrace({ ...config, body: value })
@@ -19521,7 +19666,11 @@ function buildStructItemTuple$with(node: Held, setter: string, args: readonly un
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.StructItemTuple.Config>['typeParameters']>) =>
 									buildStructItemTuple({ ...config, typeParameters: value })
@@ -19558,7 +19707,11 @@ function buildStructItemTuple$with(node: Held, setter: string, args: readonly un
 									kind: TSKindId.OrderedFieldDeclarationList as const,
 									optional: false,
 									make: buildOrderedFieldDeclarationList,
-									element: { keys: ['attributeItems', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
+									element: {
+										keys: ['attributeItems', 'visibilityModifier', 'type'],
+										make: buildAttributedOrderedField,
+										wrapper: { kind: TSKindId.AttributedOrderedField, content: 'type' }
+									}
 								},
 								(value: Admit<NonNullable<T.StructItemTuple.Config>['body']>) =>
 									buildStructItemTuple({ ...config, body: value })
@@ -19722,7 +19875,11 @@ function buildStructItemUnit$with(node: Held, setter: string, args: readonly unk
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.StructItemUnit.Config>['typeParameters']>) =>
 									buildStructItemUnit({ ...config, typeParameters: value })
@@ -21246,7 +21403,11 @@ function buildParametersElementsReceiver$with(node: Held, setter: string, args: 
 							kind: TSKindId.ParametersElementsReceiverGroup as const,
 							optional: true,
 							make: buildParametersElementsReceiverGroup,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+							element: {
+								keys: ['attributeItem', 'content'],
+								make: buildAttributedParameter,
+								wrapper: { kind: TSKindId.AttributedParameter, content: 'content' }
+							}
 						},
 						(value?: Admit<T.ParametersElementsReceiverGroup>) =>
 							buildParametersElementsReceiver({ ...config, parametersElementsReceiverGroup: value })
@@ -21453,7 +21614,11 @@ function buildParametersElementsReceiverGroup$with(node: Held, setter: string, a
 									kind: TSKindId.ParametersElements as const,
 									optional: true,
 									make: buildParametersElements,
-									element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+									element: {
+										keys: ['attributeItem', 'content'],
+										make: buildAttributedParameter,
+										wrapper: { kind: TSKindId.AttributedParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.ParametersElements>>) => _buildParametersElementsReceiverGroup(value)
 							)
@@ -21825,7 +21990,11 @@ function buildMethodDeclaration$with(node: Held, setter: string, args: readonly 
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.MethodDeclaration.Config>['typeParameters']>) =>
 									buildMethodDeclaration({ ...config, typeParameters: value })
@@ -21854,7 +22023,11 @@ function buildMethodDeclaration$with(node: Held, setter: string, args: readonly 
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+					element: {
+						keys: ['attributeItem', 'content'],
+						make: buildAttributedParameter,
+						wrapper: { kind: TSKindId.AttributedParameter, content: 'content' }
+					},
 					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,
@@ -22083,7 +22256,11 @@ function buildSignatureMethodDeclaration$with(node: Held, setter: string, args: 
 									kind: TSKindId.TypeParameters as const,
 									optional: true,
 									make: buildTypeParameters,
-									element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+									element: {
+										keys: ['attributeItems', 'content'],
+										make: buildAttributedTypeParameter,
+										wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content' }
+									}
 								},
 								(value?: Admit<NonNullable<T.SignatureMethodDeclaration.Config>['typeParameters']>) =>
 									buildSignatureMethodDeclaration({ ...config, typeParameters: value })
@@ -22112,7 +22289,11 @@ function buildSignatureMethodDeclaration$with(node: Held, setter: string, args: 
 					kind: TSKindId.ParametersElements as const,
 					optional: false,
 					make: buildParametersElements,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+					element: {
+						keys: ['attributeItem', 'content'],
+						make: buildAttributedParameter,
+						wrapper: { kind: TSKindId.AttributedParameter, content: 'content' }
+					},
 					forms: [TSKindId.ParametersElementsReceiver]
 				},
 				handle,

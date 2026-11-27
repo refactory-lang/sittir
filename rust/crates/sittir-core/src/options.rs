@@ -79,7 +79,7 @@ pub struct ResolvedOptions {
     pub edge_rows: &'static [Option<EdgeRow>],
     /// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.
     pub sites: &'static [SiteSpec],
-    /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`, `KindFlags::JOINS_NEXT`).
+    /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`, `KindFlags::JOINS_NEXT`, `KindFlags::TERMINATOR_ONLY`).
     pub kind_flags: &'static [KindFlags],
     /// Per kind id of a wrapper, the way its seat passes through to the node
     /// it holds; none for any other kind (`prepare::SeatSlot`).
@@ -142,6 +142,10 @@ impl KindFlags {
     /// derived `next` bit (`render::JoinArm::next`). A slice of the kind
     /// arms its right edge from this flag.
     pub const JOINS_NEXT: Self = Self(1 << 4);
+    /// A list item kind that spells nothing but the fixed token another item
+    /// of its list ends with (an empty statement): no line break goes
+    /// before it, whatever the options' arm for the list's gaps.
+    pub const TERMINATOR_ONLY: Self = Self(1 << 5);
 
     /// Whether the set holds any flag of `other`.
     #[must_use]
@@ -339,6 +343,14 @@ impl ResolvedOptions {
     #[must_use]
     pub fn kind_has(&self, kind: KindId, flag: crate::options::KindFlags) -> bool {
         self.kind_flags.get(kind.index()).is_some_and(|flags| flags.has(flag))
+    }
+
+    /// Whether a node of `kind` ends its line: it is line-terminated or
+    /// ends in the declared newline token, so the line break after it is
+    /// its own.
+    #[must_use]
+    pub fn ends_line(&self, kind: KindId) -> bool {
+        self.kind_has(kind, crate::options::KindFlags::LINE_TERMINATED) || self.kind_has(kind, crate::options::KindFlags::LINE_BREAK_TERMINATED)
     }
 
     /// The boundary arms of `kind`'s row on `side` (`BoundaryArm`), in `next`
@@ -696,12 +708,11 @@ pub fn indent_unit(source: &str) -> Option<String> {
     Some(unit.to_string())
 }
 
-/// What a parse reads off its source's layout, as render options: the
-/// tree's layer of the precedence, which a render of the tree resolves over
-/// the engine's options and under the call's own. Each entry is one the
-/// source sets apart from the options it was read against: the indentation
-/// unit (`indent_unit`), and the arm of each of the root's edges
-/// that the source's whitespace at the file's start and end classifies to.
+/// What a source's layout sets apart from a base table, as render options:
+/// the indentation unit (`indent_unit`), and the arm of each of the root's
+/// edges that the source's whitespace at the file's start and end
+/// classifies to. A parse that adopts its source's style lays it over the
+/// engine's defaults.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct InferredOptions {
     pub indent: Option<String>,
@@ -746,45 +757,6 @@ impl InferredOptions {
         }
         table
     }
-
-    /// The layer as the options object a render takes: `layout.indent`, and
-    /// each edge under its site's address.
-    ///
-    /// # Panics
-    ///
-    /// Never: every site address the tables hold has at least one key.
-    #[must_use]
-    pub fn to_json(&self, tables: &OptionTables) -> serde_json::Value {
-        let mut root = serde_json::Map::new();
-        if let Some(indent) = &self.indent {
-            root.insert(LAYOUT_KEY.to_owned(), serde_json::json!({ "indent": indent }));
-        }
-        for &(site, arm) in &self.edges {
-            let Some(path) = address_of(tables.addresses, site) else { continue };
-            let mut level = &mut root;
-            for key in &path[..path.len() - 1] {
-                level = level
-                    .entry((*key).to_owned())
-                    .or_insert_with(|| serde_json::Value::Object(serde_json::Map::new()))
-                    .as_object_mut()
-                    .expect("an address branch is an object");
-            }
-            level.insert(path[path.len() - 1].to_owned(), serde_json::json!(arm));
-        }
-        serde_json::Value::Object(root)
-    }
-}
-
-/// The keys that address `site` alone, from the root of `nodes`.
-fn address_of(nodes: &'static [AddressNode], site: SiteId) -> Option<Vec<&'static str>> {
-    nodes.iter().find_map(|node| match node {
-        AddressNode::Spacing { key, sites: [only] } if only.site == site => Some(vec![*key]),
-        AddressNode::Branch { key, children, .. } => address_of(children, site).map(|mut path| {
-            path.insert(0, *key);
-            path
-        }),
-        _ => None,
-    })
 }
 
 #[cfg(test)]

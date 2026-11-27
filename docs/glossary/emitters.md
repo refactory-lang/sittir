@@ -2336,7 +2336,7 @@ Every kind with a parser id that a kind id alone renders as text (`compiler/mode
 // otherwise fall back to the canonical kind string.
 ```
 
-`SURFACE_KINDS` also carries the depth pair's kind ids (`indent`, `dedent`, 0 for none, from `depthMembersOf`) and `depth: super::options::DEPTH_REGIONS`, the structural indentation `options.rs` writes, so the trivia table reads every surface fact from the one constant.
+`SURFACE_KINDS` also carries the depth pair's kind ids (`indent`, `dedent`, 0 for none, from `depthMembersOf`) so the trivia table reads every surface fact from the one constant.
 
 Also emits `RELAXED_KEYWORDS`, the token ids of the keywords the grammar relaxes into its word rule (`relaxedKeywordIds`, from the node map's `relaxedLiterals`), and `relaxes(grammar, display)`, true for a node displayed as the word rule whose grammar id is one of them. The generated engine grammar returns it from `EngineGrammar::relaxes`, and `ReadCtx::stamped_kind` stamps such a node as the word rule.
 
@@ -2503,10 +2503,7 @@ through `render_root` (`renderRootFn`), the one writer a record's render
 place the root seam policy could drift. `render_root` takes the render
 context and builds the writer from it: `.with_table(&options::WHITESPACE)` so
 `w.site(...)` resolves against this grammar's whitespace vocabulary,
-`.with_indent(&ctx.options.indent)`, `.with_recording(recording)` with the
-`Option<&mut Baseline>` it takes beside the context, so a recording render (a
-parsed tree's layout baseline) records the line breaks it writes into a
-baseline the writer alone borrows, and `.with_sources(ctx.sources)` so a
+`.with_indent(&ctx.options.indent)`, and `.with_sources(ctx.sources)` so a
 `Coord` slot slices its bytes from the tree the engine still holds. It wraps
 the output `String` once, never per level, and calls
 `node.render(&mut w)`.
@@ -2570,11 +2567,10 @@ crate's `EngineGrammar::Trivia` all name.
 
 The render entry the napi engine calls: `RenderRoot` is the root in the
 same `SlotValue` carrier every slot position uses, and
-`render_node_parts(mut node, ctx, recording)` runs the prepare walk over the
+`render_node_parts(mut node, ctx)` runs the prepare walk over the
 whole tree (`Prepare::prepare(&mut node, ctx)?`) before a single byte
 is written, then renders through `render_node_dispatch` with the same
-context and the baseline to record into, if any (the napi render passes
-none; a parsed tree's `render_read` passes its baseline). A coordinate the sources cannot resolve fails here, before the
+context. A coordinate the sources cannot resolve fails here, before the
 writer exists.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedKindFn`
@@ -2692,9 +2688,8 @@ The closure a list whose separator is chosen per instance renders its
 separator kinds by: `|kind| match kind { <id> => "<text>", ..., _ => <fallback> }`,
 one arm per candidate kind (`separatorCandidateKindNames`, the arms the
 wire capture reads), so the render never stores separator text and only
-spells a kind. The list's view binds it once (`<slot>_separator`) and both
-its default token (`node.separator_kind()`) and each item's own separator
-(`ListView::separators`, `BodyLayout::slot_tokens`) read it. `undefined` when no
+spells a kind. The list's view binds it once (`<slot>_separator`) and its
+token (`node.separator_kind()`) reads it. `undefined` when no
 candidate has a kind id, and the plain literal is the token.
 
 When the plan holds a separator site for the list, the `_ =>` fallback is
@@ -3643,13 +3638,6 @@ sides use. An arm missing either side is left out.
  * sync on one predicate rather than each re-deriving it from `modelType`.
  */
 ```
-
-### `packages/codegen/src/emitters/shared.ts::slotSeparatorTexts`
-
-The literal separator texts a repeated slot's values carry — the one source
-of "what separates this slot", which the render module reads for the
-slot's separator texts. `elidedOnly` narrows to the
-values that may be absent, which is the elidable-list form.
 
 ### `packages/codegen/src/emitters/shared.ts::canonicalSeparatedListField`
 
@@ -11535,6 +11523,12 @@ The unit kinds (`unitKindIds`) the parser names in its tree, read from the kind 
 
 The sorted kind ids of the unit kinds (keyword or punctuation model type, with a kind id) that `keep` accepts: the one walk behind `unitKindIds` and `namedUnitKindIds`.
 
+### `packages/codegen/src/emitters/wrap.ts::elementWrapperKindIds`
+
+The sorted, distinct kind ids of the wrappers a list seats around each of its elements: every seated compound that is a value of a list kind's multiple slot (rust's `_attributed_field_declaration`, `_argument` and their siblings). The list's iterator hands out the element, and a rebuild constructs the wrapper afresh around it, so the surface exposes the element in the wrapper's place. Emitted as `SurfaceKinds::wrappers` in each grammar's `kind_ids.rs` (`emitKindIdRust`). Parse and the placement then pass the wrapper's edge sides to its edge members, as they pass a list's to its edge items (`SurfaceKinds::exposes_in_place`), so a member keeps its comments and its blank-line fact through a rebuild.
+
+A display form also seats on its parent (`StructItemBrace` is the struct itself), but it is no list's element, so it is not among these. These are a subset of `rebuildWrapperKindIds`.
+
 
 ### `packages/codegen/src/emitters/render-module.ts::module`
 
@@ -12961,8 +12955,6 @@ lands.
 
 A site's blank arm is the blank id (`armIdOf`) in its allowed ids and as its default.
 
-`depthRegions` are the kinds' structural indentation regions (`depthRegionsOf`), resolved to kind ids and sorted by them; a region on a kind with no id is a build error.
-
 `seatWrappers` are the wrappers' seat passages (`seatWrappersOf`), sorted by kind id.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
@@ -12982,16 +12974,6 @@ its default arm and strength. A text whitespace kind's string is written with
 the core writer's seam mark in front, so every option-driven whitespace
 coalesces in the writer; the indent and dedent kinds keep their own mark
 constants.
-
-`DEPTH_REGIONS` lists each kind's structural indentation (`depthRegionsOf`) by kind id, as `sittir_core::trivia_table::DepthRegion` rows whose anchors `depthAnchorRs` writes.
-
-### `packages/codegen/src/emitters/render-options-rs.ts::PlannedDepthRegion`
-
-A `DepthRegion` with its kind resolved to its kind id.
-
-### `packages/codegen/src/emitters/render-options-rs.ts::depthAnchorRs`
-
-A `DepthAnchor` as the Rust expression of `sittir_core::trivia_table::DepthAnchor`.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::allowed`
 
@@ -13140,7 +13122,7 @@ Per kind id, the leaf's `LeafEdges` packed into one cell: the leading set in the
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::kindFlagsOf`
 
-Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`), `KIND_LINE_BREAK_TERMINATED` when it is an outermost kind ending in the declared newline token (`lineBreakTerminatedKinds`), `KIND_ROOT` for the grammar root (`grammarRoot`), whose edges the writer writes at a render's two ends. The bit values match `sittir_core::options::KindFlags`'s constants. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a native node, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`) as a `LineHold::Terminated`; a node of a kind ending in the declared newline token holds it as a `LineHold::Break`, which the end of a render drops.
+Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`), `KIND_LINE_BREAK_TERMINATED` when it is an outermost kind ending in the declared newline token (`lineBreakTerminatedKinds`), `KIND_ROOT` for the grammar root (`grammarRoot`), whose edges the writer writes at a render's two ends, `KIND_JOINS_NEXT` for a kind whose last token can join the next, and `KIND_TERMINATOR_ONLY` for a list item kind that spells nothing but its list's terminator (`terminatorOnlyKinds`), before which the writer breaks no line (`RenderSink::stay_on_line`). The bit values match `sittir_core::options::KindFlags`'s constants. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a native node, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`) as a `LineHold::Terminated`; a node of a kind ending in the declared newline token holds it as a `LineHold::Break`, which the end of a render drops.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::EdgeSiteRow`
 
@@ -13195,15 +13177,13 @@ The render inputs a grammar's real emission passes: the caller's facts plus the 
  */
 ```
 
-The structural indentation regions come from the same render rules (`depthRegionsOf`).
-
 ### `packages/codegen/src/emitters/render-module.ts::prepareEnumImpl`
 
 A `Prepare` impl for a generated enum: payload variants delegate to the
 payload's `prepare(ctx)`, unit variants (literals) are `Ok(())`. The match
 is the tail expression, so the impl's result is whichever arm ran. An enum
 with payloads or edged units (`PrepareArm.edged`) also delegates
-`gap_edges`, `snapshot_edge`, `source_coordinate` and `source_separator`, an edged unit
+`gap_edges`, `snapshot_edge` and `source_coordinate`, an edged unit
 answering `gap_edges` with the edges it holds and nothing else,
 so a list's gap fill reaches the edges and the geometry of
 whichever kind the item is. An enum the reader reads into also reads a
@@ -13270,9 +13250,7 @@ function with itself and `&mut ()`, its overlay, so a native node is written
 in place and its callers are unchanged.
 
 Every struct also answers `gap_edges` with its own base edges, made when the
-layout holds none, `source_separator` from its layout
-(`layout::source_separator`: the one it carries, else its source's while its
-neighbour before is unchanged), `snapshot_edge` from its layout's span
+layout holds none, `snapshot_edge` from its layout's span
 and trivia, so a snapshot root's edges read geometry, and
 `source_coordinate` from its layout's `at`, the coordinate a read node came
 from, by which a read node with no write in its range prepares and renders
@@ -13291,9 +13269,8 @@ when unset; the seat calls (`seatLoops`) write each seated element's gap into
 that element's own base `after` edge; a separated list takes its `delimiter`
 from its site when unset, its `separator_kind` from its slot's stored
 separator (`listItemWireKey`, read through the derive's `separator_kind_of`)
-before its site, and each item's own separator where its source spells
-another than the slot's (`SlotTarget::separators` over the list's item field,
-stored by `LayoutTarget::set_slot_tokens`); and a required registered choice
+before its site, so every gap of a rebuilt list writes the list's separator;
+and a required registered choice
 option the caller left unset is built from its option site's resolved arm
 (`optionDefaultFills`). Only then does it walk the children (each field
 `preparesSlot` admits, through `SlotTarget::prepare`). The order matters: a
@@ -13305,30 +13282,9 @@ render's.
 
 A list's delimiter is filled from the table like any site, zero included:
 the table's value is the grammar's declared default or a render option, and
-the node's own value still wins. One exception: a list whose trailing
-separator is optional takes its trailing flag from the source while its
-last item is still its source's last (`sourceTrailingSeparator`).
+the node's own value still wins.
 
 It reads a coordinate (`READ_COORDINATE`).
-
-### `packages/codegen/src/emitters/render-module.ts::sourceTrailingSeparator`
-
-The facts a list's generated `prepare` passes to `source_trailing_delimiter`:
-the list's own kind id and the kind ids of its separator tokens (the multiple
-slot's literal separators and the token arms of its separator rule), or
-nothing when the list's trailing separator is not optional. A separator with
-no kind id is a compile error.
-
-When a list has them, an unset `delimiter` is filled by
-`source_trailing_delimiter` instead of the plain table value. A list read
-or rebuilt from a source list (its layout's `sides`) whose trailing edge is
-unchanged, so that its last item is still the source's last, takes its
-trailing flag from that source list: set if the source list's last child
-that is not an extra is one of these separators, clear otherwise. The child
-is read from the tree, never from the span's text, so a comment the span
-includes is not mistaken for a separator. The leading flag and every other
-list take the table value. The source wins both ways, so a source with no
-trailing separator renders none even where the table's default is trailing.
 
 ### `packages/codegen/src/emitters/render-module.ts::optionDefaultFills`
 
@@ -13745,6 +13701,26 @@ The one-seam-per-flank check: every internal gap and each edge of a template car
 
 Whether a slot may be absent at render time (its node field is not required). A join printed after such a slot is written inside the slot's presence test, since the gap between a slot and what follows exists only when the slot does: a join with no left neighbour would otherwise coalesce with the seam of the template before it.
 
+### `packages/codegen/src/emitters/render-body.ts::alternativesOf`
+
+The bodies an `if` node chooses among: each arm's, then its fallback's when it has one.
+
+### `packages/codegen/src/emitters/render-body.ts::writesDepth`
+
+Whether a body holds an `indent` or `dedent` part at any level. A kind that does must be read as a record, because a depth move is stamped on the record's side record and no row carries it; `emitRenderModule` fails generation otherwise.
+
+### `packages/codegen/src/emitters/render-body.ts::bodySlotOrder`
+
+Each slot a body writes, once, at its first appearance. This is a unit's place among its holder's children, since a record's cells are not in document order: a boolean slot is a presence bit ahead of every cell. Slots in different arms of one `if` are alternatives and order nothing between them; two slots written in both orders on paths through the body throw, because no single order would then describe the kind.
+
+### `packages/codegen/src/emitters/render-body.ts::EdgePartSpec`
+
+One thing a body can write at an edge, before its ids are resolved: a `token` by its text, a `cell` by its slot name, or a token `guarded` by the slot whose presence writes it. A depth part's token is its marker text (`INDENT_TEXT`, `DEDENT_TEXT`).
+
+### `packages/codegen/src/emitters/render-body.ts::bodyEdgeParts`
+
+What a body can write first (`before`) or last (`after`), nearest the edge first, so a reader finds the edge token of a record without a row for it. The walk passes seams, spacing and whitespace-only text, which is no fixed token, stops at an unconditional token or a required slot, and reads past a slot `optional` names and past an `if` unless every alternative ends the walk. A slot inside the arm that tests it counts as required there. Two shapes a `Guarded` part cannot state throw: a token under an arm gated by a slot's kind, and a fallback that writes at the edge beside an arm that writes nothing there.
+
 ### `packages/codegen/src/emitters/factories.ts::slotGuardKey`
 
 ```text
@@ -13843,7 +13819,7 @@ The rest parameter of a spreading kind is typed from the slot's own cardinality,
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml` (its `arena` feature turns on the core's record codec beside the object codec; `scripts/build-native.mts` enables it in every napi build, so one binary serves both node storages), `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, built with or without napi bindings so a Rust test parses through the shared engine, whose `shows` is the generated `AnyNode`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaNode`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), whose `read_units` reads a node one level down as the generated `AnyNode` and takes the sides of its unit children from its layout, and whose `render_read` reads a node `depth` levels down as `AnyNode` and renders it through `render_node_parts` into the baseline it is handed, answering the text (the records a parsed tree's layout baseline is read from), whose `slot_routes` and `router` are `AnyNode`'s routing (each child's route, and how a node's kind finds its slots for a query), whose `unit_id` is `AnyNode`'s (the id the read stores for a node it stores as a unit, which a query walk selects the node by and yields in place of its coordinate); the `RecordGrammar` impl, inside `records_codec!` so it exists only when `sittir-core` is built with the arena, whose `render_record` is the render module's generated one, so a parsed tree renders a record from its address (`ParsedTree::render_record`); and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml` (its `arena` feature turns on the core's record codec beside the object codec; `scripts/build-native.mts` enables it in every napi build, so one binary serves both node storages), `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, built with or without napi bindings so a Rust test parses through the shared engine, whose `shows` is the generated `AnyNode`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaNode`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), whose `read_units` reads a node one level down as the generated `AnyNode` and takes the sides of its unit children from its layout, whose `slot_routes` and `router` are `AnyNode`'s routing (each child's route, and how a node's kind finds its slots for a query), whose `unit_id` is `AnyNode`'s (the id the read stores for a node it stores as a unit, which a query walk selects the node by and yields in place of its coordinate); the `RecordGrammar` impl, inside `records_codec!` so it exists only when `sittir-core` is built with the arena, whose `render_record` is the render module's generated one, so a parsed tree renders a record from its address (`ParsedTree::render_record`); and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NativeCrateFile`
 
@@ -13919,7 +13895,7 @@ The object literal a node's builder and wrap pass to `seatWith`, one per seat: t
 
 ### `packages/codegen/src/emitters/factories.ts::elementConfigsOf`
 
-The elements seats of a node: each multiple slot whose elements include exactly one hoisted config-shaped group, as the slot's accessor name, the group's type and raw factory, its config keys and the type of its config object. A separated list's element slot is one when its element is such a group. The config surface takes the group's config objects in these slots and builds each through the group's factory; the node surface takes them the same way in every `$with` setter for the slot, including the setter of a slot that holds the list. The type stamp (`config` of a slot hint or a list-slot hint) and the runtime spec (`element` of a list-slot spec, or an `elementsWith` call) come from this one function.
+The elements seats of a node: each multiple slot whose elements include exactly one hoisted config-shaped group, as the slot's accessor name, the group's type and raw factory, its config keys and the type of its config object. A separated list's element slot is one when its element is such a group. The config surface takes the group's config objects in these slots and builds each through the group's factory; the node surface takes them the same way in every `$with` setter for the slot, including the setter of a slot that holds the list. The type stamp (`config` of a slot hint or a list-slot hint) comes from this one function, and the runtime spec (`element` of a list-slot spec, or an `elementsWith` call) from it together with the wrapper a list's items are (`separatedListSurface`), the same wrapper the list factory's items are built into, so a setter builds a list's items as its factory does.
 
 ### `packages/codegen/src/emitters/templates.ts::droppedLiteralTexts`
 
@@ -14079,7 +14055,7 @@ A token as an entry of a reader table (`layout`, an unaliased `presence`, `separ
 
 A path, or a bracketed list of paths when there are several.
 
-### `packages/codegen/src/emitters/node-projection.ts::layoutTokenIds`
+### `packages/codegen/src/emitters/node-projection.ts::layoutTokens`
 
 The tokens a kind's own rule writes and no slot takes, as the grammar ids the parser gives them: an unfielded string (at an alias site, the symbol under the alias, not the one it is shown as), an unfielded literal symbol, an external, and a fixed-text leaf that no printed slot holds, fielded or not. `nodeArgs` prints each with the raw symbols folded into it (`tokenGroup`). Tokens inside a printed slot's field belong to the slot. The reader skips these tokens where it routes children. Every string reads its stamp: link stamps the public symbol on each string site, duplicates and `token(…)`-wrapped strings included, so there is no lookup by text. A string with no stamp, and a fixed symbol with no kind id, is a diagnostic naming the kind and the token, so nothing drops silently. The indent and dedent render markers are not tokens and are skipped.
 
@@ -14621,6 +14597,14 @@ The field name a verbatim value is stored under in a record.
 
 The render seam a fixed text writes. An indent or dedent depth text gives the kinds its depth break breaks at; a whitespace-only text gives the layout kinds it names; any other text gives `undefined` and is written as text.
 
+### `packages/codegen/src/emitters/render-module.ts::edgeTokenId`
+
+The stamped grammar id of the fixed token a kind's body spells `text` at an edge, looked up among that kind's own `layoutTokens` at generation. No id, or two ids for one text, fails generation naming the kind, so nothing resolves a token by text at run time.
+
+### `packages/codegen/src/emitters/render-module.ts::bodyFactsArg`
+
+The `order` and `edges` arguments of a struct's `#[node(…)]`, from its render body. A text leaf, a token with an interior and an envelope get none: the parser gives the first two no children, and an envelope's shape is its list's. A slot with a place that the body never writes follows the written ones in `order`, so the macro's check that every cell and flag is listed holds.
+
 ### `packages/codegen/src/emitters/render-module.ts::numberedSlotsOf`
 
 A kind's native node slots in number order, the list `nodeSlotNumbers` numbers (`structSlotsOf`): its named and unnamed slots in model order, then the named slots of a hidden helper that an unnamed single slot stands for, each forced optional. A node that is not compound has none. Codegen's family coverage check (`overlays/portable/covered.ts::familyCoverageOf`) fills a kind's tested slots from it, so the slot a case holds under a number is the one a plan names by it.
@@ -14748,6 +14732,22 @@ The projection of a node onto its emitted form.
 ### `packages/codegen/src/emitters/node-projection.ts::ReadFactsCtx::displayIds`
 
 The display ids the facts read.
+
+### `packages/codegen/src/emitters/node-projection.ts::layoutTokenIds`
+
+The distinct grammar ids of a kind's `layoutTokens`, in the order its rule writes them. `nodeArgs` prints each with the raw symbols folded into it (`tokenGroup`).
+
+### `packages/codegen/src/emitters/node-projection.ts::LayoutToken`
+
+A fixed token a kind's own rule writes: the grammar id stamped on its site, and the text its render body spells it with, undefined for a token whose symbol carries no fixed text. The text is what ties a body's token part back to the stamped id, within that one kind (`edgeTokenId`).
+
+### `packages/codegen/src/emitters/node-projection.ts::literalTokenOf`
+
+The parser's anonymous token whose literal text is a slot value's text, or `undefined` for a value that holds no literal. An aliased literal keeps two kinds: the one it shows as (`parseKindId`) and this token, which is the kind a read stores and a query reports for it.
+
+### `packages/codegen/src/emitters/node-projection.ts::listedTokens`
+
+The anonymous tokens a slot's grammar aliases to a visible named kind, emitted as the slot's `listed` stamp. A parsed unit cell holds only the token's kind, so this stamp is what lets navigation report such a unit as named: regex `class_range` holds `-` in `start` and `end`, shown as `class_character`. An alias to a hidden kind is left out, since the parser shows no named node for it.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::EdgeArmRow`
 
@@ -15020,6 +15020,10 @@ The dropped arms, with their reasons.
 ### `packages/codegen/src/emitters/boundary-arms.ts::boundaryTableOf`
 
 Builds the boundary table from the inputs, recording each dropped arm.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::memberMarks`
+
+The site mark an enum member's own arm places on one side, none where the member has no site there. The enum's row uses it for each member. A holder of a visible enum uses it too, joined after its marks for the enum: an arena record's chain reaches the member from the holder with no level for the enum, because the cell stores only the member, so the holder's arm for the member places what the two levels placed. A member spelled in two tokens, such as `unique symbol`, is shown under the member's own kind on its last token, so it takes its own site on both sides.
 
 ### `packages/codegen/src/emitters/factories.ts::splicedEnvelopeAdmission`
 

@@ -12,7 +12,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.member.property.getter', 'declaration.member.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 438, rust: 615, typescript: 664 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 371, rust: 598, typescript: 612 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -595,6 +595,126 @@ describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 		expect(differences.length).toBe(0);
 		expect([...ungenerated.values()].reduce((sum, count) => sum + count, 0)).toBeLessThanOrEqual(UNGENERATED_CEILINGS[grammar]);
 	}, 600_000);
+});
+
+type LiteralTable = { readonly build: { readonly paths: Readonly<Record<string, { readonly root: boolean; readonly arms: readonly { readonly literal?: object }[] }>> } };
+
+describe.each(GRAMMARS)('the generated portable build of %s, on a literal path', (grammar) => {
+	it.each(STORAGES)('builds every path whose arms are literal tokens through its own function as the interpreter does, in %s storage', async (nodeStorage) => {
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild(grammar)) as object);
+		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as LiteralTable;
+		const outcome = (run: () => unknown): string => textOrRefused((node) => engine.render(node), run);
+		const literalPaths = Object.entries(table.paths).filter(([, row]) => row.root && row.arms.length > 0 && row.arms.every((arm) => arm.literal !== undefined)).map(([path]) => path);
+		expect(literalPaths.length).toBeGreaterThan(0);
+		const structures = literalPaths.flatMap((path): PortableStructure[] => [{ $path: path }, { $path: path, $value: true }, { $path: path, $value: false }]);
+		const built = structures.map((structure) => {
+			const run = functionAt(generated, structure.$path);
+			return [structure, typeof run === 'function' ? outcome(() => (run as PathFunction)(structure)) : 'not generated'];
+		});
+		expect(built).toEqual(structures.map((structure) => [structure, outcome(() => runtime.build(structure))]));
+	});
+});
+
+type TakerTable = {
+	readonly build: {
+		readonly paths: Readonly<
+			Record<string, { readonly arms: readonly { readonly literal?: { readonly value?: boolean }; readonly slots: readonly { readonly takers?: Readonly<Record<string, string>> }[] }[] }>
+		>;
+	};
+};
+
+describe.each(GRAMMARS)("the build table of %s, on a slot's boolean takers", (grammar) => {
+	it('names for true and for false a path whose every arm is a literal arm that reads that value, never one that picks between the two', async () => {
+		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as TakerTable;
+		const takers = new Set(Object.values(table.paths).flatMap((row) => row.arms.flatMap((arm) => arm.slots.flatMap((slot) => (['true', 'false'] as const).flatMap((value) => (slot.takers?.[value] === undefined ? [] : [`${value} ${slot.takers[value]}`]))))));
+		expect(takers.size).toBeGreaterThan(0);
+		const misread = [...takers].filter((taker) => {
+			const [value, path] = taker.split(' ') as [string, string];
+			return !table.paths[path]!.arms.every((arm) => String(arm.literal?.value) === value);
+		});
+		expect(misread).toEqual([]);
+	});
+});
+
+describe.each(GRAMMARS)('the portable builds of %s, given a bare boolean', (grammar) => {
+	it.each(STORAGES)('build it through the slot\'s boolean path as its structure builds, and refuse it where the slot holds no boolean path, in %s storage', async (nodeStorage) => {
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild(grammar)) as object);
+		const outcome = (run: () => unknown): string => textOrRefused((node) => engine.render(node), run);
+		const run = functionAt(generated, 'statement.return') as PathFunction;
+		for (const value of [true, false]) {
+			const structure = (runtime.read(engine.parse(grammar === 'rust' ? `fn f() { return ${value}; }` : `return ${grammar === 'python' ? (value ? 'True' : 'False') : value}${grammar === 'typescript' ? ';' : ''}`)) as { readonly statements: readonly PortableStructure[] }).statements;
+			const read = (grammar === 'rust' ? (structure[0] as unknown as { readonly statements: readonly PortableStructure[] }).statements[0] : structure[0])!;
+			const bare = { $path: 'statement.return', expression: value };
+			const text = outcome(() => run(read));
+			expect(text).not.toBe('refused');
+			expect([outcome(() => run(bare)), outcome(() => runtime.build(bare))]).toEqual([text, text]);
+		}
+		const named = { $path: 'declaration.function', name: true, parameters: [], statements: [] };
+		const declare = functionAt(generated, named.$path) as PathFunction | undefined;
+		expect([declare === undefined ? 'refused' : outcome(() => declare(named)), outcome(() => runtime.build(named))]).toEqual(['refused', 'refused']);
+	});
+});
+
+describe.each(STORAGES)('python: a literal token in a slot, in %s storage', (nodeStorage) => {
+	it('builds return True and return None through the generated slot function', async () => {
+		using engine = await createEngine(await languageByName('python'), { api: 'strict', nodeStorage });
+		const generated = scopeBuilders(engine, (await generatedBuild('python')) as object);
+		const render = (node: unknown): string => engine.render(node as never).toString();
+		const run = functionAt(generated, 'statement.return') as PathFunction;
+		expect(render(run({ $path: 'statement.return', expression: { $path: 'literal.boolean.true' } }))).toBe('return True');
+		expect(render(run({ $path: 'statement.return', expression: { $path: 'literal.null' } }))).toBe('return None');
+	});
+});
+
+describe.each(STORAGES)("the generated portable build of python's getter, in %s storage", (nodeStorage) => {
+	it('builds a getter read from @property over a lone self byte-equal through the root function, which writes the decorator and the self itself', async () => {
+		using engine = await createEngine(await languageByName('python'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild('python')) as object);
+		const render = (node: unknown): string => engine.render(node as never).toString();
+		const read = (runtime.read(engine.parse('class A:\n    @property\n    def x(self):\n        return 1\n')) as { readonly statements: readonly { readonly members: readonly PortableStructure[] }[] }).statements[0]!.members[0]!;
+		expect(read.$path).toBe('declaration.member.property.getter');
+		expect('parameters' in read).toBe(false);
+		expect(render((functionAt(generated, read.$path) as PathFunction)(read))).toBe('@property\ndef x(self):\n    return 1\n');
+	});
+});
+
+describe("the generated portable build, on a slot's tails", () => {
+	const TAILED = [
+		['rust', 'clause.let', 'value', { $path: 'metavariable', $value: 'y' }, { $path: 'identifier.metavariable', $value: 'y' }],
+		['rust', 'clause.let', 'value', { $path: 'arithmetic.add', left: 'a', right: 'b' }, { $path: 'expression.binary.arithmetic.add', left: 'a', right: 'b' }],
+		['python', 'statement.return', 'expression', { $path: 'add', left: 'a', right: 'b' }, { $path: 'expression.binary.arithmetic.add', left: 'a', right: 'b' }]
+	] as const;
+	const OWNERS: Readonly<Record<string, Readonly<Record<string, unknown>>>> = {
+		'clause.let': { pattern: 'x' },
+		'statement.return': {}
+	};
+
+	it.each(STORAGES)('builds each tail as its full path builds, in %s storage', async (nodeStorage) => {
+		for (const [grammar, owner, slot, tailed, full] of TAILED) {
+			using engine = await createEngine(await languageByName(grammar), { api: 'strict', nodeStorage });
+			const runtime = await portableRuntime(engine);
+			const run = functionAt(scopeBuilders(engine, (await generatedBuild(grammar)) as object), owner) as PathFunction;
+			const render = (node: unknown): string => engine.render(node as never).toString();
+			const structure = (value: object): PortableStructure => ({ $path: owner, ...OWNERS[owner], [slot]: value });
+			expect(render(run(structure(tailed))), `${grammar} ${tailed.$path}`).toBe(render(runtime.build(structure(full))));
+		}
+	});
+
+	it("refuses a suffix that is neither a path's tail nor its full path, and a root build of a tail", async () => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild('rust')) as object);
+		const bound = functionAt(generated, 'clause.let') as PathFunction;
+		for (const $path of ['add', 'binary.arithmetic.add'])
+			expect(() => bound({ $path: 'clause.let', pattern: 'x', value: { $path, left: 'a', right: 'b' } } as never), $path).toThrow(/clause\.let\.value/);
+		expect(functionAt(generated, 'metavariable')).toBeUndefined();
+		expect(() => runtime.build({ $path: 'metavariable', $value: 'y' } as never)).toThrow();
+	});
 });
 
 type KindsTable = { readonly build: { readonly paths: Readonly<Record<string, { readonly arms: readonly { readonly kind: number; readonly when: readonly object[] }[] }>> } };

@@ -7,7 +7,7 @@ import {
 	markEdited as $edited,
 	RECEIVER,
 	carryReadTree,
-	treeHandleOf,
+	indexOf,
 	hydrateWith,
 	hydrateSlotWith,
 	hydrateSlotsWith,
@@ -105,12 +105,11 @@ function viewSlot<T>(
 	word: number,
 	width: number,
 	forms: number,
-	inline: number,
 	built: number,
 	aliasContent = false,
 	spellings?: Readonly<Record<string, string>>
 ): ParsedOfData<T> {
-	return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent, spellings) as ParsedOfData<T>;
+	return childSlot(view, word, width, forms, built, _wrap, aliasContent, spellings) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: RecordHandle,
@@ -118,10 +117,9 @@ function viewSlots<T>(
 	width: number,
 	run: number | undefined,
 	forms: number,
-	inline: number,
 	built: number
 ): readonly ParsedOfData<T>[] {
-	return childItems(view, word, width, run, forms, inline, built, _wrap) as readonly ParsedOfData<T>[];
+	return childItems(view, word, width, run, forms, built, _wrap) as readonly ParsedOfData<T>[];
 }
 
 export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
@@ -137,8 +135,8 @@ export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		$save: handleSave,
 		$errors: (data as { readonly $errors?: unknown }).$errors,
@@ -223,8 +221,8 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -322,8 +320,8 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -407,8 +405,8 @@ export function wrapRelativeImport(data: T.RelativeImport, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -464,8 +462,8 @@ export function wrapFutureImportStatement(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -515,8 +513,8 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -614,8 +612,8 @@ export function wrapImportList(data: T.ImportList, tree: TreeHandle): T.ImportLi
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -675,8 +673,8 @@ export function wrapAliasedImport(data: T.AliasedImport, tree: TreeHandle): T.Al
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -729,8 +727,8 @@ export function wrapPrintStatement(data: T.PrintStatement, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -774,8 +772,8 @@ export function wrapChevron(data: T.Chevron, tree: TreeHandle): T.Chevron.Parsed
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -819,8 +817,8 @@ export function wrapAssertStatement(data: T.AssertStatement, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -874,8 +872,8 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -925,8 +923,8 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -979,8 +977,8 @@ export function wrapNamedExpressionLhs(data: T.NamedExpressionLhs, tree: TreeHan
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1027,8 +1025,8 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1075,8 +1073,8 @@ export function wrapDeleteStatement(data: T.DeleteStatement, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1126,8 +1124,8 @@ export function wrapRaiseStatement(data: T.RaiseStatement, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1193,8 +1191,8 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle): T.IfStat
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1270,8 +1268,8 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle): T.ElifClau
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1328,8 +1326,8 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClau
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1384,8 +1382,8 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1493,8 +1491,8 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1558,8 +1556,8 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle): T.CaseClau
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1666,8 +1664,8 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1791,8 +1789,8 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1910,8 +1908,8 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle): T.TryS
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -2051,8 +2049,8 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.Exce
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -2144,8 +2142,8 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle): T.Fi
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -2195,8 +2193,8 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.Wi
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -2266,8 +2264,8 @@ export function wrapWithItem(data: T.WithItem, tree: TreeHandle): T.WithItem.Par
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -2344,8 +2342,8 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -2578,8 +2576,8 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -2698,8 +2696,8 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -2782,8 +2780,8 @@ export function wrapListSplat(data: T.ListSplat, tree: TreeHandle): T.ListSplat.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -2827,8 +2825,8 @@ export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -2875,8 +2873,8 @@ export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -2923,8 +2921,8 @@ export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandl
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -2974,8 +2972,8 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle): T.Ex
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -3054,8 +3052,8 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -3197,8 +3195,8 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -3363,8 +3361,8 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3441,8 +3439,8 @@ export function wrapParenthesizedListSplat(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -3529,8 +3527,8 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.Argu
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3623,8 +3621,8 @@ export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeH
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -3710,8 +3708,8 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle): T.Decorator.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -3755,8 +3753,8 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -3838,8 +3836,8 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3903,8 +3901,8 @@ export function wrapDottedName(data: T.DottedName, tree: TreeHandle): T.DottedNa
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -3957,8 +3955,8 @@ export function wrapCasePattern(data: T.CasePattern, tree: TreeHandle): T.CasePa
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -4020,8 +4018,8 @@ export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle): T.Si
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -4076,8 +4074,8 @@ export function wrapCaseAsPattern(data: T.CaseAsPattern, tree: TreeHandle): T.Ca
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -4199,8 +4197,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -4315,8 +4313,8 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPa
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4427,8 +4425,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -4536,8 +4534,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -4615,8 +4613,8 @@ export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle): T.Clas
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -4704,8 +4702,8 @@ export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -4820,8 +4818,8 @@ export function wrapParametersElements(data: T.ParametersElements, tree: TreeHan
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4917,8 +4915,8 @@ export function wrapPatterns(data: T.Patterns, tree: TreeHandle): T.Patterns.Par
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5012,8 +5010,8 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5135,8 +5133,8 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPa
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5221,8 +5219,8 @@ export function wrapDefaultParameter(data: T.DefaultParameter, tree: TreeHandle)
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -5297,8 +5295,8 @@ export function wrapTypedDefaultParameter(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -5393,8 +5391,8 @@ export function wrapListSplatPattern(data: T.ListSplatPattern, tree: TreeHandle)
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -5444,8 +5442,8 @@ export function wrapDictionarySplatPattern(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -5495,8 +5493,8 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle): T.AsPattern.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -5549,8 +5547,8 @@ export function wrapNotOperator(data: T.NotOperator, tree: TreeHandle): T.NotOpe
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -5600,8 +5598,8 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -5677,8 +5675,8 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -5748,8 +5746,8 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle): T.Un
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -5809,8 +5807,8 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -5889,8 +5887,8 @@ export function wrapLambda(data: T.Lambda, tree: TreeHandle): T.Lambda.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -5984,8 +5982,8 @@ export function wrapLambdaWithinForInClause(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -6088,8 +6086,8 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -6200,8 +6198,8 @@ export function wrapPatternList(data: T.PatternList, tree: TreeHandle): T.Patter
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -6258,8 +6256,8 @@ export function wrapYield(data: T.Yield, tree: TreeHandle): T.Yield.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -6306,8 +6304,8 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -6363,8 +6361,8 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle): T.Subscript.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -6455,8 +6453,8 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -6540,8 +6538,8 @@ export function wrapCall(data: T.Call, tree: TreeHandle): T.Call.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -6607,8 +6605,8 @@ export function wrapTypedParameter(data: T.TypedParameter, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -6684,8 +6682,8 @@ export function wrapType(data: T.Type, tree: TreeHandle): T.Type.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -6729,8 +6727,8 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle): T.SplatType.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -6793,8 +6791,8 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -6899,8 +6897,8 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle): T.UnionType.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -7014,8 +7012,8 @@ export function wrapConstrainedType(data: T.ConstrainedType, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -7129,8 +7127,8 @@ export function wrapMemberType(data: T.MemberType, tree: TreeHandle): T.MemberTy
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -7205,8 +7203,8 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -7299,8 +7297,8 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7419,8 +7417,8 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7537,8 +7535,8 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7657,8 +7655,8 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictiona
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7740,8 +7738,8 @@ export function wrapPair(data: T.Pair, tree: TreeHandle): T.Pair.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -7801,8 +7799,8 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -7894,8 +7892,8 @@ export function wrapDictionaryComprehension(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -7991,8 +7989,8 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -8081,8 +8079,8 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -8170,8 +8168,8 @@ export function wrapParenthesizedExpression(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -8253,8 +8251,8 @@ export function wrapCollectionElements(data: T.CollectionElements, tree: TreeHan
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -8324,8 +8322,8 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -8411,8 +8409,8 @@ export function wrapIfClause(data: T.IfClause, tree: TreeHandle): T.IfClause.Par
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -8465,8 +8463,8 @@ export function wrapConditionalExpression(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -8542,8 +8540,8 @@ export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHan
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -8601,8 +8599,8 @@ export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -8699,8 +8697,8 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -8756,8 +8754,8 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.In
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -8843,8 +8841,8 @@ export function wrapFormatSpecifier(data: T.FormatSpecifier, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -8894,8 +8892,8 @@ export function wrapAwait(data: T.Await, tree: TreeHandle): T.Await.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -8938,8 +8936,8 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -9020,8 +9018,8 @@ export function wrapSimpleStatementsElements(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -9120,8 +9118,8 @@ export function wrapSubjects(data: T.Subjects, tree: TreeHandle): T.Subjects.Par
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -9221,8 +9219,8 @@ export function wrapWithClauseWithItems(data: T.WithClauseWithItems, tree: TreeH
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -9351,8 +9349,8 @@ export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -9465,8 +9463,8 @@ export function wrapArgumentListElements(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -9573,8 +9571,8 @@ export function wrapListPatternCasePatterns(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -9693,8 +9691,8 @@ export function wrapDictPatternElements(data: T.DictPatternElements, tree: TreeH
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -9790,8 +9788,8 @@ export function wrapSubscripts(data: T.Subscripts, tree: TreeHandle): T.Subscrip
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -9883,8 +9881,8 @@ export function wrapDictionaryElements(data: T.DictionaryElements, tree: TreeHan
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -9945,8 +9943,8 @@ export function wrapSliceGroup(data: T.SliceGroup, tree: TreeHandle): T.SliceGro
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -10030,8 +10028,8 @@ export function wrapTypeParams(data: T.TypeParams, tree: TreeHandle): T.TypePara
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -10143,8 +10141,8 @@ export function wrapTypeParamsItems(data: T.TypeParamsItems, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -10243,8 +10241,8 @@ export function wrapTuplePatternElements(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -10348,8 +10346,8 @@ export function wrapCasePatternList(data: T.CasePatternList, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -10468,8 +10466,8 @@ export function wrapTupleElements(data: T.TupleElements, tree: TreeHandle): T.Tu
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -10532,8 +10530,8 @@ export function wrapExceptClauseExceptionAs(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -10643,8 +10641,8 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -10770,8 +10768,8 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -10885,8 +10883,8 @@ export function wrapPrintArguments(data: T.PrintArguments, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -10981,8 +10979,8 @@ export function wrapPrintChevronArguments(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -11061,8 +11059,8 @@ export function wrapPrintStatementChevron(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -11214,8 +11212,8 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -11298,8 +11296,8 @@ export function wrapComprehensionClauses(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -11355,8 +11353,8 @@ export function wrapIntegerHexLong(data: T.IntegerHexLong, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -11429,8 +11427,8 @@ export function wrapIntegerHexPlain(data: T.IntegerHexPlain, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -11499,8 +11497,8 @@ export function wrapIntegerOctalLong(data: T.IntegerOctalLong, tree: TreeHandle)
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -11579,8 +11577,8 @@ export function wrapIntegerOctalPlain(data: T.IntegerOctalPlain, tree: TreeHandl
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -11649,8 +11647,8 @@ export function wrapIntegerBinaryLong(data: T.IntegerBinaryLong, tree: TreeHandl
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -11729,8 +11727,8 @@ export function wrapIntegerBinaryPlain(data: T.IntegerBinaryPlain, tree: TreeHan
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -11799,8 +11797,8 @@ export function wrapIntegerLegacyOctalLong(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -11866,8 +11864,8 @@ export function wrapIntegerLegacyOctalPlain(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -11917,8 +11915,8 @@ export function wrapIntegerDecimalLong(data: T.IntegerDecimalLong, tree: TreeHan
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -11997,8 +11995,8 @@ export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoi
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12126,8 +12124,8 @@ export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandl
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12263,8 +12261,8 @@ export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12363,8 +12361,8 @@ export function wrapEscapeSequenceUnicodeFixed(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12414,8 +12412,8 @@ export function wrapEscapeSequenceUnicodeWide(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12462,8 +12460,8 @@ export function wrapEscapeSequenceHex(data: T.EscapeSequenceHex, tree: TreeHandl
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12510,8 +12508,8 @@ export function wrapEscapeSequenceOctal(data: T.EscapeSequenceOctal, tree: TreeH
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12561,8 +12559,8 @@ export function wrapEscapeSequenceLineBreak(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12612,8 +12610,8 @@ export function wrapEscapeSequenceSimple(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12660,8 +12658,8 @@ export function wrapEscapeSequenceNamed(data: T.EscapeSequenceNamed, tree: TreeH
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12711,8 +12709,8 @@ export function wrapSimplePatternNegative(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12762,8 +12760,8 @@ export function wrapExceptClauseExceptionList(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12816,8 +12814,8 @@ export function wrapExceptClauseException(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12907,8 +12905,8 @@ export function wrapParenthesizedImportList(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -12988,8 +12986,8 @@ export function wrapSplatPatternList(data: T.SplatPatternList, tree: TreeHandle)
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -13039,8 +13037,8 @@ export function wrapSplatPatternDictionary(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -13094,8 +13092,8 @@ export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle): T.Assi
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -13161,8 +13159,8 @@ export function wrapAssignmentType(data: T.AssignmentType, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -13250,8 +13248,8 @@ export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -13375,8 +13373,8 @@ export function wrapExpressionStatementTuple(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -13483,8 +13481,8 @@ export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -13608,8 +13606,8 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -13726,8 +13724,8 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -13831,8 +13829,8 @@ export function wrapSuiteBlock(data: T.SuiteBlock, tree: TreeHandle): T.SuiteBlo
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -13900,8 +13898,8 @@ export function wrapSuiteEmpty(data: T.SuiteEmpty, tree: TreeHandle): T.SuiteEmp
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -13951,8 +13949,8 @@ export function wrapComparisonOperatorComparator(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -14018,8 +14016,8 @@ export function wrapYieldFromClause(data: T.YieldFromClause, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -14079,8 +14077,8 @@ export function wrapTypeParamTypeVar(data: T.TypeParamTypeVar, tree: TreeHandle)
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -14158,8 +14156,8 @@ export function wrapTypeParamTypeVarTuple(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -14206,8 +14204,8 @@ export function wrapTypeParamParamSpec(data: T.TypeParamParamSpec, tree: TreeHan
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -14330,8 +14328,8 @@ export function wrapStringStart(data: T.StringStart, tree: TreeHandle): T.String
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -14387,8 +14385,8 @@ export function wrapStringEnd(data: T.StringEnd, tree: TreeHandle): T.StringEnd.
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -14474,8 +14472,8 @@ export function wrapConstructorDeclaration(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -14664,8 +14662,8 @@ export function wrapBlockClassDeclaration(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -14726,8 +14724,8 @@ export function wrapSuiteBlockClassDeclaration(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -14824,8 +14822,8 @@ export function wrapDecoratedDefinitionClassDeclaration(
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -14956,8 +14954,8 @@ export function wrapNames(data: T.Names, tree: TreeHandle): T.Names.Parsed {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -15016,8 +15014,8 @@ export function wrapAsPatternTarget(data: T.AsPatternTarget, tree: TreeHandle): 
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -15073,8 +15071,8 @@ export function wrapFormatExpression(data: T.FormatExpression, tree: TreeHandle)
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -15193,8 +15191,8 @@ export function wrapMethodDeclaration(data: T.MethodDeclaration, tree: TreeHandl
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -15372,7 +15370,7 @@ function wrapMethodDeclaration$returnType$native(this: object) {
 }
 
 function viewModule$statements(this: RecordHandle) {
-	return viewSlots<T.Statement>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.Statement>(this, 2, 1, 3, 1, 2);
 }
 function viewModule(data: RecordPosition, tree: TreeHandle): T.Module.Parsed {
 	const node = {
@@ -15401,7 +15399,7 @@ function viewModule(data: RecordPosition, tree: TreeHandle): T.Module.Parsed {
 }
 
 function viewSimpleStatements$statements(this: RecordHandle) {
-	return viewSlot<T.SimpleStatementsElements>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.SimpleStatementsElements>(this, 2, 3, 1, 2);
 }
 function viewSimpleStatements$listRead(this: { readonly statements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.statements(), 'items'), undefined);
@@ -15459,7 +15457,7 @@ function viewSimpleStatements(data: RecordPosition, tree: TreeHandle): T.SimpleS
 	};
 	node.$with = { statements: $with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewSimpleStatements$listRead);
@@ -15467,10 +15465,10 @@ function viewSimpleStatements(data: RecordPosition, tree: TreeHandle): T.SimpleS
 }
 
 function viewImportStatement$names(this: RecordHandle) {
-	return hoistRead(viewSlot<T.Names>(this, 2, 3, 8, 3, 2), [listElementsHop(undefined, 'names')], true);
+	return hoistRead(viewSlot<T.Names>(this, 2, 3, 1, 2), [listElementsHop(undefined, 'names')], true);
 }
 function viewImportStatement$names$native(this: RecordHandle) {
-	return viewSlot<T.Names>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.Names>(this, 2, 3, 1, 2);
 }
 function viewImportStatement$listRead(this: { readonly names: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.names(), 'names'), undefined);
@@ -15528,7 +15526,7 @@ function viewImportStatement(data: RecordPosition, tree: TreeHandle): T.ImportSt
 	};
 	node.$with = { names: $with$names, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_name', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_name', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewImportStatement$listRead);
@@ -15536,10 +15534,10 @@ function viewImportStatement(data: RecordPosition, tree: TreeHandle): T.ImportSt
 }
 
 function viewRelativeImport$dots(this: RecordHandle) {
-	return viewSlot<T.ImportPrefix>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.ImportPrefix>(this, 2, 3, 1, 2);
 }
 function viewRelativeImport$name(this: RecordHandle) {
-	return viewSlot<T.DottedName | undefined>(this, 5, 3, 1, 0, 3);
+	return viewSlot<T.DottedName | undefined>(this, 5, 3, 1, 3);
 }
 function viewRelativeImport(data: RecordPosition, tree: TreeHandle): T.RelativeImport.Parsed {
 	const node = {
@@ -15567,7 +15565,7 @@ function viewRelativeImport(data: RecordPosition, tree: TreeHandle): T.RelativeI
 }
 
 function viewFutureImportStatement$content(this: RecordHandle) {
-	return viewSlot<T.ImportList | T.ParenthesizedImportList>(this, 2, 5, 8, 5, 2);
+	return viewSlot<T.ImportList | T.ParenthesizedImportList>(this, 2, 3, 1, 2);
 }
 function viewFutureImportStatement(data: RecordPosition, tree: TreeHandle): T.FutureImportStatement.Parsed {
 	const node = {
@@ -15594,10 +15592,10 @@ function viewFutureImportStatement(data: RecordPosition, tree: TreeHandle): T.Fu
 }
 
 function viewImportFromStatement$moduleName(this: RecordHandle) {
-	return viewSlot<T.RelativeImport | T.DottedName>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.RelativeImport | T.DottedName>(this, 2, 3, 1, 2);
 }
 function viewImportFromStatement$content(this: RecordHandle) {
-	return viewSlot<TSKindId.WildcardImport | T.ImportList | T.ParenthesizedImportList>(this, 5, 6, 10, 5, 3);
+	return viewSlot<TSKindId.WildcardImport | T.ImportList | T.ParenthesizedImportList>(this, 5, 4, 3, 3);
 }
 function viewImportFromStatement(data: RecordPosition, tree: TreeHandle): T.ImportFromStatement.Parsed {
 	const node = {
@@ -15625,7 +15623,7 @@ function viewImportFromStatement(data: RecordPosition, tree: TreeHandle): T.Impo
 }
 
 function viewImportList$names(this: RecordHandle) {
-	return viewSlots<T.DottedName | T.AliasedImport>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.DottedName | T.AliasedImport>(this, 2, 1, 3, 1, 2);
 }
 function viewImportList$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'names'), undefined);
@@ -15683,17 +15681,17 @@ function viewImportList(data: RecordPosition, tree: TreeHandle): T.ImportList.Pa
 	};
 	node.$with = { names: $with$names, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewImportList$listRead);
 	return node as unknown as T.ImportList.Parsed;
 }
 
 function viewAliasedImport$name(this: RecordHandle) {
-	return viewSlot<T.DottedName>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.DottedName>(this, 2, 3, 1, 2);
 }
 function viewAliasedImport$rename(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 5, 3, 1, 0, 3);
+	return viewSlot<T.Identifier>(this, 5, 3, 1, 3);
 }
 function viewAliasedImport(data: RecordPosition, tree: TreeHandle): T.AliasedImport.Parsed {
 	const node = {
@@ -15721,7 +15719,7 @@ function viewAliasedImport(data: RecordPosition, tree: TreeHandle): T.AliasedImp
 }
 
 function viewPrintStatement$content(this: RecordHandle) {
-	return viewSlot<T.PrintStatementChevron | T.PrintStatementPlain>(this, 2, 11, 8, 11, 2);
+	return viewSlot<T.PrintStatementChevron | T.PrintStatementPlain>(this, 2, 3, 1, 2);
 }
 function viewPrintStatement(data: RecordPosition, tree: TreeHandle): T.PrintStatement.Parsed {
 	const node = {
@@ -15748,7 +15746,7 @@ function viewPrintStatement(data: RecordPosition, tree: TreeHandle): T.PrintStat
 }
 
 function viewChevron$expression(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewChevron(data: RecordPosition, tree: TreeHandle): T.Chevron.Parsed {
 	const node = {
@@ -15775,7 +15773,7 @@ function viewChevron(data: RecordPosition, tree: TreeHandle): T.Chevron.Parsed {
 }
 
 function viewAssertStatement$expressions(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 2);
 }
 function viewAssertStatement(data: RecordPosition, tree: TreeHandle): T.AssertStatement.Parsed {
 	const node = {
@@ -15807,7 +15805,6 @@ function viewExpressionStatement$content(this: RecordHandle) {
 		2,
 		4,
 		3,
-		0,
 		2
 	);
 }
@@ -15836,10 +15833,10 @@ function viewExpressionStatement(data: RecordPosition, tree: TreeHandle): T.Expr
 }
 
 function viewNamedExpression$left(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 2);
 }
 function viewNamedExpression$right(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 5, 4, 3, 0, 3);
+	return viewSlot<T.Expression>(this, 5, 4, 3, 3);
 }
 function viewNamedExpression(data: RecordPosition, tree: TreeHandle): T.NamedExpression.Parsed {
 	const node = {
@@ -15867,7 +15864,7 @@ function viewNamedExpression(data: RecordPosition, tree: TreeHandle): T.NamedExp
 }
 
 function viewNamedExpressionLhs$identifier(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 2);
 }
 function viewNamedExpressionLhs(data: RecordPosition, tree: TreeHandle): T.NamedExpressionLhs.Parsed {
 	const node = {
@@ -15894,7 +15891,7 @@ function viewNamedExpressionLhs(data: RecordPosition, tree: TreeHandle): T.Named
 }
 
 function viewReturnStatement$expressions(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList | undefined>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression | T.ExpressionList | undefined>(this, 2, 4, 3, 2);
 }
 function viewReturnStatement(data: RecordPosition, tree: TreeHandle): T.ReturnStatement.Parsed {
 	const node = {
@@ -15921,7 +15918,7 @@ function viewReturnStatement(data: RecordPosition, tree: TreeHandle): T.ReturnSt
 }
 
 function viewDeleteStatement$expressions(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression | T.ExpressionList>(this, 2, 4, 3, 2);
 }
 function viewDeleteStatement(data: RecordPosition, tree: TreeHandle): T.DeleteStatement.Parsed {
 	const node = {
@@ -15948,10 +15945,10 @@ function viewDeleteStatement(data: RecordPosition, tree: TreeHandle): T.DeleteSt
 }
 
 function viewRaiseStatement$expressions(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList | undefined>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression | T.ExpressionList | undefined>(this, 2, 4, 3, 2);
 }
 function viewRaiseStatement$cause(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 6, 4, 3, 0, 3);
+	return viewSlot<T.Expression | undefined>(this, 6, 4, 3, 3);
 }
 function viewRaiseStatement(data: RecordPosition, tree: TreeHandle): T.RaiseStatement.Parsed {
 	const node = {
@@ -15979,13 +15976,13 @@ function viewRaiseStatement(data: RecordPosition, tree: TreeHandle): T.RaiseStat
 }
 
 function viewIfStatement$condition(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewIfStatement$consequence(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 6, 5, 8, 5, 3);
+	return viewSlot<T.Suite>(this, 6, 3, 1, 3);
 }
 function viewIfStatement$alternatives(this: RecordHandle) {
-	return viewSlots<T.ElifClause | T.ElseClause>(this, 11, 1, 3, 1, 0, 4);
+	return viewSlots<T.ElifClause | T.ElseClause>(this, 9, 1, 3, 1, 4);
 }
 function viewIfStatement(data: RecordPosition, tree: TreeHandle): T.IfStatement.Parsed {
 	const node = {
@@ -16019,10 +16016,10 @@ function viewIfStatement(data: RecordPosition, tree: TreeHandle): T.IfStatement.
 }
 
 function viewElifClause$condition(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewElifClause$consequence(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 6, 5, 8, 5, 3);
+	return viewSlot<T.Suite>(this, 6, 3, 1, 3);
 }
 function viewElifClause(data: RecordPosition, tree: TreeHandle): T.ElifClause.Parsed {
 	const node = {
@@ -16050,7 +16047,7 @@ function viewElifClause(data: RecordPosition, tree: TreeHandle): T.ElifClause.Pa
 }
 
 function viewElseClause$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 2, 5, 8, 5, 2);
+	return viewSlot<T.Suite>(this, 2, 3, 1, 2);
 }
 function viewElseClause(data: RecordPosition, tree: TreeHandle): T.ElseClause.Parsed {
 	const node = {
@@ -16077,24 +16074,24 @@ function viewElseClause(data: RecordPosition, tree: TreeHandle): T.ElseClause.Pa
 }
 
 function viewMatchStatement$subject(this: RecordHandle) {
-	return hoistRead(viewSlot<T.Subjects>(this, 2, 3, 8, 3, 2), [listElementsHop(undefined, 'elements')], true);
+	return hoistRead(viewSlot<T.Subjects>(this, 2, 3, 1, 2), [listElementsHop(undefined, 'elements')], true);
 }
 function viewMatchStatement$body(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.MatchBlock>(this, 5, 3, 8, 3, 3),
+		viewSlot<T.MatchBlock>(this, 5, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
-				return viewSlots<T.CaseClause>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.CaseClause>(this, 2, 1, 3, 1, 2);
 			}
 		],
 		true
 	);
 }
 function viewMatchStatement$subject$native(this: RecordHandle) {
-	return viewSlot<T.Subjects>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.Subjects>(this, 2, 3, 1, 2);
 }
 function viewMatchStatement$body$native(this: RecordHandle) {
-	return viewSlot<T.MatchBlock>(this, 5, 3, 8, 3, 3);
+	return viewSlot<T.MatchBlock>(this, 5, 3, 1, 3);
 }
 function viewMatchStatement(data: RecordPosition, tree: TreeHandle): T.MatchStatement.Parsed {
 	const node = {
@@ -16122,7 +16119,7 @@ function viewMatchStatement(data: RecordPosition, tree: TreeHandle): T.MatchStat
 }
 
 function viewMatchBlock$alternatives(this: RecordHandle) {
-	return viewSlots<T.CaseClause>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.CaseClause>(this, 2, 1, 3, 1, 2);
 }
 function viewMatchBlock(data: RecordPosition, tree: TreeHandle): T.MatchBlock.Parsed {
 	const node = {
@@ -16149,24 +16146,24 @@ function viewMatchBlock(data: RecordPosition, tree: TreeHandle): T.MatchBlock.Pa
 }
 
 function viewCaseClause$pattern(this: RecordHandle) {
-	return viewSlot<T.CasePattern | T.CasePatternList>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.CasePattern | T.CasePatternList>(this, 2, 3, 1, 2);
 }
 function viewCaseClause$guard(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.IfClause | undefined>(this, 5, 6, 8, 6, 3),
+		viewSlot<T.IfClause | undefined>(this, 5, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+				return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 			}
 		],
 		false
 	);
 }
 function viewCaseClause$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 11, 5, 8, 5, 4);
+	return viewSlot<T.Suite>(this, 8, 3, 1, 4);
 }
 function viewCaseClause$guard$native(this: RecordHandle) {
-	return viewSlot<T.IfClause | undefined>(this, 5, 6, 8, 6, 3);
+	return viewSlot<T.IfClause | undefined>(this, 5, 3, 1, 3);
 }
 function viewCaseClause(data: RecordPosition, tree: TreeHandle): T.CaseClause.Parsed {
 	const node = {
@@ -16198,27 +16195,27 @@ function viewForStatement$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewForStatement$left(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.PatternList>(this, 3, 3, 1, 0, 3);
+	return viewSlot<T.Pattern | T.PatternList>(this, 3, 3, 1, 3);
 }
 function viewForStatement$right(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList>(this, 6, 4, 3, 0, 4);
+	return viewSlot<T.Expression | T.ExpressionList>(this, 6, 4, 3, 4);
 }
 function viewForStatement$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 10, 5, 8, 5, 5);
+	return viewSlot<T.Suite>(this, 10, 3, 1, 5);
 }
 function viewForStatement$alternative(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ElseClause | undefined>(this, 15, 7, 8, 7, 6),
+		viewSlot<T.ElseClause | undefined>(this, 13, 3, 1, 6),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.Suite>(this, 2, 5, 8, 5, 2);
+				return viewSlot<T.Suite>(this, 2, 3, 1, 2);
 			}
 		],
 		false
 	);
 }
 function viewForStatement$alternative$native(this: RecordHandle) {
-	return viewSlot<T.ElseClause | undefined>(this, 15, 7, 8, 7, 6);
+	return viewSlot<T.ElseClause | undefined>(this, 13, 3, 1, 6);
 }
 function viewForStatement(data: RecordPosition, tree: TreeHandle): T.ForStatement.Parsed {
 	const node = {
@@ -16256,24 +16253,24 @@ function viewForStatement(data: RecordPosition, tree: TreeHandle): T.ForStatemen
 }
 
 function viewWhileStatement$condition(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewWhileStatement$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 6, 5, 8, 5, 3);
+	return viewSlot<T.Suite>(this, 6, 3, 1, 3);
 }
 function viewWhileStatement$alternative(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ElseClause | undefined>(this, 11, 7, 8, 7, 4),
+		viewSlot<T.ElseClause | undefined>(this, 9, 3, 1, 4),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.Suite>(this, 2, 5, 8, 5, 2);
+				return viewSlot<T.Suite>(this, 2, 3, 1, 2);
 			}
 		],
 		false
 	);
 }
 function viewWhileStatement$alternative$native(this: RecordHandle) {
-	return viewSlot<T.ElseClause | undefined>(this, 11, 7, 8, 7, 4);
+	return viewSlot<T.ElseClause | undefined>(this, 9, 3, 1, 4);
 }
 function viewWhileStatement(data: RecordPosition, tree: TreeHandle): T.WhileStatement.Parsed {
 	const node = {
@@ -16302,17 +16299,17 @@ function viewWhileStatement(data: RecordPosition, tree: TreeHandle): T.WhileStat
 }
 
 function viewTryStatement$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 2, 5, 8, 5, 2);
+	return viewSlot<T.Suite>(this, 2, 3, 1, 2);
 }
 function viewTryStatement$handlers(this: RecordHandle) {
-	return viewSlots<T.ExceptClause>(this, 7, 1, 3, 1, 0, 3);
+	return viewSlots<T.ExceptClause>(this, 5, 1, 3, 1, 3);
 }
 function viewTryStatement$alternative(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ElseClause | undefined>(this, 8, 7, 8, 7, 4),
+		viewSlot<T.ElseClause | undefined>(this, 6, 3, 1, 4),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.Suite>(this, 2, 5, 8, 5, 2);
+				return viewSlot<T.Suite>(this, 2, 3, 1, 2);
 			}
 		],
 		false
@@ -16320,20 +16317,20 @@ function viewTryStatement$alternative(this: RecordHandle) {
 }
 function viewTryStatement$finalizer(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.FinallyClause | undefined>(this, 15, 7, 8, 7, 5),
+		viewSlot<T.FinallyClause | undefined>(this, 9, 3, 1, 5),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.Suite>(this, 2, 5, 8, 5, 2);
+				return viewSlot<T.Suite>(this, 2, 3, 1, 2);
 			}
 		],
 		false
 	);
 }
 function viewTryStatement$alternative$native(this: RecordHandle) {
-	return viewSlot<T.ElseClause | undefined>(this, 8, 7, 8, 7, 4);
+	return viewSlot<T.ElseClause | undefined>(this, 6, 3, 1, 4);
 }
 function viewTryStatement$finalizer$native(this: RecordHandle) {
-	return viewSlot<T.FinallyClause | undefined>(this, 15, 7, 8, 7, 5);
+	return viewSlot<T.FinallyClause | undefined>(this, 9, 3, 1, 5);
 }
 function viewTryStatement(data: RecordPosition, tree: TreeHandle): T.TryStatement.Parsed {
 	const node = {
@@ -16373,20 +16370,20 @@ function viewExceptClause$group(this: RecordHandle) {
 }
 function viewExceptClause$exception(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ExceptClauseException | undefined>(this, 3, 12, 8, 12, 3),
+		viewSlot<T.ExceptClauseException | undefined>(this, 3, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(this, 2, 10, 8, 10, 2);
+				return viewSlot<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(this, 2, 3, 1, 2);
 			}
 		],
 		false
 	);
 }
 function viewExceptClause$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 15, 5, 8, 5, 4);
+	return viewSlot<T.Suite>(this, 6, 3, 1, 4);
 }
 function viewExceptClause$exception$native(this: RecordHandle) {
-	return viewSlot<T.ExceptClauseException | undefined>(this, 3, 12, 8, 12, 3);
+	return viewSlot<T.ExceptClauseException | undefined>(this, 3, 3, 1, 3);
 }
 function viewExceptClause(data: RecordPosition, tree: TreeHandle): T.ExceptClause.Parsed {
 	const node = {
@@ -16415,7 +16412,7 @@ function viewExceptClause(data: RecordPosition, tree: TreeHandle): T.ExceptClaus
 }
 
 function viewFinallyClause$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 2, 5, 8, 5, 2);
+	return viewSlot<T.Suite>(this, 2, 3, 1, 2);
 }
 function viewFinallyClause(data: RecordPosition, tree: TreeHandle): T.FinallyClause.Parsed {
 	const node = {
@@ -16445,10 +16442,10 @@ function viewWithStatement$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewWithStatement$withClause(this: RecordHandle) {
-	return viewSlot<T.WithClause>(this, 3, 5, 8, 5, 3);
+	return viewSlot<T.WithClause>(this, 3, 3, 1, 3);
 }
 function viewWithStatement$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 8, 5, 8, 5, 4);
+	return viewSlot<T.Suite>(this, 6, 3, 1, 4);
 }
 function viewWithStatement(data: RecordPosition, tree: TreeHandle): T.WithStatement.Parsed {
 	const node = {
@@ -16477,7 +16474,7 @@ function viewWithStatement(data: RecordPosition, tree: TreeHandle): T.WithStatem
 }
 
 function viewWithItem$value(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewWithItem(data: RecordPosition, tree: TreeHandle): T.WithItem.Parsed {
 	const node = {
@@ -16507,17 +16504,17 @@ function viewFunctionDefinition$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewFunctionDefinition$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
+	return viewSlot<T.Identifier>(this, 3, 3, 1, 3);
 }
 function viewFunctionDefinition$typeParameters(this: RecordHandle) {
-	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 6, 5, 8, 5, 4), [listElementsHop('items', 'items')], true);
+	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 6, 3, 1, 4), [listElementsHop('items', 'items')], true);
 }
 function viewFunctionDefinition$parameters(this: RecordHandle) {
-	return hoistRead(viewSlot<T.Parameters>(this, 11, 5, 8, 5, 5), [listElementsHop('elements', 'items')], true);
+	return hoistRead(viewSlot<T.Parameters>(this, 9, 3, 1, 5), [listElementsHop('elements', 'items')], true);
 }
 function viewFunctionDefinition$returnType(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type | undefined>(this, 16, 3, 1, 0, 6),
+		viewSlot<T.Type | undefined>(this, 12, 3, 1, 6),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -16525,7 +16522,6 @@ function viewFunctionDefinition$returnType(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -16534,16 +16530,16 @@ function viewFunctionDefinition$returnType(this: RecordHandle) {
 	);
 }
 function viewFunctionDefinition$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 19, 5, 8, 5, 7);
+	return viewSlot<T.Suite>(this, 15, 3, 1, 7);
 }
 function viewFunctionDefinition$typeParameters$native(this: RecordHandle) {
-	return viewSlot<T.TypeParams | undefined>(this, 6, 5, 8, 5, 4);
+	return viewSlot<T.TypeParams | undefined>(this, 6, 3, 1, 4);
 }
 function viewFunctionDefinition$parameters$native(this: RecordHandle) {
-	return viewSlot<T.Parameters>(this, 11, 5, 8, 5, 5);
+	return viewSlot<T.Parameters>(this, 9, 3, 1, 5);
 }
 function viewFunctionDefinition$returnType$native(this: RecordHandle) {
-	return viewSlot<T.Type | undefined>(this, 16, 3, 1, 0, 6);
+	return viewSlot<T.Type | undefined>(this, 12, 3, 1, 6);
 }
 function viewFunctionDefinition(data: RecordPosition, tree: TreeHandle): T.FunctionDefinition.Parsed {
 	const node = {
@@ -16584,13 +16580,13 @@ function viewFunctionDefinition(data: RecordPosition, tree: TreeHandle): T.Funct
 
 function viewParameters$elements(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ParametersElements | undefined>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.ParametersElements | undefined>(this, 2, 3, 1, 2),
 		[listElementsHop(undefined, 'items')],
 		true
 	);
 }
 function viewParameters$elements$native(this: RecordHandle) {
-	return viewSlot<T.ParametersElements | undefined>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.ParametersElements | undefined>(this, 2, 3, 1, 2);
 }
 function viewParameters$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -16648,7 +16644,7 @@ function viewParameters(data: RecordPosition, tree: TreeHandle): T.Parameters.Pa
 	};
 	node.$with = { elements: $with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewParameters$listRead);
@@ -16656,10 +16652,10 @@ function viewParameters(data: RecordPosition, tree: TreeHandle): T.Parameters.Pa
 }
 
 function viewLambdaParameters$parametersElements(this: RecordHandle) {
-	return hoistRead(viewSlot<T.ParametersElements>(this, 2, 3, 8, 3, 2), [listElementsHop(undefined, 'items')], true);
+	return hoistRead(viewSlot<T.ParametersElements>(this, 2, 3, 1, 2), [listElementsHop(undefined, 'items')], true);
 }
 function viewLambdaParameters$parametersElements$native(this: RecordHandle) {
-	return viewSlot<T.ParametersElements>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.ParametersElements>(this, 2, 3, 1, 2);
 }
 function viewLambdaParameters$listRead(this: { readonly parametersElements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.parametersElements(), 'items'), undefined);
@@ -16717,7 +16713,7 @@ function viewLambdaParameters(data: RecordPosition, tree: TreeHandle): T.LambdaP
 	};
 	node.$with = { parametersElements: $with$parametersElements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewLambdaParameters$listRead);
@@ -16725,7 +16721,7 @@ function viewLambdaParameters(data: RecordPosition, tree: TreeHandle): T.LambdaP
 }
 
 function viewListSplat$expression(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewListSplat(data: RecordPosition, tree: TreeHandle): T.ListSplat.Parsed {
 	const node = {
@@ -16752,7 +16748,7 @@ function viewListSplat(data: RecordPosition, tree: TreeHandle): T.ListSplat.Pars
 }
 
 function viewDictionarySplat$expression(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewDictionarySplat(data: RecordPosition, tree: TreeHandle): T.DictionarySplat.Parsed {
 	const node = {
@@ -16779,7 +16775,7 @@ function viewDictionarySplat(data: RecordPosition, tree: TreeHandle): T.Dictiona
 }
 
 function viewGlobalStatement$names(this: RecordHandle) {
-	return viewSlots<T.Identifier>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.Identifier>(this, 2, 1, 3, 1, 2);
 }
 function viewGlobalStatement(data: RecordPosition, tree: TreeHandle): T.GlobalStatement.Parsed {
 	const node = {
@@ -16806,7 +16802,7 @@ function viewGlobalStatement(data: RecordPosition, tree: TreeHandle): T.GlobalSt
 }
 
 function viewNonlocalStatement$names(this: RecordHandle) {
-	return viewSlots<T.Identifier>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.Identifier>(this, 2, 1, 3, 1, 2);
 }
 function viewNonlocalStatement(data: RecordPosition, tree: TreeHandle): T.NonlocalStatement.Parsed {
 	const node = {
@@ -16833,10 +16829,10 @@ function viewNonlocalStatement(data: RecordPosition, tree: TreeHandle): T.Nonloc
 }
 
 function viewExecStatement$code(this: RecordHandle) {
-	return viewSlot<T.String | T.Identifier>(this, 2, 20, 9, 19, 2);
+	return viewSlot<T.String | T.Identifier>(this, 2, 3, 1, 2);
 }
 function viewExecStatement$inClauses(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 22, 1, 4, 3, 0, 3);
+	return viewSlots<T.Expression>(this, 5, 1, 4, 3, 3);
 }
 function viewExecStatement(data: RecordPosition, tree: TreeHandle): T.ExecStatement.Parsed {
 	const node = {
@@ -16864,14 +16860,14 @@ function viewExecStatement(data: RecordPosition, tree: TreeHandle): T.ExecStatem
 }
 
 function viewTypeAliasStatement$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 2);
 }
 function viewTypeAliasStatement$typeParameters(this: RecordHandle) {
-	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 5, 5, 8, 5, 3), [listElementsHop('items', 'items')], true);
+	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 5, 3, 1, 3), [listElementsHop('items', 'items')], true);
 }
 function viewTypeAliasStatement$value(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type>(this, 10, 3, 1, 0, 4),
+		viewSlot<T.Type>(this, 8, 3, 1, 4),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -16879,7 +16875,6 @@ function viewTypeAliasStatement$value(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -16888,10 +16883,10 @@ function viewTypeAliasStatement$value(this: RecordHandle) {
 	);
 }
 function viewTypeAliasStatement$typeParameters$native(this: RecordHandle) {
-	return viewSlot<T.TypeParams | undefined>(this, 5, 5, 8, 5, 3);
+	return viewSlot<T.TypeParams | undefined>(this, 5, 3, 1, 3);
 }
 function viewTypeAliasStatement$value$native(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 10, 3, 1, 0, 4);
+	return viewSlot<T.Type>(this, 8, 3, 1, 4);
 }
 function viewTypeAliasStatement(data: RecordPosition, tree: TreeHandle): T.TypeAliasStatement.Parsed {
 	const node = {
@@ -16920,19 +16915,19 @@ function viewTypeAliasStatement(data: RecordPosition, tree: TreeHandle): T.TypeA
 }
 
 function viewClassDefinition$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 2);
 }
 function viewClassDefinition$typeParameters(this: RecordHandle) {
-	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 5, 5, 8, 5, 3), [listElementsHop('items', 'items')], true);
+	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 5, 3, 1, 3), [listElementsHop('items', 'items')], true);
 }
 function viewClassDefinition$bases(this: RecordHandle) {
-	return viewSlot<T.ArgumentList | undefined>(this, 10, 5, 8, 5, 4);
+	return viewSlot<T.ArgumentList | undefined>(this, 8, 3, 1, 4);
 }
 function viewClassDefinition$body(this: RecordHandle) {
-	return viewSlot<T.SuiteClassDefinition>(this, 15, 5, 8, 5, 5);
+	return viewSlot<T.SuiteClassDefinition>(this, 11, 3, 1, 5);
 }
 function viewClassDefinition$typeParameters$native(this: RecordHandle) {
-	return viewSlot<T.TypeParams | undefined>(this, 5, 5, 8, 5, 3);
+	return viewSlot<T.TypeParams | undefined>(this, 5, 3, 1, 3);
 }
 function viewClassDefinition(data: RecordPosition, tree: TreeHandle): T.ClassDefinition.Parsed {
 	const node = {
@@ -16969,10 +16964,10 @@ function viewClassDefinition(data: RecordPosition, tree: TreeHandle): T.ClassDef
 
 function viewTypeParameter$types(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Types>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.Types>(this, 2, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlots<T.Type>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.Type>(this, 2, 1, 3, 1, 2);
 			},
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -16980,7 +16975,6 @@ function viewTypeParameter$types(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -16989,7 +16983,7 @@ function viewTypeParameter$types(this: RecordHandle) {
 	);
 }
 function viewTypeParameter$types$native(this: RecordHandle) {
-	return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.Types>(this, 2, 3, 1, 2);
 }
 function viewTypeParameter$listRead(this: { readonly types: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.types(), 'items'), undefined);
@@ -17047,7 +17041,7 @@ function viewTypeParameter(data: RecordPosition, tree: TreeHandle): T.TypeParame
 	};
 	node.$with = { types: $with$types, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewTypeParameter$listRead);
@@ -17055,7 +17049,7 @@ function viewTypeParameter(data: RecordPosition, tree: TreeHandle): T.TypeParame
 }
 
 function viewParenthesizedListSplat$expression(this: RecordHandle) {
-	return viewSlot<T.ParenthesizedListSplat | T.ListSplat>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.ParenthesizedListSplat | T.ListSplat>(this, 2, 3, 1, 2);
 }
 function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.ParenthesizedListSplat.Parsed {
 	const node = {
@@ -17083,13 +17077,13 @@ function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.P
 
 function viewArgumentList$arguments(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ArgumentListElements | undefined>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.ArgumentListElements | undefined>(this, 2, 3, 1, 2),
 		[listElementsHop(undefined, 'items')],
 		true
 	);
 }
 function viewArgumentList$arguments$native(this: RecordHandle) {
-	return viewSlot<T.ArgumentListElements | undefined>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.ArgumentListElements | undefined>(this, 2, 3, 1, 2);
 }
 function viewArgumentList$listRead(this: { readonly arguments: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.arguments(), 'items'), undefined);
@@ -17147,7 +17141,7 @@ function viewArgumentList(data: RecordPosition, tree: TreeHandle): T.ArgumentLis
 	};
 	node.$with = { arguments: $with$arguments, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewArgumentList$listRead);
@@ -17156,20 +17150,20 @@ function viewArgumentList(data: RecordPosition, tree: TreeHandle): T.ArgumentLis
 
 function viewDecoratedDefinition$decorators(this: RecordHandle) {
 	return hoistRead(
-		viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2),
+		viewSlots<T.Decorator>(this, 2, 1, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+				return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 			}
 		],
 		true
 	);
 }
 function viewDecoratedDefinition$definition(this: RecordHandle) {
-	return viewSlot<T.ClassDefinition | T.FunctionDefinition>(this, 3, 24, 8, 24, 3);
+	return viewSlot<T.ClassDefinition | T.FunctionDefinition>(this, 3, 3, 1, 3);
 }
 function viewDecoratedDefinition$decorators$native(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 2);
 }
 function viewDecoratedDefinition(data: RecordPosition, tree: TreeHandle): T.DecoratedDefinition.Parsed {
 	const node = {
@@ -17197,7 +17191,7 @@ function viewDecoratedDefinition(data: RecordPosition, tree: TreeHandle): T.Deco
 }
 
 function viewDecorator$expression(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewDecorator(data: RecordPosition, tree: TreeHandle): T.Decorator.Parsed {
 	const node = {
@@ -17224,7 +17218,7 @@ function viewDecorator(data: RecordPosition, tree: TreeHandle): T.Decorator.Pars
 }
 
 function viewBlock$statements(this: RecordHandle) {
-	return viewSlots<T.Statement>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.Statement>(this, 2, 1, 3, 1, 2);
 }
 function viewBlock(data: RecordPosition, tree: TreeHandle): T.Block.Parsed {
 	const node = {
@@ -17251,7 +17245,7 @@ function viewBlock(data: RecordPosition, tree: TreeHandle): T.Block.Parsed {
 }
 
 function viewExpressionList$elements(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 2);
 }
 function viewExpressionList$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'elements'), undefined);
@@ -17309,17 +17303,17 @@ function viewExpressionList(data: RecordPosition, tree: TreeHandle): T.Expressio
 	};
 	node.$with = { elements: $with$elements, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewExpressionList$listRead);
 	return node as unknown as T.ExpressionList.Parsed;
 }
 
 function viewDottedName$qualifier(this: RecordHandle) {
-	return viewSlot<T.DottedName | undefined>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.DottedName | undefined>(this, 2, 3, 1, 2);
 }
 function viewDottedName$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 5, 3, 1, 0, 3);
+	return viewSlot<T.Identifier>(this, 5, 3, 1, 3);
 }
 function viewDottedName(data: RecordPosition, tree: TreeHandle): T.DottedName.Parsed {
 	const node = {
@@ -17347,7 +17341,7 @@ function viewDottedName(data: RecordPosition, tree: TreeHandle): T.DottedName.Pa
 }
 
 function viewCasePattern$content(this: RecordHandle) {
-	return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 2);
 }
 function viewCasePattern(data: RecordPosition, tree: TreeHandle): T.CasePattern.Parsed {
 	const node = {
@@ -17392,7 +17386,7 @@ function viewSimplePattern$content(this: RecordHandle) {
 		| T.ComplexPattern
 		| T.DottedName
 		| TSKindId.WildcardPattern
-	>(this, 2, 4, 3, 0, 2);
+	>(this, 2, 4, 3, 2);
 }
 function viewSimplePattern(data: RecordPosition, tree: TreeHandle): T.SimplePattern.Parsed {
 	const node = {
@@ -17420,20 +17414,20 @@ function viewSimplePattern(data: RecordPosition, tree: TreeHandle): T.SimplePatt
 
 function viewCaseAsPattern$casePattern(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.CasePattern>(this, 2, 3, 1, 0, 2),
+		viewSlot<T.CasePattern>(this, 2, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 0, 2);
+				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 2);
 			}
 		],
 		false
 	);
 }
 function viewCaseAsPattern$identifier(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 5, 3, 1, 0, 3);
+	return viewSlot<T.Identifier>(this, 5, 3, 1, 3);
 }
 function viewCaseAsPattern$casePattern$native(this: RecordHandle) {
-	return viewSlot<T.CasePattern>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.CasePattern>(this, 2, 3, 1, 2);
 }
 function viewCaseAsPattern(data: RecordPosition, tree: TreeHandle): T.CaseAsPattern.Parsed {
 	const node = {
@@ -17479,7 +17473,7 @@ function viewUnionPattern$left(this: RecordHandle) {
 		| T.ComplexPattern
 		| T.DottedName
 		| TSKindId.WildcardPattern
-	>(this, 2, 4, 3, 0, 2);
+	>(this, 2, 4, 3, 2);
 }
 function viewUnionPattern$right(this: RecordHandle) {
 	return viewSlot<
@@ -17500,7 +17494,7 @@ function viewUnionPattern$right(this: RecordHandle) {
 		| T.ComplexPattern
 		| T.DottedName
 		| TSKindId.WildcardPattern
-	>(this, 6, 4, 3, 0, 3);
+	>(this, 6, 4, 3, 3);
 }
 function viewUnionPattern(data: RecordPosition, tree: TreeHandle): T.UnionPattern.Parsed {
 	const node = {
@@ -17529,13 +17523,13 @@ function viewUnionPattern(data: RecordPosition, tree: TreeHandle): T.UnionPatter
 
 function viewDictPattern$elements(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.DictPatternElements | undefined>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.DictPatternElements | undefined>(this, 2, 3, 1, 2),
 		[listElementsHop(undefined, 'items')],
 		true
 	);
 }
 function viewDictPattern$elements$native(this: RecordHandle) {
-	return viewSlot<T.DictPatternElements | undefined>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.DictPatternElements | undefined>(this, 2, 3, 1, 2);
 }
 function viewDictPattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -17593,7 +17587,7 @@ function viewDictPattern(data: RecordPosition, tree: TreeHandle): T.DictPattern.
 	};
 	node.$with = { elements: $with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewDictPattern$listRead);
@@ -17619,21 +17613,21 @@ function viewKeyValuePattern$key(this: RecordHandle) {
 		| T.ComplexPattern
 		| T.DottedName
 		| TSKindId.WildcardPattern
-	>(this, 2, 4, 3, 0, 2);
+	>(this, 2, 4, 3, 2);
 }
 function viewKeyValuePattern$value(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.CasePattern>(this, 6, 3, 1, 0, 3),
+		viewSlot<T.CasePattern>(this, 6, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 0, 2);
+				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 2);
 			}
 		],
 		false
 	);
 }
 function viewKeyValuePattern$value$native(this: RecordHandle) {
-	return viewSlot<T.CasePattern>(this, 6, 3, 1, 0, 3);
+	return viewSlot<T.CasePattern>(this, 6, 3, 1, 3);
 }
 function viewKeyValuePattern(data: RecordPosition, tree: TreeHandle): T.KeyValuePattern.Parsed {
 	const node = {
@@ -17661,7 +17655,7 @@ function viewKeyValuePattern(data: RecordPosition, tree: TreeHandle): T.KeyValue
 }
 
 function viewKeywordPattern$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 2);
 }
 function viewKeywordPattern$pattern(this: RecordHandle) {
 	return viewSlot<
@@ -17682,7 +17676,7 @@ function viewKeywordPattern$pattern(this: RecordHandle) {
 		| T.ComplexPattern
 		| T.DottedName
 		| TSKindId.WildcardPattern
-	>(this, 5, 4, 3, 0, 3);
+	>(this, 5, 4, 3, 3);
 }
 function viewKeywordPattern(data: RecordPosition, tree: TreeHandle): T.KeywordPattern.Parsed {
 	const node = {
@@ -17710,24 +17704,24 @@ function viewKeywordPattern(data: RecordPosition, tree: TreeHandle): T.KeywordPa
 }
 
 function viewClassPattern$type(this: RecordHandle) {
-	return viewSlot<T.DottedName>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.DottedName>(this, 2, 3, 1, 2);
 }
 function viewClassPattern$fields(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ListPatternCasePatterns | undefined>(this, 5, 3, 8, 3, 3),
+		viewSlot<T.ListPatternCasePatterns | undefined>(this, 5, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
-				return viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 2);
 			},
 			function (this: RecordHandle) {
-				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 0, 2);
+				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 2);
 			}
 		],
 		true
 	);
 }
 function viewClassPattern$fields$native(this: RecordHandle) {
-	return viewSlot<T.ListPatternCasePatterns | undefined>(this, 5, 3, 8, 3, 3);
+	return viewSlot<T.ListPatternCasePatterns | undefined>(this, 5, 3, 1, 3);
 }
 function viewClassPattern(data: RecordPosition, tree: TreeHandle): T.ClassPattern.Parsed {
 	const node = {
@@ -17758,13 +17752,13 @@ function viewComplexPattern$sign(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewComplexPattern$real(this: RecordHandle) {
-	return viewSlot<T.Integer | T.Float>(this, 3, 17, 9, 16, 3);
+	return viewSlot<T.Integer | T.Float>(this, 3, 3, 1, 3);
 }
 function viewComplexPattern$operator(this: RecordHandle) {
-	return childSlot(this, 20, 1, 2, 0, 4);
+	return childSlot(this, 6, 1, 2, 4);
 }
 function viewComplexPattern$imaginary(this: RecordHandle) {
-	return viewSlot<T.Integer | T.Float>(this, 21, 17, 9, 16, 5);
+	return viewSlot<T.Integer | T.Float>(this, 7, 3, 1, 5);
 }
 function viewComplexPattern(data: RecordPosition, tree: TreeHandle): T.ComplexPattern.Parsed {
 	const node = {
@@ -17800,7 +17794,7 @@ function viewComplexPattern(data: RecordPosition, tree: TreeHandle): T.ComplexPa
 }
 
 function viewParametersElements$items(this: RecordHandle) {
-	return viewSlots<T.Parameter>(this, 2, 1, 4, 3, 0, 2);
+	return viewSlots<T.Parameter>(this, 2, 1, 4, 3, 2);
 }
 function viewParametersElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -17858,14 +17852,14 @@ function viewParametersElements(data: RecordPosition, tree: TreeHandle): T.Param
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewParametersElements$listRead);
 	return node as unknown as T.ParametersElements.Parsed;
 }
 
 function viewPatterns$items(this: RecordHandle) {
-	return viewSlots<T.Pattern>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.Pattern>(this, 2, 1, 3, 1, 2);
 }
 function viewPatterns$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -17923,7 +17917,7 @@ function viewPatterns(data: RecordPosition, tree: TreeHandle): T.Patterns.Parsed
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewPatterns$listRead);
 	return node as unknown as T.Patterns.Parsed;
@@ -17931,13 +17925,13 @@ function viewPatterns(data: RecordPosition, tree: TreeHandle): T.Patterns.Parsed
 
 function viewTuplePattern$elements(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.TuplePatternElements | undefined>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.TuplePatternElements | undefined>(this, 2, 3, 1, 2),
 		[listElementsHop(undefined, 'items')],
 		true
 	);
 }
 function viewTuplePattern$elements$native(this: RecordHandle) {
-	return viewSlot<T.TuplePatternElements | undefined>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.TuplePatternElements | undefined>(this, 2, 3, 1, 2);
 }
 function viewTuplePattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -17995,7 +17989,7 @@ function viewTuplePattern(data: RecordPosition, tree: TreeHandle): T.TuplePatter
 	};
 	node.$with = { elements: $with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewTuplePattern$listRead);
@@ -18003,10 +17997,10 @@ function viewTuplePattern(data: RecordPosition, tree: TreeHandle): T.TuplePatter
 }
 
 function viewListPattern$elements(this: RecordHandle) {
-	return hoistRead(viewSlot<T.Patterns | undefined>(this, 2, 3, 8, 3, 2), [listElementsHop(undefined, 'items')], true);
+	return hoistRead(viewSlot<T.Patterns | undefined>(this, 2, 3, 1, 2), [listElementsHop(undefined, 'items')], true);
 }
 function viewListPattern$elements$native(this: RecordHandle) {
-	return viewSlot<T.Patterns | undefined>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.Patterns | undefined>(this, 2, 3, 1, 2);
 }
 function viewListPattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -18064,7 +18058,7 @@ function viewListPattern(data: RecordPosition, tree: TreeHandle): T.ListPattern.
 	};
 	node.$with = { elements: $with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewListPattern$listRead);
@@ -18072,10 +18066,10 @@ function viewListPattern(data: RecordPosition, tree: TreeHandle): T.ListPattern.
 }
 
 function viewDefaultParameter$name(this: RecordHandle) {
-	return viewSlot<T.Identifier | T.TuplePattern>(this, 2, 6, 9, 5, 2);
+	return viewSlot<T.Identifier | T.TuplePattern>(this, 2, 3, 1, 2);
 }
 function viewDefaultParameter$default(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 8, 4, 3, 0, 3);
+	return viewSlot<T.Expression>(this, 5, 4, 3, 3);
 }
 function viewDefaultParameter(data: RecordPosition, tree: TreeHandle): T.DefaultParameter.Parsed {
 	const node = {
@@ -18103,11 +18097,11 @@ function viewDefaultParameter(data: RecordPosition, tree: TreeHandle): T.Default
 }
 
 function viewTypedDefaultParameter$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 2);
 }
 function viewTypedDefaultParameter$type(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type>(this, 5, 3, 1, 0, 3),
+		viewSlot<T.Type>(this, 5, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -18115,7 +18109,6 @@ function viewTypedDefaultParameter$type(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -18124,10 +18117,10 @@ function viewTypedDefaultParameter$type(this: RecordHandle) {
 	);
 }
 function viewTypedDefaultParameter$default(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 8, 4, 3, 0, 4);
+	return viewSlot<T.Expression>(this, 8, 4, 3, 4);
 }
 function viewTypedDefaultParameter$type$native(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 3);
 }
 function viewTypedDefaultParameter(data: RecordPosition, tree: TreeHandle): T.TypedDefaultParameter.Parsed {
 	const node = {
@@ -18156,7 +18149,7 @@ function viewTypedDefaultParameter(data: RecordPosition, tree: TreeHandle): T.Ty
 }
 
 function viewListSplatPattern$pattern(this: RecordHandle) {
-	return viewSlot<T.Identifier | T.Subscript | T.Attribute>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier | T.Subscript | T.Attribute>(this, 2, 3, 1, 2);
 }
 function viewListSplatPattern(data: RecordPosition, tree: TreeHandle): T.ListSplatPattern.Parsed {
 	const node = {
@@ -18183,7 +18176,7 @@ function viewListSplatPattern(data: RecordPosition, tree: TreeHandle): T.ListSpl
 }
 
 function viewDictionarySplatPattern$pattern(this: RecordHandle) {
-	return viewSlot<T.Identifier | T.Subscript | T.Attribute>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier | T.Subscript | T.Attribute>(this, 2, 3, 1, 2);
 }
 function viewDictionarySplatPattern(data: RecordPosition, tree: TreeHandle): T.DictionarySplatPattern.Parsed {
 	const node = {
@@ -18210,10 +18203,10 @@ function viewDictionarySplatPattern(data: RecordPosition, tree: TreeHandle): T.D
 }
 
 function viewAsPattern$expression(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewAsPattern$alias(this: RecordHandle) {
-	return viewSlot<T.AsPatternTarget>(this, 6, 3, 1, 0, 3);
+	return viewSlot<T.AsPatternTarget>(this, 6, 3, 1, 3);
 }
 function viewAsPattern(data: RecordPosition, tree: TreeHandle): T.AsPattern.Parsed {
 	const node = {
@@ -18241,7 +18234,7 @@ function viewAsPattern(data: RecordPosition, tree: TreeHandle): T.AsPattern.Pars
 }
 
 function viewNotOperator$argument(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewNotOperator(data: RecordPosition, tree: TreeHandle): T.NotOperator.Parsed {
 	const node = {
@@ -18268,13 +18261,13 @@ function viewNotOperator(data: RecordPosition, tree: TreeHandle): T.NotOperator.
 }
 
 function viewBooleanOperator$left(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewBooleanOperator$operator(this: RecordHandle) {
-	return childSlot(this, 6, 1, 2, 0, 3);
+	return childSlot(this, 6, 1, 2, 3);
 }
 function viewBooleanOperator$right(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 7, 4, 3, 0, 4);
+	return viewSlot<T.Expression>(this, 7, 4, 3, 4);
 }
 function viewBooleanOperator(data: RecordPosition, tree: TreeHandle): T.BooleanOperator.Parsed {
 	const node = {
@@ -18303,13 +18296,13 @@ function viewBooleanOperator(data: RecordPosition, tree: TreeHandle): T.BooleanO
 }
 
 function viewBinaryOperator$left(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 2);
 }
 function viewBinaryOperator$operator(this: RecordHandle) {
-	return childSlot(this, 6, 1, 2, 0, 3);
+	return childSlot(this, 6, 1, 2, 3);
 }
 function viewBinaryOperator$right(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 7, 4, 3, 0, 4);
+	return viewSlot<T.PrimaryExpression>(this, 7, 4, 3, 4);
 }
 function viewBinaryOperator(data: RecordPosition, tree: TreeHandle): T.BinaryOperator.Parsed {
 	const node = {
@@ -18338,10 +18331,10 @@ function viewBinaryOperator(data: RecordPosition, tree: TreeHandle): T.BinaryOpe
 }
 
 function viewUnaryOperator$operator(this: RecordHandle) {
-	return childSlot(this, 2, 1, 2, 0, 2);
+	return childSlot(this, 2, 1, 2, 2);
 }
 function viewUnaryOperator$argument(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 3, 4, 3, 0, 3);
+	return viewSlot<T.PrimaryExpression>(this, 3, 4, 3, 3);
 }
 function viewUnaryOperator(data: RecordPosition, tree: TreeHandle): T.UnaryOperator.Parsed {
 	const node = {
@@ -18369,10 +18362,10 @@ function viewUnaryOperator(data: RecordPosition, tree: TreeHandle): T.UnaryOpera
 }
 
 function viewComparisonOperator$left(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 2);
 }
 function viewComparisonOperator$comparators(this: RecordHandle) {
-	return viewSlots<T.ComparisonOperatorComparator>(this, 6, 1, 3, 1, 0, 3);
+	return viewSlots<T.ComparisonOperatorComparator>(this, 6, 1, 3, 1, 3);
 }
 function viewComparisonOperator(data: RecordPosition, tree: TreeHandle): T.ComparisonOperator.Parsed {
 	const node = {
@@ -18401,16 +18394,16 @@ function viewComparisonOperator(data: RecordPosition, tree: TreeHandle): T.Compa
 
 function viewLambda$parameters(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.LambdaParameters | undefined>(this, 2, 5, 8, 5, 2),
+		viewSlot<T.LambdaParameters | undefined>(this, 2, 3, 1, 2),
 		[listElementsHop('parametersElements', 'items')],
 		true
 	);
 }
 function viewLambda$body(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 7, 4, 3, 0, 3);
+	return viewSlot<T.Expression>(this, 5, 4, 3, 3);
 }
 function viewLambda$parameters$native(this: RecordHandle) {
-	return viewSlot<T.LambdaParameters | undefined>(this, 2, 5, 8, 5, 2);
+	return viewSlot<T.LambdaParameters | undefined>(this, 2, 3, 1, 2);
 }
 function viewLambda(data: RecordPosition, tree: TreeHandle): T.Lambda.Parsed {
 	const node = {
@@ -18439,16 +18432,16 @@ function viewLambda(data: RecordPosition, tree: TreeHandle): T.Lambda.Parsed {
 
 function viewLambdaWithinForInClause$parameters(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.LambdaParameters | undefined>(this, 2, 5, 8, 5, 2),
+		viewSlot<T.LambdaParameters | undefined>(this, 2, 3, 1, 2),
 		[listElementsHop('parametersElements', 'items')],
 		true
 	);
 }
 function viewLambdaWithinForInClause$body(this: RecordHandle) {
-	return viewSlot<T.Expression | T.LambdaWithinForInClause>(this, 7, 4, 3, 0, 3);
+	return viewSlot<T.Expression | T.LambdaWithinForInClause>(this, 5, 4, 3, 3);
 }
 function viewLambdaWithinForInClause$parameters$native(this: RecordHandle) {
-	return viewSlot<T.LambdaParameters | undefined>(this, 2, 5, 8, 5, 2);
+	return viewSlot<T.LambdaParameters | undefined>(this, 2, 3, 1, 2);
 }
 function viewLambdaWithinForInClause(data: RecordPosition, tree: TreeHandle): T.LambdaWithinForInClause.Parsed {
 	const node = {
@@ -18476,13 +18469,13 @@ function viewLambdaWithinForInClause(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewAugmentedAssignment$left(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.PatternList>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Pattern | T.PatternList>(this, 2, 3, 1, 2);
 }
 function viewAugmentedAssignment$operator(this: RecordHandle) {
-	return childSlot(this, 5, 1, 2, 0, 3);
+	return childSlot(this, 5, 1, 2, 3);
 }
 function viewAugmentedAssignment$right(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, 6, 4, 3, 0, 4);
+	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, 6, 4, 3, 4);
 }
 function viewAugmentedAssignment(data: RecordPosition, tree: TreeHandle): T.AugmentedAssignment.Parsed {
 	const node = {
@@ -18511,7 +18504,7 @@ function viewAugmentedAssignment(data: RecordPosition, tree: TreeHandle): T.Augm
 }
 
 function viewPatternList$elements(this: RecordHandle) {
-	return viewSlots<T.Pattern>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.Pattern>(this, 2, 1, 3, 1, 2);
 }
 function viewPatternList$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'elements'), undefined);
@@ -18569,14 +18562,14 @@ function viewPatternList(data: RecordPosition, tree: TreeHandle): T.PatternList.
 	};
 	node.$with = { elements: $with$elements, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewPatternList$listRead);
 	return node as unknown as T.PatternList.Parsed;
 }
 
 function viewYield$content(this: RecordHandle) {
-	return viewSlot<T.YieldFromClause | T.Expression | T.ExpressionList | undefined>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.YieldFromClause | T.Expression | T.ExpressionList | undefined>(this, 2, 4, 3, 2);
 }
 function viewYield(data: RecordPosition, tree: TreeHandle): T.Yield.Parsed {
 	const node = {
@@ -18603,10 +18596,10 @@ function viewYield(data: RecordPosition, tree: TreeHandle): T.Yield.Parsed {
 }
 
 function viewAttribute$object(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 2);
 }
 function viewAttribute$property(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 6, 3, 1, 0, 3);
+	return viewSlot<T.Identifier>(this, 6, 3, 1, 3);
 }
 function viewAttribute(data: RecordPosition, tree: TreeHandle): T.Attribute.Parsed {
 	const node = {
@@ -18634,13 +18627,13 @@ function viewAttribute(data: RecordPosition, tree: TreeHandle): T.Attribute.Pars
 }
 
 function viewSubscript$object(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 2);
 }
 function viewSubscript$index(this: RecordHandle) {
-	return hoistRead(viewSlot<T.Subscripts>(this, 6, 3, 8, 3, 3), [listElementsHop(undefined, 'elements')], true);
+	return hoistRead(viewSlot<T.Subscripts>(this, 6, 3, 1, 3), [listElementsHop(undefined, 'elements')], true);
 }
 function viewSubscript$index$native(this: RecordHandle) {
-	return viewSlot<T.Subscripts>(this, 6, 3, 8, 3, 3);
+	return viewSlot<T.Subscripts>(this, 6, 3, 1, 3);
 }
 function viewSubscript(data: RecordPosition, tree: TreeHandle): T.Subscript.Parsed {
 	const node = {
@@ -18668,16 +18661,16 @@ function viewSubscript(data: RecordPosition, tree: TreeHandle): T.Subscript.Pars
 }
 
 function viewSlice$start(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression | undefined>(this, 2, 4, 3, 2);
 }
 function viewSlice$stop(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 6, 4, 3, 0, 3);
+	return viewSlot<T.Expression | undefined>(this, 6, 4, 3, 3);
 }
 function viewSlice$step(this: RecordHandle) {
-	return viewSlot<T.SliceGroup | undefined>(this, 10, 6, 8, 6, 4);
+	return viewSlot<T.SliceGroup | undefined>(this, 10, 3, 1, 4);
 }
 function viewSlice$expression(this: RecordHandle) {
-	return groupField(viewSlot<T.SliceGroup | undefined>(this, 10, 6, 8, 6, 4), 'expression');
+	return groupField(viewSlot<T.SliceGroup | undefined>(this, 10, 3, 1, 4), 'expression');
 }
 function viewSlice(data: RecordPosition, tree: TreeHandle): T.Slice.Parsed {
 	const node = {
@@ -18710,15 +18703,15 @@ function viewSlice(data: RecordPosition, tree: TreeHandle): T.Slice.Parsed {
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.expression = recordPresent(node, 10, 6, 8, 6, 4) ? viewSlice$expression : undefined;
+	node.expression = recordPresent(node, 10, 3, 1, 4) ? viewSlice$expression : undefined;
 	return node as unknown as T.Slice.Parsed;
 }
 
 function viewCall$function(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 2);
 }
 function viewCall$arguments(this: RecordHandle) {
-	return viewSlot<T.GeneratorExpression | T.ArgumentList>(this, 6, 3, 1, 0, 3);
+	return viewSlot<T.GeneratorExpression | T.ArgumentList>(this, 6, 3, 1, 3);
 }
 function viewCall(data: RecordPosition, tree: TreeHandle): T.Call.Parsed {
 	const node = {
@@ -18746,11 +18739,11 @@ function viewCall(data: RecordPosition, tree: TreeHandle): T.Call.Parsed {
 }
 
 function viewTypedParameter$name(this: RecordHandle) {
-	return viewSlot<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(this, 2, 3, 1, 2);
 }
 function viewTypedParameter$type(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type>(this, 5, 3, 1, 0, 3),
+		viewSlot<T.Type>(this, 5, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -18758,7 +18751,6 @@ function viewTypedParameter$type(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -18767,7 +18759,7 @@ function viewTypedParameter$type(this: RecordHandle) {
 	);
 }
 function viewTypedParameter$type$native(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 3);
 }
 function viewTypedParameter(data: RecordPosition, tree: TreeHandle): T.TypedParameter.Parsed {
 	const node = {
@@ -18800,7 +18792,6 @@ function viewType$content(this: RecordHandle) {
 		2,
 		4,
 		3,
-		0,
 		2
 	);
 }
@@ -18829,7 +18820,7 @@ function viewType(data: RecordPosition, tree: TreeHandle): T.Type.Parsed {
 }
 
 function viewSplatType$type(this: RecordHandle) {
-	return viewSlot<T.Identifier | T.GenericType>(this, 2, 11, 9, 10, 2);
+	return viewSlot<T.Identifier | T.GenericType>(this, 2, 3, 1, 2);
 }
 function viewSplatType(data: RecordPosition, tree: TreeHandle): T.SplatType.Parsed {
 	const node = {
@@ -18856,17 +18847,17 @@ function viewSplatType(data: RecordPosition, tree: TreeHandle): T.SplatType.Pars
 }
 
 function viewGenericType$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 2);
 }
 function viewGenericType$typeParameter(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.TypeParameter>(this, 5, 5, 8, 5, 3),
+		viewSlot<T.TypeParameter>(this, 5, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
+				return viewSlot<T.Types>(this, 2, 3, 1, 2);
 			},
 			function (this: RecordHandle) {
-				return viewSlots<T.Type>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.Type>(this, 2, 1, 3, 1, 2);
 			},
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -18874,7 +18865,6 @@ function viewGenericType$typeParameter(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -18883,7 +18873,7 @@ function viewGenericType$typeParameter(this: RecordHandle) {
 	);
 }
 function viewGenericType$typeParameter$native(this: RecordHandle) {
-	return viewSlot<T.TypeParameter>(this, 5, 5, 8, 5, 3);
+	return viewSlot<T.TypeParameter>(this, 5, 3, 1, 3);
 }
 function viewGenericType(data: RecordPosition, tree: TreeHandle): T.GenericType.Parsed {
 	const node = {
@@ -18912,7 +18902,7 @@ function viewGenericType(data: RecordPosition, tree: TreeHandle): T.GenericType.
 
 function viewUnionType$left(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type>(this, 2, 3, 1, 0, 2),
+		viewSlot<T.Type>(this, 2, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -18920,7 +18910,6 @@ function viewUnionType$left(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -18930,7 +18919,7 @@ function viewUnionType$left(this: RecordHandle) {
 }
 function viewUnionType$right(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type>(this, 5, 3, 1, 0, 3),
+		viewSlot<T.Type>(this, 5, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -18938,7 +18927,6 @@ function viewUnionType$right(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -18947,10 +18935,10 @@ function viewUnionType$right(this: RecordHandle) {
 	);
 }
 function viewUnionType$left$native(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Type>(this, 2, 3, 1, 2);
 }
 function viewUnionType$right$native(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 3);
 }
 function viewUnionType(data: RecordPosition, tree: TreeHandle): T.UnionType.Parsed {
 	const node = {
@@ -18979,7 +18967,7 @@ function viewUnionType(data: RecordPosition, tree: TreeHandle): T.UnionType.Pars
 
 function viewConstrainedType$baseType(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type>(this, 2, 3, 1, 0, 2),
+		viewSlot<T.Type>(this, 2, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -18987,7 +18975,6 @@ function viewConstrainedType$baseType(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -18997,7 +18984,7 @@ function viewConstrainedType$baseType(this: RecordHandle) {
 }
 function viewConstrainedType$constraint(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type>(this, 5, 3, 1, 0, 3),
+		viewSlot<T.Type>(this, 5, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -19005,7 +18992,6 @@ function viewConstrainedType$constraint(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -19014,10 +19000,10 @@ function viewConstrainedType$constraint(this: RecordHandle) {
 	);
 }
 function viewConstrainedType$baseType$native(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Type>(this, 2, 3, 1, 2);
 }
 function viewConstrainedType$constraint$native(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 3);
 }
 function viewConstrainedType(data: RecordPosition, tree: TreeHandle): T.ConstrainedType.Parsed {
 	const node = {
@@ -19046,7 +19032,7 @@ function viewConstrainedType(data: RecordPosition, tree: TreeHandle): T.Constrai
 
 function viewMemberType$qualifier(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type>(this, 2, 3, 1, 0, 2),
+		viewSlot<T.Type>(this, 2, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -19054,7 +19040,6 @@ function viewMemberType$qualifier(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -19063,10 +19048,10 @@ function viewMemberType$qualifier(this: RecordHandle) {
 	);
 }
 function viewMemberType$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 5, 3, 1, 0, 3);
+	return viewSlot<T.Identifier>(this, 5, 3, 1, 3);
 }
 function viewMemberType$qualifier$native(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Type>(this, 2, 3, 1, 2);
 }
 function viewMemberType(data: RecordPosition, tree: TreeHandle): T.MemberType.Parsed {
 	const node = {
@@ -19094,10 +19079,10 @@ function viewMemberType(data: RecordPosition, tree: TreeHandle): T.MemberType.Pa
 }
 
 function viewKeywordArgument$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 2);
 }
 function viewKeywordArgument$value(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 5, 4, 3, 0, 3);
+	return viewSlot<T.Expression>(this, 5, 4, 3, 3);
 }
 function viewKeywordArgument(data: RecordPosition, tree: TreeHandle): T.KeywordArgument.Parsed {
 	const node = {
@@ -19126,13 +19111,13 @@ function viewKeywordArgument(data: RecordPosition, tree: TreeHandle): T.KeywordA
 
 function viewList$elements(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.CollectionElements | undefined>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.CollectionElements | undefined>(this, 2, 3, 1, 2),
 		[listElementsHop(undefined, 'items')],
 		true
 	);
 }
 function viewList$elements$native(this: RecordHandle) {
-	return viewSlot<T.CollectionElements | undefined>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.CollectionElements | undefined>(this, 2, 3, 1, 2);
 }
 function viewList$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -19190,7 +19175,7 @@ function viewList(data: RecordPosition, tree: TreeHandle): T.List.Parsed {
 	};
 	node.$with = { elements: $with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewList$listRead);
@@ -19198,10 +19183,10 @@ function viewList(data: RecordPosition, tree: TreeHandle): T.List.Parsed {
 }
 
 function viewSet$elements(this: RecordHandle) {
-	return hoistRead(viewSlot<T.CollectionElements>(this, 2, 3, 8, 3, 2), [listElementsHop(undefined, 'items')], true);
+	return hoistRead(viewSlot<T.CollectionElements>(this, 2, 3, 1, 2), [listElementsHop(undefined, 'items')], true);
 }
 function viewSet$elements$native(this: RecordHandle) {
-	return viewSlot<T.CollectionElements>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.CollectionElements>(this, 2, 3, 1, 2);
 }
 function viewSet$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -19259,7 +19244,7 @@ function viewSet(data: RecordPosition, tree: TreeHandle): T.Set.Parsed {
 	};
 	node.$with = { elements: $with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewSet$listRead);
@@ -19268,13 +19253,13 @@ function viewSet(data: RecordPosition, tree: TreeHandle): T.Set.Parsed {
 
 function viewTuple$elements(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.TupleElements | undefined>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.TupleElements | undefined>(this, 2, 3, 1, 2),
 		[listElementsHop(undefined, 'items')],
 		true
 	);
 }
 function viewTuple$elements$native(this: RecordHandle) {
-	return viewSlot<T.TupleElements | undefined>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.TupleElements | undefined>(this, 2, 3, 1, 2);
 }
 function viewTuple$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -19332,7 +19317,7 @@ function viewTuple(data: RecordPosition, tree: TreeHandle): T.Tuple.Parsed {
 	};
 	node.$with = { elements: $with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewTuple$listRead);
@@ -19341,13 +19326,13 @@ function viewTuple(data: RecordPosition, tree: TreeHandle): T.Tuple.Parsed {
 
 function viewDictionary$elements(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.DictionaryElements | undefined>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.DictionaryElements | undefined>(this, 2, 3, 1, 2),
 		[listElementsHop(undefined, 'items')],
 		true
 	);
 }
 function viewDictionary$elements$native(this: RecordHandle) {
-	return viewSlot<T.DictionaryElements | undefined>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.DictionaryElements | undefined>(this, 2, 3, 1, 2);
 }
 function viewDictionary$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -19405,7 +19390,7 @@ function viewDictionary(data: RecordPosition, tree: TreeHandle): T.Dictionary.Pa
 	};
 	node.$with = { elements: $with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewDictionary$listRead);
@@ -19413,10 +19398,10 @@ function viewDictionary(data: RecordPosition, tree: TreeHandle): T.Dictionary.Pa
 }
 
 function viewPair$key(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewPair$value(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 6, 4, 3, 0, 3);
+	return viewSlot<T.Expression>(this, 6, 4, 3, 3);
 }
 function viewPair(data: RecordPosition, tree: TreeHandle): T.Pair.Parsed {
 	const node = {
@@ -19444,21 +19429,21 @@ function viewPair(data: RecordPosition, tree: TreeHandle): T.Pair.Parsed {
 }
 
 function viewListComprehension$body(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewListComprehension$clauses(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ComprehensionClauses>(this, 6, 3, 8, 3, 3),
+		viewSlot<T.ComprehensionClauses>(this, 6, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
-				return viewSlots<T.ForInClause | T.IfClause>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.ForInClause | T.IfClause>(this, 2, 1, 3, 1, 2);
 			}
 		],
 		true
 	);
 }
 function viewListComprehension$clauses$native(this: RecordHandle) {
-	return viewSlot<T.ComprehensionClauses>(this, 6, 3, 8, 3, 3);
+	return viewSlot<T.ComprehensionClauses>(this, 6, 3, 1, 3);
 }
 function viewListComprehension(data: RecordPosition, tree: TreeHandle): T.ListComprehension.Parsed {
 	const node = {
@@ -19486,21 +19471,21 @@ function viewListComprehension(data: RecordPosition, tree: TreeHandle): T.ListCo
 }
 
 function viewDictionaryComprehension$body(this: RecordHandle) {
-	return viewSlot<T.Pair>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Pair>(this, 2, 3, 1, 2);
 }
 function viewDictionaryComprehension$clauses(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ComprehensionClauses>(this, 5, 3, 8, 3, 3),
+		viewSlot<T.ComprehensionClauses>(this, 5, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
-				return viewSlots<T.ForInClause | T.IfClause>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.ForInClause | T.IfClause>(this, 2, 1, 3, 1, 2);
 			}
 		],
 		true
 	);
 }
 function viewDictionaryComprehension$clauses$native(this: RecordHandle) {
-	return viewSlot<T.ComprehensionClauses>(this, 5, 3, 8, 3, 3);
+	return viewSlot<T.ComprehensionClauses>(this, 5, 3, 1, 3);
 }
 function viewDictionaryComprehension(data: RecordPosition, tree: TreeHandle): T.DictionaryComprehension.Parsed {
 	const node = {
@@ -19528,21 +19513,21 @@ function viewDictionaryComprehension(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewSetComprehension$body(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewSetComprehension$clauses(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ComprehensionClauses>(this, 6, 3, 8, 3, 3),
+		viewSlot<T.ComprehensionClauses>(this, 6, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
-				return viewSlots<T.ForInClause | T.IfClause>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.ForInClause | T.IfClause>(this, 2, 1, 3, 1, 2);
 			}
 		],
 		true
 	);
 }
 function viewSetComprehension$clauses$native(this: RecordHandle) {
-	return viewSlot<T.ComprehensionClauses>(this, 6, 3, 8, 3, 3);
+	return viewSlot<T.ComprehensionClauses>(this, 6, 3, 1, 3);
 }
 function viewSetComprehension(data: RecordPosition, tree: TreeHandle): T.SetComprehension.Parsed {
 	const node = {
@@ -19570,21 +19555,21 @@ function viewSetComprehension(data: RecordPosition, tree: TreeHandle): T.SetComp
 }
 
 function viewGeneratorExpression$body(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewGeneratorExpression$clauses(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ComprehensionClauses>(this, 6, 3, 8, 3, 3),
+		viewSlot<T.ComprehensionClauses>(this, 6, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
-				return viewSlots<T.ForInClause | T.IfClause>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.ForInClause | T.IfClause>(this, 2, 1, 3, 1, 2);
 			}
 		],
 		true
 	);
 }
 function viewGeneratorExpression$clauses$native(this: RecordHandle) {
-	return viewSlot<T.ComprehensionClauses>(this, 6, 3, 8, 3, 3);
+	return viewSlot<T.ComprehensionClauses>(this, 6, 3, 1, 3);
 }
 function viewGeneratorExpression(data: RecordPosition, tree: TreeHandle): T.GeneratorExpression.Parsed {
 	const node = {
@@ -19612,7 +19597,7 @@ function viewGeneratorExpression(data: RecordPosition, tree: TreeHandle): T.Gene
 }
 
 function viewParenthesizedExpression$expression(this: RecordHandle) {
-	return viewSlot<T.Expression | T.Yield>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression | T.Yield>(this, 2, 4, 3, 2);
 }
 function viewParenthesizedExpression(data: RecordPosition, tree: TreeHandle): T.ParenthesizedExpression.Parsed {
 	const node = {
@@ -19639,7 +19624,7 @@ function viewParenthesizedExpression(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewCollectionElements$items(this: RecordHandle) {
-	return viewSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, 2, 1, 4, 3, 0, 2);
+	return viewSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, 2, 1, 4, 3, 2);
 }
 function viewCollectionElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -19697,7 +19682,7 @@ function viewCollectionElements(data: RecordPosition, tree: TreeHandle): T.Colle
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewCollectionElements$listRead);
 	return node as unknown as T.CollectionElements.Parsed;
@@ -19707,13 +19692,13 @@ function viewForInClause$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewForInClause$left(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.PatternList>(this, 3, 3, 1, 0, 3);
+	return viewSlot<T.Pattern | T.PatternList>(this, 3, 3, 1, 3);
 }
 function viewForInClause$rights(this: RecordHandle) {
-	return viewSlots<T.Expression | T.LambdaWithinForInClause>(this, 6, 1, 4, 3, 0, 4);
+	return viewSlots<T.Expression | T.LambdaWithinForInClause>(this, 6, 1, 4, 3, 4);
 }
 function viewForInClause$trailingComma(this: RecordHandle) {
-	return blankArmRead(childSlot(this, 7, 1, 18, 0, 5));
+	return blankArmRead(childSlot(this, 7, 1, 18, 5));
 }
 function viewForInClause(data: RecordPosition, tree: TreeHandle): T.ForInClause.Parsed {
 	const node = {
@@ -19749,7 +19734,7 @@ function viewForInClause(data: RecordPosition, tree: TreeHandle): T.ForInClause.
 }
 
 function viewIfClause$condition(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewIfClause(data: RecordPosition, tree: TreeHandle): T.IfClause.Parsed {
 	const node = {
@@ -19776,13 +19761,13 @@ function viewIfClause(data: RecordPosition, tree: TreeHandle): T.IfClause.Parsed
 }
 
 function viewConditionalExpression$consequence(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewConditionalExpression$condition(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 6, 4, 3, 0, 3);
+	return viewSlot<T.Expression>(this, 6, 4, 3, 3);
 }
 function viewConditionalExpression$alternative(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 10, 4, 3, 0, 4);
+	return viewSlot<T.Expression>(this, 10, 4, 3, 4);
 }
 function viewConditionalExpression(data: RecordPosition, tree: TreeHandle): T.ConditionalExpression.Parsed {
 	const node = {
@@ -19816,7 +19801,7 @@ function viewConditionalExpression(data: RecordPosition, tree: TreeHandle): T.Co
 }
 
 function viewConcatenatedString$strings(this: RecordHandle) {
-	return viewSlots<T.String>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.String>(this, 2, 1, 3, 1, 2);
 }
 function viewConcatenatedString(data: RecordPosition, tree: TreeHandle): T.ConcatenatedString.Parsed {
 	const node = {
@@ -19843,16 +19828,16 @@ function viewConcatenatedString(data: RecordPosition, tree: TreeHandle): T.Conca
 }
 
 function viewString$stringStart(this: RecordHandle) {
-	return viewSlot<T.StringStart>(this, 2, 8, 8, 8, 2);
+	return viewSlot<T.StringStart>(this, 2, 3, 1, 2);
 }
 function viewString$contents(this: RecordHandle) {
-	return viewSlots<T.Interpolation | T.StringContent>(this, 10, 1, 3, 1, 0, 3);
+	return viewSlots<T.Interpolation | T.StringContent>(this, 5, 1, 3, 1, 3);
 }
 function viewString$stringEnd(this: RecordHandle) {
-	return viewSlot<T.StringEnd>(this, 11, 8, 8, 8, 4);
+	return viewSlot<T.StringEnd>(this, 6, 3, 1, 4);
 }
 function viewString$prefix(this: RecordHandle) {
-	return groupField(viewSlot<T.StringStart | undefined>(this, 2, 8, 8, 8, 2), 'prefix');
+	return groupField(viewSlot<T.StringStart | undefined>(this, 2, 3, 1, 2), 'prefix');
 }
 function viewString(data: RecordPosition, tree: TreeHandle): T.String.Parsed {
 	const node = {
@@ -19885,7 +19870,7 @@ function viewString(data: RecordPosition, tree: TreeHandle): T.String.Parsed {
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.prefix = recordPresent(node, 2, 8, 8, 8, 2) ? viewString$prefix : undefined;
+	node.prefix = recordPresent(node, 2, 3, 1, 2) ? viewString$prefix : undefined;
 	return node as unknown as T.String.Parsed;
 }
 
@@ -19896,7 +19881,6 @@ function viewStringContent$elements(this: RecordHandle) {
 		1,
 		4,
 		3,
-		0,
 		2
 	);
 }
@@ -19925,16 +19909,16 @@ function viewStringContent(data: RecordPosition, tree: TreeHandle): T.StringCont
 }
 
 function viewInterpolation$expression(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, 3, 4, 3, 0, 3);
+	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, 3, 4, 3, 3);
 }
 function viewInterpolation$debug(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewInterpolation$typeConversion(this: RecordHandle) {
-	return viewSlot<T.TypeConversion | undefined>(this, 7, 3, 1, 0, 4);
+	return viewSlot<T.TypeConversion | undefined>(this, 7, 3, 1, 4);
 }
 function viewInterpolation$formatSpecifier(this: RecordHandle) {
-	return viewSlot<T.FormatSpecifier | undefined>(this, 10, 3, 8, 3, 5);
+	return viewSlot<T.FormatSpecifier | undefined>(this, 10, 3, 1, 5);
 }
 function viewInterpolation(data: RecordPosition, tree: TreeHandle): T.Interpolation.Parsed {
 	const node = {
@@ -19970,7 +19954,7 @@ function viewInterpolation(data: RecordPosition, tree: TreeHandle): T.Interpolat
 }
 
 function viewFormatSpecifier$elements(this: RecordHandle) {
-	return viewSlots<T.FormatSpecifierText | T.FormatExpression>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.FormatSpecifierText | T.FormatExpression>(this, 2, 1, 3, 1, 2);
 }
 function viewFormatSpecifier(data: RecordPosition, tree: TreeHandle): T.FormatSpecifier.Parsed {
 	const node = {
@@ -19997,7 +19981,7 @@ function viewFormatSpecifier(data: RecordPosition, tree: TreeHandle): T.FormatSp
 }
 
 function viewAwait$expression(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 2);
 }
 function viewAwait(data: RecordPosition, tree: TreeHandle): T.Await.Parsed {
 	const node = {
@@ -20024,7 +20008,7 @@ function viewAwait(data: RecordPosition, tree: TreeHandle): T.Await.Parsed {
 }
 
 function viewComment$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewComment(data: RecordPosition, tree: TreeHandle): T.Comment.Parsed {
 	const node = {
@@ -20046,12 +20030,12 @@ function viewComment(data: RecordPosition, tree: TreeHandle): T.Comment.Parsed {
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
 	return node as unknown as T.Comment.Parsed;
 }
 
 function viewSimpleStatementsElements$items(this: RecordHandle) {
-	return viewSlots<T.SimpleStatement>(this, 2, 1, 4, 3, 0, 2);
+	return viewSlots<T.SimpleStatement>(this, 2, 1, 4, 3, 2);
 }
 function viewSimpleStatementsElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -20109,14 +20093,14 @@ function viewSimpleStatementsElements(data: RecordPosition, tree: TreeHandle): T
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewSimpleStatementsElements$listRead);
 	return node as unknown as T.SimpleStatementsElements.Parsed;
 }
 
 function viewSubjects$elements(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 2);
 }
 function viewSubjects$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'elements'), undefined);
@@ -20174,7 +20158,7 @@ function viewSubjects(data: RecordPosition, tree: TreeHandle): T.Subjects.Parsed
 	};
 	node.$with = { elements: $with$elements, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewSubjects$listRead);
 	return node as unknown as T.Subjects.Parsed;
@@ -20182,17 +20166,17 @@ function viewSubjects(data: RecordPosition, tree: TreeHandle): T.Subjects.Parsed
 
 function viewWithClauseWithItems$items(this: RecordHandle) {
 	return hoistRead(
-		viewSlots<T.WithItem>(this, 2, 1, 3, 1, 0, 2),
+		viewSlots<T.WithItem>(this, 2, 1, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+				return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 			}
 		],
 		true
 	);
 }
 function viewWithClauseWithItems$items$native(this: RecordHandle) {
-	return viewSlots<T.WithItem>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.WithItem>(this, 2, 1, 3, 1, 2);
 }
 function viewWithClauseWithItems$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -20250,7 +20234,7 @@ function viewWithClauseWithItems(data: RecordPosition, tree: TreeHandle): T.With
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewWithClauseWithItems$listRead);
 	return node as unknown as T.WithClauseWithItems.Parsed;
@@ -20258,7 +20242,7 @@ function viewWithClauseWithItems(data: RecordPosition, tree: TreeHandle): T.With
 
 function viewTypes$items(this: RecordHandle) {
 	return hoistRead(
-		viewSlots<T.Type>(this, 2, 1, 3, 1, 0, 2),
+		viewSlots<T.Type>(this, 2, 1, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -20266,7 +20250,6 @@ function viewTypes$items(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -20275,7 +20258,7 @@ function viewTypes$items(this: RecordHandle) {
 	);
 }
 function viewTypes$items$native(this: RecordHandle) {
-	return viewSlots<T.Type>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.Type>(this, 2, 1, 3, 1, 2);
 }
 function viewTypes$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -20333,7 +20316,7 @@ function viewTypes(data: RecordPosition, tree: TreeHandle): T.Types.Parsed {
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewTypes$listRead);
 	return node as unknown as T.Types.Parsed;
@@ -20346,7 +20329,6 @@ function viewArgumentListElements$items(this: RecordHandle) {
 		1,
 		4,
 		3,
-		0,
 		2
 	);
 }
@@ -20406,7 +20388,7 @@ function viewArgumentListElements(data: RecordPosition, tree: TreeHandle): T.Arg
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewArgumentListElements$listRead);
 	return node as unknown as T.ArgumentListElements.Parsed;
@@ -20414,17 +20396,17 @@ function viewArgumentListElements(data: RecordPosition, tree: TreeHandle): T.Arg
 
 function viewListPatternCasePatterns$items(this: RecordHandle) {
 	return hoistRead(
-		viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 0, 2),
+		viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 0, 2);
+				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 2);
 			}
 		],
 		true
 	);
 }
 function viewListPatternCasePatterns$items$native(this: RecordHandle) {
-	return viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 2);
 }
 function viewListPatternCasePatterns$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -20482,14 +20464,14 @@ function viewListPatternCasePatterns(data: RecordPosition, tree: TreeHandle): T.
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewListPatternCasePatterns$listRead);
 	return node as unknown as T.ListPatternCasePatterns.Parsed;
 }
 
 function viewDictPatternElements$items(this: RecordHandle) {
-	return viewSlots<T.KeyValuePattern | T.SplatPattern>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.KeyValuePattern | T.SplatPattern>(this, 2, 1, 3, 1, 2);
 }
 function viewDictPatternElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -20547,14 +20529,14 @@ function viewDictPatternElements(data: RecordPosition, tree: TreeHandle): T.Dict
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewDictPatternElements$listRead);
 	return node as unknown as T.DictPatternElements.Parsed;
 }
 
 function viewSubscripts$elements(this: RecordHandle) {
-	return viewSlots<T.Expression | T.Slice>(this, 2, 1, 4, 3, 0, 2);
+	return viewSlots<T.Expression | T.Slice>(this, 2, 1, 4, 3, 2);
 }
 function viewSubscripts$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'elements'), undefined);
@@ -20612,14 +20594,14 @@ function viewSubscripts(data: RecordPosition, tree: TreeHandle): T.Subscripts.Pa
 	};
 	node.$with = { elements: $with$elements, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewSubscripts$listRead);
 	return node as unknown as T.Subscripts.Parsed;
 }
 
 function viewDictionaryElements$items(this: RecordHandle) {
-	return viewSlots<T.Pair | T.DictionarySplat>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.Pair | T.DictionarySplat>(this, 2, 1, 3, 1, 2);
 }
 function viewDictionaryElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -20677,14 +20659,14 @@ function viewDictionaryElements(data: RecordPosition, tree: TreeHandle): T.Dicti
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewDictionaryElements$listRead);
 	return node as unknown as T.DictionaryElements.Parsed;
 }
 
 function viewSliceGroup$expression(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression | undefined>(this, 2, 4, 3, 2);
 }
 function viewSliceGroup(data: RecordPosition, tree: TreeHandle): T.SliceGroup.Parsed {
 	const node = {
@@ -20711,10 +20693,10 @@ function viewSliceGroup(data: RecordPosition, tree: TreeHandle): T.SliceGroup.Pa
 }
 
 function viewTypeParams$items(this: RecordHandle) {
-	return hoistRead(viewSlot<T.TypeParamsItems>(this, 2, 3, 8, 3, 2), [listElementsHop(undefined, 'items')], true);
+	return hoistRead(viewSlot<T.TypeParamsItems>(this, 2, 3, 1, 2), [listElementsHop(undefined, 'items')], true);
 }
 function viewTypeParams$items$native(this: RecordHandle) {
-	return viewSlot<T.TypeParamsItems>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.TypeParamsItems>(this, 2, 3, 1, 2);
 }
 function viewTypeParams$listRead(this: { readonly items: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.items(), 'items'), undefined);
@@ -20772,7 +20754,7 @@ function viewTypeParams(data: RecordPosition, tree: TreeHandle): T.TypeParams.Pa
 	};
 	node.$with = { items: $with$items, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewTypeParams$listRead);
@@ -20780,7 +20762,7 @@ function viewTypeParams(data: RecordPosition, tree: TreeHandle): T.TypeParams.Pa
 }
 
 function viewTypeParamsItems$items(this: RecordHandle) {
-	return viewSlots<T.TypeParam>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.TypeParam>(this, 2, 1, 3, 1, 2);
 }
 function viewTypeParamsItems$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -20838,14 +20820,14 @@ function viewTypeParamsItems(data: RecordPosition, tree: TreeHandle): T.TypePara
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewTypeParamsItems$listRead);
 	return node as unknown as T.TypeParamsItems.Parsed;
 }
 
 function viewTuplePatternElements$items(this: RecordHandle) {
-	return viewSlots<T.Pattern>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.Pattern>(this, 2, 1, 3, 1, 2);
 }
 function viewTuplePatternElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -20903,7 +20885,7 @@ function viewTuplePatternElements(data: RecordPosition, tree: TreeHandle): T.Tup
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewTuplePatternElements$listRead);
 	return node as unknown as T.TuplePatternElements.Parsed;
@@ -20911,17 +20893,17 @@ function viewTuplePatternElements(data: RecordPosition, tree: TreeHandle): T.Tup
 
 function viewCasePatternList$elements(this: RecordHandle) {
 	return hoistRead(
-		viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 0, 2),
+		viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 0, 2);
+				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 2);
 			}
 		],
 		true
 	);
 }
 function viewCasePatternList$elements$native(this: RecordHandle) {
-	return viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 2);
 }
 function viewCasePatternList$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'elements'), undefined);
@@ -20979,14 +20961,14 @@ function viewCasePatternList(data: RecordPosition, tree: TreeHandle): T.CasePatt
 	};
 	node.$with = { elements: $with$elements, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewCasePatternList$listRead);
 	return node as unknown as T.CasePatternList.Parsed;
 }
 
 function viewTupleElements$items(this: RecordHandle) {
-	return viewSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, 2, 1, 4, 3, 0, 2);
+	return viewSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, 2, 1, 4, 3, 2);
 }
 function viewTupleElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -21044,17 +21026,17 @@ function viewTupleElements(data: RecordPosition, tree: TreeHandle): T.TupleEleme
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewTupleElements$listRead);
 	return node as unknown as T.TupleElements.Parsed;
 }
 
 function viewExceptClauseExceptionAs$value(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewExceptClauseExceptionAs$alias(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 6, 4, 3, 0, 3);
+	return viewSlot<T.Expression | undefined>(this, 6, 4, 3, 3);
 }
 function viewExceptClauseExceptionAs(data: RecordPosition, tree: TreeHandle): T.ExceptClauseExceptionAs.Parsed {
 	const node = {
@@ -21083,20 +21065,20 @@ function viewExceptClauseExceptionAs(data: RecordPosition, tree: TreeHandle): T.
 
 function viewCaseTuplePattern$elements(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ListPatternCasePatterns | undefined>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.ListPatternCasePatterns | undefined>(this, 2, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 2);
 			},
 			function (this: RecordHandle) {
-				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 0, 2);
+				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 2);
 			}
 		],
 		true
 	);
 }
 function viewCaseTuplePattern$elements$native(this: RecordHandle) {
-	return viewSlot<T.ListPatternCasePatterns | undefined>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.ListPatternCasePatterns | undefined>(this, 2, 3, 1, 2);
 }
 function viewCaseTuplePattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -21154,7 +21136,7 @@ function viewCaseTuplePattern(data: RecordPosition, tree: TreeHandle): T.CaseTup
 	};
 	node.$with = { elements: $with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewCaseTuplePattern$listRead);
@@ -21163,20 +21145,20 @@ function viewCaseTuplePattern(data: RecordPosition, tree: TreeHandle): T.CaseTup
 
 function viewCaseListPattern$elements(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.ListPatternCasePatterns | undefined>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.ListPatternCasePatterns | undefined>(this, 2, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 2);
 			},
 			function (this: RecordHandle) {
-				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 0, 2);
+				return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 2);
 			}
 		],
 		true
 	);
 }
 function viewCaseListPattern$elements$native(this: RecordHandle) {
-	return viewSlot<T.ListPatternCasePatterns | undefined>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.ListPatternCasePatterns | undefined>(this, 2, 3, 1, 2);
 }
 function viewCaseListPattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -21234,7 +21216,7 @@ function viewCaseListPattern(data: RecordPosition, tree: TreeHandle): T.CaseList
 	};
 	node.$with = { elements: $with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewCaseListPattern$listRead);
@@ -21242,7 +21224,7 @@ function viewCaseListPattern(data: RecordPosition, tree: TreeHandle): T.CaseList
 }
 
 function viewPrintArguments$items(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 2);
 }
 function viewPrintArguments$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -21300,14 +21282,14 @@ function viewPrintArguments(data: RecordPosition, tree: TreeHandle): T.PrintArgu
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewPrintArguments$listRead);
 	return node as unknown as T.PrintArguments.Parsed;
 }
 
 function viewPrintChevronArguments$items(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 2);
 }
 function viewPrintChevronArguments$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -21365,7 +21347,7 @@ function viewPrintChevronArguments(data: RecordPosition, tree: TreeHandle): T.Pr
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewPrintChevronArguments$listRead);
 	return node as unknown as T.PrintChevronArguments.Parsed;
@@ -21373,10 +21355,10 @@ function viewPrintChevronArguments(data: RecordPosition, tree: TreeHandle): T.Pr
 
 function viewPrintStatementChevron$chevron(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Chevron>(this, 2, 6, 8, 6, 2),
+		viewSlot<T.Chevron>(this, 2, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+				return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 			}
 		],
 		false
@@ -21384,16 +21366,16 @@ function viewPrintStatementChevron$chevron(this: RecordHandle) {
 }
 function viewPrintStatementChevron$arguments(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.PrintChevronArguments | undefined>(this, 8, 3, 8, 3, 3),
+		viewSlot<T.PrintChevronArguments | undefined>(this, 5, 3, 1, 3),
 		[listElementsHop(undefined, 'items')],
 		true
 	);
 }
 function viewPrintStatementChevron$chevron$native(this: RecordHandle) {
-	return viewSlot<T.Chevron>(this, 2, 6, 8, 6, 2);
+	return viewSlot<T.Chevron>(this, 2, 3, 1, 2);
 }
 function viewPrintStatementChevron$arguments$native(this: RecordHandle) {
-	return viewSlot<T.PrintChevronArguments | undefined>(this, 8, 3, 8, 3, 3);
+	return viewSlot<T.PrintChevronArguments | undefined>(this, 5, 3, 1, 3);
 }
 function viewPrintStatementChevron(data: RecordPosition, tree: TreeHandle): T.PrintStatementChevron.Parsed {
 	const node = {
@@ -21421,10 +21403,10 @@ function viewPrintStatementChevron(data: RecordPosition, tree: TreeHandle): T.Pr
 }
 
 function viewPrintStatementPlain$arguments(this: RecordHandle) {
-	return hoistRead(viewSlot<T.PrintArguments>(this, 2, 3, 8, 3, 2), [listElementsHop(undefined, 'items')], true);
+	return hoistRead(viewSlot<T.PrintArguments>(this, 2, 3, 1, 2), [listElementsHop(undefined, 'items')], true);
 }
 function viewPrintStatementPlain$arguments$native(this: RecordHandle) {
-	return viewSlot<T.PrintArguments>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.PrintArguments>(this, 2, 3, 1, 2);
 }
 function viewPrintStatementPlain$listRead(this: { readonly arguments: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.arguments(), 'items'), undefined);
@@ -21482,7 +21464,7 @@ function viewPrintStatementPlain(data: RecordPosition, tree: TreeHandle): T.Prin
 	};
 	node.$with = { arguments: $with$arguments, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewPrintStatementPlain$listRead);
@@ -21490,7 +21472,7 @@ function viewPrintStatementPlain(data: RecordPosition, tree: TreeHandle): T.Prin
 }
 
 function viewComprehensionClauses$contents(this: RecordHandle) {
-	return viewSlots<T.ForInClause | T.IfClause>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.ForInClause | T.IfClause>(this, 2, 1, 3, 1, 2);
 }
 function viewComprehensionClauses(data: RecordPosition, tree: TreeHandle): T.ComprehensionClauses.Parsed {
 	const node = {
@@ -21517,13 +21499,13 @@ function viewComprehensionClauses(data: RecordPosition, tree: TreeHandle): T.Com
 }
 
 function viewIntegerHexLong$radixPrefix(this: RecordHandle) {
-	return viewSlot<'0x' | '0X'>(this, 2, 2, 4, 0, 2);
+	return viewSlot<'0x' | '0X'>(this, 2, 2, 4, 2);
 }
 function viewIntegerHexLong$content(this: RecordHandle) {
-	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+	return viewSlot<string>(this, 4, 2, 4, 3);
 }
 function viewIntegerHexLong$marker(this: RecordHandle) {
-	return viewSlot<'L' | 'l'>(this, 6, 2, 4, 0, 4);
+	return viewSlot<'L' | 'l'>(this, 6, 2, 4, 4);
 }
 function viewIntegerHexLong(data: RecordPosition, tree: TreeHandle): T.IntegerHexLong.Parsed {
 	const node = {
@@ -21549,15 +21531,15 @@ function viewIntegerHexLong(data: RecordPosition, tree: TreeHandle): T.IntegerHe
 	};
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, marker: $with$marker, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 8, 2, 4, 0, 5);
+	node.$verbatim = viewSlot<string | undefined>(node, 8, 2, 4, 5);
 	return node as unknown as T.IntegerHexLong.Parsed;
 }
 
 function viewIntegerHexPlain$radixPrefix(this: RecordHandle) {
-	return viewSlot<'0x' | '0X'>(this, 2, 2, 4, 0, 2);
+	return viewSlot<'0x' | '0X'>(this, 2, 2, 4, 2);
 }
 function viewIntegerHexPlain$content(this: RecordHandle) {
-	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+	return viewSlot<string>(this, 4, 2, 4, 3);
 }
 function viewIntegerHexPlain(data: RecordPosition, tree: TreeHandle): T.IntegerHexPlain.Parsed {
 	const node = {
@@ -21582,18 +21564,18 @@ function viewIntegerHexPlain(data: RecordPosition, tree: TreeHandle): T.IntegerH
 	};
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 4);
 	return node as unknown as T.IntegerHexPlain.Parsed;
 }
 
 function viewIntegerOctalLong$radixPrefix(this: RecordHandle) {
-	return viewSlot<'0o' | '0O'>(this, 2, 2, 4, 0, 2);
+	return viewSlot<'0o' | '0O'>(this, 2, 2, 4, 2);
 }
 function viewIntegerOctalLong$content(this: RecordHandle) {
-	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+	return viewSlot<string>(this, 4, 2, 4, 3);
 }
 function viewIntegerOctalLong$marker(this: RecordHandle) {
-	return viewSlot<'L' | 'l'>(this, 6, 2, 4, 0, 4);
+	return viewSlot<'L' | 'l'>(this, 6, 2, 4, 4);
 }
 function viewIntegerOctalLong(data: RecordPosition, tree: TreeHandle): T.IntegerOctalLong.Parsed {
 	const node = {
@@ -21619,15 +21601,15 @@ function viewIntegerOctalLong(data: RecordPosition, tree: TreeHandle): T.Integer
 	};
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, marker: $with$marker, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 8, 2, 4, 0, 5);
+	node.$verbatim = viewSlot<string | undefined>(node, 8, 2, 4, 5);
 	return node as unknown as T.IntegerOctalLong.Parsed;
 }
 
 function viewIntegerOctalPlain$radixPrefix(this: RecordHandle) {
-	return viewSlot<'0o' | '0O'>(this, 2, 2, 4, 0, 2);
+	return viewSlot<'0o' | '0O'>(this, 2, 2, 4, 2);
 }
 function viewIntegerOctalPlain$content(this: RecordHandle) {
-	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+	return viewSlot<string>(this, 4, 2, 4, 3);
 }
 function viewIntegerOctalPlain(data: RecordPosition, tree: TreeHandle): T.IntegerOctalPlain.Parsed {
 	const node = {
@@ -21652,18 +21634,18 @@ function viewIntegerOctalPlain(data: RecordPosition, tree: TreeHandle): T.Intege
 	};
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 4);
 	return node as unknown as T.IntegerOctalPlain.Parsed;
 }
 
 function viewIntegerBinaryLong$radixPrefix(this: RecordHandle) {
-	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 0, 2);
+	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 2);
 }
 function viewIntegerBinaryLong$content(this: RecordHandle) {
-	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+	return viewSlot<string>(this, 4, 2, 4, 3);
 }
 function viewIntegerBinaryLong$marker(this: RecordHandle) {
-	return viewSlot<'L' | 'l'>(this, 6, 2, 4, 0, 4);
+	return viewSlot<'L' | 'l'>(this, 6, 2, 4, 4);
 }
 function viewIntegerBinaryLong(data: RecordPosition, tree: TreeHandle): T.IntegerBinaryLong.Parsed {
 	const node = {
@@ -21689,15 +21671,15 @@ function viewIntegerBinaryLong(data: RecordPosition, tree: TreeHandle): T.Intege
 	};
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, marker: $with$marker, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 8, 2, 4, 0, 5);
+	node.$verbatim = viewSlot<string | undefined>(node, 8, 2, 4, 5);
 	return node as unknown as T.IntegerBinaryLong.Parsed;
 }
 
 function viewIntegerBinaryPlain$radixPrefix(this: RecordHandle) {
-	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 0, 2);
+	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 2);
 }
 function viewIntegerBinaryPlain$content(this: RecordHandle) {
-	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+	return viewSlot<string>(this, 4, 2, 4, 3);
 }
 function viewIntegerBinaryPlain(data: RecordPosition, tree: TreeHandle): T.IntegerBinaryPlain.Parsed {
 	const node = {
@@ -21722,15 +21704,15 @@ function viewIntegerBinaryPlain(data: RecordPosition, tree: TreeHandle): T.Integ
 	};
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 4);
 	return node as unknown as T.IntegerBinaryPlain.Parsed;
 }
 
 function viewIntegerLegacyOctalLong$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewIntegerLegacyOctalLong$marker(this: RecordHandle) {
-	return viewSlot<'L' | 'l'>(this, 4, 2, 4, 0, 3);
+	return viewSlot<'L' | 'l'>(this, 4, 2, 4, 3);
 }
 function viewIntegerLegacyOctalLong(data: RecordPosition, tree: TreeHandle): T.IntegerLegacyOctalLong.Parsed {
 	const node = {
@@ -21755,12 +21737,12 @@ function viewIntegerLegacyOctalLong(data: RecordPosition, tree: TreeHandle): T.I
 	};
 	node.$with = { content: $with$content, marker: $with$marker, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 4);
 	return node as unknown as T.IntegerLegacyOctalLong.Parsed;
 }
 
 function viewIntegerLegacyOctalPlain$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewIntegerLegacyOctalPlain(data: RecordPosition, tree: TreeHandle): T.IntegerLegacyOctalPlain.Parsed {
 	const node = {
@@ -21784,15 +21766,15 @@ function viewIntegerLegacyOctalPlain(data: RecordPosition, tree: TreeHandle): T.
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
 	return node as unknown as T.IntegerLegacyOctalPlain.Parsed;
 }
 
 function viewIntegerDecimalLong$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewIntegerDecimalLong$marker(this: RecordHandle) {
-	return viewSlot<'L' | 'l'>(this, 4, 2, 4, 0, 3);
+	return viewSlot<'L' | 'l'>(this, 4, 2, 4, 3);
 }
 function viewIntegerDecimalLong(data: RecordPosition, tree: TreeHandle): T.IntegerDecimalLong.Parsed {
 	const node = {
@@ -21817,27 +21799,27 @@ function viewIntegerDecimalLong(data: RecordPosition, tree: TreeHandle): T.Integ
 	};
 	node.$with = { content: $with$content, marker: $with$marker, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 4);
 	return node as unknown as T.IntegerDecimalLong.Parsed;
 }
 
 function viewFloatPoint$integer(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewFloatPoint$fraction(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 4, 2, 4, 0, 3);
+	return viewSlot<string | undefined>(this, 4, 2, 4, 3);
 }
 function viewFloatPoint$marker(this: RecordHandle) {
-	return viewSlot<'e' | 'E' | undefined>(this, 6, 2, 4, 0, 4);
+	return viewSlot<'e' | 'E' | undefined>(this, 6, 2, 4, 4);
 }
 function viewFloatPoint$exponentSign(this: RecordHandle) {
-	return viewSlot<'-' | '+' | undefined>(this, 8, 2, 4, 0, 5);
+	return viewSlot<'-' | '+' | undefined>(this, 8, 2, 4, 5);
 }
 function viewFloatPoint$exponent(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 10, 2, 4, 0, 6);
+	return viewSlot<string | undefined>(this, 10, 2, 4, 6);
 }
 function viewFloatPoint$imaginary(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 12, 2, 4, 0, 7);
+	return viewSlot<string | undefined>(this, 12, 2, 4, 7);
 }
 function viewFloatPoint(data: RecordPosition, tree: TreeHandle): T.FloatPoint.Parsed {
 	const node = {
@@ -21875,27 +21857,27 @@ function viewFloatPoint(data: RecordPosition, tree: TreeHandle): T.FloatPoint.Pa
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 14, 2, 4, 0, 8);
+	node.$verbatim = viewSlot<string | undefined>(node, 14, 2, 4, 8);
 	return node as unknown as T.FloatPoint.Parsed;
 }
 
 function viewFloatLeadingPoint$integer(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string | undefined>(this, 2, 2, 4, 2);
 }
 function viewFloatLeadingPoint$fraction(this: RecordHandle) {
-	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+	return viewSlot<string>(this, 4, 2, 4, 3);
 }
 function viewFloatLeadingPoint$marker(this: RecordHandle) {
-	return viewSlot<'e' | 'E' | undefined>(this, 6, 2, 4, 0, 4);
+	return viewSlot<'e' | 'E' | undefined>(this, 6, 2, 4, 4);
 }
 function viewFloatLeadingPoint$exponentSign(this: RecordHandle) {
-	return viewSlot<'-' | '+' | undefined>(this, 8, 2, 4, 0, 5);
+	return viewSlot<'-' | '+' | undefined>(this, 8, 2, 4, 5);
 }
 function viewFloatLeadingPoint$exponent(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 10, 2, 4, 0, 6);
+	return viewSlot<string | undefined>(this, 10, 2, 4, 6);
 }
 function viewFloatLeadingPoint$imaginary(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 12, 2, 4, 0, 7);
+	return viewSlot<string | undefined>(this, 12, 2, 4, 7);
 }
 function viewFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.FloatLeadingPoint.Parsed {
 	const node = {
@@ -21933,24 +21915,24 @@ function viewFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.FloatL
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 14, 2, 4, 0, 8);
+	node.$verbatim = viewSlot<string | undefined>(node, 14, 2, 4, 8);
 	return node as unknown as T.FloatLeadingPoint.Parsed;
 }
 
 function viewFloatScientific$integer(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewFloatScientific$marker(this: RecordHandle) {
-	return viewSlot<'e' | 'E'>(this, 4, 2, 4, 0, 3);
+	return viewSlot<'e' | 'E'>(this, 4, 2, 4, 3);
 }
 function viewFloatScientific$exponentSign(this: RecordHandle) {
-	return viewSlot<'-' | '+' | undefined>(this, 6, 2, 4, 0, 4);
+	return viewSlot<'-' | '+' | undefined>(this, 6, 2, 4, 4);
 }
 function viewFloatScientific$exponent(this: RecordHandle) {
-	return viewSlot<string>(this, 8, 2, 4, 0, 5);
+	return viewSlot<string>(this, 8, 2, 4, 5);
 }
 function viewFloatScientific$imaginary(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 10, 2, 4, 0, 6);
+	return viewSlot<string | undefined>(this, 10, 2, 4, 6);
 }
 function viewFloatScientific(data: RecordPosition, tree: TreeHandle): T.FloatScientific.Parsed {
 	const node = {
@@ -21985,12 +21967,12 @@ function viewFloatScientific(data: RecordPosition, tree: TreeHandle): T.FloatSci
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 12, 2, 4, 0, 7);
+	node.$verbatim = viewSlot<string | undefined>(node, 12, 2, 4, 7);
 	return node as unknown as T.FloatScientific.Parsed;
 }
 
 function viewEscapeSequenceUnicodeFixed$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewEscapeSequenceUnicodeFixed(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceUnicodeFixed.Parsed {
 	const node = {
@@ -22014,12 +21996,12 @@ function viewEscapeSequenceUnicodeFixed(data: RecordPosition, tree: TreeHandle):
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
 	return node as unknown as T.EscapeSequenceUnicodeFixed.Parsed;
 }
 
 function viewEscapeSequenceUnicodeWide$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewEscapeSequenceUnicodeWide(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceUnicodeWide.Parsed {
 	const node = {
@@ -22043,12 +22025,12 @@ function viewEscapeSequenceUnicodeWide(data: RecordPosition, tree: TreeHandle): 
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
 	return node as unknown as T.EscapeSequenceUnicodeWide.Parsed;
 }
 
 function viewEscapeSequenceHex$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewEscapeSequenceHex(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceHex.Parsed {
 	const node = {
@@ -22072,12 +22054,12 @@ function viewEscapeSequenceHex(data: RecordPosition, tree: TreeHandle): T.Escape
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
 	return node as unknown as T.EscapeSequenceHex.Parsed;
 }
 
 function viewEscapeSequenceOctal$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewEscapeSequenceOctal(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceOctal.Parsed {
 	const node = {
@@ -22101,12 +22083,12 @@ function viewEscapeSequenceOctal(data: RecordPosition, tree: TreeHandle): T.Esca
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
 	return node as unknown as T.EscapeSequenceOctal.Parsed;
 }
 
 function viewEscapeSequenceLineBreak$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewEscapeSequenceLineBreak(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceLineBreak.Parsed {
 	const node = {
@@ -22130,12 +22112,12 @@ function viewEscapeSequenceLineBreak(data: RecordPosition, tree: TreeHandle): T.
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
 	return node as unknown as T.EscapeSequenceLineBreak.Parsed;
 }
 
 function viewEscapeSequenceSimple$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewEscapeSequenceSimple(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceSimple.Parsed {
 	const node = {
@@ -22159,12 +22141,12 @@ function viewEscapeSequenceSimple(data: RecordPosition, tree: TreeHandle): T.Esc
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
 	return node as unknown as T.EscapeSequenceSimple.Parsed;
 }
 
 function viewEscapeSequenceNamed$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewEscapeSequenceNamed(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceNamed.Parsed {
 	const node = {
@@ -22188,12 +22170,12 @@ function viewEscapeSequenceNamed(data: RecordPosition, tree: TreeHandle): T.Esca
 	};
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
 	return node as unknown as T.EscapeSequenceNamed.Parsed;
 }
 
 function viewSimplePatternNegative$value(this: RecordHandle) {
-	return viewSlot<T.Integer | T.Float>(this, 2, 17, 9, 16, 2);
+	return viewSlot<T.Integer | T.Float>(this, 2, 3, 1, 2);
 }
 function viewSimplePatternNegative(data: RecordPosition, tree: TreeHandle): T.SimplePatternNegative.Parsed {
 	const node = {
@@ -22220,7 +22202,7 @@ function viewSimplePatternNegative(data: RecordPosition, tree: TreeHandle): T.Si
 }
 
 function viewExceptClauseExceptionList$values(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 2);
 }
 function viewExceptClauseExceptionList(data: RecordPosition, tree: TreeHandle): T.ExceptClauseExceptionList.Parsed {
 	const node = {
@@ -22247,7 +22229,7 @@ function viewExceptClauseExceptionList(data: RecordPosition, tree: TreeHandle): 
 }
 
 function viewExceptClauseException$content(this: RecordHandle) {
-	return viewSlot<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(this, 2, 10, 8, 10, 2);
+	return viewSlot<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(this, 2, 3, 1, 2);
 }
 function viewExceptClauseException(data: RecordPosition, tree: TreeHandle): T.ExceptClauseException.Parsed {
 	const node = {
@@ -22274,10 +22256,10 @@ function viewExceptClauseException(data: RecordPosition, tree: TreeHandle): T.Ex
 }
 
 function viewParenthesizedImportList$importList(this: RecordHandle) {
-	return hoistRead(viewSlot<T.ImportList>(this, 2, 3, 8, 3, 2), [listElementsHop(undefined, 'names')], true);
+	return hoistRead(viewSlot<T.ImportList>(this, 2, 3, 1, 2), [listElementsHop(undefined, 'names')], true);
 }
 function viewParenthesizedImportList$importList$native(this: RecordHandle) {
-	return viewSlot<T.ImportList>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.ImportList>(this, 2, 3, 1, 2);
 }
 function viewParenthesizedImportList$listRead(this: { readonly importList: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.importList(), 'names'), undefined);
@@ -22335,7 +22317,7 @@ function viewParenthesizedImportList(data: RecordPosition, tree: TreeHandle): T.
 	};
 	node.$with = { importList: $with$importList, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_name', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_name', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewParenthesizedImportList$listRead);
@@ -22343,7 +22325,7 @@ function viewParenthesizedImportList(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewSplatPatternList$pattern(this: RecordHandle) {
-	return viewSlot<T.Identifier | TSKindId.Underscore>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Identifier | TSKindId.Underscore>(this, 2, 4, 3, 2);
 }
 function viewSplatPatternList(data: RecordPosition, tree: TreeHandle): T.SplatPatternList.Parsed {
 	const node = {
@@ -22370,7 +22352,7 @@ function viewSplatPatternList(data: RecordPosition, tree: TreeHandle): T.SplatPa
 }
 
 function viewSplatPatternDictionary$pattern(this: RecordHandle) {
-	return viewSlot<T.Identifier | TSKindId.Underscore>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Identifier | TSKindId.Underscore>(this, 2, 4, 3, 2);
 }
 function viewSplatPatternDictionary(data: RecordPosition, tree: TreeHandle): T.SplatPatternDictionary.Parsed {
 	const node = {
@@ -22397,10 +22379,10 @@ function viewSplatPatternDictionary(data: RecordPosition, tree: TreeHandle): T.S
 }
 
 function viewAssignmentEq$name(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.PatternList>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Pattern | T.PatternList>(this, 2, 3, 1, 2);
 }
 function viewAssignmentEq$value(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield | T.Assignment>(this, 5, 4, 3, 0, 3);
+	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield | T.Assignment>(this, 5, 4, 3, 3);
 }
 function viewAssignmentEq(data: RecordPosition, tree: TreeHandle): T.AssignmentEq.Parsed {
 	const node = {
@@ -22428,11 +22410,11 @@ function viewAssignmentEq(data: RecordPosition, tree: TreeHandle): T.AssignmentE
 }
 
 function viewAssignmentType$name(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.PatternList>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Pattern | T.PatternList>(this, 2, 3, 1, 2);
 }
 function viewAssignmentType$type(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type>(this, 5, 3, 1, 0, 3),
+		viewSlot<T.Type>(this, 5, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -22440,7 +22422,6 @@ function viewAssignmentType$type(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -22449,7 +22430,7 @@ function viewAssignmentType$type(this: RecordHandle) {
 	);
 }
 function viewAssignmentType$type$native(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 3);
 }
 function viewAssignmentType(data: RecordPosition, tree: TreeHandle): T.AssignmentType.Parsed {
 	const node = {
@@ -22477,11 +22458,11 @@ function viewAssignmentType(data: RecordPosition, tree: TreeHandle): T.Assignmen
 }
 
 function viewAssignmentTyped$name(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.PatternList>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Pattern | T.PatternList>(this, 2, 3, 1, 2);
 }
 function viewAssignmentTyped$type(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type>(this, 5, 3, 1, 0, 3),
+		viewSlot<T.Type>(this, 5, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -22489,7 +22470,6 @@ function viewAssignmentTyped$type(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -22498,10 +22478,10 @@ function viewAssignmentTyped$type(this: RecordHandle) {
 	);
 }
 function viewAssignmentTyped$value(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, 8, 4, 3, 0, 4);
+	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, 8, 4, 3, 4);
 }
 function viewAssignmentTyped$type$native(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 3);
 }
 function viewAssignmentTyped(data: RecordPosition, tree: TreeHandle): T.AssignmentTyped.Parsed {
 	const node = {
@@ -22530,7 +22510,7 @@ function viewAssignmentTyped(data: RecordPosition, tree: TreeHandle): T.Assignme
 }
 
 function viewExpressionStatementTuple$elements(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 2);
 }
 function viewExpressionStatementTuple$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'elements'), undefined);
@@ -22588,7 +22568,7 @@ function viewExpressionStatementTuple(data: RecordPosition, tree: TreeHandle): T
 	};
 	node.$with = { elements: $with$elements, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewExpressionStatementTuple$listRead);
 	return node as unknown as T.ExpressionStatementTuple.Parsed;
@@ -22596,17 +22576,17 @@ function viewExpressionStatementTuple(data: RecordPosition, tree: TreeHandle): T
 
 function viewWithClauseBare$items(this: RecordHandle) {
 	return hoistRead(
-		viewSlots<T.WithItem>(this, 2, 1, 3, 1, 0, 2),
+		viewSlots<T.WithItem>(this, 2, 1, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+				return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 			}
 		],
 		true
 	);
 }
 function viewWithClauseBare$items$native(this: RecordHandle) {
-	return viewSlots<T.WithItem>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.WithItem>(this, 2, 1, 3, 1, 2);
 }
 function viewWithClauseBare$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -22664,7 +22644,7 @@ function viewWithClauseBare(data: RecordPosition, tree: TreeHandle): T.WithClaus
 	};
 	node.$with = { items: $with$items, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewWithClauseBare$listRead);
 	return node as unknown as T.WithClauseBare.Parsed;
@@ -22672,20 +22652,20 @@ function viewWithClauseBare(data: RecordPosition, tree: TreeHandle): T.WithClaus
 
 function viewWithClauseParen$items(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.WithClauseWithItems>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.WithClauseWithItems>(this, 2, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlots<T.WithItem>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.WithItem>(this, 2, 1, 3, 1, 2);
 			},
 			function (this: RecordHandle) {
-				return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+				return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 			}
 		],
 		true
 	);
 }
 function viewWithClauseParen$items$native(this: RecordHandle) {
-	return viewSlot<T.WithClauseWithItems>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.WithClauseWithItems>(this, 2, 3, 1, 2);
 }
 function viewWithClauseParen$listRead(this: { readonly items: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.items(), 'items'), undefined);
@@ -22743,7 +22723,7 @@ function viewWithClauseParen(data: RecordPosition, tree: TreeHandle): T.WithClau
 	};
 	node.$with = { items: $with$items, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewWithClauseParen$listRead);
@@ -22751,14 +22731,10 @@ function viewWithClauseParen(data: RecordPosition, tree: TreeHandle): T.WithClau
 }
 
 function viewSuiteInline$statements(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.SimpleStatementsElements>(this, 2, 3, 8, 3, 2),
-		[listElementsHop(undefined, 'items')],
-		true
-	);
+	return hoistRead(viewSlot<T.SimpleStatementsElements>(this, 2, 3, 1, 2), [listElementsHop(undefined, 'items')], true);
 }
 function viewSuiteInline$statements$native(this: RecordHandle) {
-	return viewSlot<T.SimpleStatementsElements>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.SimpleStatementsElements>(this, 2, 3, 1, 2);
 }
 function viewSuiteInline$listRead(this: { readonly statements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.statements(), 'items'), undefined);
@@ -22816,7 +22792,7 @@ function viewSuiteInline(data: RecordPosition, tree: TreeHandle): T.SuiteInline.
 	};
 	node.$with = { statements: $with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 1, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	holdReadItems(node, viewSuiteInline$listRead);
@@ -22825,17 +22801,17 @@ function viewSuiteInline(data: RecordPosition, tree: TreeHandle): T.SuiteInline.
 
 function viewSuiteBlock$block(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Block>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.Block>(this, 2, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlots<T.Statement>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.Statement>(this, 2, 1, 3, 1, 2);
 			}
 		],
 		true
 	);
 }
 function viewSuiteBlock$block$native(this: RecordHandle) {
-	return viewSlot<T.Block>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.Block>(this, 2, 3, 1, 2);
 }
 function viewSuiteBlock(data: RecordPosition, tree: TreeHandle): T.SuiteBlock.Parsed {
 	const node = {
@@ -22862,7 +22838,7 @@ function viewSuiteBlock(data: RecordPosition, tree: TreeHandle): T.SuiteBlock.Pa
 }
 
 function viewSuiteEmpty$newline(this: RecordHandle) {
-	return childSlot(this, 2, 1, 2, 0, 2);
+	return childSlot(this, 2, 1, 2, 2);
 }
 function viewSuiteEmpty(data: RecordPosition, tree: TreeHandle): T.SuiteEmpty.Parsed {
 	const node = {
@@ -22889,10 +22865,10 @@ function viewSuiteEmpty(data: RecordPosition, tree: TreeHandle): T.SuiteEmpty.Pa
 }
 
 function viewComparisonOperatorComparator$operators(this: RecordHandle) {
-	return childSlot(this, 2, 1, 2, 0, 2);
+	return childSlot(this, 2, 1, 2, 2);
 }
 function viewComparisonOperatorComparator$primaryExpression(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 3, 4, 3, 0, 3);
+	return viewSlot<T.PrimaryExpression>(this, 3, 4, 3, 3);
 }
 function viewComparisonOperatorComparator(
 	data: RecordPosition,
@@ -22923,7 +22899,7 @@ function viewComparisonOperatorComparator(
 }
 
 function viewYieldFromClause$expression(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 }
 function viewYieldFromClause(data: RecordPosition, tree: TreeHandle): T.YieldFromClause.Parsed {
 	const node = {
@@ -22950,11 +22926,11 @@ function viewYieldFromClause(data: RecordPosition, tree: TreeHandle): T.YieldFro
 }
 
 function viewTypeParamTypeVar$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 2);
 }
 function viewTypeParamTypeVar$bounds(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type | undefined>(this, 5, 3, 1, 0, 3),
+		viewSlot<T.Type | undefined>(this, 5, 3, 1, 3),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -22962,7 +22938,6 @@ function viewTypeParamTypeVar$bounds(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -22971,7 +22946,7 @@ function viewTypeParamTypeVar$bounds(this: RecordHandle) {
 	);
 }
 function viewTypeParamTypeVar$bounds$native(this: RecordHandle) {
-	return viewSlot<T.Type | undefined>(this, 5, 3, 1, 0, 3);
+	return viewSlot<T.Type | undefined>(this, 5, 3, 1, 3);
 }
 function viewTypeParamTypeVar(data: RecordPosition, tree: TreeHandle): T.TypeParamTypeVar.Parsed {
 	const node = {
@@ -22999,7 +22974,7 @@ function viewTypeParamTypeVar(data: RecordPosition, tree: TreeHandle): T.TypePar
 }
 
 function viewTypeParamTypeVarTuple$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 2);
 }
 function viewTypeParamTypeVarTuple(data: RecordPosition, tree: TreeHandle): T.TypeParamTypeVarTuple.Parsed {
 	const node = {
@@ -23026,7 +23001,7 @@ function viewTypeParamTypeVarTuple(data: RecordPosition, tree: TreeHandle): T.Ty
 }
 
 function viewTypeParamParamSpec$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 2);
 }
 function viewTypeParamParamSpec(data: RecordPosition, tree: TreeHandle): T.TypeParamParamSpec.Parsed {
 	const node = {
@@ -23093,7 +23068,7 @@ function viewStringStart$prefix(this: RecordHandle) {
 		| 'Ur'
 		| 'UR'
 		| undefined
-	>(this, 2, 2, 4, 0, 2, false, {
+	>(this, 2, 2, 4, 2, false, {
 		R: 'r',
 		B: 'b',
 		F: 'f',
@@ -23126,7 +23101,7 @@ function viewStringStart$prefix(this: RecordHandle) {
 	});
 }
 function viewStringStart$quote(this: RecordHandle) {
-	return viewSlot<'"' | "'" | '"""' | "'''" | '`'>(this, 4, 2, 4, 0, 3);
+	return viewSlot<'"' | "'" | '"""' | "'''" | '`'>(this, 4, 2, 4, 3);
 }
 function viewStringStart(data: RecordPosition, tree: TreeHandle): T.StringStart.Parsed {
 	const node = {
@@ -23151,15 +23126,15 @@ function viewStringStart(data: RecordPosition, tree: TreeHandle): T.StringStart.
 	};
 	node.$with = { prefix: $with$prefix, quote: $with$quote, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 4);
 	return node as unknown as T.StringStart.Parsed;
 }
 
 function viewStringEnd$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 2);
 }
 function viewStringEnd$quote(this: RecordHandle) {
-	return viewSlot<'"' | "'" | '"""' | "'''" | '`'>(this, 4, 2, 4, 0, 3);
+	return viewSlot<'"' | "'" | '"""' | "'''" | '`'>(this, 4, 2, 4, 3);
 }
 function viewStringEnd(data: RecordPosition, tree: TreeHandle): T.StringEnd.Parsed {
 	const node = {
@@ -23184,7 +23159,7 @@ function viewStringEnd(data: RecordPosition, tree: TreeHandle): T.StringEnd.Pars
 	};
 	node.$with = { content: $with$content, quote: $with$quote, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 4);
 	return node as unknown as T.StringEnd.Parsed;
 }
 
@@ -23192,14 +23167,14 @@ function viewConstructorDeclaration$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewConstructorDeclaration$typeParameters(this: RecordHandle) {
-	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 3, 5, 8, 5, 3), [listElementsHop('items', 'items')], true);
+	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 3, 3, 1, 3), [listElementsHop('items', 'items')], true);
 }
 function viewConstructorDeclaration$parameters(this: RecordHandle) {
-	return hoistRead(viewSlot<T.Parameters>(this, 8, 5, 8, 5, 4), [listElementsHop('elements', 'items')], true);
+	return hoistRead(viewSlot<T.Parameters>(this, 6, 3, 1, 4), [listElementsHop('elements', 'items')], true);
 }
 function viewConstructorDeclaration$returnType(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type | undefined>(this, 13, 3, 1, 0, 5),
+		viewSlot<T.Type | undefined>(this, 9, 3, 1, 5),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -23207,7 +23182,6 @@ function viewConstructorDeclaration$returnType(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -23216,16 +23190,16 @@ function viewConstructorDeclaration$returnType(this: RecordHandle) {
 	);
 }
 function viewConstructorDeclaration$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 16, 5, 8, 5, 6);
+	return viewSlot<T.Suite>(this, 12, 3, 1, 6);
 }
 function viewConstructorDeclaration$typeParameters$native(this: RecordHandle) {
-	return viewSlot<T.TypeParams | undefined>(this, 3, 5, 8, 5, 3);
+	return viewSlot<T.TypeParams | undefined>(this, 3, 3, 1, 3);
 }
 function viewConstructorDeclaration$parameters$native(this: RecordHandle) {
-	return viewSlot<T.Parameters>(this, 8, 5, 8, 5, 4);
+	return viewSlot<T.Parameters>(this, 6, 3, 1, 4);
 }
 function viewConstructorDeclaration$returnType$native(this: RecordHandle) {
-	return viewSlot<T.Type | undefined>(this, 13, 3, 1, 0, 5);
+	return viewSlot<T.Type | undefined>(this, 9, 3, 1, 5);
 }
 function viewConstructorDeclaration(data: RecordPosition, tree: TreeHandle): T.ConstructorDeclaration.Parsed {
 	const node = {
@@ -23263,7 +23237,7 @@ function viewConstructorDeclaration(data: RecordPosition, tree: TreeHandle): T.C
 }
 
 function viewBlockClassDeclaration$statements(this: RecordHandle) {
-	return viewSlots<T.StatementClassDefinition>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.StatementClassDefinition>(this, 2, 1, 3, 1, 2);
 }
 function viewBlockClassDeclaration(data: RecordPosition, tree: TreeHandle): T.BlockClassDeclaration.Parsed {
 	const node = {
@@ -23291,17 +23265,17 @@ function viewBlockClassDeclaration(data: RecordPosition, tree: TreeHandle): T.Bl
 
 function viewSuiteBlockClassDeclaration$blockClassDeclaration(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.BlockClassDeclaration>(this, 2, 3, 8, 3, 2),
+		viewSlot<T.BlockClassDeclaration>(this, 2, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlots<T.StatementClassDefinition>(this, 2, 1, 3, 1, 0, 2);
+				return viewSlots<T.StatementClassDefinition>(this, 2, 1, 3, 1, 2);
 			}
 		],
 		true
 	);
 }
 function viewSuiteBlockClassDeclaration$blockClassDeclaration$native(this: RecordHandle) {
-	return viewSlot<T.BlockClassDeclaration>(this, 2, 3, 8, 3, 2);
+	return viewSlot<T.BlockClassDeclaration>(this, 2, 3, 1, 2);
 }
 function viewSuiteBlockClassDeclaration(data: RecordPosition, tree: TreeHandle): T.SuiteBlockClassDeclaration.Parsed {
 	const node = {
@@ -23329,20 +23303,20 @@ function viewSuiteBlockClassDeclaration(data: RecordPosition, tree: TreeHandle):
 
 function viewDecoratedDefinitionClassDeclaration$decorators(this: RecordHandle) {
 	return hoistRead(
-		viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2),
+		viewSlots<T.Decorator>(this, 2, 1, 3, 1, 2),
 		[
 			function (this: RecordHandle) {
-				return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+				return viewSlot<T.Expression>(this, 2, 4, 3, 2);
 			}
 		],
 		true
 	);
 }
 function viewDecoratedDefinitionClassDeclaration$definition(this: RecordHandle) {
-	return viewSlot<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>(this, 3, 24, 8, 24, 3);
+	return viewSlot<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>(this, 3, 3, 1, 3);
 }
 function viewDecoratedDefinitionClassDeclaration$decorators$native(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 2);
 }
 function viewDecoratedDefinitionClassDeclaration(
 	data: RecordPosition,
@@ -23373,7 +23347,7 @@ function viewDecoratedDefinitionClassDeclaration(
 }
 
 function viewNames$names(this: RecordHandle) {
-	return viewSlots<T.DottedName | T.AliasedImport>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.DottedName | T.AliasedImport>(this, 2, 1, 3, 1, 2);
 }
 function viewNames$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'names'), undefined);
@@ -23431,14 +23405,14 @@ function viewNames(data: RecordPosition, tree: TreeHandle): T.Names.Parsed {
 	};
 	node.$with = { names: $with$names, delimiter: $with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	holdReadItems(node, viewNames$listRead);
 	return node as unknown as T.Names.Parsed;
 }
 
 function viewAsPatternTarget$content(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2, true);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 2, true);
 }
 function viewAsPatternTarget(data: RecordPosition, tree: TreeHandle): T.AsPatternTarget.Parsed {
 	const node = {
@@ -23465,16 +23439,16 @@ function viewAsPatternTarget(data: RecordPosition, tree: TreeHandle): T.AsPatter
 }
 
 function viewFormatExpression$expression(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, 3, 4, 3, 0, 3);
+	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, 3, 4, 3, 3);
 }
 function viewFormatExpression$debug(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewFormatExpression$typeConversion(this: RecordHandle) {
-	return viewSlot<T.TypeConversion | undefined>(this, 7, 3, 1, 0, 4);
+	return viewSlot<T.TypeConversion | undefined>(this, 7, 3, 1, 4);
 }
 function viewFormatExpression$formatSpecifier(this: RecordHandle) {
-	return viewSlot<T.FormatSpecifier | undefined>(this, 10, 3, 8, 3, 5);
+	return viewSlot<T.FormatSpecifier | undefined>(this, 10, 3, 1, 5);
 }
 function viewFormatExpression(data: RecordPosition, tree: TreeHandle): T.FormatExpression.Parsed {
 	const node = {
@@ -23513,17 +23487,17 @@ function viewMethodDeclaration$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewMethodDeclaration$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
+	return viewSlot<T.Identifier>(this, 3, 3, 1, 3);
 }
 function viewMethodDeclaration$typeParameters(this: RecordHandle) {
-	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 6, 5, 8, 5, 4), [listElementsHop('items', 'items')], true);
+	return hoistRead(viewSlot<T.TypeParams | undefined>(this, 6, 3, 1, 4), [listElementsHop('items', 'items')], true);
 }
 function viewMethodDeclaration$parameters(this: RecordHandle) {
-	return hoistRead(viewSlot<T.Parameters>(this, 11, 5, 8, 5, 5), [listElementsHop('elements', 'items')], true);
+	return hoistRead(viewSlot<T.Parameters>(this, 9, 3, 1, 5), [listElementsHop('elements', 'items')], true);
 }
 function viewMethodDeclaration$returnType(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Type | undefined>(this, 16, 3, 1, 0, 6),
+		viewSlot<T.Type | undefined>(this, 12, 3, 1, 6),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -23531,7 +23505,6 @@ function viewMethodDeclaration$returnType(this: RecordHandle) {
 					2,
 					4,
 					3,
-					0,
 					2
 				);
 			}
@@ -23540,16 +23513,16 @@ function viewMethodDeclaration$returnType(this: RecordHandle) {
 	);
 }
 function viewMethodDeclaration$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 19, 5, 8, 5, 7);
+	return viewSlot<T.Suite>(this, 15, 3, 1, 7);
 }
 function viewMethodDeclaration$typeParameters$native(this: RecordHandle) {
-	return viewSlot<T.TypeParams | undefined>(this, 6, 5, 8, 5, 4);
+	return viewSlot<T.TypeParams | undefined>(this, 6, 3, 1, 4);
 }
 function viewMethodDeclaration$parameters$native(this: RecordHandle) {
-	return viewSlot<T.Parameters>(this, 11, 5, 8, 5, 5);
+	return viewSlot<T.Parameters>(this, 9, 3, 1, 5);
 }
 function viewMethodDeclaration$returnType$native(this: RecordHandle) {
-	return viewSlot<T.Type | undefined>(this, 16, 3, 1, 0, 6);
+	return viewSlot<T.Type | undefined>(this, 12, 3, 1, 6);
 }
 function viewMethodDeclaration(data: RecordPosition, tree: TreeHandle): T.MethodDeclaration.Parsed {
 	const node = {
@@ -23883,8 +23856,8 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -23903,8 +23876,8 @@ function wrapInteriorLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -24120,6 +24093,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.LineContinuationNewline]: (d, t) => wrapInteriorLeaf(d, t),
 	[TSKindId.StringFragment]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.EscapeInterpolation]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.LineContinuationNul]: (d, t) => wrapInteriorLeaf(d, t),
 	[TSKindId.Error]: (d, t) => wrapLeaf(d, t)
 };
 

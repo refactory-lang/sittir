@@ -2,7 +2,7 @@
 //! leaves on them until something reads them.
 
 use crate::render::SourceTable;
-use crate::slot::NodeCoordinate;
+use crate::slot::{NodeIdOrCoordinate, NodeIdOrOwnedCoordinate};
 
 /// The levels a writer has open: how many; for each, how many further
 /// opens asked for it at the position it opened (an open while armed:
@@ -67,7 +67,7 @@ impl Levels {
 /// text written after it disarms what the move opens.
 #[derive(Debug)]
 struct Held {
-    coord: NodeCoordinate,
+    node: NodeIdOrOwnedCoordinate,
     disarmed: bool,
 }
 
@@ -90,7 +90,7 @@ impl Depth {
     pub(super) fn levels(&mut self, sources: Option<&dyn SourceTable>) -> &mut Levels {
         if let Some(held) = self.held.take() {
             debug_assert!(!self.levels.armed, "a held move starts after its slice's text");
-            let moved = sources.map_or(0, |sources| sources.depth_move(&held.coord));
+            let moved = sources.map_or(0, |sources| sources.depth_move(held.node.at()));
             for _ in 0..moved.unsigned_abs() {
                 if moved > 0 {
                     self.levels.open();
@@ -109,9 +109,9 @@ impl Depth {
     /// just been written, making any move held before it first. Its closes
     /// then meet a disarmed level, so they merge no seam and clear no
     /// payload.
-    pub(super) fn hold(&mut self, coord: &NodeCoordinate, sources: Option<&dyn SourceTable>) {
+    pub(super) fn hold(&mut self, coord: NodeIdOrCoordinate<'_>, sources: Option<&dyn SourceTable>) {
         let _ = self.levels(sources);
-        self.held = Some(Held { coord: coord.clone(), disarmed: false });
+        self.held = Some(Held { node: coord.into(), disarmed: false });
     }
 
     /// Text was written: the last open is no longer armed, after any held

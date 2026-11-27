@@ -1040,6 +1040,12 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			return placed === undefined ? [] : [{ ...placed, name: route.name }];
 		});
 		const tested = new Set<string>();
+		const spelledPaths = entry.claim.predicates.flatMap((predicate) => {
+			const [value, ...more] = predicate.arguments;
+			if (predicate.operator !== 'eq' || value === undefined || more.length > 0 || !('text' in value)) return [];
+			const path = held(kind, predicate.subject ?? { up: 0, down: [] });
+			return path === undefined ? [] : [JSON.stringify(path)];
+		});
 		const claimed = [
 			...delimiterPresets(kind, entry),
 			...entry.pins.flatMap((pin) => {
@@ -1052,6 +1058,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				if (path === undefined) return [];
 				if ('text' in child) return placedText(path, child.text) ?? [];
 				if ('kinds' in child) {
+					if (spelledPaths.includes(JSON.stringify(path))) return [];
 					const filler = fillingSlot(guaranteed, routed, path);
 					if (filler !== undefined) return (tested.add(filler), []);
 					if (forms > 1 && builtThrough(guaranteed, routed, path)) return [];
@@ -1732,15 +1739,19 @@ function valueBuilds(
 }
 
 function withTakers(paths: Readonly<Record<string, PortableBuildPath>>, kindName: (kind: number) => string, diagnostics: PickDiagnostic[]): Record<string, PortableBuildPath> {
-	const takers = Object.entries(paths).flatMap(([path, built]) =>
-		Object.entries(built.builds ?? {}).flatMap(([scalar, kind]) => built.arms.filter((arm) => arm.kind === kind && arm.scalar === scalar).map((arm) => ({ path, scalar, arm })))
-	);
+	const takers = Object.entries(paths).flatMap(([path, built]) => [
+		...Object.entries(built.builds ?? {}).flatMap(([scalar, kind]) => built.arms.filter((arm) => arm.kind === kind && arm.scalar === scalar).map((arm) => ({ path, scalar, arm }))),
+		...built.arms.flatMap((arm) => {
+			const value = arm.literal?.value;
+			return value === undefined || !built.arms.every((other) => other.literal?.value === value) ? [] : [{ path, scalar: String(value), arm }];
+		})
+	]);
 	const kindsOf = new WeakMap<PortableSeat, ReadonlySet<number>>();
 	const sits = (arm: PortableBuildArm, seat: PortableSeat): boolean =>
 		(kindsOf.get(seat) ?? kindsOf.set(seat, new Set(seat.kinds)).get(seat)!).has(arm.kind) &&
 		(arm.holders === undefined || arm.holders.some(([holder, key]) => holder === seat.at[0] && key === seat.at[1]));
 	const stamped = (path: string, slot: PortableSlotRoute): PortableSlotRoute => {
-		const found = ARM_SCALARS.flatMap((scalar) => {
+		const found = [...ARM_SCALARS, 'true', 'false'].flatMap((scalar) => {
 			const fitting = takers.filter((taker) => taker.scalar === scalar && slot.seats.some((seat) => sits(taker.arm, seat)));
 			const outer = [...new Set(fitting.map((taker) => taker.path))].filter((at, _, all) => !all.some((other) => at.startsWith(`${other}.`)));
 			if (outer.length > 1)

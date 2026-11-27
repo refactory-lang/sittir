@@ -5,6 +5,7 @@ import {
 	differencesOf,
 	storageFactsOf,
 	verdictOf,
+	type AcceptedDifference,
 	type Difference,
 	type SourceFacts,
 	type StorageCheck,
@@ -22,11 +23,10 @@ const lookups = { slotsOf: await loadSlotAccessorOf('rust'), kindNameOf: await l
 
 const report = (
 	differences: readonly Difference[],
-	counts: Partial<Pick<StorageParityReport, 'measuredRuns'> & { sources: number }> = {}
+	counts: Partial<{ sources: number; nodes: number }> = {}
 ): StorageParityReport => ({
 	grammars: ['python', 'rust', 'typescript'],
-	compared: { snapshots: counts.sources ?? 1, renders: 1, layoutRuns: 1, rebuilds: 1, writeBacks: 1 },
-	measuredRuns: counts.measuredRuns ?? 1,
+	compared: { snapshots: counts.sources ?? 1, renders: 1, backerParity: counts.nodes ?? 1, rebuilds: 1, writeBacks: 1 },
 	differences
 });
 const rebuild = (grammar: string, objectText: string, arenaText: string): Difference => ({
@@ -94,59 +94,50 @@ describe('storage parity', () => {
 			expect(verdict.passes, check).toBe(false);
 			expect(verdict.unaccepted).toEqual(differences);
 		}
-		const runs: Difference = {
-			check: 'layoutRuns',
-			grammar: 'rust',
-			entry: 'source',
-			parity: { nodes: 3, differing: 0, runs: 2, measuredRuns: 1, differingRuns: 1, firstRun: 4 }
-		};
-		expect(verdictOf(report([runs])).passes).toBe(false);
+		const apart: Difference = { check: 'backerParity', grammar: 'rust', entry: 'source', parity: { nodes: 3, differing: 1, first: 2 } };
+		expect(verdictOf(report([apart])).passes).toBe(false);
 	});
 
+	const rootInner: AcceptedDifference = {
+		name: "a root's written-back inner side",
+		ceilings: { rust: 6 },
+		matches: (difference) => difference.check === 'writeBacks' && difference.node === 0 && difference.side === 'inner'
+	};
+	const shapes = [rootInner];
+
 	it('accepts an accepted shape up to its ceiling in each grammar, and fails one past it', () => {
-		const throwing = rebuild('rust', 'throws: Missing field `_content`', '(a)');
-		expect(verdictOf(report(Array.from({ length: 11 }, () => throwing))).passes).toBe(true);
-		const over = verdictOf(report(Array.from({ length: 12 }, () => throwing)));
+		const inner = writeBack('rust', 0, 'inner', false);
+		expect(verdictOf(report(Array.from({ length: 6 }, () => inner)), shapes).passes).toBe(true);
+		const over = verdictOf(report(Array.from({ length: 7 }, () => inner)), shapes);
 		expect(over.passes).toBe(false);
 		expect(over.unaccepted).toEqual([]);
-		expect(over.accepted).toContainEqual({
-			name: ACCEPTED_DIFFERENCES[0]!.name,
-			grammar: 'rust',
-			count: 12,
-			ceiling: 11
-		});
-		expect(verdictOf(report([rebuild('typescript', 'throws: Missing field', '(a)')])).passes).toBe(false);
+		expect(over.accepted).toContainEqual({ name: rootInner.name, grammar: 'rust', count: 7, ceiling: 6 });
+		expect(verdictOf(report([writeBack('typescript', 0, 'inner', false)]), shapes).passes).toBe(false);
+	});
+
+	it('refuses a rebuild that throws in either storage alone', () => {
+		expect(verdictOf(report([rebuild('rust', 'throws: Missing field `_content`', '(a)')])).unaccepted).toHaveLength(1);
 		expect(verdictOf(report([rebuild('rust', '(a)', 'throws: Missing field')])).unaccepted).toHaveLength(1);
 	});
 
 	it('reports an accepted count under its ceiling and passes', () => {
-		const verdict = verdictOf(report([]));
+		const verdict = verdictOf(report([]), shapes);
 		expect(verdict.passes).toBe(true);
-		expect(verdict.accepted).toContainEqual({
-			name: ACCEPTED_DIFFERENCES[0]!.name,
-			grammar: 'rust',
-			count: 0,
-			ceiling: 11
-		});
+		expect(verdict.accepted).toContainEqual({ name: rootInner.name, grammar: 'rust', count: 0, ceiling: 6 });
 	});
 
-	it("accepts a written-back side holding an ERROR in python and typescript, and a root's inner side in rust", () => {
-		expect(
-			verdictOf(
-				report([
-					writeBack('python', 3, 'trailing', true),
-					writeBack('typescript', 3, 'leading', true),
-					writeBack('rust', 0, 'inner', false)
-				])
-			).passes
-		).toBe(true);
-		expect(verdictOf(report([writeBack('rust', 1, 'inner', false)])).unaccepted).toHaveLength(1);
-		expect(verdictOf(report([writeBack('rust', 0, 'leading', false)])).unaccepted).toHaveLength(1);
-		expect(verdictOf(report([writeBack('rust', 3, 'trailing', true)])).passes).toBe(false);
+	it('accepts no difference between the storages, so a written-back side holding an ERROR or a root inner side fails', () => {
+		expect(ACCEPTED_DIFFERENCES).toEqual([]);
+		const verdict = verdictOf(
+			report([writeBack('python', 3, 'trailing', true), writeBack('typescript', 3, 'leading', true), writeBack('rust', 0, 'inner', false)])
+		);
+		expect(verdict.passes).toBe(false);
+		expect(verdict.unaccepted).toHaveLength(3);
+		expect(verdict.accepted).toEqual([]);
 	});
 
-	it('fails a report that read no source or measured no layout run, so parity cannot pass on nothing', () => {
+	it('fails a report that read no source or compared no node of its records, so parity cannot pass on nothing', () => {
 		expect(verdictOf(report([], { sources: 0 })).passes).toBe(false);
-		expect(verdictOf(report([], { measuredRuns: 0 })).passes).toBe(false);
+		expect(verdictOf(report([], { nodes: 0 })).passes).toBe(false);
 	});
 });

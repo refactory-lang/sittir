@@ -1,6 +1,6 @@
 import type { Snapshot } from '@sittir/types';
-import { decodeIndex, isCoordinate, type TreeHandle } from './read.ts';
-import { coordinateOf, enterPath, envelopeKindOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
+import { isCoordinate, type TreeHandle } from './read.ts';
+import { coordinateIndex, coordinateOf, enterPath, envelopeKindOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { TriviaSides } from './trivia.ts';
 import { builtEntryNode, isBuiltEntry, readCoordinate } from './built-arena.ts';
@@ -23,8 +23,8 @@ function snapshotTreeOf(value: object): SnapshotTree | undefined {
  * from its data and its geometry. Every node is the data and slots its node surface holds.
  *
  * - A tree-backed node takes its layout from one native measure of its subtree: its span from the
- *   node that holds it, and its sides as text with spans; a built record written into one of those
- *   sides is the snapshot of its node. An alias content keeps its span alone, since its sides are
+ *   node that holds it, and its sides as text with spans; a built record or a parsed node written
+ *   into one of those sides is the snapshot of its node. An alias content keeps its span alone, since its sides are
  *   its envelope's. A parsed root's `$errors` are its parse's, not its data, and are left out.
  * - A built node keeps its data with no span, and its sides (`sidesOf`): the ones it holds, else
  *   those of the node it was rebuilt from. A tree-backed node under it is measured from where it
@@ -83,7 +83,7 @@ function snapshotStep({ value, measure }: SnapshotTask, walk: SnapshotWalk): unk
 	const at = coordinateOf(value);
 	const tree = at === undefined ? undefined : (measure?.tree ?? snapshotTreeOf(value));
 	if (at === undefined || tree === undefined) return copyStep(value, walk, undefined);
-	const row = decodeIndex(at.$treeHandle);
+	const row = coordinateIndex(at, tree.built?.format.nodeId);
 	const measured = measure ?? measureOf(tree, row, value);
 	const layout = measured.rows.get(row);
 	if (layout === undefined) throw new Error(`snapshot: the measure of a parsed subtree holds no layout for its row ${row}`);
@@ -101,7 +101,7 @@ function measureOf(tree: SnapshotTree, row: number, value: object): Measure {
 function detachedLayout(layout: Record<string, unknown>, { tree, own }: Measure): Record<string, unknown> {
 	const visit = (entry: unknown): unknown => {
 		if (isBuiltEntry(entry)) return snapshotIn(builtEntryNode(entry, tree), undefined);
-		if (isCoordinate(entry)) return snapshotIn(readCoordinate(tree, entry, own), undefined);
+		if (isCoordinate(entry)) return snapshotIn('$node' in entry ? hydrateOn(tree, entry) : readCoordinate(tree, entry, own), undefined);
 		return entry;
 	};
 	if (isRecord(layout.trivia)) layout.trivia = mapSideEntries(layout.trivia as TriviaSides<unknown>, visit);
@@ -142,12 +142,10 @@ function finishCopy(value: Record<string, unknown>, out: Record<string, unknown>
 	const unitSides = unitSidesOf(value);
 	const units = unitSides === undefined ? undefined : mapUnitSides(unitSides, each);
 	const slots = slotsOf(value);
-	const separator = separatorOf(value);
 	const layout = {
 		...(sides === undefined ? {} : { trivia: mapSideEntries(sides as TriviaSides<unknown>, each) }),
 		...(units === undefined || units.length === 0 ? {} : { units }),
-		...(slots === undefined || slots.length === 0 ? {} : { slots }),
-		...(separator === undefined ? {} : { separator })
+		...(slots === undefined || slots.length === 0 ? {} : { slots })
 	};
 	if (Object.keys(layout).length > 0) out.$_layout = layout;
 }

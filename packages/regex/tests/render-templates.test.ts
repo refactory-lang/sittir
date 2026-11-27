@@ -10,7 +10,12 @@ const engines = {
 describe.each(['object', 'arena'] as const)('a render from templates in %s storage', (storage) => {
 	const engine = engines[storage];
 
-	it.each(['a(\nb)', '(\nb)', 'a(?:\nb)', '[-a-z]{2}\n\\.\\b(\n[a-z]*\n)'])('keeps the line breaks inside a group %j', (source) => {
-		expect(engine.diagnostics.renderTemplates(engine.parse(source))).toBe(source);
+	it.each([
+		['a(\nb)', 'a(b)'],
+		['(\nb)', '(b)'],
+		['a(?:\nb)', 'a(?:b)'],
+		['[-a-z]{2}\n\\.\\b(\n[a-z]*\n)', '[-a-z]{2}\\.\\b([a-z]*)']
+	])("lays out the line breaks inside a group %j with the options' gaps", (source, expected) => {
+		expect(engine.diagnostics.renderTemplates(engine.parse(source))).toBe(expected);
 	});
 });

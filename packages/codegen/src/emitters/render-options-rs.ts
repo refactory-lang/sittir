@@ -7,7 +7,7 @@ import { rustStringLiteral as q } from '../util/string-literal.ts';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { Delimiter } from '@sittir/common/delimiter';
 import { AssembledLeaf } from '../compiler/model/node-map.ts';
-import { LAYOUT_KIND_BITS, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
+import { LAYOUT_KIND_BITS, leafEdgesOf, terminatorOnlyKinds } from '../compiler/model/layout-kinds.ts';
 import {
 	BLANK_ARM,
 	type PreferenceArm,
@@ -15,7 +15,7 @@ import {
 } from '../compiler/model/site-preferences.ts';
 import type { DisplayUnions, DisplayUnionMember, NodeMap } from '../compiler/types.ts';
 import { displayNameOf } from '../compiler/model/display-name.ts';
-import { admitsDepth, type DepthAnchor, type DepthRegion, type EdgeArm } from '../compiler/model/render-rules.ts';
+import { admitsDepth, type EdgeArm } from '../compiler/model/render-rules.ts';
 import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf, siteKey } from '../dsl/primitives/spacing.ts';
 import type { SeamAddress, SeparatorSide, SpacingAddress } from '../types/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
@@ -94,19 +94,12 @@ export interface SitePath {
 	readonly index: number;
 }
 
-export interface PlannedDepthRegion {
-	readonly id: number;
-	readonly open: DepthAnchor;
-	readonly close: DepthAnchor;
-}
-
 export interface RenderOptionsPlan {
 	readonly displayUnions?: DisplayUnions;
 	readonly spacingSites: readonly SpacingSite[];
 	readonly sitePaths: readonly SitePath[];
 	readonly delimiterSites: readonly DelimiterSite[];
 	readonly depthSites: readonly DepthSites[];
-	readonly depthRegions: readonly PlannedDepthRegion[];
 	readonly indentId: number;
 	readonly dedentId: number;
 	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
@@ -130,6 +123,7 @@ const KIND_LINE_TERMINATED = 2;
 const KIND_LINE_BREAK_TERMINATED = 4;
 const KIND_ROOT = 8;
 const KIND_JOINS_NEXT = 16;
+const KIND_TERMINATOR_ONLY = 32;
 
 const DELIMITER_BITS: Readonly<Record<string, number>> = Object.fromEntries(
 	Object.entries(Delimiter).map(([member, bits]) => [`Delimiter.${member}`, bits])
@@ -168,7 +162,8 @@ function kindFlagsOf(kindEntries: readonly IdEntry[], nodeMap: NodeMap, joins: J
 			(lineTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_TERMINATED : 0) |
 			(lineBreakTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_BREAK_TERMINATED : 0) |
 			(nodeMap.nodes.get(entry.kind)?.grammarRoot === true ? KIND_ROOT : 0) |
-			([entry.kind, entry.symbolName, entry.parseName].some((name) => name !== undefined && joins.joinsNextKinds.has(name)) ? KIND_JOINS_NEXT : 0);
+			([entry.kind, entry.symbolName, entry.parseName].some((name) => name !== undefined && joins.joinsNextKinds.has(name)) ? KIND_JOINS_NEXT : 0) |
+			(terminatorOnlyKinds(nodeMap).has(entry.kind) ? KIND_TERMINATOR_ONLY : 0);
 		if (bits !== 0) flags.set(entry.id, (flags.get(entry.id) ?? 0) | bits);
 	}
 	return [...flags].map(([id, bits]) => ({ id, flags: bits })).sort((a, b) => a.id - b.id);
@@ -193,7 +188,6 @@ export function planRenderOptions(
 	whitespaceText: ReadonlyMap<string, string>,
 	declaredIndent: string | undefined,
 	grammar: string,
-	depthRegions: readonly DepthRegion[] = [],
 	seatWrappers: readonly SeatWrapper[] = []
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
@@ -288,9 +282,6 @@ export function planRenderOptions(
 			.map(({ path, site, index }) => ({ path: formatPreferencePath(path), segments: path, site, index })),
 		delimiterSites: delimiters,
 		depthSites: [...depthSites].map(([kind, sites]) => ({ kind, sites })).sort((a, b) => byTuple([a.kind], [b.kind])),
-		depthRegions: depthRegions
-			.map((region) => ({ id: idOf(kindEntries, region.kind, `the depth region of ${region.kind}`), open: region.open, close: region.close }))
-			.sort((a, b) => a.id - b.id),
 		indentId: idOfText(INDENT_TEXT),
 		dedentId: idOfText(DEDENT_TEXT),
 		whitespaceText: [...whitespaceText]
@@ -784,10 +775,6 @@ export function renderOptionsRs(
 	L.push('pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[');
 	for (const d of plan.depthSites) L.push(`    (${q(d.kind)}, &[${d.sites.map((site) => idLiteral('SiteId', site)).join(', ')}]),`);
 	L.push('];', '');
-	L.push('/// Per kind id, the stretches of its children its template indents one level, by their anchors.');
-	L.push('pub static DEPTH_REGIONS: &[::sittir_core::trivia_table::DepthRegion] = &[');
-	for (const r of plan.depthRegions) L.push(`    ::sittir_core::trivia_table::DepthRegion { kind: KindId(${r.id}), open: ${depthAnchorRs(r.open)}, close: ${depthAnchorRs(r.close)} },`);
-	L.push('];', '');
 	L.push('#[must_use]');
 	L.push("pub fn spacing_text(kind: KindId) -> &'static str {");
 	L.push('    match kind {');
@@ -860,11 +847,3 @@ export function renderOptionsRs(
 	return L.join('\n') + '\n';
 }
 
-function depthAnchorRs(anchor: DepthAnchor): string {
-	const path = '::sittir_core::trivia_table::DepthAnchor';
-	if (anchor === 'start') return `${path}::Start`;
-	if (anchor === 'end') return `${path}::End`;
-	return 'after' in anchor
-		? `${path}::After(&[${anchor.after.map(rustStringLiteral).join(', ')}])`
-		: `${path}::Before(&[${anchor.before.map(rustStringLiteral).join(', ')}])`;
-}

@@ -9,7 +9,7 @@ import { candidateData } from '../src/validate/read-render-parse.ts';
 
 afterAll(disposeNativeEngines);
 
-const py = await sharedEngine(() => createEngine(python));
+const py = await sharedEngine(() => createEngine(python, { nodeStorage: 'object' }));
 const native = await loadNativeEngine('python');
 const accessorOf = await loadSlotAccessorOf('python');
 const render = (node: AnyUntypedNode): string => native.render(node).toString();

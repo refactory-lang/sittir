@@ -7,16 +7,13 @@
 use crate::tree_sitter;
 use crate::options::{EdgeArm, Edges, ResolvedOptions, Side};
 use crate::types::{KindId, SiteId};
-use crate::render::{CoordinateError, Lent, RenderError, SourceTable};
+use crate::render::{CoordinateError, RenderError, SourceTable};
 use crate::slot::{CoordinateEdges, NodeCoordinate, SeamArm, SlotValue};
 
 /// Everything a render reads that is not the node itself.
 pub struct RenderContext<'a> {
     pub options: &'a ResolvedOptions,
     pub sources: &'a dyn SourceTable,
-    /// The arenas the render holds, lent to each lookup it makes through
-    /// `sources` that measures (`Lent`).
-    pub lent: Lent<'a>,
 }
 
 impl<'a> RenderContext<'a> {
@@ -24,17 +21,7 @@ impl<'a> RenderContext<'a> {
     /// no arena.
     #[must_use]
     pub fn new(options: &'a ResolvedOptions, sources: &'a dyn SourceTable) -> Self {
-        Self { options, sources, lent: Lent::NONE }
-    }
-
-    /// This context, lending `arenas`, which the render holds.
-    #[cfg(feature = "arena")]
-    #[must_use]
-    pub fn lending<'b>(&self, arenas: &'b dyn crate::arena::RecordArenas) -> RenderContext<'b>
-    where
-        'a: 'b,
-    {
-        RenderContext { options: self.options, sources: self.sources, lent: Lent::of(arenas) }
+        Self { options, sources }
     }
 }
 
@@ -66,7 +53,7 @@ pub trait ArmOf<O> {
 impl<T: crate::view::KindOf, const ADJACENT: bool> ArmOf<()> for SlotValue<T, ADJACENT> {
     fn arm_among(&self, (): &(), ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
         match self {
-            SlotValue::Coord(coord) => coord.kind_in(ctx.sources).filter(|kind| arms.iter().any(|a| a.arm == *kind)),
+            SlotValue::Coord(coord) => crate::slot::NodeIdOrCoordinate::from(coord).kind_in(ctx.sources).filter(|kind| arms.iter().any(|a| a.arm == *kind)),
             SlotValue::Node(t) => arms.iter().map(|a| a.arm).find(|kind| t.kind_in(&[*kind])),
         }
     }
@@ -85,18 +72,16 @@ impl<O, X: ArmOf<O> + ?Sized> ArmOf<O> for &mut X {
 }
 
 /// A rebuilt list's delimiter flags with its trailing flag as `source`, the
-/// list it was rebuilt from (`Layout::sides`), spells it, as a read list's
-/// are its own: the trailing flag (2) is set iff that list's last child that
-/// is not an extra is one of its `separators` (`SourceTable::last_list_child_kind`,
-/// the list's own kind being `kind`). A list rebuilt from none, or a table
-/// that cannot answer, takes `default`, the options table's. The leading
-/// flag is always `default`'s.
+/// list of `kind` it was rebuilt from (`Layout::sides`), resolved it
+/// (`SourceTable::list_delimiter`). A list rebuilt from none, or a table that
+/// cannot answer, takes `default`, the options table's. The leading flag is
+/// always `default`'s.
 #[must_use]
-pub fn source_trailing_delimiter(source: Option<&NodeCoordinate>, kind: KindId, separators: &[KindId], default: crate::types::Delimiter, ctx: &RenderContext<'_>) -> crate::types::Delimiter {
-    let Some(source) = source else { return default };
-    let Some(last) = ctx.sources.last_list_child_kind(source.tree, source.span, kind) else { return default };
+pub fn source_trailing_delimiter(source: Option<&crate::slot::NodeIdOrOwnedCoordinate>, kind: KindId, default: crate::types::Delimiter, ctx: &RenderContext<'_>) -> crate::types::Delimiter {
+    let Some(source) = source.map(crate::slot::NodeIdOrOwnedCoordinate::at) else { return default };
+    let Some(resolved) = ctx.sources.list_delimiter(source, kind) else { return default };
     let trailing = crate::types::Delimiter::TRAILING;
-    if separators.contains(&last) { default.with(trailing) } else { default.without(trailing) }
+    if resolved.has(trailing) { default.with(trailing) } else { default.without(trailing) }
 }
 
 /// The item at one end of a root's render, as the root's edge reads it: a
@@ -108,7 +93,9 @@ pub fn source_trailing_delimiter(source: Option<&NodeCoordinate>, kind: KindId, 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum EdgeItem<'a> {
     Coord(std::borrow::Cow<'a, crate::NodeCoordinate>),
-    Bytes { tree: crate::types::TreeId, span: crate::types::Span },
+    /// A node named by its id, framed by its sides as a coordinate is.
+    Node(crate::types::NodeId),
+    Bytes { node: crate::slot::NodeIdOrOwnedCoordinate, span: crate::types::Span },
     Snapshot(SnapshotEdge),
     Rebuilt,
 }
@@ -119,7 +106,8 @@ impl EdgeItem<'_> {
     pub fn into_owned(self) -> EdgeItem<'static> {
         match self {
             EdgeItem::Coord(coord) => EdgeItem::Coord(std::borrow::Cow::Owned(coord.into_owned())),
-            EdgeItem::Bytes { tree, span } => EdgeItem::Bytes { tree, span },
+            EdgeItem::Node(id) => EdgeItem::Node(id),
+            EdgeItem::Bytes { node, span } => EdgeItem::Bytes { node, span },
             EdgeItem::Snapshot(edge) => EdgeItem::Snapshot(edge),
             EdgeItem::Rebuilt => EdgeItem::Rebuilt,
         }
@@ -236,16 +224,23 @@ pub fn root_flanks(
     ctx: &RenderContext<'_>,
 ) -> Edges {
     let flank = |item: Option<EdgeItem<'_>>, side: Side, allowed: &[KindId]| {
-        let source_bytes = |tree: crate::types::TreeId, span: crate::types::Span| {
-            let source = ctx.sources.source_of(tree)?;
+        let source_bytes = |at: crate::slot::NodeIdOrCoordinate<'_>, span: crate::types::Span| {
+            let source = ctx.sources.source_of(at)?;
             match side {
                 Side::Before => source.get(..span.start as usize),
                 Side::After => source.get(span.end as usize..),
             }
         };
         let arm = match item? {
-            EdgeItem::Coord(coord) => crate::classify::classify_whitespace(source_bytes(coord.tree, ctx.sources.framed_span(&coord))?, allowed, table),
-            EdgeItem::Bytes { tree, span } => crate::classify::classify_whitespace(source_bytes(tree, span)?, allowed, table),
+            EdgeItem::Coord(coord) => {
+                let at = crate::slot::NodeIdOrCoordinate::from(&*coord);
+                crate::classify::classify_whitespace(source_bytes(at, ctx.sources.framed_span(at)?)?, allowed, table)
+            }
+            EdgeItem::Node(id) => {
+                let at = crate::slot::NodeIdOrCoordinate::of(id);
+                crate::classify::classify_whitespace(source_bytes(at, ctx.sources.framed_span(at)?)?, allowed, table)
+            }
+            EdgeItem::Bytes { node, span } => crate::classify::classify_whitespace(source_bytes(node.at(), span)?, allowed, table),
             EdgeItem::Snapshot(edge) => {
                 edge.outer(side)?;
                 let stamped = match side {
@@ -289,7 +284,7 @@ impl<T: SeatTarget + ?Sized> SeatTarget for Box<T> {
 /// (`SourceTable::seat_through`), as a wrapper node seats through its
 /// content.
 #[must_use]
-pub fn coord_seat(coord: &crate::slot::NodeCoordinate, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<SiteId> {
+pub fn coord_seat(coord: crate::slot::NodeIdOrCoordinate<'_>, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<SiteId> {
     let seat = |kind| seat_site(table, kind);
     coord.kind_in(ctx.sources).and_then(seat).or_else(|| ctx.sources.seat_through(coord, ctx.options.seat_wrappers, &seat))
 }
@@ -351,29 +346,6 @@ pub fn fill_gaps(items: &mut impl GapItems, slot: Option<&crate::layout::SlotLay
     }
 }
 
-/// A list slot's items' own separators, by each item's place in the slot:
-/// the separator its source spells before it where that is another than
-/// the slot's (`Prepare::source_separator`), as the candidate kind `kind_of`
-/// maps it to (the list's `separator_kind_of`). The first item has no
-/// separator before it. `None` when no item has one; otherwise the slot's
-/// entry stores them (`layout::SlotLayout::tokens`).
-#[must_use]
-pub fn slot_separators<'i, T: Prepare + 'i, const ADJACENT: bool>(
-    items: impl Iterator<Item = Option<&'i SlotValue<T, ADJACENT>>>,
-    kind_of: fn(KindId) -> Option<KindId>,
-    ctx: &RenderContext<'_>,
-) -> Option<Vec<Option<KindId>>> {
-    separators(items.map(|item| item.map(|item| item.source_separator(ctx))), kind_of)
-}
-
-/// `slot_separators` over any slot's items: each present item's own
-/// separator (`Prepare::source_separator`), an absent one `None`.
-#[must_use]
-pub fn separators(items: impl Iterator<Item = Option<Option<KindId>>>, kind_of: fn(KindId) -> Option<KindId>) -> Option<Vec<Option<KindId>>> {
-    let tokens: Vec<Option<KindId>> = items.enumerate().map(|(at, item)| item.filter(|_| at > 0).flatten().and_then(kind_of)).collect();
-    tokens.iter().any(Option::is_some).then_some(tokens)
-}
-
 impl<T, const ADJACENT: bool> PresentItems for Vec<&mut SlotValue<T, ADJACENT>> {
     fn present(&self) -> usize {
         self.len()
@@ -419,7 +391,7 @@ impl<T: SeatTarget, const ADJACENT: bool> SeatItems for Vec<&mut SlotValue<T, AD
                 }
             }
             SlotValue::Coord(coord) => {
-                if let Some(site) = coord_seat(coord, table, ctx) {
+                if let Some(site) = coord_seat((&*coord).into(), table, ctx) {
                     seat_coordinate(&mut coord.edges, site, ctx);
                 }
             }
@@ -511,14 +483,6 @@ pub trait Prepare {
         None
     }
 
-    /// The separator this value's source spells before it as a list item,
-    /// as a grammar id, where it is not the one its slot renders
-    /// (`layout::source_separator`).
-    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<KindId> {
-        let _ = ctx;
-        None
-    }
-
     /// The node the cursor is on read one level into this type
     /// (`read::read_coordinate`), when the type reads; `None` for a value no
     /// read produces.
@@ -559,7 +523,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         crate::stack::grown(|| {
             if let SlotValue::Node(node) = self {
-                if let Some(at) = node.source_coordinate().filter(|at| ctx.sources.renders_as_source(at)).cloned() {
+                if let Some(at) = node.source_coordinate().filter(|at| ctx.sources.renders_as_source((*at).into())).cloned() {
                     let seated = node.gap_edges().and_then(|edges| seated_edges(*edges));
                     *self = SlotValue::Coord(NodeCoordinate { edges: seated, ..at });
                 }
@@ -575,7 +539,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
                         *self = SlotValue::Node(node);
                         return Ok(());
                     }
-                    coord.edges = coordinate_edges(coord, coord.edges, ctx);
+                    coord.edges = coordinate_edges((&*coord).into(), coord.edges, ctx);
                     Ok(())
                 }
                 SlotValue::Node(t) => t.prepare(ctx),
@@ -589,24 +553,26 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
             SlotValue::Coord(_) => None,
         }
     }
-
-    /// A coordinate's is its source's, while its neighbour before is still
-    /// its source's.
-    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<KindId> {
-        match self {
-            SlotValue::Node(t) => t.source_separator(ctx),
-            SlotValue::Coord(coord) if coord.writes.as_ref().is_some_and(|writes| writes.changed.leading) => None,
-            SlotValue::Coord(coord) => ctx.sources.separator_before(coord, ctx.lent),
-        }
-    }
 }
 
 /// A coordinate's edges once it is prepared: its kind's edge row (its stamped
 /// kind's, or, for a display kind with no edge row of its own, its grammar
 /// kind's), with each side its holder seated (`seated`) set over it.
 #[must_use]
-pub fn coordinate_edges(coord: &NodeCoordinate, seated: Option<CoordinateEdges>, ctx: &RenderContext<'_>) -> Option<CoordinateEdges> {
-    let mut edges = [coord.kind, ctx.sources.kind_of(coord)].into_iter().flatten().find_map(|kind| ctx.options.edge_arms(kind));
+pub fn coordinate_edges(coord: crate::slot::NodeIdOrCoordinate<'_>, seated: Option<CoordinateEdges>, ctx: &RenderContext<'_>) -> Option<CoordinateEdges> {
+    edges_seated([coord.stamp(ctx.sources), ctx.sources.kind_of(coord)].into_iter().flatten().find_map(|kind| ctx.options.edge_arms(kind)), seated)
+}
+
+/// The edges a parsed unit of `kind` that no row names renders between: its
+/// kind's, under what its holder `seated` on it, as a coordinate's.
+#[cfg(feature = "arena")]
+#[must_use]
+pub fn unit_coordinate_edges(kind: KindId, seated: Option<CoordinateEdges>, ctx: &RenderContext<'_>) -> Option<CoordinateEdges> {
+    edges_seated(ctx.options.edge_arms(kind), seated)
+}
+
+/// `edges`, each side `seated` sets taking its arm.
+fn edges_seated(mut edges: Option<CoordinateEdges>, seated: Option<CoordinateEdges>) -> Option<CoordinateEdges> {
     if let Some(seated) = seated {
         let edges = edges.get_or_insert(CoordinateEdges { before: None, after: None });
         if seated.before.is_some() {
@@ -617,6 +583,20 @@ pub fn coordinate_edges(coord: &NodeCoordinate, seated: Option<CoordinateEdges>,
         }
     }
     edges
+}
+
+/// The node `at` names, checked against its source and between its kind's
+/// edges (`coordinate_edges`), as a render root that renders as its bytes.
+///
+/// # Errors
+///
+/// A node whose bytes its source does not hold.
+pub fn prepared_source<'c>(at: crate::slot::NodeIdOrCoordinate<'c>, ctx: &RenderContext<'_>) -> Result<crate::slot::NodeIdOrCoordinate<'c>, RenderError> {
+    at.resolve(ctx.sources)?;
+    Ok(match at {
+        crate::slot::NodeIdOrCoordinate::NodeId { id, edges, changed } => crate::slot::NodeIdOrCoordinate::NodeId { id, edges: coordinate_edges(at, edges, ctx), changed },
+        coordinate @ crate::slot::NodeIdOrCoordinate::Coordinate(_) => coordinate,
+    })
 }
 
 /// The seams a read node's base edges hold, as a coordinate holds them, when
@@ -648,12 +628,12 @@ pub fn seat_read_node(edges: &mut Edges, seated: CoordinateEdges) {
 /// the read (`ReadCtx::with_changed`); `None` for any other, or when `T`
 /// reads nothing.
 pub(crate) fn read_edited<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> Result<Option<T>, CoordinateError> {
-    let edited = ctx.sources.edited_within(coord);
+    let edited = ctx.sources.edited_within(coord.into());
     if !edited && !ctx.sources.reads_templates() {
         return Ok(None);
     }
     let mut node = None;
-    ctx.sources.read_node(coord.tree, coord.index, &mut |cursor, read| {
+    ctx.sources.read_node(coord, &mut |cursor, read| {
         let at = cursor.node();
         if !edited && !T::reads_record(crate::read::grammar_id(&at), crate::read::display_id(&at)) {
             return;
@@ -706,10 +686,6 @@ impl<T: Prepare> Prepare for Option<T> {
     fn gap_edges(&mut self) -> Option<&mut Edges> {
         self.as_mut()?.gap_edges()
     }
-
-    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<KindId> {
-        self.as_ref()?.source_separator(ctx)
-    }
 }
 
 impl<T: Prepare> Prepare for Box<T> {
@@ -736,10 +712,6 @@ impl<T: Prepare> Prepare for Box<T> {
     fn gap_edges(&mut self) -> Option<&mut Edges> {
         (**self).gap_edges()
     }
-
-    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<KindId> {
-        (**self).source_separator(ctx)
-    }
 }
 
 macro_rules! inert {
@@ -765,8 +737,8 @@ mod tests {
 
     struct Sources(HashMap<crate::types::TreeId, Arc<str>>);
     impl SourceTable for Sources {
-        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
-            self.0.get(&tree_id).map(|source| &**source)
+        fn source_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
+            self.0.get(&at.tree()?).map(|source| &**source)
         }
     }
 
@@ -805,48 +777,45 @@ mod tests {
         assert_eq!(before_flank(&coordinate(1, 4), "\n#!\n"), Some(NEWLINE));
     }
 
-    const COMMA: KindId = KindId(9);
-    const ITEM: KindId = KindId(4);
-
-    /// A table that holds trees: the list a flank names ends in a child of kind `last`, or the table cannot answer.
-    struct ListTrees(Option<KindId>);
+    /// A table that holds trees: the list a flank names resolved `resolved`, or the table cannot answer.
+    struct ListTrees(Option<crate::types::Delimiter>);
     impl SourceTable for ListTrees {
-        fn source_of(&self, _: crate::types::TreeId) -> Option<&str> {
+        fn source_of(&self, _: crate::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
             None
         }
-        fn last_list_child_kind(&self, _: crate::types::TreeId, _: Span, _: crate::types::KindId) -> Option<crate::types::KindId> {
+        fn list_delimiter(&self, _: crate::slot::NodeIdOrCoordinate<'_>, _: KindId) -> Option<crate::types::Delimiter> {
             self.0
         }
     }
 
-    /// The delimiter a list rebuilt from one whose source ends in a child of kind `last` (rebuilt from none when not `rebuilt`) takes over the options default `default`.
-    fn trailing(last: Option<KindId>, rebuilt: bool, default: u8) -> u8 {
-        let sources = ListTrees(last);
+    /// The delimiter a list rebuilt from one that resolved `resolved` (rebuilt from none when not `rebuilt`) takes over the options default `default`.
+    fn trailing(resolved: Option<u8>, rebuilt: bool, default: u8) -> u8 {
+        let sources = ListTrees(resolved.map(crate::types::Delimiter));
         let options = ResolvedOptions::default();
         let ctx = RenderContext::new(&options, &sources);
         let source = rebuilt.then(|| coordinate(2, 7));
-        super::source_trailing_delimiter(source.as_ref(), crate::types::KindId(1), &[COMMA], crate::types::Delimiter(default), &ctx).get()
+        super::source_trailing_delimiter(source.map(crate::slot::NodeIdOrOwnedCoordinate::Coordinate).as_ref(), KindId(1), crate::types::Delimiter(default), &ctx).get()
     }
 
     #[test]
-    fn a_rebuilt_list_keeps_its_sources_trailing_separator() {
-        assert_eq!(trailing(Some(COMMA), true, 0), 2);
+    fn a_rebuilt_list_keeps_its_sources_trailing_delimiter() {
+        assert_eq!(trailing(Some(2), true, 0), 2);
     }
 
     #[test]
-    fn a_rebuilt_list_whose_source_has_no_trailing_separator_clears_a_trailing_default() {
-        assert_eq!(trailing(Some(ITEM), true, 2), 0);
+    fn a_rebuilt_list_whose_source_has_no_trailing_delimiter_clears_a_trailing_default() {
+        assert_eq!(trailing(Some(0), true, 2), 0);
     }
 
     #[test]
     fn a_list_rebuilt_from_none_or_a_table_with_no_tree_takes_the_options_default() {
-        assert_eq!(trailing(Some(COMMA), false, 0), 0);
+        assert_eq!(trailing(Some(2), false, 0), 0);
         assert_eq!(trailing(None, true, 2), 2);
     }
 
     #[test]
     fn the_leading_flag_always_comes_from_the_options_default() {
-        assert_eq!(trailing(Some(COMMA), true, 1), 3);
-        assert_eq!(trailing(Some(ITEM), true, 3), 1);
+        assert_eq!(trailing(Some(2), true, 1), 3);
+        assert_eq!(trailing(Some(1), true, 3), 1);
     }
 }

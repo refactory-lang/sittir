@@ -82,6 +82,18 @@ impl HeapBytes for BuiltEntry {
 pub struct RecordEntry<T> {
     pub record: BuiltEntry,
     pub store: Option<crate::trivia_store::TriviaStore<T>>,
+    /// Set on a record a read left whose node renders as its source bytes.
+    pub as_source: Option<SourceEntry>,
+}
+
+/// What a record a read left renders as its source with: its bytes, the
+/// entry of the source they index, and the seams prepare gave it.
+#[cfg(feature = "arena")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SourceEntry {
+    pub span: crate::types::Span,
+    pub source: crate::arena::Address,
+    pub edges: Option<crate::slot::CoordinateEdges>,
 }
 
 /// The store a record entry holds is a handle on its engine's store, whose
@@ -89,7 +101,7 @@ pub struct RecordEntry<T> {
 #[cfg(feature = "arena")]
 impl<T> HeapBytes for RecordEntry<T> {
     fn heap_bytes(&self) -> usize {
-        let Self { record, store: _ } = self;
+        let Self { record, store: _, as_source: _ } = self;
         record.heap_bytes()
     }
 }
@@ -98,6 +110,10 @@ impl<T: Render + 'static> Render for TriviaEntry<T> {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         match self {
             Self::Value(value) => value.render(w),
+            #[cfg(feature = "arena")]
+            Self::Record(RecordEntry { record, as_source: Some(source), .. }) => {
+                crate::slot::write_coordinate(crate::slot::NodeIdOrCoordinate::NodeId { id: crate::types::NodeId::record(record.at.0), edges: source.edges, changed: crate::slot::ChangedEdges::default() }, false, w)
+            }
             #[cfg(feature = "arena")]
             Self::Record(entry) => {
                 let store = entry.store.as_ref().ok_or(crate::render::RenderError::Record(crate::arena::ARENA_RELEASED))?;
@@ -129,6 +145,21 @@ pub trait TriviaSeam: 'static {
         Self: Sized,
     {
         None
+    }
+}
+
+impl<T> TriviaEntry<T> {
+    /// The node an entry renders as its source names, which source it is
+    /// (a tree's id, or a read's entry) and the bytes it spans; none for an
+    /// entry that renders any other way.
+    #[must_use]
+    pub fn source_bytes(&self) -> Option<(crate::slot::NodeIdOrOwnedCoordinate, (bool, u32), crate::types::Span)> {
+        match self {
+            Self::Value(SlotValue::Coord(coord)) => Some((crate::slot::NodeIdOrOwnedCoordinate::Coordinate(coord.clone()), (false, coord.tree.0), coord.span)),
+            #[cfg(feature = "arena")]
+            Self::Record(RecordEntry { record, as_source: Some(source), .. }) => Some((crate::slot::NodeIdOrOwnedCoordinate::NodeId(crate::types::NodeId::record(record.at.0)), (true, source.source.0), source.span)),
+            _ => None,
+        }
     }
 }
 
@@ -208,8 +239,17 @@ impl<T: crate::prepare::Prepare> crate::prepare::Prepare for NodeTrivia<T> {
     /// kind's edges, as a coordinate in a slot does.
     fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::RenderError> {
         let sides = self.leading.iter_mut().chain(self.trailing.iter_mut());
-        for value in sides.chain(self.inner.iter_mut()).flatten().filter_map(TriviaEntry::value_mut) {
-            value.prepare(ctx)?;
+        for entry in sides.chain(self.inner.iter_mut()).flatten() {
+            #[cfg(feature = "arena")]
+            if let TriviaEntry::Record(RecordEntry { record, as_source: Some(source), .. }) = entry {
+                let at = crate::slot::NodeIdOrCoordinate::of(crate::types::NodeId::record(record.at.0));
+                at.resolve(ctx.sources)?;
+                source.edges = crate::prepare::coordinate_edges(at, source.edges, ctx);
+                continue;
+            }
+            if let Some(value) = entry.value_mut() {
+                value.prepare(ctx)?;
+            }
         }
         Ok(())
     }
@@ -225,24 +265,18 @@ pub struct TriviaText {
     /// In a snapshot, where the entry lies: its span measured from the start
     /// of its owner's holder.
     pub span: Option<crate::points::PointSpan>,
-    /// The in-line adjacency of an entry the source fixes in place (an
-    /// `ERROR` region, a line continuation): the source's whitespace right
-    /// before and right after it, up to the tokens beside it on its line,
-    /// empty where it touches them, and `None` on a side where a line break
-    /// or the file's edge lies between (`trivia_table::Adjacency`). The
-    /// entry writes it verbatim around itself, in place of any seam. A
-    /// comment has none.
+    /// The in-line whitespace a caller writes right before and right after
+    /// an entry the source fixes in place (an `ERROR` region, a line
+    /// continuation), empty where it touches the tokens beside it, and
+    /// `None` where none is written. The entry writes it verbatim around
+    /// itself, in place of any seam. A read writes none.
     pub before: Option<String>,
     pub after: Option<String>,
-    /// Read from a live tree, the bytes of its source the entry spans: a
-    /// recording render anchors its text there, as it anchors a slice. A
-    /// snapshot's entry has its `span` instead, and a written one neither.
-    pub bytes: Option<crate::types::Span>,
 }
 
 impl HeapBytes for TriviaText {
     fn heap_bytes(&self) -> usize {
-        let Self { kind: _, text, span, before, after, bytes: _ } = self;
+        let Self { kind: _, text, span, before, after } = self;
         text.heap_bytes() + span.heap_bytes() + before.heap_bytes() + after.heap_bytes()
     }
 }
@@ -252,39 +286,51 @@ impl TriviaText {
     /// snapshot and no adjacency.
     #[must_use]
     pub fn of(kind: KindId, text: &str) -> Self {
-        Self { kind, text: text.to_owned(), span: None, before: None, after: None, bytes: None }
+        Self { kind, text: text.to_owned(), span: None, before: None, after: None }
     }
 
-    /// Whether the entry writes itself verbatim with its adjacency, in place
-    /// of any seam: an `ERROR` always, any other entry when it carries an
-    /// adjacency.
+    /// Whether the entry writes itself verbatim with the whitespace a caller
+    /// gave it, in place of any seam.
     #[must_use]
     pub fn verbatim(&self) -> bool {
-        self.kind == KindId::ERROR || self.before.is_some() || self.after.is_some()
+        self.before.is_some() || self.after.is_some()
     }
 
-    /// The entry of `kind` spanning `span` of `source`, with the in-line runs
-    /// `adjacent` names before and after it, and `at` where a snapshot
-    /// places it; an entry no snapshot places is a live read's, and keeps
-    /// the bytes it spans.
+    /// The entry of `kind` spanning `span` of `source`, with no adjacency,
+    /// and `at` where a snapshot places it; an entry no snapshot places is a
+    /// live read's, and keeps the bytes it spans.
     #[must_use]
-    pub fn of_source(kind: KindId, source: &str, span: crate::types::Span, adjacent: Option<crate::trivia_table::Adjacency>, at: Option<crate::points::PointSpan>) -> Self {
-        let slice = |run: Option<crate::types::Span>| run.map(|run| source[run.range()].to_owned());
-        let (before, after) = adjacent.map_or((None, None), |adjacent| (slice(adjacent.before), slice(adjacent.after)));
-        Self { kind, text: source[span.range()].to_owned(), span: at, before, after, bytes: at.is_none().then_some(span) }
+    pub fn of_source(kind: KindId, source: &str, span: crate::types::Span, at: Option<crate::points::PointSpan>) -> Self {
+        Self { kind, text: source[span.range()].to_owned(), span: at, before: None, after: None }
+    }
+}
+
+impl TriviaText {
+    /// Write an entry of `kind` with `text` and no adjacency, as a built
+    /// entry renders: an `ERROR` as its text between the seams the options
+    /// write beside it, its last token joining what follows; any other
+    /// between its kind's edges, holding the line end its kind leaves.
+    pub(crate) fn write(kind: KindId, text: &str, w: &mut dyn RenderSink) -> RenderResult {
+        if kind == KindId::ERROR {
+            if !text.is_empty() {
+                w.join_arm(crate::render::JoinArm::NEXT);
+            }
+            return w.text(text);
+        }
+        w.edge(kind, Side::Before, None);
+        w.text(text)?;
+        w.edge(kind, Side::After, None);
+        w.end_line_after(kind);
+        Ok(())
     }
 }
 
 impl Render for TriviaText {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         if self.verbatim() {
-            return w.verbatim(self.before.as_deref(), &self.text, self.after.as_deref(), self.bytes);
+            return w.verbatim(self.before.as_deref(), &self.text, self.after.as_deref());
         }
-        w.edge(self.kind, Side::Before, None);
-        w.text(&self.text)?;
-        w.edge(self.kind, Side::After, None);
-        w.end_line_after(self.kind);
-        Ok(())
+        Self::write(self.kind, &self.text, w)
     }
 }
 
@@ -547,7 +593,9 @@ fn join(gap: LayoutKinds, w: &mut dyn RenderSink) {
 
 /// A whitespace entry's text, which replaces the seam at its gap. Right
 /// after an entry (`after_entry`) it is kept to at least the line break that
-/// entry left pending; anywhere else it replaces the gap's seam outright.
+/// entry left pending; anywhere else it replaces the gap's seam, save that a
+/// blank-line entry leaves a wider seam standing, so the gap takes the larger
+/// of the two (`SpacingWriter::trivia_seam`).
 fn whitespace(gap: LayoutKinds, after_entry: bool, w: &mut dyn RenderSink) {
     if keeps_break(gap, after_entry, w) {
         w.trivia_seam(LayoutKinds::NEWLINE);
@@ -696,7 +744,7 @@ impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::FromNapiValue
             if let Some(at) = unsafe { crate::boundary::property_whole::<u32>(env, napi_val, c"$record", "TriviaEntry")? } {
                 // SAFETY: `napi_val` is a live object in `env`.
                 let kind = unsafe { crate::boundary::required(env, napi_val, c"$type", "TriviaEntry")? };
-                return Ok(Self::Record(RecordEntry { record: BuiltEntry { kind, at: crate::arena::Address(at) }, store: None }));
+                return Ok(Self::Record(RecordEntry { record: BuiltEntry { kind, at: crate::arena::Address(at) }, store: None, as_source: None }));
             }
         }
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
@@ -748,6 +796,12 @@ impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::ToNapiValue for TriviaE
             // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
             Self::Value(value) => unsafe { SlotValue::to_napi_value(env, value) },
             #[cfg(feature = "arena")]
+            Self::Record(RecordEntry { record: BuiltEntry { kind, at }, as_source: Some(source), .. }) => {
+                use crate::boundary::{object_with_present, present};
+                // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
+                unsafe { object_with_present(env, &[present(env, c"$node", Some(at.0))?, present(env, c"$span", Some(source.span))?, present(env, c"$type", Some(u32::from(kind.0)))?]) }
+            }
+            #[cfg(feature = "arena")]
             Self::Record(RecordEntry { record: BuiltEntry { kind, at }, .. }) => {
                 use crate::boundary::{object_with_present, present};
                 // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
@@ -774,7 +828,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
             before: unsafe { crate::boundary::property(env, obj, c"$before")? },
             // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             after: unsafe { crate::boundary::property(env, obj, c"$after")? },
-            bytes: None,
         })
     }
 }

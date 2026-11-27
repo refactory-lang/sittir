@@ -12,7 +12,7 @@ use sittir_python::render::node::{
 
 struct NoSources;
 impl SourceTable for NoSources {
-    fn source_of(&self, _tree_id: sittir_core::types::TreeId) -> Option<&str> {
+    fn source_of(&self, _: sittir_core::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
         None
     }
 }
@@ -24,6 +24,6 @@ fn an_empty_suite_block_closes_the_indent_it_opened() {
     let block = BlockNode::new(None, Vec::new(), None);
     let suite = SuiteBlockNode::new(None, ::sittir_core::SlotValue::Node(block));
     let root: RenderRoot = ::sittir_core::SlotValue::Node(AnyNode::SuiteBlock(suite));
-    let (_, rendered) = render_node_parts(root, &ctx, None).expect("render");
+    let (_, rendered) = render_node_parts(root, &ctx).expect("render");
     assert!(!rendered.contains('\u{FDD0}'));
 }

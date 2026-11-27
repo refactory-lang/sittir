@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { boundaryTableOf, type BoundaryInputs, type BoundarySlot } from '../boundary-arms.ts';
+import { boundaryTableOf, type BoundaryInputs, type BoundaryMember, type BoundarySlot } from '../boundary-arms.ts';
 import type { Body } from '../render-body.ts';
 
 const HOLDER = 10;
@@ -66,7 +66,43 @@ function holding(child: string, hidden: Record<string, readonly (HiddenSlot | Bo
 	return { ...outer, templates, kindOf: (kind) => ({ ...outer.kindOf(kind), hidden: kind.startsWith('_') }) };
 }
 
+const ENUM = 40;
+const site = (at: number) => ({ at: 'site' as const, site: at });
+
+function holdingEnum(members: readonly BoundaryMember[], tokens: Record<string, number> = {}): BoundaryInputs {
+	const inputs = inputsOf([{ kind: 'seam', field: 'open' }, { kind: 'slot', name: 'child' }], { child: { presence: 'required', prefix: '', suffix: '', elements: [{ kind: 'choice' }], fields: [] } }, tokens);
+	return { ...inputs, members: new Map([['choice', members]]), kindOf: (kind) => ({ id: kind === 'holder' ? HOLDER : kind === 'choice' ? ENUM : undefined, hidden: false }) };
+}
+
 describe('boundaryTableOf', () => {
+	it("gives a holder of a visible enum an arm for each member, placing the enum's marks and the member's", () => {
+		const table = boundaryTableOf(holdingEnum([{ text: '+', id: 30, before: 8, after: 9 }]));
+		expect(table.dropped).toEqual([]);
+		expect(table.rows.find((row) => row.kind === HOLDER)).toEqual({
+			kind: HOLDER,
+			before: [
+				{ next: 30, marks: [site(SITE), site(8)] },
+				{ next: ENUM, marks: [site(SITE)] }
+			],
+			after: [{ next: 30, marks: [site(9)] }]
+		});
+	});
+
+	it('places a member spelled in two tokens by its own sites on both sides', () => {
+		const table = boundaryTableOf(
+			holdingEnum(
+				[
+					{ text: 'unique symbol', id: 31, before: 8, after: 9 },
+					{ text: 'symbol', id: 32, before: 10, after: 11 }
+				],
+				{ symbol: 32 }
+			)
+		);
+		const holder = table.rows.find((row) => row.kind === HOLDER)!;
+		expect(holder.before.find((arm) => arm.next === 31)?.marks).toEqual([site(SITE), site(8)]);
+		expect(holder.after.find((arm) => arm.next === 31)?.marks).toEqual([site(9)]);
+	});
+
 	it('splits the arms one child kind reaches through two slots by the field the tree tags it with', () => {
 		const table = boundaryTableOf(listThenLast({ members: [1], last: [2] }));
 		expect(table.dropped).toEqual([]);

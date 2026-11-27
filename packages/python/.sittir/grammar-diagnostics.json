@@ -899,38 +899,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.boolean.false: arm 70 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.boolean.true: arm 69 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.ellipsis: arm 63 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.null: arm 71 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "literal.number.integer.imaginary: arm 99's builder takes its text"
   },
   {
@@ -939,7 +907,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.bytes: a preset at stringStart.prefix below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -947,7 +915,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes.multiline: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.bytes.multiline: a preset at stringStart.prefix below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -971,7 +939,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated: a preset at stringStart.prefix below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -979,7 +947,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.deferred: a preset at stringStart.prefix below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -987,7 +955,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.multiline: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.deferred.multiline: a preset at stringStart.prefix below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -995,7 +963,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.raw: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.deferred.raw: a preset at stringStart.prefix below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -1003,7 +971,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.raw.multiline: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.deferred.raw.multiline: a preset at stringStart.prefix below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -1011,7 +979,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.multiline: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.multiline: a preset at stringStart.prefix below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -1019,7 +987,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.raw: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.raw: a preset at stringStart.prefix below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -1027,7 +995,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.raw.multiline: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.interpolated.raw.multiline: a preset at stringStart.prefix below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -1059,7 +1027,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.unicode: a preset at stringStart.prefix that is not one keyword or text"
+    "message": "literal.string.unicode: a preset at stringStart.prefix below a holder with no builder"
   },
   {
     "scope": "grammar",

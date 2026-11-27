@@ -295,8 +295,8 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		const rendered = native.render(target, renderOptions);
 		return renderChain === undefined ? measured(target, rendered) : interceptedRender(renderCall(target, renderOptions), renderChain, rendered, () => materializeNative(target, rendered), writeText);
 	};
-	const parseAndBind = (source: string) => {
-		const tree = native.parseTree(source);
+	const parseAndBind = (source: string, parseOptions?: ParseOptions) => {
+		const tree = native.parseTree(source, parseOptions);
 		bindTree(tree, handle);
 		return tree;
 	};
@@ -380,6 +380,11 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		}) as Engine<API, M>['isEmptyNode'],
 		parse(source, parseOptions) {
 			const run = (): API['root'] => {
+				if (handle.builtArena !== undefined) {
+					const parsed = handle.builtArena.parse(source, parseOptions) as API['root'];
+					if (parseOptions?.errors === 'throw' && parsed.$errors.length > 0) throw new ParseErrors(parsed.$errors);
+					return parsed;
+				}
 				const { root, tree } = readAndBind(source, parseOptions);
 				if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
 				return wrapRegistered(root, tree, hooks.wrap);

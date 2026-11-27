@@ -74,7 +74,6 @@ fn render_function<N: FunctionFields + ?Sized>(node: &N, w: &mut dyn RenderSink)
         template: "({})",
         before: KindId::BLANK,
         token: ",",
-        separators: Some((node.layout().slot_tokens("_parameters"), |_| ";")),
         after: KindId::BLANK,
         leading: false,
         trailing: false,

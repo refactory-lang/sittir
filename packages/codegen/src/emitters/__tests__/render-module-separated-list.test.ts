@@ -200,7 +200,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		expect(emitted).toContain('trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),');
 		expect(emitted).toMatch(/let member_separator: fn\(KindId\) -> &'static str = \|kind\| match kind \{ KindId\(3\) => ",", KindId\(4\) => ";", _ => [^}]+ \};/);
 		expect(emitted).toContain('token: node.separator_kind().map_or(');
-		expect(emitted).toContain('separators: Some((::sittir_core::layout::BodyLayout::slot_tokens(node.layout(), "_member"), member_separator)),');
+		expect(emitted).not.toContain('separators:');
 	});
 
 	it('fills separator_kind from the declared separator site and falls back to the declared token', () => {
@@ -225,8 +225,8 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		}).nodeRs.contents;
 
 		expect(emitted).toContain('::sittir_core::prepare::Setting::fill(&mut parts.separator_kind, overlay, ctx.options.site_arm(options::SITE_MEMBER_LIST_MEMBER_SEPARATOR).arm);');
-		expect(emitted).toContain('let chosen = ::sittir_core::prepare::Setting::chosen(&parts.separator_kind, overlay);');
-		expect(emitted).toContain('if let Some(tokens) = ::sittir_core::prepare::SlotTarget::separators(&parts.member, overlay, MemberListNode::separator_kind_of, ctx).filter(|_| !chosen) {');
+		expect(emitted).not.toContain('SlotTarget::separators');
+		expect(emitted).not.toContain('set_slot_tokens');
 		expect(emitted).toContain('_ => ";" };');
 	});
 

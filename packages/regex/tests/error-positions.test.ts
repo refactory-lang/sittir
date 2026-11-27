@@ -49,7 +49,16 @@ describe.each(['object', 'arena'] as const)('an ERROR read in %s storage', (node
 		expect(() => entry.$trivia.trailing(entry)).toThrow(/an ERROR read as a side entry holds no sides/);
 		expect(root.$trivia.leading()).toEqual([]);
 		const written = root.$trivia.trailing(entry);
-		expect(String(written.$render())).toBe(')a)');
 		expect(written.$trivia.trailing().map((item) => item.$text())).toEqual(['a)']);
+	});
+
+	it('written as a side entry, it renders with no gap the grammar does not admit', async () => {
+		const re = await createEngine(regex, { nodeStorage });
+		type Sides = { leading(...items: unknown[]): { $render(): unknown }; trailing(...items: unknown[]): { $render(): unknown } };
+		const root = () => (re.parse(')') as unknown as { $trivia: Sides }).$trivia;
+		const entry = () => sideEntryOf(re.parse('a)b'));
+		expect(String(root().trailing(entry()).$render())).toBe(')a)');
+		expect(String(root().leading(entry()).$render())).toBe('a))');
+		expect(String(root().trailing(entry(), entry()).$render())).toBe(')a)a)');
 	});
 });

@@ -1,6 +1,6 @@
 //! The record layout codegen stamps on a node: `words` and `built_words` on
 //! `#[node(…)]`, and on each slot's `#[slot(…)]` its parsed cell, `word`
-//! with `width`, `forms` (and `run` or `inline`), or `bit`, and its built
+//! with `width`, `forms` (and `run`), or `bit`, and its built
 //! cell, `built`, beside the slot's read facts. The derive checks it and
 //! computes none of it: the stamped cells stay inside the record's words and
 //! never overlap, and each slot's type fits its cell (`sittir_core::record`),
@@ -54,7 +54,7 @@ pub fn checks(owner: &Ident, words: Option<u32>, built_words: Option<u32>, slots
     }
     for &(ident, ty, stamp) in slots {
         let Some(word) = stamp.word else {
-            if words.is_some() || stamp.width.is_some() || stamp.run.is_some() || stamp.bit.is_some() || stamp.inline.is_some() || stamp.forms.is_some() {
+            if words.is_some() || stamp.width.is_some() || stamp.run.is_some() || stamp.bit.is_some() || stamp.forms.is_some() {
                 return Err(syn::Error::new_spanned(ident, format!("`{ident}`'s record cell states its `word`")));
             }
             continue;
@@ -64,9 +64,6 @@ pub fn checks(owner: &Ident, words: Option<u32>, built_words: Option<u32>, slots
         };
         let message = format!("{owner}.{ident}: its record cell overlaps the header");
         asserts.push(quote!(const _: () = assert!(#word >= ::sittir_core::record::HEADER_WORDS, #message);));
-        if stamp.inline.is_some() && (stamp.bit.is_some() || stamp.run.is_some()) {
-            return Err(syn::Error::new_spanned(ident, "only a scalar child has inline record capacity"));
-        }
         let place = match (stamp.bit, stamp.width) {
             (Some(bit), None) if bit < 32 => {
                 let message = format!("{owner}.{ident}: a stamped bit holds only a presence");
@@ -75,10 +72,9 @@ pub fn checks(owner: &Ident, words: Option<u32>, built_words: Option<u32>, slots
             }
             (None, Some(width)) => {
                 let run = stamp.run.unwrap_or(0);
-                let inline = stamp.inline.unwrap_or(0);
                 let forms = stamp.forms.ok_or_else(|| syn::Error::new_spanned(ident, format!("`{ident}`'s record cell states its `forms`")))?;
                 let message = format!("{owner}.{ident}: its type is not held as its stamped forms in its stamped cell");
-                asserts.push(quote!(const _: () = assert!(::sittir_core::record::fits_cell::<#ty>(#forms, #width, #run, #inline), #message);));
+                asserts.push(quote!(const _: () = assert!(::sittir_core::record::fits_cell::<#ty>(#forms, #width, #run), #message);));
                 Place::Cell { start: word, end: end_word(ident, word, width)? }
             }
             _ => return Err(syn::Error::new_spanned(ident, format!("`{ident}` is stamped a `width` or a `bit` below 32, not both"))),
@@ -140,8 +136,8 @@ mod tests {
         })
         .expect("checks");
         assert!(has(&out, r#"assert!(::sittir_core::record::fits_bit::<bool>(), "LetDeclarationNode.mutable: a stamped bit holds only a presence")"#));
-        assert!(has(&out, r#"assert!(::sittir_core::record::fits_cell::<SlotValue<PatternNode>>(1u8, 3u32, 0u32, 0u32), "LetDeclarationNode.pattern: its type is not held as its stamped forms in its stamped cell")"#));
-        assert!(has(&out, r"::sittir_core::record::fits_cell::<Vec<SlotValue<ItemNode>>>(1u8, 1u32, 3u32, 0u32)"));
+        assert!(has(&out, r#"assert!(::sittir_core::record::fits_cell::<SlotValue<PatternNode>>(1u8, 3u32, 0u32), "LetDeclarationNode.pattern: its type is not held as its stamped forms in its stamped cell")"#));
+        assert!(has(&out, r"::sittir_core::record::fits_cell::<Vec<SlotValue<ItemNode>>>(1u8, 1u32, 3u32)"));
         assert!(has(&out, r#"assert!(4u32 >= ::sittir_core::record::HEADER_WORDS, "LetDeclarationNode.items: its built cell overlaps the header")"#));
     }
 

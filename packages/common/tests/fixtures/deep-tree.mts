@@ -85,7 +85,7 @@ async function run({ storage, side, levels }: Case): Promise<Outcome> {
 			const [engine, shell] = wireOf(() => rs.render(rs.build.parenthesizedExpression(rs.build.integerLiteral('1'))).toString());
 			expect(render(engine, nest(shell, levels)), parens);
 		} else {
-			const source = 'fn f() { ((1), 2); }\n';
+			const source = 'fn f() {\n    ((1), 2);\n}\n';
 			const [engine, root] = wireOf(() => rs.render(rs.parse(source, { depth: Infinity }).$snapshot()).toString());
 			const pair = itemPair(root) as [Wire, unknown];
 			const [first, second] = pair;

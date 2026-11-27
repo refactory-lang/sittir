@@ -96,7 +96,6 @@ packages/python/tests/with-list-setter.test.ts
 packages/regex/tests/alias-chain-withdrawn.test.ts
 packages/regex/tests/class-dash-reads.test.ts
 packages/regex/tests/error-positions.test.ts
-packages/regex/tests/error-root.test.ts
 packages/regex/tests/full-form-acceptance.test.ts
 packages/regex/tests/generic-layout-indent.test.ts
 packages/regex/tests/identity-escape-input.test.ts

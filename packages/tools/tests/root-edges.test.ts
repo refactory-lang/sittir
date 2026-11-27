@@ -3,7 +3,7 @@ import { sharedEngine } from '@sittir/common/testing';
 import type { AnyUntypedNode } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import rust from '../../rust/src/index.ts';
-import { kindViewOf, loadIsLeafKind, loadNativeEngine, loadSlotAccessorOf, materializeDetached, nativeLanguageEngineOf, parseNativeTree, readNodeOf, disposeNativeEngines } from '../src/validate/common.ts';
+import { fixtureReplayOf, kindViewOf, loadIsLeafKind, loadNativeEngine, loadSlotAccessorOf, materializeDetached, nativeLanguageEngineOf, parseNativeTree, readNodeOf, disposeNativeEngines } from '../src/validate/common.ts';
 import { selfContainedRenderInput } from '../src/validate/read-render-parse.ts';
 
 afterAll(disposeNativeEngines);
@@ -16,15 +16,14 @@ const isLeafKind = await loadIsLeafKind('rust');
 const accessorOf = await loadSlotAccessorOf('rust');
 const readNode = await readNodeOf('rust');
 
-function detachedInput(source: string): { readonly input: AnyUntypedNode; readonly options: Readonly<Record<string, unknown>> } {
+function detachedInput(source: string): AnyUntypedNode {
 	const tree = parseNativeTree(engine, source);
-	const input = selfContainedRenderInput(materializeDetached(readNode(tree), accessorOf), source, isLeafKind, kindViewOf(engine)) as AnyUntypedNode;
-	return { input, options: tree.options ?? {} };
+	return selfContainedRenderInput(materializeDetached(readNode(tree), accessorOf), source, isLeafKind, kindViewOf(engine)) as AnyUntypedNode;
 }
 
 function detached(source: string, edges: { readonly before?: number; readonly after?: number }): string {
 	const options = { sourceFile: edges };
-	return native.render(detachedInput(source).input, options).toString();
+	return native.render(detachedInput(source), options).toString();
 }
 
 describe("a detached root's edges are its options, whether it holds items or only trivia", () => {
@@ -42,7 +41,7 @@ describe("a detached root's edges are its options, whether it holds items or onl
 
 describe("a parsed root's edges are the ones its source infers", () => {
 	function swapped(source: string): string {
-		const root = parsed.parse(source);
+		const root = parsed.parse(source, { adoptStyle: true });
 		const [first, second] = root.statements();
 		if (first === undefined || second === undefined) throw new Error('expected two statements');
 		return root.$with.statements(second, first).$render();
@@ -54,11 +53,10 @@ describe("a parsed root's edges are the ones its source infers", () => {
 		expect(swapped('use x;\nuse y;\n\n\n\n')).toBe('use y;\nuse x;\n\n\n');
 	});
 
-	it("records them in the tree's options, which reproduce the source from a detached copy", () => {
+	it('are adopted by a parse that adopts its style, and reproduce the source from a detached copy', async () => {
 		const source = '\n// a';
-		const { input, options } = detachedInput(source);
-		expect(options).toEqual({ sourceFile: { before: K.Newline, after: K.Tight } });
-		expect(native.render(input, options).toString()).toBe(source);
+		const input = detachedInput(source);
 		expect(native.render(input).toString()).toBe('// a\n');
+		expect((await fixtureReplayOf('rust'))(input, source)).toBe(source);
 	});
 });

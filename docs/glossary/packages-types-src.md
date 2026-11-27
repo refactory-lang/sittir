@@ -86,7 +86,7 @@ A trivia entry as input: one of the grammar's trivia kinds or a string. A string
 
 ### `packages/types/src/core-types.ts::TriviaFlanks`
 
-The in-line adjacency of a trivia item the source fixes in place, as a read finds it: `$before` and `$after`, the source's whitespace on the item's line between it and the tokens beside it, `''` where it touches a token, and absent where a line break or the file's edge lies between or the item before it carries the run as its `$after` (`trivia_table::Adjacency`, stamped once by the trivia table's assignment). An item with either renders verbatim with them (`TriviaText::verbatim`): on a side it carries, no seam below a whitespace entry's strength is written, a line break included, so only a whitespace entry the side holds, stored or written, replaces the run. Two items carry it: an `ErrorNode`, and a line continuation with whitespace beside it, whose own line ends inside it so the next line's alignment is its `$after`. A built continuation has neither and takes the spacing the options give its gap. Comments carry neither field.
+The in-line whitespace a caller writes around a trivia item the source fixes in place, `$before` and `$after`. A read writes neither: the gaps beside an `ErrorNode` or a line continuation come from the options, as any gap's do. An item with either renders verbatim with them (`TriviaText::verbatim`): on a side it carries, no seam below a whitespace entry's strength is written, a line break included, so only a whitespace entry the side holds, stored or written, replaces the run. Comments carry neither field.
 
 ### `packages/types/src/core-types.ts::ErrorNode`
 
@@ -2150,7 +2150,23 @@ The input type of the build for path `P` in grammar `G`: the input shape of that
 
 ### `packages/types/src/vocabulary/input.ts::PathInput`
 
-A path function's input: the path's build input, or its form without `$path`, with its named flags. A path's own `$path` is optional because the function already names the path.
+A path function's input: the path's build input, or its form without `$path`, with its named flags. A path's own `$path` is optional because the function already names the path. `S` adds the tails the input may spell `$path` with (`TailInput`): an arm function takes the tails every slot that seats it admits, and a root function takes none.
+
+### `packages/types/src/vocabulary/input.ts::TailInput`
+
+Path `P`'s input spelled with `$path` set to one of its tails `S` instead of its full name: what a slot that admits `P` under the tail `S` takes. A root build takes no tail, so `BuildInput` and `PathInput` without `S` never admit one.
+
+### `packages/types/src/vocabulary/input.ts::Tails`
+
+The tails member `M` of read type `R` admits, from the grammar map's `tails`: each admitted path keyed to its tail, or `{}` when the slot has none.
+
+### `packages/types/src/vocabulary/input.ts::Tailed`
+
+A read type's members as inputs with `$path` set to the spelling `S`; nothing when `S` is `never`.
+
+### `packages/types/src/vocabulary/input.ts::Members`
+
+A read type's members other than `$path`, each as its input; `Pathless` and `Tailed` add their own `$path` to it.
 
 ### `packages/types/src/vocabulary/map.ts::NodesAt`
 
@@ -2158,7 +2174,7 @@ The node type the grammar map records for path `P`, or `never` when the grammar 
 
 ### `packages/types/src/vocabulary/map.ts::NodesOf`
 
-Maps each key of `Ids` to its node type, bound by `Bound` and parsed as `Parsed`.
+Maps each key of `Ids` to its node type, bound by `Bound` and parsed as `Parsed`. A kind with no bound node type, a fixed word, maps to `never`: no slot holds a bare kind id, so a fixed word reads and builds as its structure or its text.
 
 ### `packages/types/src/vocabulary/map.ts::TextInput`
 

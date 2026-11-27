@@ -19,6 +19,14 @@ sittir_core::grammar_nodes!(NoTrivia; NoTrivia, Ident, Params, Block, Function, 
 
 type Layout = Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>;
 
+::sittir_core::records_codec! {
+    impl ::sittir_core::arena::RecordCells for Ident {
+        fn shape(_: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
+            ::core::option::Option::None
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Node)]
 #[node(kind = kind::IDENTIFIER, text, words = 2, built_words = 2)]
 struct Ident {
@@ -154,7 +162,7 @@ struct Table<'t> {
 impl<'t> Table<'t> {
     /// The table of a rust `tree`.
     fn of(tree: &'t tree_sitter::Tree, source: &'t str) -> Self {
-        Table { tree, source, trivia: sittir_parity_tests::PlacedTrivia::of(tree, source, kind::SURFACE_KINDS, 4) }
+        Table { tree, source, trivia: sittir_parity_tests::PlacedTrivia::of(tree, source, sittir_rust::RustGrammar) }
     }
 }
 
@@ -165,7 +173,7 @@ impl SideLookup for Table<'_> {
         let source = |at: sittir_core::types::NodeIndex| {
             let node = sittir_core::engine::node_at_index(self.tree, at)?;
             let coord = ctx.coordinate(&node, at);
-            Some(SideEntry::Source { kind: coord.kind?, span: coord.span, adjacent: None, entry: sittir_core::trivia::TriviaEntry::new(SlotValue::Coord(coord)) })
+            Some(SideEntry::Source { kind: coord.kind?, span: coord.span, entry: sittir_core::trivia::TriviaEntry::new(SlotValue::Coord(coord)) })
         };
         let mut entries: Vec<SideEntry<NoTrivia>> = self
             .trivia
@@ -173,8 +181,7 @@ impl SideLookup for Table<'_> {
             .iter()
             .filter_map(|assigned| match *assigned {
                 Assigned::Extra(at) | Assigned::Error(at) => source(at),
-                Assigned::Layout { start, end, .. } if !self.source[start as usize..end as usize].contains('\n') => None,
-                Assigned::Layout { .. } | Assigned::Member(_) | Assigned::Depth(_) => Some(SideEntry::Layout(sittir_core::trivia::TriviaEntry::new(SlotValue::Node(NoTrivia)))),
+                Assigned::Member(_) => Some(SideEntry::Layout(sittir_core::trivia::TriviaEntry::new(SlotValue::Node(NoTrivia)))),
             })
             .collect();
         if edge_changed {
@@ -837,6 +844,14 @@ fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let inner: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &mut ctx, inner_row, Depth::All).unwrap();
     let body = function(&whole, 0).body.node().unwrap();
     assert_eq!(&inner, body.statements[0].node().unwrap());
+}
+
+::sittir_core::records_codec! {
+    impl ::sittir_core::arena::RecordCells for Name {
+        fn shape(_: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
+            ::core::option::Option::None
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Node)]

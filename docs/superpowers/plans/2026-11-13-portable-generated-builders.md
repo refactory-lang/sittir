@@ -129,7 +129,15 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 
 ### Task 4: The build emitter
 
-**Status:** in progress on `feat/portable-build-emitter`; the bodies held on their holders are built on `feat/portable-body-contents` (stacked on it). There, the member and type declarations nest under the namespaces `declaration.member` and `declaration.type`, and the operator and collection groups are namespaces: a bound name leaves a namespace's segment out (9ca10eff4), and the paths, the portable trees' namespace nodes and their guards move with it (f306683bb). A namespace is left out only when every name beneath it is unique within its parent, so the shift family keeps `shift` (963df888a), and `ofType` takes a namespace as the guards do (037105fbe). A namespace's `Any` holds its aliases, stamped per grammar and read by the guards and `ofType`, and rust's modifier blocks lie beneath `statement.block` (5341f2abc). Slots name their kind-set, with the nine `AnyWith…` types for the unions they share (1760978db). A lambda's block body holds `statements` and only an expression body keeps `body`, and a rust closure builds the arm the parser reads (52500aec8). Rust's struct pattern forms are two paths, `pattern.struct` for braces and `pattern.struct.tuple` for parentheses (f873d7dc7). Six structures both builds refused before now build in the interpreter and stop at paths the generated build already lacks (`statement.match` ×3, `file` ×2, `element.type_argument` ×1), so rust's ungenerated count goes 770 → 776 and its ceiling 771 → 776 by the user's grant; a commit that generates one of those paths lowers the ceiling to its new count. `try`, `catch`, `finally`, python's `with` and python's `case` hold `statements`, and rust's match arm keeps its expression in `body`, each slot gated to its language's feature (93ec48c2f). A number read keeps its value or carries its node: an arm whose slots can't spell its value takes no `$value`, and a base prefix in its own slot builds with its digits (e7c30a630). An arm with nothing to pass keeps no direct builder (36e74eee3), and a direct builder's fixed text choice is narrowed at its seat (774470867).
+**Status:** merged in #1312 (c03b7bc1a); the open items are built on `feat/portable-emitter-open-steps`, and Steps 1 to 4 are done:
+- python's getter takes no `parameters` and its generated build writes `self` (e04591ed9);
+- decision 9's tails, on the map's input side and as `case` labels (1cac68316);
+- `portable-emit-pinned-gap` and `portable-emit-type` are raised, and `portable-emit-tail-is-path` fails generation, each at ceiling 0 (1562bee9d). The type check reads the module gen wrote; it found nothing under `regen:all` until d63936b27, and reads a custom `--output` from c4844f260;
+- literal arms (71d24879a), and decision 7's bare booleans (d63936b27), whose taker is a path every one of whose arms reads the value (5c85862df).
+
+Step 3: 0 type errors in all three grammars. Step 4's times, branch base against head: rust's module check 3.3 s to 4.2 s (the tails add 1.5 s), python 4.3 s to 4.4 s, typescript 10.6 s to 8.5 s; without the native build, rust's codegen takes about 15 s, about 8 s of it the per-module check.
+
+Built: decision 4 (335ff4d3a), decision 5 (5e24a3738), decision 7's optional `$path` (9fd46572b) and bare numbers by taker (2f95ba872), the header comment (c1e641e55), and number spelling through `decimalSpelling` (64ae5b972). The member and type declarations nest under the namespaces `declaration.member` and `declaration.type`, and the operator and collection groups are namespaces: a bound name leaves a namespace's segment out (9ca10eff4), and the paths, the portable trees' namespace nodes and their guards move with it (f306683bb). A namespace is left out only when every name beneath it is unique within its parent, so the shift family keeps `shift` (963df888a), and `ofType` takes a namespace as the guards do (037105fbe). A namespace's `Any` holds its aliases, stamped per grammar and read by the guards and `ofType`, and rust's modifier blocks lie beneath `statement.block` (5341f2abc). Slots name their kind-set, with the nine `AnyWith…` types for the unions they share (1760978db). A lambda's block body holds `statements` and only an expression body keeps `body`, and a rust closure builds the arm the parser reads (52500aec8). Rust's struct pattern forms are two paths, `pattern.struct` for braces and `pattern.struct.tuple` for parentheses (f873d7dc7). Six structures both builds refused before now build in the interpreter and stop at paths the generated build already lacks (`statement.match` ×3, `file` ×2, `element.type_argument` ×1), so rust's ungenerated count goes 770 → 776 and its ceiling 771 → 776 by the user's grant; a commit that generates one of those paths lowers the ceiling to its new count. `try`, `catch`, `finally`, python's `with` and python's `case` hold `statements`, and rust's match arm keeps its expression in `body`, each slot gated to its language's feature (93ec48c2f). A number read keeps its value or carries its node: an arm whose slots can't spell its value takes no `$value`, and a base prefix in its own slot builds with its digits (e7c30a630). An arm with nothing to pass keeps no direct builder (36e74eee3), and a direct builder's fixed text choice is narrowed at its seat (774470867).
 - Built on the body branch:
   - a slot read through a list container takes the hoist's route, and a list the grammar requires non-empty is non-empty;
   - a switch holds `cases` and a match `arms`; enum, interface, trait, extension, conformance and `expression.class` hold `members`; typescript's static block, function expression and switch case hold `statements` (the case at both levels);
@@ -187,13 +195,6 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 - A number path is its path, its `$value` and its other slots. Two kinds of slot leave it: the slots its value is written from (`valueSource` on the model), and its options, the slots a preference binds (the model's `registered`). The low-level builder writes an option from its preference default. Python loses 32 fields, rust 4 and typescript 24. Two kinds one path claims stay apart when their options differ.
 - The portable code says "slot" where it said "member": a path holds slots, options (a slot a preference binds) and flags. The bindings' collections that hold slots and flags together are named slots too, since a bindings flag is read from a grammar slot, by its presence or its kind. Each symbol was renamed through the TypeScript language service: the `@sittir/types` build table (`PortableSlotRoute`, an arm's and a container's `slots`, a fact's, template's, pick test's and sole delimiter's `slot`), the module emitter's input and its diagnostic `portable-emit-unfit-slot`, the build interpreter, the bindings (`Vocabulary.slots`, `SlotFact`, `SlotRoute`, `DeclaredSlot`), the build table emitter, the portable tools (`AdmissionSlot`, `holdsSlot`, `UNHELD_SLOTS`, the conformance causes `extra slot` and `missing slot`), the inventory's `--slots`, the tests and the spec. A refused key says whether it is a flag of the path (state it in `$flags`) or an option of the kind (the build writes it from its preference default, and `$with` changes it), from `PortableBuildPath.flags` and `PortableBuildArm.options`.
 - Decision 7's bare numbers, by the outermost taker (ruled 2026-11-17). Each slot route carries `takers`: per scalar type, the path a bare number builds through there, the one inside none of the slot's other candidates. No slot has two, so none is undecided. Slots with takers: python 179 and 2 container slots, rust 178, typescript 200. In such a slot a number is a number, built by the interpreter and the generated module as `{ $path: taker, $value }`; a type the slot has no taker for is refused (`unnumbered`). The map's `inputs` admit each number path's scalars. The type can't refuse a fixed word's bare kind id there, since a numeric enum member and `number` are assignable both ways; the build reads it as a number, never a kind id.
-- Remaining:
-  - decision 5;
-  - python's getter: its facts build, but its body's block arms pick by the render options' variant (`_suite`), which the emitter refuses, as it does for 15 python paths;
-  - decision 9's tails;
-  - the `pinned-gap`, `type` and `tail-is-path` diagnostics;
-  - decision 7's bare booleans, once the emitter builds literal arms (`literal.boolean.*` arms are literal arms, unfit today), since a bare `true` has no generated path to go to until then;
-  - Step 3 (generated-module type errors: 0 in all three grammars) and Step 4.
 
 **Ceiling:** the user allowed rust's count of structures only the interpreter builds to rise from 771 to 776 for the struct-pattern paths. Both builds refused those six rows before, and the generated build now stops at paths that were already ungenerated: `statement.match`, `file` and `element.type_argument`. A commit that generates one of them lowers the ceiling to its new count.
 
@@ -204,23 +205,23 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 
 - [x] **Step 1: The failing test.** For every corpus file in all three grammars, in both storages, project each node with today's reader. Then build the projection with the generated function and with the interpreter. The two renders are identical.
   - The known differences are rows: python's root getter and static method, which the interpreter refuses. Every other difference stops the task for review.
-- [ ] **Step 2: Implement** the emitter over every path:
+- [x] **Step 2: Implement** the emitter over every path:
   - decisions 1, 4, 5 and 7;
   - python's getter takes no `parameters`, and its generated build writes `self`. The vocabulary edit to `accessors/declaration.ts` comes from Task 3. It lands here because the interpreted build table takes that slot's list arity from the vocabulary. The type tests gain "the getter's input has no `parameters`" for python and typescript;
   - decision 9's tails. Each slot's tails are computed beside its exact set, written as `$path` spellings on the map's input side and as `case` labels in the slot function, and checked by `portable-emit-tail-is-path`. The type and build tests gain:
-    - rust `declaration.function.name` accepts `{ $path: 'metavariable', $value: 'y' }`, and the generated build gives `$y`;
-    - rust `statement.return.expression` accepts `'arithmetic.add'` and refuses `'add'` and `'binary.arithmetic.add'`;
-    - python `statement.return.expression` accepts `'add'`;
-    - a root build refuses a tail;
+    - the types: rust `declaration.function.name` accepts `{ $path: 'metavariable', $value: 'y' }`; rust `statement.return.expression` accepts `'arithmetic.add'` and refuses `'add'` and `'binary.arithmetic.add'`; python `statement.return.expression` accepts `'add'`; a root `PathInput` refuses a tail;
+    - the builds, in both storages: each tail builds as its full path builds, on rust `clause.let.value` (`metavariable` gives `$y`, `arithmetic.add`) and python `statement.return.expression` (`add`); rust `clause.let.value` refuses `'add'` and `'binary.arithmetic.add'`; a root build refuses a tail. The rust builds run on `clause.let.value` because rust's function `name` and return `expression` are not generated yet;
   - the five emit diagnostics;
   - the header comment through `$trivia.leading`;
   - number spelling (exponent forms included) through one shared value helper.
-- [ ] **Step 3: Regenerate.** The generated modules type-check with 0 errors, or each error is a `portable-emit-type` row. Record the per-grammar counts of every emit diagnostic as the ceilings.
-- [ ] **Step 4: Run** the corpus test, validate history and the suite. Report type-check times against the baseline. Commit.
+- [x] **Step 3: Regenerate.** The generated modules type-check with 0 errors, or each error is a `portable-emit-type` row. Record the per-grammar counts of every emit diagnostic as the ceilings.
+- [x] **Step 4: Run** the corpus test, validate history and the suite. Report type-check times against the baseline. Commit.
 
 ### Task 4b: No kind id on the portable surface
 
 The spec's "A kind id has no meaning on the portable surface", as approved: a literal union for paths, no nominal brand, and the kind-id gap closed. No code before Task 4 is in a PR.
+
+**Status:** done on `feat/portable-no-kind-id` (6bf2ad1ad), stacked on Task 4's branch. The generated slot functions that place a bare number as a kind id, counted at Task 4's head as `if (seated(value, …)) return value` inside a number branch: python 94, rust 111, typescript 134, and 0 in each after. Measured with the old `NodeOf` fallback, no build slot that admits no number admitted a fixed word's kind id in any grammar; the fallback reached reads only (python `statement.import.from`'s `argument`, rust `type.generic`'s `name`, typescript `argument`'s `value`), so those read pins are the type tests that fail without the change, and the build pins hold before and after. Rust `type.unit` is a text path, read and built as `'()'`. Validation +0 −0, native baseline 26818, conformance 4, 3 and 5.
 
 **Files:**
 - Modify: `packages/types/src/vocabulary/map.ts` (`NodeOf`), `packages/types/src/portable-build.ts` (`PortableStructure`'s JSDoc)
@@ -233,16 +234,16 @@ What the census checked, so the task needs no new probe:
 - No table data reaches the kind-id branch of the interpreter's `element()`: a spelled fact's items are structures, and no item slot holds a number (python's 8 facts and 12 spellings; rust and typescript have none). Presets write their kind ids into the builder config directly.
 - Before this task, the generated slot functions that place a bare number as a kind id: python 52, rust 63, typescript 34.
 
-- [ ] **Step 1: The failing tests.**
+- [x] **Step 1: The failing tests.**
   - Types: a fixed word's bare kind id is refused where a slot holds its path and admits no number (a slot that admits `number` admits every numeric enum member, so a number slot is pinned at run time instead); its structure is admitted (`{ $path: 'literal.null' }`); a text path admits its text (rust `type.primitive.integral.size` as `'usize'`).
   - Run time: a bare number in a slot with no number taker is refused, by the interpreter and the generated slot function alike, with the same refusal.
   - Emit: a slot with no takers writes the refusal for a number, never `seated(value, …)`.
-- [ ] **Step 2: Implement.**
+- [x] **Step 2: Implement.**
   - `NodeOf`'s fallback is `never`.
   - The interpreter's `element()` refuses a number instead of placing it as a kind id.
   - The emitter's no-taker number branch calls `unnumbered`, and `placedByKind` keeps only nodes.
   - `PortableStructure`'s JSDoc drops "a kind id".
-- [ ] **Step 3: Regenerate,** run the three-way verification, and commit.
+- [x] **Step 3: Regenerate,** run the three-way verification, and commit.
 
 ### Task 5: The projection emitter
 
@@ -276,6 +277,7 @@ What the census checked, so the task needs no new probe:
 ### Task 7: Gates and ratchets
 
 - [ ] **Step 1: Retire the conformance mirror** (`tool portable-conformance` and its ceilings). The generated modules' type-check replaces it.
+  - The mirror is today the only check of `packages/<lang>/tests/*.portable.test-d.ts`, which each package's `tsconfig.json` excludes. Those files move into a type-check lane the workspace type-check runs, and that lane fails if any of them is excluded from it, so retiring the mirror leaves no type test unchecked.
 - [ ] **Step 2: Add the emit-diagnostic ratchet,** per grammar, at Task 4's counts. An MVP path with any diagnostic fails generation once the user names the sets.
 - [ ] **Step 3: Run every gate:** the ratchets, validate history against base, the suite, the workspace type-check, and the times against the baseline.
 - [ ] **Step 4: Open the PR** with `Owner: sittir-design` on the first line, the API rows (every public export added, changed or removed, before → after), the counts and the times. Brainstorm reviews, and the merge needs the user's word.

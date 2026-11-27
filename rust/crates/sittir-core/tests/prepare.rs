@@ -10,8 +10,8 @@ use sittir_core::{NodeCoordinate, SlotValue};
 
 struct Sources(HashMap<sittir_core::types::TreeId, Arc<str>>);
 impl SourceTable for Sources {
-    fn source_of(&self, tree_id: sittir_core::types::TreeId) -> Option<&str> {
-        self.0.get(&tree_id).map(|source| &**source)
+    fn source_of(&self, at: sittir_core::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
+        self.0.get(&at.tree()?).map(|source| &**source)
     }
 }
 
@@ -675,7 +675,7 @@ fn the_outermost_end_of_a_root_is_its_inner_trivia_when_that_lies_beyond_its_end
 }
 
 fn slot(before: Option<KindId>, after: Option<KindId>) -> sittir_core::layout::SlotLayout {
-    sittir_core::layout::SlotLayout { slot: "_item".to_string(), before, after, separator: None, tokens: Vec::new() }
+    sittir_core::layout::SlotLayout { slot: "_item".to_string(), before, after, separator: None }
 }
 
 /// An edge's arm and strength, where one is set.

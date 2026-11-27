@@ -5,6 +5,7 @@ import { builtFlags, containerSetFlags, textBuilt } from '@sittir/common/engine'
 import type { PortableBuildArm, PortableBuildTable, PortablePickTest } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { kindDiscriminantExpr } from '../../kind-discriminant.ts';
+import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import { exactReadsOf, type ExactReads, type ExactSet, type ExactSlots } from './exact.ts';
 import type { PortableTypedInput } from './typed.ts';
 
@@ -218,14 +219,20 @@ const spellingType = (text: readonly string[]): string =>
 
 const SCALAR_TYPES = { integer: 'number', float: 'number', bigint: 'bigint' } as const;
 
-export type ScalarInput = (typeof SCALAR_TYPES)[keyof typeof SCALAR_TYPES];
+export type ScalarInput = (typeof SCALAR_TYPES)[keyof typeof SCALAR_TYPES] | 'true' | 'false';
+
+const literalValuesOf = (built: PortableBuildTable['paths'][string]): readonly ScalarInput[] =>
+	built.arms.length > 0 && built.arms.every((arm) => arm.literal?.value !== undefined) ? built.arms.map((arm) => (arm.literal!.value ? 'true' : 'false')) : [];
 
 export const scalarInputsOf = (table: PortableBuildTable): ReadonlyMap<string, readonly ScalarInput[]> =>
 	new Map(
 		Object.entries(table.paths)
-			.filter(([, built]) => built.builds !== undefined)
 			.sort(([a], [b]) => byCodepoint(a, b))
-			.map(([path, built]) => [path, [...new Set((Object.keys(built.builds!) as (keyof typeof SCALAR_TYPES)[]).map((scalar) => SCALAR_TYPES[scalar]))].sort(byCodepoint)])
+			.map(([path, built]): [string, ScalarInput[]] => [
+				path,
+				[...new Set([...(Object.keys(built.builds ?? {}) as (keyof typeof SCALAR_TYPES)[]).map((scalar) => SCALAR_TYPES[scalar]), ...literalValuesOf(built)])].sort(byCodepoint)
+			])
+			.filter(([, inputs]) => inputs.length > 0)
 	);
 
 export function mapInputsOf(typedInput: PortableTypedInput): readonly (readonly [path: string, inputs: readonly string[]])[] {
@@ -270,6 +277,37 @@ export function mapDecidedOf({ input }: PortableTypedInput, slots: ReadonlyMap<s
 	});
 }
 
+export type MapTails = readonly (readonly [path: string, slots: readonly (readonly [slot: string, tails: readonly (readonly [admitted: string, tail: string])[]])[]])[];
+
+export function tailsOf(admitted: readonly string[]): readonly (readonly [admitted: string, tail: string])[] {
+	if (admitted.length < 2) return [];
+	return admitted.flatMap((path) => {
+		const segments = path.split('.');
+		for (let length = 1; length < segments.length; length++) {
+			const tail = segments.slice(-length).join('.');
+			if (!admitted.some((other) => other !== path && (other === tail || other.endsWith(`.${tail}`)))) return [[path, tail] as const];
+		}
+		return [];
+	});
+}
+
+export function mapTailsOf(slots: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>, grammarPaths: ReadonlySet<string>): MapTails {
+	return [...slots].flatMap(([path, sets]) => {
+		const tailed = [...sets].flatMap(([slot, set]) => {
+			const tails = tailsOf(set.kinds);
+			for (const [admitted, tail] of tails)
+				if (grammarPaths.has(tail))
+					throw emitShapeFailure({
+						code: 'portable-emit-tail-is-path',
+						message: `${path}.${slot}: ${admitted}'s tail ${tail} is the full name of the path ${tail}`,
+						details: { path, slot, admitted, tail }
+					});
+			return tails.length === 0 ? [] : [[slot, tails] as const];
+		});
+		return tailed.length === 0 ? [] : [[path, tailed] as const];
+	});
+}
+
 const unionOf = (arms: readonly string[]): string => (arms.length === 0 ? 'never' : arms.join(' | '));
 
 export interface GrammarMapOutput {
@@ -281,6 +319,7 @@ export interface GrammarMapOutput {
 	readonly flags: readonly (readonly [path: string, flags: readonly string[]])[];
 	readonly facts: readonly (readonly [path: string, facts: readonly string[]])[];
 	readonly decided: MapDecided;
+	readonly tails: MapTails;
 }
 
 export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots): GrammarMapOutput {
@@ -320,6 +359,7 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		[...sets.values()].flatMap((set) => set.unmapped.map((name) => name.slice(name.indexOf(':') + 1)))
 	);
 	const decided = mapDecidedOf(typedInput, slots, new Set(reads.viewed));
+	const tails = mapTailsOf(slots, new Set([...reads.readPaths, ...slots.keys(), ...[...slots.values()].flatMap((sets) => [...sets.values()].flatMap((set) => set.kinds))]));
 	lines.push(
 		'\t};',
 		'\treadonly inputs: {',
@@ -337,6 +377,11 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		'\treadonly decided: {',
 		...decided.map(([path, slotKinds]) => `\t\treadonly ${q(path)}: { ${slotKinds.map(([slot, at]) => `readonly ${slot}: ${q(at)};`).join(' ')} };`),
 		'\t};',
+		'\treadonly tails: {',
+		...tails.map(
+			([path, slotTails]) => `\t\treadonly ${q(path)}: { ${slotTails.map(([slot, at]) => `readonly ${slot}: { ${at.map(([admitted, tail]) => `readonly ${q(admitted)}: ${q(tail)};`).join(' ')} };`).join(' ')} };`
+		),
+		'\t};',
 		'}',
 		'',
 		...unmappedKindsBlock(VOCABULARY_MODULE, input.grammar, nodeMap, unmapped),
@@ -353,6 +398,7 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		textValues: textInputs.filter((path) => textValued(typedInput.input.vocabulary, path)),
 		flags,
 		facts: facts.map(([path, named]) => [path, named.map(([fact]) => fact)] as const),
-		decided
+		decided,
+		tails
 	};
 }
