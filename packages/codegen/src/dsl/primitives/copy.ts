@@ -89,9 +89,15 @@ function refuseRedisplay(copy: string, source: string, display: string | undefin
 	throw new VerbRefusal('edit-site-conflict', `the copy '${copy}' is shown as '${display}', and a path shows it as '${shown}'`, { copy, displays: [display, shown] });
 }
 
-export function copy(source: unknown, path = '.'): RuntimeRule {
+export interface CopyOptions {
+	readonly path?: string;
+	readonly name?: string;
+}
+
+export function copy(source: unknown, options: string | CopyOptions = '.'): RuntimeRule {
+	const { path = '.', name: named } = typeof options === 'string' ? { path: options } : options;
 	const name = nameOf(source);
-	const made = wireCopy({ source: name, part: path, via: 'copy' }, (body) => body);
+	const made = wireCopy({ source: name, part: path, via: 'copy', ...(named === undefined ? {} : { name: named }) }, (body) => body);
 	if (made === undefined) return symbol(name);
 	return path === '.' ? copyReference(made, name) : bareReference(made);
 }

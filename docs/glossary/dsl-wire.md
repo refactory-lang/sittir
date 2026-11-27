@@ -938,15 +938,15 @@ Runs a patch application with the given sites as the active ones (`WireContext.a
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireCopyRequest`
 
-A copy to make or reuse: its source, the part copied (`.` for the whole rule), and whether a path or a `copy()` call asks for it. `from` names the copy a path reached, when the reference it entered already stands for one; the request then edits that copy.
+A copy to make or reuse: its source, the part copied (`.` for the whole rule), and whether a path or a `copy()` call asks for it. `from` names the copy a path reached, when the reference it entered already stands for one; the request then edits that copy. `name` is the name `copy()` was given; without one the copy takes `verbs/copy.ts::copyNameOf`'s (`requestedCopyName`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopy`
 
-The context's copy of a source part, made or reused, with `edit` applied to its body; returns the copy's name. The context is the rule kind being evaluated, and the name is `verbs/copy.ts::copyNameOf`'s. A copy is made only during a layer pass; elsewhere it is `edit-entry-invalid`. Its body is the source's (a deposit before the base's), or the selected part (`copyPartOf`). The body is a deposit, so the layer gains it as a rule, and the copy effect is recorded once, with the path or `copy()` origin that makes it inherit its source's options. One copy per source, part and context: a request from another entry edits the same body. A request `from` a copy the path reached edits that copy under its own name. A reached copy is always the current kind's own, because a copy starts from its source's deposit or base body and a kind's edited body is never a deposit, so no walked body holds another kind's copy; one that is not is refused as `edit-entry-invalid` (`refuseForeignCopy`). A name the grammar already has, or a second source for one name, is `rule-name-taken` (`refuseCopyName`), and a source the grammar lacks is `edit-site-missing`; a refused copy returns `undefined`. The edit runs inside the copy (`insideCopy`). A new copy is registered before its edit runs, so a reference to it inside its own body finds no deposit and is not entered. Within one edits entry a copy is edited once: a later reach of the same copy returns its name without editing it, so the entry only re-points or re-shows that reference (`WireEntryScope`). When an edit throws, the registration is undone by whichever caller catches the throw (`wireAtomic`).
+The context's copy of a source part, made or reused, with `edit` applied to its body; returns the copy's name. The context is the rule kind being evaluated, and the name is the request's own, or else `verbs/copy.ts::copyNameOf`'s (`requestedCopyName`). A copy is made only during a layer pass; elsewhere it is `edit-entry-invalid`. Its body is the source's (a deposit before the base's), or the selected part (`copyPartOf`). The body is a deposit, so the layer gains it as a rule, and the copy effect is recorded once, with the path or `copy()` origin that makes it inherit its source's options. One copy per source, part and context: a request from another entry edits the same body. A request `from` a copy the path reached edits that copy under its own name. A reached copy is always the current kind's own, because a copy starts from its source's deposit or base body and a kind's edited body is never a deposit, so no walked body holds another kind's copy; one that is not is refused as `edit-entry-invalid` (`refuseForeignCopy`). A name the grammar already has, or a second source for one name, is `rule-name-taken` (`refuseCopyName`), and a source the grammar lacks is `edit-site-missing`; a refused copy returns `undefined`. The edit runs inside the copy (`insideCopy`). A new copy is registered before its edit runs, so a reference to it inside its own body finds no deposit and is not entered. Within one edits entry a copy is edited once: a later reach of the same copy returns its name without editing it, so the entry only re-points or re-shows that reference (`WireEntryScope`). When an edit throws, the registration is undone by whichever caller catches the throw (`wireAtomic`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopyBody`
 
-The body the copy a request names has, or would start from: a reached copy's own body (`from`), the context's copy when it exists, otherwise the source's for a whole copy. It makes nothing, so a walk can look before it copies.
+The body the copy a request names has, or would start from: a reached copy's own body (`from`), the copy its name resolves to when it exists (`requestedCopyName`), otherwise the source's for a whole copy. It makes nothing, so a walk can look before it copies.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopyOf`
 
@@ -1002,7 +1002,7 @@ The `edit-entry-invalid` refusal of a path that reached a copy another kind made
 
 ### `packages/codegen/src/dsl/wire/wire.ts::freshCopyBody`
 
-The body a new copy starts from, or the refusal: a name the base, the layer's `rules:` or a deposit already has is `rule-name-taken`, and a source with no body is `edit-site-missing`.
+The body a new copy starts from, or the refusal: a name the base, the layer's `rules:` or a deposit already has is `rule-name-taken`, and a source with no body is `edit-site-missing`. The one `rules:` name a copy may take is the name of the entry making it: that entry is the copy (`isOwnCopyReference`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::copyPartOf`
 
@@ -1555,7 +1555,7 @@ minted whitespace bodies.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::evaluatingExternals`
 
-Wire's `externals` callback, always present. The runtime calls it once, before it reads any rule, and wire evaluates the config there: it applies the config's `externals` callback (or passes the base's list through), records the names on `WireContext.evaluatedExternals`, builds a `$` over the rule callbacks' names, the base's rules and the externals (`layerSymbols`), evaluates the lists (`evaluateWireLists`), calls every rule callback once in key order with the base body wire holds (a rule a copy evaluated sooner gives the body it gave then, `evaluateLayerRule`), appends each deposit no callback is declared for and no base rule holds (a kind a callback minted inline, such as a direct `variant` arm) as a rule of its own, in the order the deposits were made, and runs the whole-grammar operations over the bodies. A key of `WireContext.editedMints` that no callback has minted a body for by its turn is refused instead (`refuseEditSite`) and has no body. A second call is refused.
+Wire's `externals` callback, always present. The runtime calls it once, before it reads any rule, and wire evaluates the config there: it applies the config's `externals` callback (or passes the base's list through), records the names on `WireContext.evaluatedExternals`, builds a `$` over the rule callbacks' names, the base's rules and the externals (`layerSymbols`), evaluates the lists (`evaluateWireLists`), calls every rule callback once in key order with the base body wire holds (a rule a copy evaluated sooner gives the body it gave then, `evaluateLayerRule`), sets no body for a callback that returns its own named copy (`isOwnCopyReference`), appends each deposit no callback is declared for and no base rule holds (a kind a callback minted inline, such as a direct `variant` arm) as a rule of its own, in the order the deposits were made, and runs the whole-grammar operations over the bodies. A key of `WireContext.editedMints` that no callback has minted a body for by its turn is refused instead (`refuseEditSite`) and has no body. A second call is refused.
 
 A whole-grammar operation sees every body at once, so its result does not depend on the order the runtime calls the rules in. The lift rename is one (`resolveLiftNames`); it refuses a renamed lift among the externals. Keyword rule naming is another (`keyword-names.ts::resolveKeywordNames`). The externals are returned unchanged: an external is never renamed.
 
@@ -2067,7 +2067,7 @@ The displays the entry applying now gave its copies' references (`WireEntryScope
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopyEdited`
 
-Whether the entry applying now has already edited the copy a request names: the request's `from` copy, or else the current kind's copy of the source part.
+Whether the entry applying now has already edited the copy a request names: the request's `from` copy, or else the copy its name resolves to (`requestedCopyName`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopyDeposit`
 
@@ -2276,3 +2276,11 @@ A rule's body as the active wire context's layer leaves it (`sourceBodyOf`): its
 ### `packages/codegen/src/dsl/wire/wire.ts::wireInfo`
 
 Records an info-level grammar diagnostic on the active layer, as `wireWarn` records a warning: the layer goes on, and the notice tells the author something they may want to know. Outside a layer it records nothing.
+
+### `packages/codegen/src/dsl/wire/wire.ts::requestedCopyName`
+
+The name a copy request makes or reuses: the request's own `name`, or else the one its source, part and the current kind make (`verbs/copy.ts::copyNameOf`). `wireCopy`, `wireCopyBody` and `wireCopyEdited` all resolve a request through it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::isOwnCopyReference`
+
+Whether a `rules:` callback's body is a reference to the copy named for its own entry: a copy of that name exists, and the body is a symbol of that name, bare or aliased. Such an entry is the copy. `evaluatingExternals` sets no body for it, so the copy's deposit becomes the rule, and no rule stands between the entry's name and the copy.

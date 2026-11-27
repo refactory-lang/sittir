@@ -371,7 +371,7 @@ Refuses to show a copy's reference as `shown` when the reference already has a d
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::copy`
 
-`copy(source, path?)`: the context's copy of `source`, or of the part `path` selects, made or reused (`wire/wire.ts::wireCopy`), and its reference. A whole copy takes `copyReference`; a part, which is not the source's kind, is the bare copy (`bareReference`). It runs only during the layer pass: in a `rules:` callback, a replacing function or a helper. Called anywhere else it throws `edit-entry-invalid`. A refused copy leaves the source's own reference.
+`copy(source, options?)`: the context's copy of `source`, or of the part a path selects, made or reused (`wire/wire.ts::wireCopy`), and its reference. `options` is the path alone, or `CopyOptions` with a path and a name. A whole copy takes `copyReference`; a part, which is not the source's kind, is the bare copy (`bareReference`). It runs only during the layer pass: in a `rules:` callback, a replacing function or a helper. Called anywhere else it throws `edit-entry-invalid`. A refused copy leaves the source's own reference.
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::namedCopy`
 
@@ -400,6 +400,10 @@ The rule walker the display check descends with (`referenceDisplays`).
 ### `packages/codegen/src/dsl/primitives/copy.ts::bareReference`
 
 A copy referenced by its own name, `$._copy`, showing no display: the reference of a copy of a hidden rule or a supertype, and of every part copy. The copy effect is stamped with no display, and the reference is noted as the copy's.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::CopyOptions`
+
+What `copy` copies and what the copy is called. `path` selects the part, `.` (the default) for the whole rule. `name` is the copy's name, in place of the one its source, part and context make (`verbs/copy.ts::copyNameOf`). A copy named for the `rules:` entry that makes it is that entry's rule, so a rule defined as a narrowed copy of another has one name and joins its source's supertype and inline lists as itself (`wire/wire.ts::isOwnCopyReference`).
 
 ### `packages/codegen/src/dsl/primitives/refine.ts::module`
 

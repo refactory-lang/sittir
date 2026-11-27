@@ -5,7 +5,7 @@ import { rule as ruleImpl, type RulePlaceholder } from './primitives/rule.ts';
 import { role as roleImpl } from './primitives/role.ts';
 import { refine as refineImpl, type FormMap, type RefineOptions, type RefinePlaceholder } from './primitives/refine.ts';
 import { edit as editImpl, replace as replaceImpl } from './transform/transform.ts';
-import { copy as copyImpl } from './primitives/copy.ts';
+import { copy as copyImpl, type CopyOptions } from './primitives/copy.ts';
 import { spellings as spellingsImpl, type SpellingOptions, type SpellingRule } from './primitives/spellings.ts';
 import type { PatchMap } from './wire/wire.ts';
 import type {
@@ -77,7 +77,7 @@ interface AuthoringEdit {
 export const edit = editImpl as unknown as AuthoringEdit;
 
 interface AuthoringCopy {
-	(source: string | SymbolRule<string>, path?: string): AuthoringRule;
+	(source: string | SymbolRule<string>, options?: string | CopyOptions): AuthoringRule;
 }
 export const copy = copyImpl as unknown as AuthoringCopy;
 

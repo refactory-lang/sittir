@@ -475,7 +475,7 @@ export function wireCopyEdited(request: WireCopyRequest): boolean {
 	const context = currentContext;
 	const owner = context?.currentRuleKind;
 	if (!context?.entry || owner === null || owner === undefined) return false;
-	return context.entry.edited.has(request.from ?? copyNameOf(request.source, request.part, owner));
+	return context.entry.edited.has(request.from ?? requestedCopyName(request, owner));
 }
 
 export function wireCopyDeposit(copy: string): RuntimeRule | undefined {
@@ -487,6 +487,11 @@ export interface WireCopyRequest {
 	readonly part: string;
 	readonly via: 'path' | 'copy';
 	readonly from?: string;
+	readonly name?: string;
+}
+
+function requestedCopyName(request: WireCopyRequest, owner: string): string {
+	return request.name ?? copyNameOf(request.source, request.part, owner);
 }
 
 export function wireCopy(request: WireCopyRequest, edit: (body: RuntimeRule) => RuntimeRule): string | undefined {
@@ -494,7 +499,7 @@ export function wireCopy(request: WireCopyRequest, edit: (body: RuntimeRule) => 
 	const owner = context?.currentRuleKind;
 	if (context?.layer === undefined || owner === null || owner === undefined)
 		throw new VerbRefusal('edit-entry-invalid', `copy('${request.source}'): a copy is made only during a layer pass: in a rule callback, a replacing function or a helper`);
-	const name = copyNameOf(request.source, request.part, owner);
+	const name = requestedCopyName(request, owner);
 	if (request.from !== undefined && request.from !== name) {
 		refuseForeignCopy(owner, request.from);
 		return undefined;
@@ -548,7 +553,7 @@ export function wireCopyBody(request: WireCopyRequest): RuntimeRule | undefined 
 	const owner = context?.currentRuleKind;
 	if (context === null || owner === null || owner === undefined) return undefined;
 	if (request.from !== undefined) return context.deposits.get(request.from);
-	const name = copyNameOf(request.source, request.part, owner);
+	const name = requestedCopyName(request, owner);
 	return context.copies.has(name) ? context.deposits.get(name) : request.part === '.' ? sourceBodyOf(context, request.source) : undefined;
 }
 
@@ -640,7 +645,7 @@ function refuseForeignCopy(owner: string, copy: string): void {
 }
 
 function freshCopyBody(context: WireContext, request: WireCopyRequest, name: string, owner: string): RuntimeRule | undefined {
-	if (Object.hasOwn(context.baseRuleBodies, name) || context.authoredRuleNames.has(name) || context.deposits.has(name)) {
+	if (Object.hasOwn(context.baseRuleBodies, name) || (context.authoredRuleNames.has(name) && name !== owner) || context.deposits.has(name)) {
 		refuseCopyName(owner, request, name);
 		return undefined;
 	}
@@ -1282,13 +1287,23 @@ function evaluatingExternals(
 		const bodies = new Map<string, unknown>();
 		for (const [name, callback] of callbacks) {
 			if (context.editedMints.has(name) && context.deposits.get(name) === undefined) refuseEditSite(name, cfg, ctx);
-			else bodies.set(name, callback.call(symbols, symbols, context.baseRuleBodies[name]));
+			else {
+				const body = callback.call(symbols, symbols, context.baseRuleBodies[name]);
+				if (!isOwnCopyReference(context, name, body)) bodies.set(name, body);
+			}
 		}
 		for (const [name, body] of context.deposits) if (!bodies.has(name) && !Object.hasOwn(context.baseRuleBodies, name)) bodies.set(name, body);
 		for (const operation of operations) operation(bodies);
 		context.evaluatedBodies = bodies;
 		return value;
 	};
+}
+
+function isOwnCopyReference(context: WireContext, name: string, body: unknown): boolean {
+	if (!context.copies.has(name)) return false;
+	const reference = body as { readonly type?: string; readonly name?: string; readonly content?: { readonly type?: string; readonly name?: string } } | null;
+	const symbol = reference?.type === 'ALIAS' ? reference.content : reference;
+	return symbol?.type === 'SYMBOL' && symbol.name === name;
 }
 
 function refuseEditSite(kind: string, cfg: WireConfig<any>, ctx: WireEntryCtx): void {
