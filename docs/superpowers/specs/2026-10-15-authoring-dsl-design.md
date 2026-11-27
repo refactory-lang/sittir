@@ -26,7 +26,7 @@ Maintainer, 2026-10-15:
   - A declarative entry and an inline call that target the same site are a diagnostic.
 - **Generated layers write the section as data,** so the staleness hash and the existence checks carry over. The section is named `edits`.
 - **Replace.** Declaratively, a bare rule or `($, member) => rule` at a path replaces the member. Inline, `replace(previous, path, rule)`.
-- **Copy.** `copy(source, path?)` returns a reference to a new hidden rule, aliased back to its source, with the copy effect and the form-of fact.
+- **Copy.** `copy(source, path?)`, or `copy(source, { path?, name? })`, returns a reference to a new hidden rule, aliased back to its source, with the copy effect and the form-of fact.
   - Naming is `alias(copy(…), $.name)`, and editing is `replace(copy(…), path, rule)`.
   - Copy takes no name and no edits.
 - **Lead** is a helper composed of general verbs. Its facts derive from the copy effects, and its refusals are the verbs' refusals.
@@ -386,7 +386,7 @@ The "parser" column says whether tree-sitter sees the edit, or only the model do
 | `variant` | `variant(name, { default?, absent? })` | `variant(name, rule, options?)` | yes where it mints, else a label | stays; gains the direct form |
 | `rule` | `rule(name, body)` | write the rule in `rules:` | yes | stays |
 | replace | a rule, or `($, member) => rule` | `replace(rule, path, rule)` | yes | stays as today's literal entry; gains the function form and the inline form |
-| `copy` | used inside a replacement | `copy(source, path?)` | yes | new; the copy primitive (§4) |
+| `copy` | used inside a replacement | `copy(source, path? \| { path?, name? })` | yes | new; the copy primitive (§4) |
 | `narrow` | `narrow(...admits)`, `narrow.except(...admits)` | through `edit()` | yes | new (§5.1) |
 | `lead` | `lead(item, field, ...admits)` at a list's `.` | — | yes | moves from the bindings record; a helper over `copy`, `narrow`, `replace` and `alias` (§5.2) |
 | `match` | the admit builder of `narrow` and `lead` | — | — | stays (§5.3) |
@@ -488,18 +488,20 @@ A key outside this table is refused. The layer pass records `config-key-unknown`
 
 ## 4. The copy primitive
 
-### 4.1 `copy(source, path?)`
+### 4.1 `copy(source, path? | { path?, name? })`
 
 A copy is a rule made from a source rule for one context. Every rule a verb makes from another one is a copy: the copies that paths entering rules make, `copy()` itself, `narrow`'s copies, and the lead's forms.
 
 - **Arguments.**
   - `source` names a rule: `'name'` or `$.name`.
   - `path` selects the part copied. It is omitted, or `.`, for the whole rule; `'2'` copies the third member, one arm of a choice. A part is reached by index and field segments only.
+  - `name` gives the copy its own name, in place of the name from its context. It is passed with `path` as an options object: `copy('_pattern', { name: '_pattern_no_top_alt' })`.
 - **Context.** The kind whose `edits` entry or `rules:` callback makes the copy. A helper sets its own: the lead copies in the context of its field or its item (§5.2).
 - **Body.** The source's body, or the selected part.
 - **Name.** A copy is always hidden.
   - A whole copy is `_<source>_<context>`, with the source's and the context's own leading underscores dropped. So `_declaration_statement` copied in `impl_item_body` gives `_declaration_statement_impl_item_body`, as split clones and lead mints are named today, and `formal_parameters` copied in `_get_accessor_signature` gives `_formal_parameters_get_accessor_signature`.
   - A part copy puts the part's segments between the two: `_<source>_<part>_<context>`, so arm 2 of `_declaration` in `impl_item_body` gives `_declaration_2_impl_item_body`.
+  - A copy given a `name` takes that name instead. A `rules:` entry whose callback returns a copy named for the entry is that copy: the entry holds the copy's body itself, with no rule between it and its source, and a copy of a supertype's member joins the supertype's list under that name. Rust's reference has one PatternNoTopAlt for function parameters, `let` and closure parameters. `_pattern_no_top_alt: () => edit(copy('_pattern', { name: '_pattern_no_top_alt' }), { '.': narrow.except(match('or_pattern')) })` is that one rule, where a name taken from its context would have made `_pattern_pattern_no_top_alt` and a second rule passing through to it.
   - A name that some other rule already has is `rule-name-taken`.
 - **The reference.** `copy()` returns `alias($._<copy>, $.<source>)` when the source is visible, so the tree shows the source's kind. A copy of a hidden rule returns `$._<copy>`.
 - **Naming.** `alias(copy(…), $.name)` shows the copy as `name`. The alias replaces the alias back to the source, and the alias effect records `(source, name)`.
