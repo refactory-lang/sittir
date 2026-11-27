@@ -42,6 +42,7 @@ Each is the maintainer's, and where it disagrees with a sentence below, it wins 
       - Untouched gaps keep their source bytes, so tests that pin a re-laid gap around a write flip.
       - The list is a parsed node's one home for a written side: `$trivia` reads, `seated`, and a rebuilt record's source sides look it up by node and side. JS never writes a read record's side record of rows; those hold the sides a parse placed. Copy-on-write of side records of rows is for built records.
       - `edited_within` with its addon row `readEditedWithin`, the store's written marks, and the move of `parent` all go.
+      - **Object storage changes in the same PR** (the maintainer, 2026-11-26, "b", over arena only with object storage as a follow-up). Object storage's parsed tree gains the same list of replaced ranges, and the same template render through its coordinates, so both storages render a written parsed node alike. This replaces its re-lay of an edited coordinate's gaps from options. Object storage's side functions by tree id, ruled out of scope above, change only as far as this needs.
     - Arena storage's 12 side addon functions and `readEditedWithin` go, and none is added. The new side-record fields and marks are exported as `SIDE_FIELD_*` constants. The rows go to the maintainer with the PR.
 - **Reads share one open words chunk,** as the cap paragraph says and the code does. "In whole chunks of its own" under "A parsed node lives in the same storage as a built node" is wrong and is read as that.
 
