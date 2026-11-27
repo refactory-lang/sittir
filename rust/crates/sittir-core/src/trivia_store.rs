@@ -17,8 +17,6 @@
 
 use crate::heap::HeapBytes;
 use std::collections::BTreeMap;
-#[cfg(feature = "arena")]
-use std::collections::BTreeSet;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 #[cfg(feature = "arena")]
@@ -37,6 +35,8 @@ use crate::types::KindId;
 /// and no inside.
 #[cfg(feature = "arena")]
 const NO_INSIDE: &str = "an inner side on a node with no record, which has no inside";
+#[cfg(feature = "arena")]
+const READ_SIDE: &str = "a side of a read's node, which its read's list of replaced ranges holds (`write_read_kept`)";
 
 /// Where a node's sides are kept.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -342,22 +342,23 @@ fn leaf_text(arena: &dyn ArenaRead, at: Address, kind: KindId, bits: u32) -> Res
 /// A built record's sides, and those of the units and leaves at its sites,
 /// are rows in the built arena's chunks, in a side record of rows its
 /// header names (`RowFields`), released with the record. A parsed tree's
-/// written rows are its own (`ParsedTree::write_trivia_side`). The store
-/// keeps which sides a write gave a read's node in place of the ones its
-/// parse placed (`written`), and the sides of the lone leaf a render roots
-/// at (`Place::RootLeaf`).
+/// written rows are its own (`ParsedTree::write_trivia_side`). A side a
+/// write gave a read's node is an entry of its read's list of replaced
+/// ranges (`Replaced`), which the store reads over the rows its parse
+/// placed (`read_overlay`). The store keeps the sides of the lone leaf a
+/// render roots at (`Place::RootLeaf`).
 #[derive(Debug)]
 pub struct TriviaStore<T> {
-    /// The sides a write gave a read's node in place of the side its parse
-    /// placed (`write_kept_in`).
-    #[cfg(feature = "arena")]
-    marks: Arc<RwLock<BTreeSet<(Place, TriviaSide)>>>,
     /// The leading, trailing and inner sides of the lone leaf a render
     /// roots at (`root_leaf`).
     #[cfg(feature = "arena")]
     root: Option<Box<[Option<Vec<CompactEntry>>; 3]>>,
     /// The rows the edit checks have walked (`edit_walks`).
     edit_walks: Arc<AtomicU64>,
+    /// How many times a read's list of replaced ranges was read
+    /// (`list_reads`).
+    #[cfg(feature = "arena")]
+    list_reads: Arc<AtomicU64>,
     /// The chunks of the arena the engine's builders write, which a record
     /// entry this store answers renders from.
     #[cfg(feature = "arena")]
@@ -386,10 +387,10 @@ impl<T> Clone for TriviaStore<T> {
     fn clone(&self) -> Self {
         Self {
             #[cfg(feature = "arena")]
-            marks: Arc::clone(&self.marks),
-            #[cfg(feature = "arena")]
             root: self.root.clone(),
             edit_walks: Arc::clone(&self.edit_walks),
+            #[cfg(feature = "arena")]
+            list_reads: Arc::clone(&self.list_reads),
             #[cfg(feature = "arena")]
             built: Arc::clone(&self.built),
             #[cfg(feature = "arena")]
@@ -455,10 +456,10 @@ impl<T> TriviaStore<T> {
     pub fn with_kind_bits(kind_bits: u32) -> Self {
         Self {
             #[cfg(feature = "arena")]
-            marks: Arc::default(),
-            #[cfg(feature = "arena")]
             root: None,
             edit_walks: Arc::default(),
+            #[cfg(feature = "arena")]
+            list_reads: Arc::default(),
             #[cfg(feature = "arena")]
             built: Arc::new(RwLock::new(crate::arena::BuiltChunks::new(kind_bits, no_shape))),
             #[cfg(feature = "arena")]
@@ -479,9 +480,9 @@ impl<T> TriviaStore<T> {
     #[must_use]
     pub fn for_records(kind_bits: u32, shape: crate::arena::ShapeOf) -> Self {
         Self {
-            marks: Arc::default(),
             root: None,
             edit_walks: Arc::default(),
+            list_reads: Arc::default(),
             built: Arc::new(RwLock::new(crate::arena::BuiltChunks::new(kind_bits, shape))),
             kind_bits,
             shape,
@@ -507,6 +508,52 @@ impl<T> TriviaStore<T> {
     #[cfg(feature = "arena")]
     fn keeps(place: Place, side: TriviaSide) -> bool {
         side != TriviaSide::Inner || place.as_record().is_some()
+    }
+
+    /// The list of replaced ranges of the read that left the record at
+    /// `holder` (`replaced_list`), which the readers that take a `list`
+    /// read once a call: the empty list for a built record. Each read of
+    /// a list counts (`list_reads`).
+    ///
+    /// # Errors
+    ///
+    /// What reading the record's side record and its read's refuses.
+    #[cfg(feature = "arena")]
+    pub fn list_of(&self, holder: Address, arena: &dyn ArenaRead) -> Result<crate::arena::CellWord, ArenaError> {
+        if !arena.read_record(holder) {
+            return Ok(crate::arena::CellWord(0));
+        }
+        self.list_reads.fetch_add(1, Ordering::Relaxed);
+        Ok(crate::arena::replaced_list(arena, holder)?.map_or(crate::arena::CellWord(0), |(_, list)| list))
+    }
+
+    /// `list_of` the read whose source's entry is at `source`.
+    ///
+    /// # Errors
+    ///
+    /// What reading the source's entry and the read's side record refuses.
+    #[cfg(feature = "arena")]
+    pub fn list_of_source(&self, source: Address, arena: &dyn ArenaRead) -> Result<crate::arena::CellWord, ArenaError> {
+        self.list_reads.fetch_add(1, Ordering::Relaxed);
+        Ok(crate::arena::read_replaced_list(arena, source)?.map_or(crate::arena::CellWord(0), |(_, list)| list))
+    }
+
+    /// `list_of` the record the node at `place` is kept in; the empty list
+    /// for the root leaf.
+    #[cfg(feature = "arena")]
+    fn list_of_place(&self, place: Place, arena: &dyn ArenaRead) -> Result<crate::arena::CellWord, ArenaError> {
+        match place {
+            Place::Node(name) => self.list_of(Address(name.address()), arena),
+            Place::RootLeaf => Ok(crate::arena::CellWord(0)),
+        }
+    }
+
+    /// How many times a read's list of replaced ranges was read
+    /// (`list_of`), every handle's: a diagnostic a test compares.
+    #[cfg(feature = "arena")]
+    #[must_use]
+    pub fn list_reads(&self) -> u64 {
+        self.list_reads.load(Ordering::Relaxed)
     }
 }
 
@@ -574,16 +621,6 @@ impl<T: Clone> TriviaStore<T> {
         Self::default()
     }
 
-    #[cfg(feature = "arena")]
-    fn marks(&self) -> std::sync::RwLockReadGuard<'_, BTreeSet<(Place, TriviaSide)>> {
-        self.marks.read().unwrap_or_else(PoisonError::into_inner)
-    }
-
-    #[cfg(feature = "arena")]
-    fn marks_mut(&self) -> std::sync::RwLockWriteGuard<'_, BTreeSet<(Place, TriviaSide)>> {
-        self.marks.write().unwrap_or_else(PoisonError::into_inner)
-    }
-
     /// `entries`, a parsed tree's row, as this store answers them: each
     /// built record among them holds this store, which holds the record's
     /// own sides and the arena that wrote it.
@@ -637,18 +674,32 @@ impl<T: Clone> TriviaStore<T> {
     where
         T: crate::trivia::FromTriviaText,
     {
-        self.kept_of(place, side, arena)?.map(|kept| self.expanded(&kept, arena)).transpose()
+        self.side_in(place, side, self.list_of_place(place, arena)?, arena)
+    }
+
+    /// `side`, `list` the list of replaced ranges of the read that left the
+    /// node's record (`list_of`), which the caller read once a call.
+    ///
+    /// # Errors
+    ///
+    /// As `side`.
+    #[cfg(feature = "arena")]
+    pub fn side_in(&self, place: Place, side: TriviaSide, list: crate::arena::CellWord, arena: &dyn ArenaRead) -> Result<Option<Vec<TriviaEntry<T>>>, ArenaError>
+    where
+        T: crate::trivia::FromTriviaText,
+    {
+        self.kept_of(place, side, list, arena)?.map(|kept| self.expanded(&kept, arena)).transpose()
     }
 
     /// The entries a write gave `side` of the node at `place`, as this store
     /// keeps them, its record's header and rows read under `arena`
     /// (`kept_side`); `None` when no write did.
     #[cfg(feature = "arena")]
-    fn kept_of(&self, place: Place, side: TriviaSide, arena: &dyn ArenaRead) -> Result<Option<Vec<CompactEntry>>, ArenaError> {
+    fn kept_of(&self, place: Place, side: TriviaSide, list: crate::arena::CellWord, arena: &dyn ArenaRead) -> Result<Option<Vec<CompactEntry>>, ArenaError> {
         if !Self::keeps(place, side) {
             return Ok(None);
         }
-        let (header, rows) = self.header_and_rows(place, arena)?;
+        let (header, rows) = self.header_and_rows(place, list, arena)?;
         self.kept_side(place, side, header.as_ref(), rows.as_ref(), arena)
     }
 
@@ -658,18 +709,57 @@ impl<T: Clone> TriviaStore<T> {
     /// chunk for a record whose side record lies there and holds no rows
     /// (`RowFields::of_record`).
     #[cfg(feature = "arena")]
-    fn header_and_rows(&self, place: Place, arena: &dyn ArenaRead) -> Result<(Option<Header>, Option<crate::arena::RowFields>), ArenaError> {
+    fn header_and_rows(&self, place: Place, list: crate::arena::CellWord, arena: &dyn ArenaRead) -> Result<(Option<Header>, Option<crate::arena::RowFields>), ArenaError> {
         let Place::Node(name) = place else { return Ok((None, None)) };
-        let (header, _, rows) = crate::arena::RowFields::of_record(arena, Address(name.address()))?;
-        Ok((self.header_of(place, header)?, rows))
+        let holder = Address(name.address());
+        let (header, _, rows) = crate::arena::RowFields::of_record(arena, holder)?;
+        Self::read_overlay(holder, self.header_of(place, header)?, rows, list, arena)
+    }
+
+    /// The entries of `list`, a read's list of replaced ranges, that name a
+    /// node kept in the record at `holder`: none for a built record.
+    #[cfg(feature = "arena")]
+    fn replaced_of(holder: Address, list: crate::arena::CellWord, arena: &dyn ArenaRead) -> Result<Vec<crate::arena::Replaced>, ArenaError> {
+        if list.0 == 0 || !arena.read_record(holder) {
+            return Ok(Vec::new());
+        }
+        let mut entries = crate::arena::Replaced::read(arena, list)?;
+        entries.retain(|entry| entry.node.address() == holder.0);
+        Ok(entries)
+    }
+
+    /// The header and rows of the record at `holder` as its sides read,
+    /// `list` its read's list of replaced ranges (`list_of`): for a read's
+    /// record, each side the list holds an entry for (`replaced_of`) is
+    /// that entry's row in place of the row its parse placed, with no
+    /// layout codes from the header; any other record's as they are.
+    #[cfg(feature = "arena")]
+    fn read_overlay(holder: Address, mut header: Option<Header>, rows: Option<crate::arena::RowFields>, list: crate::arena::CellWord, arena: &dyn ArenaRead) -> Result<(Option<Header>, Option<crate::arena::RowFields>), ArenaError> {
+        let entries = Self::replaced_of(holder, list, arena)?;
+        if entries.is_empty() {
+            return Ok((header, rows));
+        }
+        let mut rows = rows.unwrap_or_default();
+        for entry in entries {
+            Self::set_row_of(&mut rows, entry.node, entry.side, Some(entry.row));
+            if let (None, Some((layout, _))) = (entry.node.site(), header.as_mut()) {
+                layout.side_mut(entry.side).fill(crate::layout_kinds::LayoutKinds::NONE);
+            }
+        }
+        Ok((header, Some(rows)))
     }
 
     /// Whether a write gave `side` of the read's node at `place` in place of
-    /// the side its parse placed (`write_kept_in`).
+    /// the side its parse placed: an entry of its read's list of replaced
+    /// ranges names it (`write_read_kept`), read under `arena`.
+    ///
+    /// # Errors
+    ///
+    /// What reading the read's list refuses.
     #[cfg(feature = "arena")]
-    #[must_use]
-    pub fn edited(&self, place: Place, side: TriviaSide) -> bool {
-        Self::keeps(place, side) && self.marks().contains(&(place, side))
+    pub fn edited(place: Place, side: TriviaSide, list: crate::arena::CellWord, arena: &dyn ArenaRead) -> Result<bool, ArenaError> {
+        let Place::Node(name) = place else { return Ok(false) };
+        Ok(Self::keeps(place, side) && Self::replaced_of(Address(name.address()), list, arena)?.iter().any(|entry| entry.node == name && entry.side == side))
     }
 
     /// Whether `side` of the node at `place`, its header's codes and its
@@ -680,8 +770,8 @@ impl<T: Clone> TriviaStore<T> {
     ///
     /// What reading the node's header and rows refuses.
     #[cfg(feature = "arena")]
-    pub fn ends_with_layout(&self, place: Place, side: TriviaSide, kind: KindId, arena: &dyn ArenaRead) -> Result<bool, ArenaError> {
-        Ok(matches!(self.kept_of(place, side, arena)?.as_deref().and_then(<[CompactEntry]>::last), Some(&CompactEntry::Layout { kind: last }) if last == kind))
+    pub fn ends_with_layout(&self, place: Place, side: TriviaSide, kind: KindId, list: crate::arena::CellWord, arena: &dyn ArenaRead) -> Result<bool, ArenaError> {
+        Ok(matches!(self.kept_of(place, side, list, arena)?.as_deref().and_then(<[CompactEntry]>::last), Some(&CompactEntry::Layout { kind: last }) if last == kind))
     }
 
     /// The sides writes gave the node at `place`, as its trivia, or `None`
@@ -695,7 +785,21 @@ impl<T: Clone> TriviaStore<T> {
     where
         T: crate::trivia::FromTriviaText,
     {
-        let (header, rows) = self.header_and_rows(place, arena)?;
+        self.sides_in(place, self.list_of_place(place, arena)?, arena)
+    }
+
+    /// `sides`, `list` the list of replaced ranges of the read that left
+    /// the node's record (`list_of`), which the caller read once a call.
+    ///
+    /// # Errors
+    ///
+    /// As `side`.
+    #[cfg(feature = "arena")]
+    pub fn sides_in(&self, place: Place, list: crate::arena::CellWord, arena: &dyn ArenaRead) -> Result<Option<crate::trivia::NodeTrivia<T>>, ArenaError>
+    where
+        T: crate::trivia::FromTriviaText,
+    {
+        let (header, rows) = self.header_and_rows(place, list, arena)?;
         self.sides_with(place, header, rows.as_ref(), arena)
     }
 
@@ -708,11 +812,14 @@ impl<T: Clone> TriviaStore<T> {
     /// As `side`, and `ArenaError::Malformed` for a header layout code past
     /// the widest layout kind.
     #[cfg(feature = "arena")]
-    pub fn sides_under(&self, place: Place, header: u32, rows: &crate::arena::RowFields, arena: &dyn ArenaRead) -> Result<Option<crate::trivia::NodeTrivia<T>>, ArenaError>
+    pub fn sides_under(&self, place: Place, header: u32, rows: &crate::arena::RowFields, list: crate::arena::CellWord, arena: &dyn ArenaRead) -> Result<Option<crate::trivia::NodeTrivia<T>>, ArenaError>
     where
         T: crate::trivia::FromTriviaText,
     {
-        self.sides_with(place, self.header_of(place, header)?, Some(rows), arena)
+        let header = self.header_of(place, header)?;
+        let Place::Node(name) = place else { return self.sides_with(place, header, Some(rows), arena) };
+        let (header, rows) = Self::read_overlay(Address(name.address()), header, Some(rows.clone()), list, arena)?;
+        self.sides_with(place, header, rows.as_ref(), arena)
     }
 
     /// `sides`, `header` the record's header (`header_of`) and `rows` the
@@ -736,21 +843,16 @@ impl<T: Clone> TriviaStore<T> {
         Ok((trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then_some(trivia))
     }
 
-    /// Each side a write gave a node of the read whose records lie in
-    /// `spans` (`read_spans`), by the node's name; not a side its parse
-    /// placed and no write replaced.
+    /// Each side a write gave a node of a read, by the node's name: the
+    /// entries of `list`, its list of replaced ranges (`list_of`), in the
+    /// list's order; not a side its parse placed and no write replaced.
+    ///
+    /// # Errors
+    ///
+    /// What reading the list refuses.
     #[cfg(feature = "arena")]
-    #[must_use]
-    pub fn written(&self, spans: &[std::ops::Range<crate::arena::Address>]) -> Vec<(crate::types::NodeId, TriviaSide)> {
-        let marks = self.marks();
-        spans
-            .iter()
-            .flat_map(|span| marks.range((Place::record(span.start), TriviaSide::Leading)..(Place::record(span.end), TriviaSide::Leading)))
-            .filter_map(|&(place, side)| match place {
-                Place::Node(name) => Some((name, side)),
-                Place::RootLeaf => None,
-            })
-            .collect()
+    pub fn written(list: crate::arena::CellWord, arena: &dyn ArenaRead) -> Result<Vec<(crate::types::NodeId, TriviaSide)>, ArenaError> {
+        Ok(crate::arena::Replaced::read(arena, list)?.into_iter().map(|entry| (entry.node, entry.side)).collect())
     }
 
     /// The sides writes gave each built unit `holder`'s record holds, by the
@@ -765,10 +867,22 @@ impl<T: Clone> TriviaStore<T> {
     where
         T: crate::trivia::FromTriviaText,
     {
-        match crate::arena::RowFields::of_record(arena, holder)?.2 {
-            Some(rows) => self.units_in(holder, &rows, arena),
-            None => Ok(Vec::new()),
-        }
+        self.units_with(holder, self.list_of(holder, arena)?, arena)
+    }
+
+    /// `units`, `list` the list of replaced ranges of the read that left
+    /// the holder's record (`list_of`), which the caller read once a call.
+    ///
+    /// # Errors
+    ///
+    /// As `units`.
+    #[cfg(feature = "arena")]
+    pub fn units_with(&self, holder: crate::arena::Address, list: crate::arena::CellWord, arena: &dyn ArenaRead) -> Result<Vec<(u32, crate::types::ItemIndex, crate::trivia::NodeTrivia<T>)>, ArenaError>
+    where
+        T: crate::trivia::FromTriviaText,
+    {
+        let rows = crate::arena::RowFields::of_record(arena, holder)?.2.unwrap_or_default();
+        self.units_in(holder, &rows, list, arena)
     }
 
     /// `units` of `holder`, `rows` the rows of its side record as its caller
@@ -778,11 +892,13 @@ impl<T: Clone> TriviaStore<T> {
     ///
     /// As `side`.
     #[cfg(feature = "arena")]
-    pub fn units_in(&self, holder: crate::arena::Address, rows: &crate::arena::RowFields, arena: &dyn ArenaRead) -> Result<Vec<(u32, crate::types::ItemIndex, crate::trivia::NodeTrivia<T>)>, ArenaError>
+    pub fn units_in(&self, holder: crate::arena::Address, rows: &crate::arena::RowFields, list: crate::arena::CellWord, arena: &dyn ArenaRead) -> Result<Vec<(u32, crate::types::ItemIndex, crate::trivia::NodeTrivia<T>)>, ArenaError>
     where
         T: crate::trivia::FromTriviaText,
     {
         let mut units: Vec<(u32, crate::types::ItemIndex, crate::trivia::NodeTrivia<T>)> = Vec::new();
+        let (_, overlaid) = Self::read_overlay(holder, None, Some(rows.clone()), list, arena)?;
+        let rows = overlaid.as_ref().unwrap_or(rows);
         for (key, cell) in self.unit_sites(rows, holder, arena)? {
             let (word, item, side) = crate::arena::RowFields::site_of(key);
             let item = crate::types::ItemIndex(item);
@@ -872,7 +988,9 @@ impl<T: Clone> TriviaStore<T> {
     pub fn copy_sites(&self, from: crate::arena::Address, to: crate::arena::Address, skip: &[u32]) -> Result<(), ArenaError> {
         let mut chunks = self.built_mut();
         let mut writer = crate::arena::ReadWriter::new(&mut chunks);
-        let Some(source) = crate::arena::RowFields::of_record(&writer, from)?.2 else { return Ok(()) };
+        let list = self.list_of(from, &writer)?;
+        let (_, source) = Self::read_overlay(from, None, crate::arena::RowFields::of_record(&writer, from)?.2, list, &writer)?;
+        let Some(source) = source else { return Ok(()) };
         let copied: Vec<_> = source.sites.iter().copied().filter(|&(key, _)| !skip.contains(&crate::arena::RowFields::site_of(key).0)).collect();
         if copied.is_empty() {
             return Ok(());
@@ -978,9 +1096,85 @@ impl<T: Clone> TriviaStore<T> {
         if !Self::keeps(place, side) {
             return if kept.is_empty() { Ok(()) } else { Err(ArenaError::Unwritable(NO_INSIDE)) };
         }
-        self.keep_kept(chunks, place, side, kept)?;
         if matches!(place, Place::Node(name) if chunks.read_record(Address(name.address()))) {
-            self.marks_mut().insert((place, side));
+            return Err(ArenaError::Unwritable(READ_SIDE));
+        }
+        self.keep_kept(chunks, place, side, kept)
+    }
+
+    /// The records a read's parse placed on `side` of its node `name`, in
+    /// document order: the record entries of the row its holder's rows hold
+    /// for that side, not a write's.
+    ///
+    /// # Errors
+    ///
+    /// What reading the holder's rows and the row refuses.
+    #[cfg(feature = "arena")]
+    pub fn placed_records(&self, name: crate::types::NodeId, side: TriviaSide, arena: &dyn ArenaRead) -> Result<Vec<Address>, ArenaError> {
+        let Some(rows) = crate::arena::RowFields::of_record(arena, Address(name.address()))?.2 else { return Ok(Vec::new()) };
+        let row = match name.site() {
+            None => rows.side_row(side),
+            Some([word, item]) => rows.site_row(crate::arena::RowFields::site_key(word, item, site_side(side))),
+        };
+        let Some(row) = row else { return Ok(Vec::new()) };
+        Ok(self.entries(row, arena)?.into_iter().filter_map(|entry| match entry {
+            CompactEntry::Record { at, .. } => Some(at),
+            _ => None,
+        }).collect())
+    }
+
+    /// `side` of the read's node `name` holds `entries`, as `write_held_side`
+    /// writes a built node's: an entry of its read's list of replaced
+    /// ranges at `offset` in the original source (`write_read_kept`).
+    ///
+    /// # Errors
+    ///
+    /// What keeping an entry, holding a record or writing the list refuses,
+    /// before the list is written when a new entry is refused.
+    #[cfg(feature = "arena")]
+    pub fn write_read_held_side(&self, name: crate::types::NodeId, side: TriviaSide, entries: &[TriviaEntry<T>], offset: u32) -> Result<(), ArenaError>
+    where
+        T: HeapBytes + crate::arena::WriteCell<T>,
+    {
+        let kept = self.compact(entries)?;
+        self.adopt(entries)?;
+        Self::write_read_kept(&mut self.built_mut(), name, side, &kept, offset)
+    }
+
+    /// `side` of the read's node `name` holds `kept`, entries already kept
+    /// as this store keeps them: its read's list of replaced ranges holds an
+    /// entry for the side at `offset`, whose row is `kept` whole, in place
+    /// of any entry it held for the side. The read's records stay as its
+    /// parse left them. Each record `kept` names is held once more, the
+    /// list is written anew with every row it keeps held once more, and
+    /// the old list is released.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Unwritable` for a non-empty inner side of a node with no
+    /// inside and for a record no read left, and what reading or writing
+    /// the read's records refuses.
+    #[cfg(feature = "arena")]
+    pub fn write_read_kept(chunks: &mut crate::arena::BuiltChunks, name: crate::types::NodeId, side: TriviaSide, kept: &[CompactEntry], offset: u32) -> Result<(), ArenaError> {
+        if !Self::keeps(Place::Node(name), side) {
+            return if kept.is_empty() { Ok(()) } else { Err(ArenaError::Unwritable(NO_INSIDE)) };
+        }
+        let (read, list) = crate::arena::replaced_list(&*chunks, Address(name.address()))?.ok_or(ArenaError::Unwritable("a side of a record no read left, as a read's"))?;
+        let mut entries = crate::arena::Replaced::read(&*chunks, list)?;
+        entries.retain(|entry| (entry.node, entry.side) != (name, side));
+        Self::hold_kept_in(chunks, kept)?;
+        for entry in &entries {
+            if entry.row.0 != 0 {
+                chunks.hold(entry.row.address())?;
+            }
+        }
+        let mut writer = crate::arena::ReadWriter::new(chunks);
+        let row = Self::place_row(&mut writer, kept)?;
+        entries.push(crate::arena::Replaced { node: name, side, offset, row });
+        let written = crate::arena::Replaced::place(&mut writer, &mut entries)?;
+        crate::arena::RecordSpace::words_mut(&mut writer, read.offset(1).ok_or(ArenaError::Malformed { what: "read side record", word: read.0 })?, 1)?[0] = written.0;
+        if list.0 != 0 {
+            chunks.release(crate::arena::count::Held::Replaced(list.address()), false)?;
         }
         Ok(())
     }
@@ -1248,9 +1442,9 @@ impl<T: Clone> TriviaStore<T> {
             }
         }
         let store = Self {
-            marks: Arc::default(),
             root: Some(Box::new(root)),
             edit_walks: Arc::default(),
+            list_reads: Arc::clone(&self.list_reads),
             built: Arc::clone(&self.built),
             kind_bits: self.kind_bits,
             shape: self.shape,
@@ -1295,7 +1489,7 @@ impl<T: Clone> TriviaStore<T> {
     /// How many handles of the store are held.
     #[cfg(all(test, feature = "arena"))]
     pub(crate) fn handles(&self) -> usize {
-        Arc::strong_count(&self.marks)
+        Arc::strong_count(&self.built)
     }
 }
 
@@ -1592,7 +1786,7 @@ mod tests {
     #[cfg(feature = "arena")]
     fn kept_row<T: Clone>(store: &TriviaStore<T>, place: Place, side: TriviaSide) -> Option<Vec<CompactEntry>> {
         let built = store.built();
-        store.row(place, side, store.header_and_rows(place, &*built).expect("its rows").1.as_ref(), &*built).expect("a row")
+        store.row(place, side, store.header_and_rows(place, store.list_of_place(place, &*built).expect("its read's list"), &*built).expect("its rows").1.as_ref(), &*built).expect("a row")
     }
 
     /// The string chunk the first text entry of `side` at `place` lies in.
@@ -1652,20 +1846,20 @@ mod tests {
 
     #[cfg(feature = "arena")]
     #[test]
-    fn a_record_s_inner_side_is_its_own_inner_row_in_every_kind() {
+    fn a_built_record_s_inner_side_is_its_own_inner_row_and_a_read_s_record_takes_no_written_row() {
         let store = TriviaStore::<Probe>::new();
         let (built, read) = records(&store);
-        for at in [built, read] {
-            let record = Place::record(at);
-            store.write_held_side(record, TriviaSide::Inner, &[text("// in")]).expect("kept");
-            let rows = rows_of(&store, at).expect("a side record of rows");
-            assert!(rows.inner.is_some() && rows.sites.is_empty(), "the record's own inner row keeps it, at no site: {rows:?}");
-            assert_eq!(read_side(&store, record, TriviaSide::Inner), Some(vec![text("// in")]));
-            assert_eq!(store.sides(record, &*store.built()).expect("read").and_then(|sides| sides.inner), Some(vec![text("// in")]));
-            assert_eq!(store.units(at, &*store.built()).expect("read"), [], "a record's inside is no unit's side");
-            store.write_held_side(record, TriviaSide::Inner, &[]).expect("a write of nothing");
-            assert_eq!(read_side(&store, record, TriviaSide::Inner), Some(Vec::new()), "a write of nothing replaces it");
-        }
+        let record = Place::record(built);
+        store.write_held_side(record, TriviaSide::Inner, &[text("// in")]).expect("kept");
+        let rows = rows_of(&store, built).expect("a side record of rows");
+        assert!(rows.inner.is_some() && rows.sites.is_empty(), "the record's own inner row keeps it, at no site: {rows:?}");
+        assert_eq!(read_side(&store, record, TriviaSide::Inner), Some(vec![text("// in")]));
+        assert_eq!(store.sides(record, &*store.built()).expect("read").and_then(|sides| sides.inner), Some(vec![text("// in")]));
+        assert_eq!(store.units(built, &*store.built()).expect("read"), [], "a record's inside is no unit's side");
+        store.write_held_side(record, TriviaSide::Inner, &[]).expect("a write of nothing");
+        assert_eq!(read_side(&store, record, TriviaSide::Inner), Some(Vec::new()), "a write of nothing replaces it");
+        assert_eq!(store.write_held_side(Place::record(read), TriviaSide::Inner, &[text("// in")]), Err(ArenaError::Unwritable(READ_SIDE)), "a read's record keeps the rows its parse placed: its read's list holds a written side");
+        assert_eq!(rows_of(&store, read), None);
         store.write_held_side(Place::record(built), TriviaSide::Inner, &[text("// in")]).expect("kept");
         let copy = {
             let mut chunks = store.built_mut();
@@ -1696,10 +1890,8 @@ mod tests {
         assert_eq!(read_side(&store, place, TriviaSide::Leading), Some(vec![text("// y")]), "a write replaces the side's codes with its row");
         let header = |at| crate::arena::ArenaRead::word(&*store.built(), at).expect("a header");
         let stamp = header(read);
-        store.write_held_side(Place::record(read), TriviaSide::Trailing, &[member()]).expect("kept");
-        assert_eq!(kept_row(&store, Place::record(read), TriviaSide::Trailing), None, "a read's record keeps a side of members alone in its header, as a built record does");
-        assert_ne!(header(read), stamp, "the write replaced the codes its parse stamped");
-        assert_eq!(read_side(&store, Place::record(read), TriviaSide::Trailing), Some(vec![member()]));
+        assert_eq!(store.write_held_side(Place::record(read), TriviaSide::Trailing, &[member()]), Err(ArenaError::Unwritable(READ_SIDE)), "its read's list holds a written side of a read's record");
+        assert_eq!(header(read), stamp, "a read's record keeps the codes its parse stamped");
     }
 
     #[cfg(feature = "arena")]

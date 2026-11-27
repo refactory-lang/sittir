@@ -194,6 +194,49 @@ fn at_path(nodes: &mut dyn Nodes<'_>, path: &[usize]) -> NodeIndex {
     path.iter().fold(NodeIndex::ROOT, |at, &position| nodes.kids(at)[position].index)
 }
 
+/// The name of the first node of `root`'s tree, in a walk from the root,
+/// one of whose sides holds an entry its parse placed, with that side.
+fn placed_side(engine: &Engine<sittir_rust::RustGrammar>, root: sittir_core::arena::Address) -> (sittir_core::types::NodeId, sittir_core::trivia_table::TriviaSide) {
+    use sittir_core::trivia_table::TriviaSide;
+    let built = engine.written().built();
+    let records = sittir_core::engine::Records::over(engine, &built, root).expect("a tree over the records");
+    let mut nodes = records.nodes();
+    let mut pending = vec![NodeIndex::ROOT];
+    while let Some(at) = pending.pop() {
+        if let Some(side) = [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].into_iter().find(|&side| records.side_entries(at, side, false).iter().any(|entry| matches!(entry, sittir_core::read::SideEntry::Source { .. }))) {
+            let Some(sittir_core::trivia_store::Place::Node(name)) = records.place(at) else { panic!("a node the store keeps") };
+            return (name, side);
+        }
+        pending.extend(nodes.kids(at).iter().rev().map(|kid| kid.index));
+    }
+    panic!("no side holds an entry")
+}
+
+#[test]
+fn a_side_written_to_a_read_s_node_is_an_entry_of_its_read_s_list_and_its_record_keeps_its_parse_s_rows() {
+    use sittir_core::arena::{replaced_list, Address, CellWord, Replaced, RowFields};
+    use sittir_core::trivia_table::TriviaSide;
+    let source = "fn f() {\n    // why\n    a;\n}\n";
+    let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
+    let root = engine.parse_records::<sittir_rust::render::AnyNode>(source).expect("a parse").root.expect("a root");
+    let (name, side) = placed_side(&engine, root);
+    assert_eq!(side, TriviaSide::Leading, "the comment leads the statement");
+    let holder = Address(name.address());
+    let rows = RowFields::of_record(&*engine.written().built(), holder).expect("its rows").2;
+    engine.write_read_side(name, side, &[]).expect("a write");
+    engine.write_read_side(name, TriviaSide::Trailing, &[]).expect("a write");
+    let built = engine.written().built();
+    assert_eq!(RowFields::of_record(&*built, holder).expect("its rows").2, rows, "the read's record keeps the rows its parse placed");
+    let (_, list) = replaced_list(&*built, holder).expect("its read").expect("a list");
+    let entries = Replaced::read(&*built, list).expect("its entries");
+    let comment = u32::try_from(source.find("// why").expect("the comment")).expect("an offset");
+    let end = u32::try_from(source.find("a;").expect("the statement") + 2).expect("an offset");
+    assert_eq!(entries, vec![
+        Replaced { node: name, side: TriviaSide::Leading, offset: comment, row: CellWord(0) },
+        Replaced { node: name, side: TriviaSide::Trailing, offset: end, row: CellWord(0) },
+    ], "a leading side's range starts where its placed comment does, a trailing side's where its node ends, in offset order");
+}
+
 #[test]
 fn a_side_written_to_a_read_s_node_is_read_by_every_later_call() {
     use sittir_core::trivia_table::TriviaSide;
@@ -217,7 +260,8 @@ fn a_side_written_to_a_read_s_node_is_read_by_every_later_call() {
         found.expect("a side that holds the comment")
     };
     assert_eq!(path.first(), Some(&0), "the comment lies in the first function");
-    engine.written().write_held_side(place, side, &[]).expect("a write");
+    let sittir_core::trivia_store::Place::Node(name) = place else { panic!("a node the store keeps") };
+    engine.write_read_side(name, side, &[]).expect("a write");
     let built = engine.written().built();
     let records = sittir_core::engine::Records::over(&engine, &built, root).expect("a tree over the records");
     let mut nodes = records.nodes();

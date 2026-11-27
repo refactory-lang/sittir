@@ -233,10 +233,49 @@ fn a_records_sides_read_its_header_once() {
     let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
     let root = engine.parse_records::<sittir_rust::render::node::AnyNode>("fn f() {}\n").expect("a parse").root.expect("a root");
     let built = engine.written().built();
+    let list = engine.written().list_of(root, &*built).expect("its read's list");
     let counted = CountedChunks(&*built, std::cell::Cell::new(0));
-    let sides = engine.written().sides(sittir_core::trivia_store::Place::record(root), &counted).expect("its sides");
+    let sides = engine.written().sides_in(sittir_core::trivia_store::Place::record(root), list, &counted).expect("its sides");
     assert_eq!(sides, None, "a record no write and no parse gave a side");
-    assert!(counted.1.get() <= 1, "{} chunk lookups for the sides of one record: one for its header", counted.1.get());
+    assert!(counted.1.get() <= 1, "{} chunk lookups for the sides of one record, its read's list in hand: one for its header", counted.1.get());
+}
+
+/// The chunk lookups one read of a read's list of replaced ranges takes
+/// from one of its records (`TriviaStore::list_of`): the record's header,
+/// its side record, its source's entry, and the read's side record.
+const LIST_LOOKUPS: u32 = 4;
+
+#[test]
+fn a_read_s_list_of_replaced_ranges_is_read_from_one_of_its_records_in_a_few_lookups() {
+    let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
+    let root = engine.parse_records::<sittir_rust::render::node::AnyNode>("fn f() {}\n").expect("a parse").root.expect("a root");
+    let built = engine.written().built();
+    let counted = CountedChunks(&*built, std::cell::Cell::new(0));
+    assert_eq!(engine.written().list_of(root, &counted).expect("its read's list"), sittir_core::arena::CellWord(0), "a read no write replaced a range of");
+    assert!(counted.1.get() <= LIST_LOOKUPS, "{} chunk lookups for a read's list", counted.1.get());
+}
+
+/// The reads of its read's list of replaced ranges a render of parsed
+/// records takes, whatever their number: once for its prepare and once for
+/// the tree over their source.
+const LIST_READS_A_RENDER: u64 = 2;
+
+#[test]
+fn a_render_of_many_parsed_records_reads_their_read_s_list_once_a_call() {
+    let reads = |n: usize| {
+        let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
+        let options = engine.options().clone();
+        let source = functions(n);
+        let root = engine.parse_records::<sittir_rust::render::node::AnyNode>(&source).expect("a parse").root.expect("a root");
+        let built = engine.written().built();
+        let before = engine.written().list_reads();
+        let text = engine.render_at(&built, root, ChangedEdges::default(), &options, true, |_| Ok(())).expect("a render");
+        assert_eq!(text, source, "the render is the source");
+        engine.written().list_reads() - before
+    };
+    let (few, many) = (reads(4), reads(64));
+    assert_eq!(few, many, "a render reads its read's list once a call, not once a record");
+    assert!(many <= LIST_READS_A_RENDER, "{many} reads of a read's list in one render");
 }
 
 #[test]

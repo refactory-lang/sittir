@@ -614,12 +614,32 @@ impl Replaced {
     /// Its words: the record's address, the key, the offset and the row.
     #[must_use]
     pub fn words(self) -> [u32; field::REPLACED_WORDS as usize] {
-        let side = match self.side {
+        [self.node.address(), self.node.packed_site() << Self::PART_BITS | Self::side_code(self.side), self.offset, self.row.0]
+    }
+
+    const fn side_code(side: TriviaSide) -> u32 {
+        match side {
             TriviaSide::Leading => 0,
             TriviaSide::Trailing => 1,
             TriviaSide::Inner => 2,
-        };
-        [self.node.address(), self.node.packed_site() << Self::PART_BITS | side, self.offset, self.row.0]
+        }
+    }
+
+    /// `entries` as a list placed through `space`, by offset, then node,
+    /// then side, held once by the cell answered: the empty list for none.
+    ///
+    /// # Errors
+    ///
+    /// What placing the run refuses.
+    pub fn place(space: &mut dyn RecordSpace, entries: &mut [Self]) -> Result<CellWord, ArenaError> {
+        if entries.is_empty() {
+            return Ok(CellWord(0));
+        }
+        entries.sort_by_key(|entry| (entry.offset, entry.node, Self::side_code(entry.side)));
+        let mut words = Vec::with_capacity(1 + entries.len() * field::REPLACED_WORDS as usize);
+        words.push(u32::try_from(entries.len()).map_err(|_| ArenaError::Full)?);
+        words.extend(entries.iter().flat_map(|entry| entry.words()));
+        super::ListCell::word(space.push(&words)?)
     }
 
     /// The entry `words` hold (`words`).
@@ -647,6 +667,34 @@ impl Replaced {
     pub fn read(arena: &dyn ArenaRead, list: CellWord) -> Result<Vec<Self>, ArenaError> {
         super::ListCell::of_word(list, arena)?.items(arena, field::REPLACED_WORDS)?.map(|words| Self::of_words(words.try_into().map_err(|_| malformed("replaced range words", list.0))?)).collect()
     }
+}
+
+/// The read whose source the record at `holder` was read from: its own
+/// side record, and the cell of its list of replaced ranges
+/// (`SideRecord::replaced`), the word after its mask; none for a record no
+/// read left.
+///
+/// # Errors
+///
+/// What reading the record's side record, its source's entry and the
+/// read's side record refuses.
+pub fn replaced_list(arena: &dyn ArenaRead, holder: Address) -> Result<Option<(Address, CellWord)>, ArenaError> {
+    let (side, _) = SideRecord::read_facts(arena, super::borrowed::side_of(arena, holder)?)?;
+    side.source.map_or(Ok(None), |source| read_replaced_list(arena, Address(source)))
+}
+
+/// `replaced_list` of the read whose source's entry is at `source`.
+///
+/// # Errors
+///
+/// What reading the source's entry and the read's side record refuses.
+pub fn read_replaced_list(arena: &dyn ArenaRead, source: Address) -> Result<Option<(Address, CellWord)>, ArenaError> {
+    let Some(read) = super::source::Source::read_side_of(arena, source)? else { return Ok(None) };
+    if arena.word(read)? & mask::REPLACED == 0 {
+        return Ok(None);
+    }
+    let list = arena.word(read.offset(1).ok_or(malformed("read side record", read.0))?)?;
+    Ok(Some((read, CellWord(list))))
 }
 
 /// What a side record holds.

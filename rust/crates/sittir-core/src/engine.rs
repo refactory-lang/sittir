@@ -382,6 +382,14 @@ pub trait Backing<G: EngineGrammar>: Sized {
     /// records its written sides name come from, and what answers them.
     fn store(&self) -> &TriviaStore<G::Trivia>;
 
+    /// The list of replaced ranges of the read this backer is over
+    /// (`TriviaStore::list_of_source`), read once a call; the empty list
+    /// for a backer over no read's records.
+    #[cfg(feature = "arena")]
+    fn replaced_list(&self) -> crate::arena::CellWord {
+        crate::arena::CellWord(0)
+    }
+
     /// The work this backer's layout reads have done.
     fn work(&self) -> &crate::layout::LayoutWorkCounter;
 
@@ -1122,6 +1130,9 @@ pub struct Records<'a, G: EngineGrammar> {
     render_unit: fn(&Self, KindId) -> Option<String>,
     /// The text of each unit kind the call asked about.
     unit_texts: PerCall<HashMap<KindId, Option<String>, crate::heap::IndexState>>,
+    /// The read's list of replaced ranges, read on the call's first ask
+    /// (`Backing::replaced_list`).
+    replaced: std::cell::OnceCell<crate::arena::CellWord>,
 }
 
 #[cfg(feature = "arena")]
@@ -1145,11 +1156,11 @@ impl<'a, G: EngineGrammar> Records<'a, G> {
         Some(std::borrow::Cow::Owned(starts))
     }
 
-    /// Where each side a write gave a node of the source is kept.
+    /// Where each side a write gave a node of the source is kept: its read's
+    /// list of replaced ranges (`TriviaStore::written`).
     fn written_sites(&self) -> Option<Vec<(crate::arena::NodeSite, TriviaSide)>> {
-        let spans = crate::arena::read_spans(self.built, self.source).ok()?;
         let (shape, bits, _) = self.shape;
-        Some(self.store.written(&spans).into_iter().filter_map(|(name, side)| Some((crate::arena::site::node_site(self.built, shape, bits, name).ok()?, side))).collect())
+        Some(crate::trivia_store::TriviaStore::<G::Trivia>::written(self.replaced_list(), self.built).ok()?.into_iter().filter_map(|(name, side)| Some((crate::arena::site::node_site(self.built, shape, bits, name).ok()?, side))).collect())
     }
 }
 
@@ -1181,6 +1192,10 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
 
     fn store(&self) -> &TriviaStore<G::Trivia> {
         &self.store
+    }
+
+    fn replaced_list(&self) -> crate::arena::CellWord {
+        *self.replaced.get_or_init(|| self.store.list_of_source(self.source, self.built).unwrap_or(crate::arena::CellWord(0)))
     }
 
     fn work(&self) -> &crate::layout::LayoutWorkCounter {
@@ -1217,7 +1232,7 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
         let Some(crate::arena::NodeSite::Record(at)) = self.table.site(index) else { return Vec::new() };
         let (shape, bits, _) = self.shape;
         let Some(record) = crate::arena::ArenaRead::header_kind(self.built, at, bits).ok().and_then(shape) else { return Vec::new() };
-        let units = self.store.units(at, self.built).unwrap_or_default();
+        let units = self.store.units_with(at, self.replaced_list(), self.built).unwrap_or_default();
         units.into_iter().filter_map(|(word, item, trivia)| Some(crate::layout::UnitSides { slot: record.cells.iter().find(|cell| cell.word == word)?.key.to_owned(), item, trivia })).collect()
     }
 
@@ -1306,7 +1321,7 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
         let blank = [LayoutKinds::BLANKLINE, LayoutKinds::DOUBLE_BLANKLINE];
         let gaps = self.grammar.whitespace().0;
         Some(match self.place(index) {
-            Some(place @ crate::trivia_store::Place::Node(_)) => blank.into_iter().find(|&gap| gaps.gap_kind(gap).is_some_and(|kind| self.store.ends_with_layout(place, TriviaSide::Trailing, kind, self.built).unwrap_or(false))).unwrap_or(LayoutKinds::NONE),
+            Some(place @ crate::trivia_store::Place::Node(_)) => blank.into_iter().find(|&gap| gaps.gap_kind(gap).is_some_and(|kind| self.store.ends_with_layout(place, TriviaSide::Trailing, kind, self.replaced_list(), self.built).unwrap_or(false))).unwrap_or(LayoutKinds::NONE),
             _ => LayoutKinds::NONE,
         })
     }
@@ -1393,6 +1408,7 @@ impl<'a, G: crate::arena::RecordGrammar> Records<'a, G> {
             work: crate::layout::LayoutWorkCounter::default(),
             render_unit: Self::rendered_unit,
             unit_texts: PerCall::default(),
+            replaced: std::cell::OnceCell::new(),
         })
     }
 
@@ -2023,9 +2039,11 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
         let stored = match tree.place(index) {
             #[cfg(feature = "arena")]
             Some(place) => {
-                let stored = tree.reads().and_then(|arena| tree.store().side(place, side, arena).ok().flatten()).unwrap_or_default();
-                let placed = stored.into_iter().filter_map(|entry| self.parse_placed(entry, layout || tree.store().edited(place, side)));
-                if !tree.store().edited(place, side) {
+                let list = tree.replaced_list();
+                let stored = tree.reads().and_then(|arena| tree.store().side_in(place, side, list, arena).ok().flatten()).unwrap_or_default();
+                let edited = tree.reads().is_some_and(|arena| crate::trivia_store::TriviaStore::<G::Trivia>::edited(place, side, list, arena).unwrap_or(false));
+                let placed = stored.into_iter().filter_map(|entry| self.parse_placed(entry, layout || edited));
+                if !edited {
                     return placed.collect();
                 }
                 return placed.map(|entry| SideEntry::Written(entry.into_entry())).collect();

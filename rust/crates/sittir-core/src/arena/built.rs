@@ -53,7 +53,13 @@ impl<G: RecordGrammar> Engine<G> {
     }
 
     /// Replace `side` of the node a read left that `name` names with
-    /// `entries`, which its render then writes.
+    /// `entries`, which its render then writes: an entry of its read's list
+    /// of replaced ranges, at the offset where the side's bytes start. A
+    /// leading or inner side starts where the first record its parse
+    /// placed there starts, else where the node starts, and a trailing side
+    /// where the node ends. A unit kept as its kind alone has no bytes of
+    /// its own, so a side of one starts where its holder starts, but for a
+    /// leading or inner side whose parse placed a record there.
     ///
     /// # Errors
     ///
@@ -61,13 +67,26 @@ impl<G: RecordGrammar> Engine<G> {
     /// no source.
     pub fn write_read_side(&self, name: crate::types::NodeId, side: TriviaSide, entries: &[TriviaEntry<G::Trivia>]) -> Result<(), ArenaError> {
         let record = Address(name.address()).record()?;
-        {
+        let (placed, unit) = {
             let chunks = self.written().built();
             let built = chunks.readable()?;
             super::RunNodes::source_of(built, record)?;
-            super::site::node_site(built, G::shape, G::KIND_BITS, name)?;
-        }
-        self.written().write_held_side(Place::Node(name), side, entries)
+            let site = super::site::node_site(built, G::shape, G::KIND_BITS, name)?;
+            (self.written().placed_records(name, side, built)?, matches!(site, super::NodeSite::Unit(_)))
+        };
+        let spanned = if unit { crate::types::NodeId::record(record.0) } else { name };
+        let offset = self.read_named(spanned, |tree, index| {
+            use crate::nodes::Nodes as _;
+            let mut nodes = tree.nodes();
+            let node = nodes.kid(index);
+            match (side, placed.first().and_then(|&at| tree.index_named(crate::types::NodeId::record(at.0)))) {
+                (TriviaSide::Trailing, _) if !unit => node.end,
+                (TriviaSide::Leading | TriviaSide::Inner, Some(first)) => nodes.kid(first).start,
+                _ => node.start,
+            }
+        })?
+        .ok_or(ArenaError::Malformed { what: "read node", word: record.0 })?;
+        self.written().write_read_held_side(name, side, entries, offset)
     }
 
     /// What `f` answers of the node a read left a record of at `at`: the
