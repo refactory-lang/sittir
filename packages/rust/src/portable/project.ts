@@ -8,11 +8,11 @@ import {
 	fits,
 	flagsSetOn,
 	floatOf,
+	hasKind,
 	holderOf,
 	holdsKey,
 	integerOf,
 	integerValue,
-	isNode,
 	itemsAt,
 	joined,
 	kindIn,
@@ -6480,7 +6480,7 @@ const seats1 = (value: unknown): Found | undefined => {
 const seats0 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats0(item) ?? { found: item, many: false }));
 	if (fits(KINDS0, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
 	if (next0 === undefined || next0 === null) {
@@ -6630,7 +6630,7 @@ const seats4 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats4(item) ?? { found: item, many: false }));
 	if (fits(KINDS2, value)) return { found: value, many: false };
 	if (fits(KINDS3, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -6645,7 +6645,7 @@ const seats4 = (value: unknown): Found | undefined => {
 const seats6 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats6(item) ?? { found: item, many: false }));
 	if (fits(KINDS2, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -6669,7 +6669,7 @@ const seats3 = (value: unknown): Found | undefined => {
 	if (fits(KINDS2, value)) return { found: value, many: false };
 	if (fits(KINDS0, value)) return { found: value, many: false };
 	if (fits(KINDS0, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -6785,7 +6785,7 @@ const seats9 = (value: unknown): Found | undefined => {
 	if (fits(KINDS3, value)) return { found: value, many: false };
 	if (fits(KINDS2, value)) return { found: value, many: false };
 	if (fits(KINDS3, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -6825,7 +6825,7 @@ const seats11 = (value: unknown): Found | undefined => {
 	if (fits(KINDS2, value)) return { found: value, many: false };
 	if (fits(KINDS2, value)) return { found: value, many: false };
 	if (fits(KINDS2, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -6895,7 +6895,7 @@ const seats12 = (value: unknown): Found | undefined => {
 };
 const seats8 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats8(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -7048,7 +7048,7 @@ const seats17 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats17(item) ?? { found: item, many: false }));
 	if (fits(KINDS8, value)) return { found: value, many: true };
 	if (fits(KINDS9, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -7134,7 +7134,7 @@ const seats21 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats21(item) ?? { found: item, many: false }));
 	if (fits(KINDS12, value)) return { found: value, many: true };
 	if (fits(KINDS9, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -7184,7 +7184,7 @@ const seats23 = (value: unknown): Found | undefined => {
 };
 const seats22 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats22(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -7551,7 +7551,7 @@ const seats26 = (value: unknown): Found | undefined => {
 	if (fits(KINDS15, value)) return { found: value, many: true };
 	if (fits(KINDS0, value)) return { found: value, many: false };
 	if (fits(KINDS0, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
 	if (next0 === undefined || next0 === null) {
@@ -7580,7 +7580,7 @@ const seats28 = (value: unknown): Found | undefined => {
 	if (fits(KINDS15, value)) return { found: value, many: true };
 	if (fits(KINDS15, value)) return { found: value, many: true };
 	if (fits(KINDS15, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
 	if (next0 === undefined || next0 === null) {
@@ -7594,7 +7594,7 @@ const seats28 = (value: unknown): Found | undefined => {
 };
 const seats24 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats24(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
@@ -7726,7 +7726,7 @@ const seats30 = (value: unknown): Found | undefined => {
 };
 const seats29 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats29(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
@@ -7884,7 +7884,7 @@ const seats37 = (value: unknown): Found | undefined => {
 };
 const seats36 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats36(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -7898,7 +7898,7 @@ const seats36 = (value: unknown): Found | undefined => {
 };
 const seats35 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats35(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -7922,7 +7922,7 @@ const seats35 = (value: unknown): Found | undefined => {
 };
 const seats38 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats38(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -7938,7 +7938,7 @@ const seats38 = (value: unknown): Found | undefined => {
 };
 const seats34 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats34(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'elements');
@@ -8009,7 +8009,7 @@ const seats43 = (value: unknown): Found | undefined => {
 };
 const seats42 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats42(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'fieldDeclaration');
 	if (next0 === undefined || next0 === null) {
@@ -8023,7 +8023,7 @@ const seats42 = (value: unknown): Found | undefined => {
 };
 const seats41 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats41(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -8047,7 +8047,7 @@ const seats41 = (value: unknown): Found | undefined => {
 };
 const seats44 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats44(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -8063,7 +8063,7 @@ const seats44 = (value: unknown): Found | undefined => {
 };
 const seats40 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats40(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'elements');
@@ -8135,7 +8135,7 @@ const seats48 = (value: unknown): Found | undefined => {
 };
 const seats47 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats47(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'enumVariant');
 	if (next0 === undefined || next0 === null) {
@@ -8149,7 +8149,7 @@ const seats47 = (value: unknown): Found | undefined => {
 };
 const seats46 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats46(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -8173,7 +8173,7 @@ const seats46 = (value: unknown): Found | undefined => {
 };
 const seats49 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats49(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -8189,7 +8189,7 @@ const seats49 = (value: unknown): Found | undefined => {
 };
 const seats45 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats45(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'elements');
@@ -8280,7 +8280,7 @@ const route25 = (node: Node): Routed | undefined => {
 const seats51 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats51(item) ?? { found: item, many: false }));
 	if (fits(KINDS0, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
 	if (next0 === undefined || next0 === null) {
@@ -8306,7 +8306,7 @@ const route26 = (node: Node): Routed | undefined => {
 };
 const seats52 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats52(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -8349,7 +8349,7 @@ const seats54 = (value: unknown): Found | undefined => {
 const seats53 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats53(item) ?? { found: item, many: false }));
 	if (fits(KINDS34, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -8616,7 +8616,7 @@ const seats60 = (value: unknown): Found | undefined => {
 };
 const seats59 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats59(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -8665,7 +8665,7 @@ const seats62 = (value: unknown): Found | undefined => {
 };
 const seats61 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats61(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -8749,7 +8749,7 @@ const seats64 = (value: unknown): Found | undefined => {
 const seats63 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats63(item) ?? { found: item, many: false }));
 	if (fits(KINDS44, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -8812,7 +8812,7 @@ const seats67 = (value: unknown): Found | undefined => {
 const seats66 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats66(item) ?? { found: item, many: false }));
 	if (fits(KINDS46, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'bounds');
@@ -8843,7 +8843,7 @@ const seats69 = (value: unknown): Found | undefined => {
 	if (fits(KINDS15, value)) return { found: value, many: true };
 	if (fits(KINDS0, value)) return { found: value, many: false };
 	if (fits(KINDS0, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
 	if (next0 === undefined || next0 === null) {
@@ -8858,7 +8858,7 @@ const seats69 = (value: unknown): Found | undefined => {
 const seats70 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats70(item) ?? { found: item, many: false }));
 	if (fits(KINDS15, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
 	if (next0 === undefined || next0 === null) {
@@ -8873,7 +8873,7 @@ const seats70 = (value: unknown): Found | undefined => {
 const seats68 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats68(item) ?? { found: item, many: false }));
 	if (fits(KINDS15, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'declarations');
@@ -9113,7 +9113,7 @@ const seats78 = (value: unknown): Found | undefined => {
 const seats77 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats77(item) ?? { found: item, many: false }));
 	if (fits(KINDS51, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -9402,7 +9402,7 @@ const seats84 = (value: unknown): Found | undefined => {
 const seats83 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats83(item) ?? { found: item, many: false }));
 	if (fits(KINDS48, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -9418,7 +9418,7 @@ const seats83 = (value: unknown): Found | undefined => {
 };
 const seats85 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats85(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -9434,7 +9434,7 @@ const seats85 = (value: unknown): Found | undefined => {
 };
 const seats82 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats82(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'lifetimes');
@@ -9537,7 +9537,7 @@ const seats88 = (value: unknown): Found | undefined => {
 const seats87 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats87(item) ?? { found: item, many: false }));
 	if (fits(KINDS36, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -9600,7 +9600,7 @@ const seats92 = (value: unknown): Found | undefined => {
 const seats91 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats91(item) ?? { found: item, many: false }));
 	if (fits(KINDS62, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -9616,7 +9616,7 @@ const seats91 = (value: unknown): Found | undefined => {
 };
 const seats93 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats93(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -9632,7 +9632,7 @@ const seats93 = (value: unknown): Found | undefined => {
 };
 const seats90 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats90(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'elements');
@@ -9786,7 +9786,7 @@ const seats98 = (value: unknown): Found | undefined => {
 const seats97 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats97(item) ?? { found: item, many: false }));
 	if (fits(KINDS66, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -10170,9 +10170,9 @@ const route88 = (node: Node): Routed | undefined => {
 };
 const seats109 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats109(item) ?? { found: item, many: false }));
-	if (fits(KINDS79, value) && !(isNode(value) && kindIn(KINDS79, value) && classify(value) === undefined))
+	if (fits(KINDS79, value) && !(hasKind(value) && kindIn(KINDS79, value) && classify(value) === undefined))
 		return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -10186,9 +10186,9 @@ const seats109 = (value: unknown): Found | undefined => {
 };
 const seats108 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats108(item) ?? { found: item, many: false }));
-	if (fits(KINDS79, value) && !(isNode(value) && kindIn(KINDS79, value) && classify(value) === undefined))
+	if (fits(KINDS79, value) && !(hasKind(value) && kindIn(KINDS79, value) && classify(value) === undefined))
 		return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -10212,7 +10212,7 @@ const seats108 = (value: unknown): Found | undefined => {
 };
 const seats110 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats110(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -10228,7 +10228,7 @@ const seats110 = (value: unknown): Found | undefined => {
 };
 const seats107 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats107(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'elements');
@@ -10441,7 +10441,7 @@ const seats114 = (value: unknown): Found | undefined => {
 const seats113 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats113(item) ?? { found: item, many: false }));
 	if (fits(KINDS80, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -10504,7 +10504,7 @@ const seats118 = (value: unknown): Found | undefined => {
 const seats117 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats117(item) ?? { found: item, many: false }));
 	if (fits(KINDS82, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -10520,7 +10520,7 @@ const seats117 = (value: unknown): Found | undefined => {
 };
 const seats119 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats119(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -10536,7 +10536,7 @@ const seats119 = (value: unknown): Found | undefined => {
 };
 const seats116 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats116(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'initializers');
@@ -10856,7 +10856,7 @@ const seats126 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats126(item) ?? { found: item, many: false }));
 	if (fits(KINDS0, value)) return { found: value, many: false };
 	if (fits(KINDS0, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
 	if (next0 === undefined || next0 === null) {
@@ -11135,7 +11135,7 @@ const seats129 = (value: unknown): Found | undefined => {
 const seats128 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats128(item) ?? { found: item, many: false }));
 	if (fits(KINDS91, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -11169,7 +11169,7 @@ const seats131 = (value: unknown): Found | undefined => {
 const seats130 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats130(item) ?? { found: item, many: false }));
 	if (fits(KINDS49, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -11268,7 +11268,7 @@ const seats134 = (value: unknown): Found | undefined => {
 const seats133 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats133(item) ?? { found: item, many: false }));
 	if (fits(KINDS93, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -11390,7 +11390,7 @@ const seats140 = (value: unknown): Found | undefined => {
 const seats139 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats139(item) ?? { found: item, many: false }));
 	if (fits(KINDS100, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'doc');
 	if (next0 === undefined || next0 === null) {
@@ -11447,7 +11447,7 @@ const seats143 = (value: unknown): Found | undefined => {
 const seats142 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats142(item) ?? { found: item, many: false }));
 	if (fits(KINDS104, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'doc');
 	if (next0 === undefined || next0 === null) {
@@ -11483,7 +11483,7 @@ const seats145 = (value: unknown): Found | undefined => {
 const seats144 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats144(item) ?? { found: item, many: false }));
 	if (fits(KINDS105, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'parameters');
@@ -11598,7 +11598,7 @@ const seats149 = (value: unknown): Found | undefined => {
 	if (fits(KINDS13, value)) return { found: value, many: true };
 	if (fits(KINDS0, value)) return { found: value, many: false };
 	if (fits(KINDS0, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
 	if (next0 === undefined || next0 === null) {
@@ -11613,7 +11613,7 @@ const seats149 = (value: unknown): Found | undefined => {
 const seats150 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats150(item) ?? { found: item, many: false }));
 	if (fits(KINDS13, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
 	if (next0 === undefined || next0 === null) {
@@ -11628,7 +11628,7 @@ const seats150 = (value: unknown): Found | undefined => {
 const seats148 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats148(item) ?? { found: item, many: false }));
 	if (fits(KINDS13, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'declarations');
@@ -11789,7 +11789,7 @@ const seats155 = (value: unknown): Found | undefined => {
 	if (fits(KINDS14, value)) return { found: value, many: true };
 	if (fits(KINDS0, value)) return { found: value, many: false };
 	if (fits(KINDS0, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
 	if (next0 === undefined || next0 === null) {
@@ -11804,7 +11804,7 @@ const seats155 = (value: unknown): Found | undefined => {
 const seats156 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats156(item) ?? { found: item, many: false }));
 	if (fits(KINDS14, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'attribute');
 	if (next0 === undefined || next0 === null) {
@@ -11819,7 +11819,7 @@ const seats156 = (value: unknown): Found | undefined => {
 const seats154 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats154(item) ?? { found: item, many: false }));
 	if (fits(KINDS14, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'declarations');
@@ -11985,7 +11985,7 @@ const route151 = (node: Node): Routed | undefined => {
 };
 const seats159 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats159(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'doc');
 	if (next0 === undefined || next0 === null) {
@@ -11999,7 +11999,7 @@ const seats159 = (value: unknown): Found | undefined => {
 };
 const seats160 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats160(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'doc');
 	if (next0 === undefined || next0 === null) {
@@ -12015,7 +12015,7 @@ const seats161 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats161(item) ?? { found: item, many: false }));
 	if (fits(KINDS112, value)) return { found: value, many: true };
 	if (fits(KINDS9, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -12076,7 +12076,7 @@ const seats164 = (value: unknown): Found | undefined => {
 const seats163 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats163(item) ?? { found: item, many: false }));
 	if (fits(KINDS114, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -12158,7 +12158,7 @@ const route156 = (node: Node): Routed | undefined => {
 const seats167 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats167(item) ?? { found: item, many: false }));
 	if (fits(KINDS34, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -12174,7 +12174,7 @@ const seats167 = (value: unknown): Found | undefined => {
 };
 const seats168 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats168(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -12190,7 +12190,7 @@ const seats168 = (value: unknown): Found | undefined => {
 };
 const seats166 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats166(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'elements');
@@ -12249,7 +12249,7 @@ const seats171 = (value: unknown): Found | undefined => {
 };
 const seats170 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats170(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'fieldDeclaration');
 	if (next0 === undefined || next0 === null) {
@@ -12279,7 +12279,7 @@ const seats174 = (value: unknown): Found | undefined => {
 };
 const seats173 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats173(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'fieldDeclaration');
 	if (next0 === undefined || next0 === null) {
@@ -12293,7 +12293,7 @@ const seats173 = (value: unknown): Found | undefined => {
 };
 const seats172 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats172(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -12317,7 +12317,7 @@ const seats172 = (value: unknown): Found | undefined => {
 };
 const seats175 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats175(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -12333,7 +12333,7 @@ const seats175 = (value: unknown): Found | undefined => {
 };
 const seats169 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats169(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -12376,7 +12376,7 @@ const seats179 = (value: unknown): Found | undefined => {
 };
 const seats178 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats178(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'enumVariant');
 	if (next0 === undefined || next0 === null) {
@@ -12390,7 +12390,7 @@ const seats178 = (value: unknown): Found | undefined => {
 };
 const seats177 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats177(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -12414,7 +12414,7 @@ const seats177 = (value: unknown): Found | undefined => {
 };
 const seats180 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats180(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -12430,7 +12430,7 @@ const seats180 = (value: unknown): Found | undefined => {
 };
 const seats176 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats176(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'elements');
@@ -12517,7 +12517,7 @@ const seats182 = (value: unknown): Found | undefined => {
 };
 const seats181 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats181(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -12609,7 +12609,7 @@ const seats186 = (value: unknown): Found | undefined => {
 };
 const seats185 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats185(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -12623,7 +12623,7 @@ const seats185 = (value: unknown): Found | undefined => {
 };
 const seats184 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats184(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -12647,7 +12647,7 @@ const seats184 = (value: unknown): Found | undefined => {
 };
 const seats187 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats187(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -12663,7 +12663,7 @@ const seats187 = (value: unknown): Found | undefined => {
 };
 const seats183 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats183(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'elements');
@@ -12703,13 +12703,13 @@ const seats191 = (value: unknown): Found | undefined => {
 };
 const seats190 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats190(item) ?? { found: item, many: false }));
-	if (fits(KINDS79, value) && !(isNode(value) && kindIn(KINDS79, value) && classify(value) === undefined))
+	if (fits(KINDS79, value) && !(hasKind(value) && kindIn(KINDS79, value) && classify(value) === undefined))
 		return { found: value, many: true };
-	if (fits(KINDS79, value) && !(isNode(value) && kindIn(KINDS79, value) && classify(value) === undefined))
+	if (fits(KINDS79, value) && !(hasKind(value) && kindIn(KINDS79, value) && classify(value) === undefined))
 		return { found: value, many: true };
-	if (fits(KINDS79, value) && !(isNode(value) && kindIn(KINDS79, value) && classify(value) === undefined))
+	if (fits(KINDS79, value) && !(hasKind(value) && kindIn(KINDS79, value) && classify(value) === undefined))
 		return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -12723,13 +12723,13 @@ const seats190 = (value: unknown): Found | undefined => {
 };
 const seats189 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats189(item) ?? { found: item, many: false }));
-	if (fits(KINDS79, value) && !(isNode(value) && kindIn(KINDS79, value) && classify(value) === undefined))
+	if (fits(KINDS79, value) && !(hasKind(value) && kindIn(KINDS79, value) && classify(value) === undefined))
 		return { found: value, many: true };
-	if (fits(KINDS79, value) && !(isNode(value) && kindIn(KINDS79, value) && classify(value) === undefined))
+	if (fits(KINDS79, value) && !(hasKind(value) && kindIn(KINDS79, value) && classify(value) === undefined))
 		return { found: value, many: true };
-	if (fits(KINDS79, value) && !(isNode(value) && kindIn(KINDS79, value) && classify(value) === undefined))
+	if (fits(KINDS79, value) && !(hasKind(value) && kindIn(KINDS79, value) && classify(value) === undefined))
 		return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -12753,7 +12753,7 @@ const seats189 = (value: unknown): Found | undefined => {
 };
 const seats192 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats192(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -12769,7 +12769,7 @@ const seats192 = (value: unknown): Found | undefined => {
 };
 const seats188 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats188(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'elements');
@@ -12896,7 +12896,7 @@ const seats195 = (value: unknown): Found | undefined => {
 };
 const seats194 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats194(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -16634,16 +16634,18 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 			const own = nodeText(node);
 			if (own !== undefined) return spelledText(K.FunctionItem, own, seats, undefined) ?? node;
 			const flags = [
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+				...(slot1.filter(hasKind).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 					? ['async']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+				...(slot1.filter(hasKind).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 					? ['const']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
+				...(slot1.filter(hasKind).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 					? ['unsafe']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
+				...(slot1
+					.filter(hasKind)
+					.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 					? ['default']
 					: []),
 				...flagsSetOn(node)
@@ -16678,19 +16680,23 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -16728,19 +16734,23 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -16778,19 +16788,23 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -16828,19 +16842,23 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -16878,19 +16896,23 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -17007,16 +17029,18 @@ const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
 			const own = nodeText(node);
 			if (own !== undefined) return spelledText(K.FunctionSignatureItem, own, seats, undefined) ?? node;
 			const flags = [
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+				...(slot1.filter(hasKind).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 					? ['async']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+				...(slot1.filter(hasKind).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 					? ['const']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
+				...(slot1.filter(hasKind).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 					? ['unsafe']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
+				...(slot1
+					.filter(hasKind)
+					.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 					? ['default']
 					: []),
 				...flagsSetOn(node)
@@ -17049,19 +17073,23 @@ const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionSignatureItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -17097,19 +17125,23 @@ const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionSignatureItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -17145,19 +17177,23 @@ const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionSignatureItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -17193,19 +17229,23 @@ const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionSignatureItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -17241,19 +17281,23 @@ const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionSignatureItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -18300,9 +18344,9 @@ const readFunctionType = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionType, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) =>
+					...(slot1.filter(hasKind).some((c0) =>
 						itemsAt(c0, K.FunctionTypeFnForm, ROW36)
-							.filter(isNode)
+							.filter(hasKind)
 							.some((c1) => texts(itemsAt(c1, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 					)
 						? ['unsafe']
@@ -18339,9 +18383,9 @@ const readFunctionType = (node: Node, seats?: Seats): unknown => {
 			const own = nodeText(node);
 			if (own !== undefined) return spelledText(K.FunctionType, own, seats, undefined) ?? node;
 			if (
-				slot1.filter(isNode).some((c0) =>
+				slot1.filter(hasKind).some((c0) =>
 					itemsAt(c0, K.FunctionTypeFnForm, ROW36)
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c1) => texts(itemsAt(c1, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 				)
 			)
@@ -24226,19 +24270,21 @@ const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 		case 'declaration.member.method': {
 			const own = nodeText(node);
 			if (own !== undefined) return spelledText(K.MethodDeclaration, own, seats, undefined) ?? node;
-			if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
+			if (slot4.filter(hasKind).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 				return node;
 			const flags = [
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+				...(slot1.filter(hasKind).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 					? ['async']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+				...(slot1.filter(hasKind).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 					? ['const']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
+				...(slot1.filter(hasKind).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 					? ['unsafe']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
+				...(slot1
+					.filter(hasKind)
+					.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 					? ['default']
 					: []),
 				...flagsSetOn(node)
@@ -24272,22 +24318,26 @@ const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS0, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.MethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(hasKind).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -24324,22 +24374,26 @@ const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS1, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.MethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(hasKind).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -24376,22 +24430,26 @@ const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS2, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.MethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(hasKind).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -24428,22 +24486,26 @@ const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS3, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.MethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(hasKind).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -24480,22 +24542,26 @@ const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS4, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.MethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(hasKind).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -24644,19 +24710,21 @@ const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 		case 'declaration.member.method.signature': {
 			const own = nodeText(node);
 			if (own !== undefined) return spelledText(K.SignatureMethodDeclaration, own, seats, undefined) ?? node;
-			if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
+			if (slot4.filter(hasKind).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 				return node;
 			const flags = [
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+				...(slot1.filter(hasKind).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 					? ['async']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+				...(slot1.filter(hasKind).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 					? ['const']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
+				...(slot1.filter(hasKind).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 					? ['unsafe']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
+				...(slot1
+					.filter(hasKind)
+					.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 					? ['default']
 					: []),
 				...flagsSetOn(node)
@@ -24688,22 +24756,26 @@ const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS0, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.SignatureMethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(hasKind).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -24738,22 +24810,26 @@ const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS1, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.SignatureMethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(hasKind).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -24788,22 +24864,26 @@ const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS2, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.SignatureMethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(hasKind).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -24838,22 +24918,26 @@ const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS3, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.SignatureMethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(hasKind).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -24888,22 +24972,26 @@ const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS4, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.SignatureMethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(hasKind).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
+					...(slot1
+						.filter(hasKind)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
-						.filter(isNode)
+						.filter(hasKind)
 						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
@@ -24973,7 +25061,7 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 		}
 		return tokenText(value, seats) ?? value;
 	}
-	if (!isNode(value)) return value;
+	if (!hasKind(value)) return value;
 	if (erred(value) || opaque(value)) return value;
 	switch (value.$type) {
 		case K.Identifier:

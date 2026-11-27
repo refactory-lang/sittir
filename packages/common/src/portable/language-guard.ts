@@ -1,8 +1,6 @@
 import type { PortableRows, PortableTable } from '@sittir/types';
 import { engineOf } from '../engine-scope.ts';
-import { hasKind } from './classify.ts';
-
-type Node = { readonly $type: number };
+import { hasKind, type Node } from './classify.ts';
 
 const rowsByLoad = new WeakMap<object, PortableRows>();
 

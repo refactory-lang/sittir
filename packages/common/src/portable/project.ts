@@ -5,9 +5,7 @@ import { isErrorNode } from '../utils.ts';
 import { meaningfulText, rebuilds, setsOn, spelledText, tokenText, type SeatText } from './facts.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
-import { Keyword, rowItems, sameText, textOf } from './classify.ts';
-
-export type Node = { readonly $type: number };
+import { hasKind, Keyword, rowItems, sameText, textOf, type Node } from './classify.ts';
 
 export interface Found {
 	readonly found: unknown;
@@ -68,21 +66,19 @@ export const erred = (node: Node): boolean => {
 	return Object.values(sidesOf(node) ?? {}).some((entries) => entries.some(isErrorNode)) || (errors !== undefined && holdsMissing(node, errors));
 };
 
-export const isNode = (value: unknown): value is Node => typeof value === 'object' && value !== null && typeof (value as Node).$type === 'number';
-
-export const kindOf = (value: unknown): number | undefined => (typeof value === 'number' ? value : value instanceof Keyword ? value.kind : isNode(value) ? value.$type : undefined);
+export const kindOf = (value: unknown): number | undefined => (typeof value === 'number' ? value : value instanceof Keyword ? value.kind : hasKind(value) ? value.$type : undefined);
 
 export const kindIn = (kinds: ReadonlySet<number>, value: unknown): boolean => {
 	const kind = kindOf(value);
 	return kind !== undefined && kinds.has(kind);
 };
 
-export const itemsAt = (value: unknown, kind: number, row: QuerySlotEntry): readonly unknown[] => (isNode(value) && value.$type === kind ? rowItems(value, row) : []);
+export const itemsAt = (value: unknown, kind: number, row: QuerySlotEntry): readonly unknown[] => (hasKind(value) && value.$type === kind ? rowItems(value, row) : []);
 
 export const present = (value: unknown): boolean => value !== undefined && value !== null && !(Array.isArray(value) && value.length === 0);
 
 export const slotOf = (node: unknown, key: string): unknown => {
-	if (!isNode(node)) return undefined;
+	if (!hasKind(node)) return undefined;
 	const read = slotReader(node, key);
 	return typeof read === 'function' ? (read as () => unknown).call(node) : read;
 };
@@ -97,7 +93,7 @@ export const only = <T>(items: readonly T[]): readonly T[] => (items.length === 
 
 export const step = (at: unknown, read: (node: Node) => unknown, kinds: ReadonlySet<number> | undefined): unknown => {
 	if (Array.isArray(at)) return at.flatMap((item) => [step(item, read, kinds) ?? []].flat());
-	if (!isNode(at)) return undefined;
+	if (!hasKind(at)) return undefined;
 	const reached = read(at);
 	if (reached === undefined || reached === null || kinds === undefined) return reached ?? undefined;
 	return Array.isArray(reached) ? reached.filter((item) => kinds.has(kindOf(item) ?? -1)) : kinds.has(kindOf(reached) ?? -1) ? reached : undefined;
@@ -152,7 +148,7 @@ export const holdsKey = (value: object, key: string): boolean => key in value;
 
 export const enclose = (result: Found, container: Node, sets: readonly Pick<PortableContainer, 'sets'>[]): Found => {
 	const held = result.found;
-	if (!isNode(held)) return result;
+	if (!hasKind(held)) return result;
 	holders.set(held, container);
 	const flags = sets.flatMap((at) => (at.sets?.kind === container.$type ? setsOn(at, held.$type) : []));
 	if (flags.length > 0) containerFlags.set(held, [...new Set(flags)]);
@@ -161,7 +157,7 @@ export const enclose = (result: Found, container: Node, sets: readonly Pick<Port
 
 export const fits = (kinds: ReadonlySet<number>, value: unknown): boolean => (typeof value === 'number' ? kinds.size > 0 : kindIn(kinds, value));
 
-export const leafFits = (value: unknown): boolean => isNode(value) && nodeText(value) !== undefined;
+export const leafFits = (value: unknown): boolean => hasKind(value) && nodeText(value) !== undefined;
 
 export const unclaimedText = (node: Node, seats: Seats | undefined, fixed: Readonly<Record<number, string>>): string | undefined => {
 	const kind = node.$type;
@@ -225,7 +221,7 @@ export const walkSteps = (value: unknown, steps: readonly Pick<PortableSlotStep,
 	let reached = value;
 	for (let i = 0; i < steps.length; i++) {
 		if (Array.isArray(reached)) return walkSteps(reached, steps.slice(i));
-		if (!isNode(reached)) return undefined;
+		if (!hasKind(reached)) return undefined;
 		const { key, stored, builder, kinds } = steps[i]!;
 		const read = stored === undefined ? slotOf(reached, key) : storedSlotRead(reached, key, stored);
 		const next = kinds === undefined ? read : Array.isArray(read) ? read.filter((item) => kinds.includes(kindOf(item) ?? -1)) : kinds.includes(kindOf(read) ?? -1) ? read : undefined;
@@ -246,7 +242,7 @@ export const contradicted = (node: Node, presets: readonly PortablePreset[], spe
 			if (text === undefined) return false;
 			const token = walkSteps(node, preset.steps.slice(0, -1));
 			const facet = preset.steps.at(-1)!.key;
-			const slot = isNode(token) ? spelledMember(text, spellings[token.$type]?.[facet]) : text;
+			const slot = hasKind(token) ? spelledMember(text, spellings[token.$type]?.[facet]) : text;
 			return !(preset.among ?? [preset.text]).includes(slot);
 		}
 		const kind = kindOf(held);
@@ -272,11 +268,11 @@ export interface Closer {
 }
 
 export const closerTexts = (items: readonly unknown[], facets: Readonly<Record<number, string>>, fixed: Readonly<Record<number, string>>): readonly string[] =>
-	items.flatMap((item) => closerText(item, isNode(item) ? facets[item.$type] : undefined, fixed) ?? []);
+	items.flatMap((item) => closerText(item, hasKind(item) ? facets[item.$type] : undefined, fixed) ?? []);
 
 export const closersInto = (structure: Record<string, unknown>, items: readonly unknown[], closers: Readonly<Record<number, Closer>>, fixed: Readonly<Record<number, string>>): void => {
 	for (const item of items) {
-		const closer = isNode(item) ? closers[item.$type] : undefined;
+		const closer = hasKind(item) ? closers[item.$type] : undefined;
 		const text = closer === undefined ? undefined : closerText(item, closer.facet, fixed);
 		if (closer === undefined || text === undefined) continue;
 		const read = spelledText(closer.reads, text, closer.seats, closer.built);
@@ -299,14 +295,14 @@ export const decimalOf = (node: Node, parts: PortableDecimalParts, fixed: Readon
 
 export const delimited = (items: readonly unknown[], delimiter: number): boolean =>
 	items.some((item) => {
-		const stamped = isNode(item) ? (item as { readonly delimiter?: unknown }).delimiter : undefined;
+		const stamped = hasKind(item) ? (item as { readonly delimiter?: unknown }).delimiter : undefined;
 		return typeof stamped === 'number' && (stamped & delimiter) !== 0;
 	});
 
 export const readOnlySpelled = (items: readonly unknown[], readOnly: Readonly<Record<number, Readonly<Record<string, readonly string[]>>>>, spellings: Spellings, fixed: Readonly<Record<number, string>>): boolean =>
 	items.some((item) => {
-		const facets = isNode(item) ? readOnly[item.$type] : undefined;
-		if (facets === undefined || !isNode(item)) return false;
+		const facets = hasKind(item) ? readOnly[item.$type] : undefined;
+		if (facets === undefined || !hasKind(item)) return false;
 		return Object.entries(facets).some(([facet, slots]) => {
 			const text = facetText(item, facet, fixed);
 			return text !== undefined && slots.includes(spelledMember(text, spellings[item.$type]?.[facet]));
@@ -314,6 +310,6 @@ export const readOnlySpelled = (items: readonly unknown[], readOnly: Readonly<Re
 	});
 
 export const unread = (items: readonly unknown[], otherTested: boolean, meaning: Readonly<Record<number, readonly string[]>>, fixed: Readonly<Record<number, string>>): boolean =>
-	items.some((item) => (isNode(item) ? meaningfulText(item, meaning[item.$type], (value) => textOf(value, fixed)) !== '' : typeof item === 'number' && otherTested));
+	items.some((item) => (hasKind(item) ? meaningfulText(item, meaning[item.$type], (value) => textOf(value, fixed)) !== '' : typeof item === 'number' && otherTested));
 
-export const opaque = (item: unknown): boolean => isNode(item) && typeof (item as { readonly $verbatim?: unknown }).$verbatim === 'string';
+export const opaque = (item: unknown): boolean => hasKind(item) && typeof (item as { readonly $verbatim?: unknown }).$verbatim === 'string';

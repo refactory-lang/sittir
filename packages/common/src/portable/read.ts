@@ -2,14 +2,12 @@ import type { PortableBuildArm, PortableBuildTable, PortableContainer, PortableD
 import { nodeText } from '../node-data.ts';
 import { integerValue } from '../number.ts';
 import { spelledMember } from '../spelled.ts';
-import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
+import { hasKind, type HoldingFact, type Node, type PortableClassifier } from './classify.ts';
 import { containerSlots, isNumberSlots, meaningfulText, rebuilds, setsOn, spelledText, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
 import { erred, opaque, templated } from './project.ts';
-
-type Node = { readonly $type: number };
 
 export type PortableCarry =
 	| { readonly reason: 'unclaimed' | 'scalar' | 'text' | 'preset' | 'opaque' | 'readOnly' }

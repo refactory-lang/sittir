@@ -6,7 +6,7 @@ import { treeOf } from '../tree-token.ts';
 import { sourceTextOf } from '../node-data.ts';
 import { entriesHolding, portablePathHasFacts, portableRowHasFacts, readableEntries, unplaced } from './facts.ts';
 
-type Node = { readonly $type: number };
+export type Node = { readonly $type: number };
 
 export class Keyword {
 	constructor(

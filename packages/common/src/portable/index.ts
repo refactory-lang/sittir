@@ -1,6 +1,6 @@
 import { engineOf } from '../engine-scope.ts';
 import { inLanguage } from '../language.ts';
-import { hasKind, readsAs } from './classify.ts';
+import { hasKind, readsAs, type Node } from './classify.ts';
 import { languageGuardOf, type PortableLanguage } from './language-guard.ts';
 import { portableTrees, type LanguageGuard, type PortableGuard, type PortableGuardTree } from './tree.ts';
 import { vocabularyAliasPaths, vocabularyNamespaces, vocabularyPaths } from './vocabulary-paths.ts';
@@ -23,8 +23,6 @@ export { portablePathHasFacts } from './facts.ts';
 export { portableTrees, type LanguageGuard, type PortableGuard, type PortableGuardTree, type PortableKindTree } from './tree.ts';
 export type { PortableKind } from '@sittir/types';
 export { vocabularyNamespaces, vocabularyPaths } from './vocabulary-paths.ts';
-
-type Node = { readonly $type: number };
 
 const guardOf =
 	(path: string): PortableGuard =>

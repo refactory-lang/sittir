@@ -799,7 +799,7 @@ The classifier of a bound grammar's `PortableRows`, built once per rows object (
 
 ### `packages/common/src/portable/classify.ts::hasKind`
 
-Whether a value is an object with a numeric `$type`: the shape a classifier reads as a node, and the first test of a shared portable guard, which therefore refuses a bare kind id. A language's guards (`languageGuardOf`) test for a number first and read it through the language's rows.
+Whether a value is an object with a numeric `$type` (a `Node`): the shape a classifier reads as a node, and the first test of a shared portable guard, which therefore refuses a bare kind id. A language's guards (`languageGuardOf`) test for a number first and read it through the language's rows. It is the one such test in the portable modules: today's read, the builder and a generated projection, through `@sittir/common/portable/utils`, all call it. `utils.ts::isNode` is stricter: it also asks for a source stamp or a tree token.
 
 ### `packages/common/src/portable/index.ts::guardOf`
 
@@ -1658,9 +1658,9 @@ Checks one object node: its row (`checkRow`) when its `$type` has one, then each
 
 Walks one slot value. An array is walked item by item. An object is verified only when its source stamp is `Source.Factory` (`sourceOf`); a read node, a coordinate or an object already in `seen` is skipped, and a non-object passes.
 
-### `packages/common/src/portable/project.ts::Node`
+### `packages/common/src/portable/classify.ts::Node`
 
-What a generated projection reads a node as: anything with a numeric `$type`, the kind id it switches on. Its slots are read through `slotOf` and `rowItems`, so the projection works the same over the object and arena storages.
+What the portable modules read a node as: anything with a numeric `$type`, the kind id they switch on (`hasKind` tests for it). Today's read, the classifier, the guards and a generated projection, through `@sittir/common/portable/utils`, all take this one type. A generated projection reads its slots through `slotOf` and `rowItems`, so it works the same over the object and arena storages.
 
 ### `packages/common/src/portable/project.ts::Found`
 
@@ -1669,10 +1669,6 @@ What a generated seat resolver returns: the value it reached for a slot, whether
 ### `packages/common/src/portable/project.ts::Placed`
 
 A fact a generated projection placed on a node: the fact's name, the container slot its item sits in and the item's index there, the item's spelling when the fact spells one, and the path or flag the fact gives the node.
-
-### `packages/common/src/portable/project.ts::isNode`
-
-Whether a value is a node: a non-null object with a numeric `$type`.
 
 ### `packages/common/src/portable/project.ts::kindOf`
 

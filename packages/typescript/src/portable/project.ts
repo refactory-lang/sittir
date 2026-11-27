@@ -8,11 +8,11 @@ import {
 	fill,
 	fits,
 	flagsSetOn,
+	hasKind,
 	holderOf,
 	holdsKey,
 	integerOf,
 	integerValue,
-	isNode,
 	itemsAt,
 	joined,
 	kindIn,
@@ -6115,11 +6115,11 @@ const seats3 = (value: unknown): Found | undefined => {
 };
 const seats1 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats1(item) ?? { found: item, many: false }));
-	if (fits(KINDS0, value) && !(isNode(value) && kindIn(KINDS1, value) && classify(value) === undefined))
+	if (fits(KINDS0, value) && !(hasKind(value) && kindIn(KINDS1, value) && classify(value) === undefined))
 		return { found: value, many: true };
 	if (fits(KINDS2, value)) return { found: value, many: false };
 	if (fits(KINDS3, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -6188,7 +6188,7 @@ const seats6 = (value: unknown): Found | undefined => {
 const seats5 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats5(item) ?? { found: item, many: false }));
 	if (fits(KINDS5, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -6392,7 +6392,7 @@ const seats13 = (value: unknown): Found | undefined => {
 const seats12 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats12(item) ?? { found: item, many: false }));
 	if (fits(KINDS13, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -6408,7 +6408,7 @@ const seats12 = (value: unknown): Found | undefined => {
 };
 const seats14 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats14(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -6425,7 +6425,7 @@ const seats14 = (value: unknown): Found | undefined => {
 const seats11 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats11(item) ?? { found: item, many: false }));
 	if (fits(KINDS12, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'importSpecifiers');
@@ -6497,7 +6497,7 @@ const route12 = (node: Node): Routed | undefined => {
 const seats16 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats16(item) ?? { found: item, many: false }));
 	if (fits(KINDS17, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'importSpecifiers');
@@ -6706,7 +6706,7 @@ const seats21 = (value: unknown): Found | undefined => {
 };
 const seats19 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats19(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -6808,11 +6808,11 @@ const route20 = (node: Node): Routed | undefined => {
 };
 const seats25 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats25(item) ?? { found: item, many: false }));
-	if (fits(KINDS0, value) && !(isNode(value) && kindIn(KINDS1, value) && classify(value) === undefined))
+	if (fits(KINDS0, value) && !(hasKind(value) && kindIn(KINDS1, value) && classify(value) === undefined))
 		return { found: value, many: false };
 	if (fits(KINDS2, value)) return { found: value, many: false };
 	if (fits(KINDS3, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -6967,7 +6967,7 @@ const seats29 = (value: unknown): Found | undefined => {
 const seats28 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats28(item) ?? { found: item, many: false }));
 	if (fits(KINDS28, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'cases');
@@ -7313,7 +7313,7 @@ const seats37 = (value: unknown): Found | undefined => {
 const seats36 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats36(item) ?? { found: item, many: false }));
 	if (fits(KINDS35, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'type');
 	if (next0 === undefined || next0 === null) {
@@ -7439,7 +7439,7 @@ const seats41 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats41(item) ?? { found: item, many: false }));
 	if (fits(KINDS40, value)) return { found: value, many: false };
 	if (fits(KINDS41, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -7549,7 +7549,7 @@ const seats45 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats45(item) ?? { found: item, many: false }));
 	if (fits(KINDS44, value)) return { found: value, many: true };
 	if (fits(KINDS41, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -7639,7 +7639,7 @@ const seats49 = (value: unknown): Found | undefined => {
 const seats48 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats48(item) ?? { found: item, many: false }));
 	if (fits(KINDS47, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -7700,7 +7700,7 @@ const seats53 = (value: unknown): Found | undefined => {
 const seats52 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats52(item) ?? { found: item, many: false }));
 	if (fits(KINDS49, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -7716,7 +7716,7 @@ const seats52 = (value: unknown): Found | undefined => {
 };
 const seats54 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats54(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -7732,7 +7732,7 @@ const seats54 = (value: unknown): Found | undefined => {
 };
 const seats51 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats51(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'elements');
@@ -7788,7 +7788,7 @@ const seats56 = (value: unknown): Found | undefined => {
 	if (fits(KINDS51, value)) return { found: value, many: false };
 	if (fits(KINDS52, value)) return { found: value, many: false };
 	if (fits(KINDS53, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'methodDefinition');
 	if (next0 === undefined || next0 === null) {
@@ -7819,7 +7819,7 @@ const seats56 = (value: unknown): Found | undefined => {
 const seats60 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats60(item) ?? { found: item, many: false }));
 	if (fits(KINDS50, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'methodDefinition');
 	if (next0 === undefined || next0 === null) {
@@ -7850,7 +7850,7 @@ const seats60 = (value: unknown): Found | undefined => {
 const seats55 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats55(item) ?? { found: item, many: false }));
 	if (fits(KINDS50, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'members');
@@ -7998,7 +7998,7 @@ const seats63 = (value: unknown): Found | undefined => {
 	if (fits(KINDS35, value)) return { found: value, many: false };
 	if (fits(KINDS57, value)) return { found: value, many: false };
 	if (fits(KINDS58, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'type');
 	if (next0 === undefined || next0 === null) {
@@ -8267,7 +8267,7 @@ const route71 = (node: Node): Routed | undefined => {
 const seats71 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats71(item) ?? { found: item, many: false }));
 	if (fits(KINDS35, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -8283,7 +8283,7 @@ const seats71 = (value: unknown): Found | undefined => {
 };
 const seats72 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats72(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -8299,7 +8299,7 @@ const seats72 = (value: unknown): Found | undefined => {
 };
 const seats70 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats70(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'types');
@@ -8337,7 +8337,7 @@ const route72 = (node: Node): Routed | undefined => {
 const seats73 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats73(item) ?? { found: item, many: false }));
 	if (fits(KINDS43, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'elements');
@@ -8492,7 +8492,7 @@ const seats77 = (value: unknown): Found | undefined => {
 };
 const seats76 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats76(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -8508,7 +8508,7 @@ const seats78 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats78(item) ?? { found: item, many: false }));
 	if (fits(KINDS25, value)) return { found: value, many: false };
 	if (fits(KINDS41, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -8801,7 +8801,7 @@ const seats85 = (value: unknown): Found | undefined => {
 };
 const seats84 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats84(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -8935,7 +8935,7 @@ const seats88 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats88(item) ?? { found: item, many: false }));
 	if (fits(KINDS79, value)) return { found: value, many: false };
 	if (fits(KINDS37, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -8999,7 +8999,7 @@ const seats89 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats89(item) ?? { found: item, many: false }));
 	if (fits(KINDS44, value)) return { found: value, many: false };
 	if (fits(KINDS41, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -9094,7 +9094,7 @@ const seats91 = (value: unknown): Found | undefined => {
 };
 const seats90 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats90(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'expression');
 	if (next0 === undefined || next0 === null) {
@@ -9138,7 +9138,7 @@ const route96 = (node: Node): Routed | undefined => {
 const seats93 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats93(item) ?? { found: item, many: false }));
 	if (fits(KINDS35, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -9316,7 +9316,7 @@ const seats96 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats96(item) ?? { found: item, many: false }));
 	if (fits(KINDS83, value)) return { found: value, many: false };
 	if (fits(KINDS23, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'body');
 	if (next0 === undefined || next0 === null) {
@@ -9476,7 +9476,7 @@ const seats103 = (value: unknown): Found | undefined => {
 const seats102 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats102(item) ?? { found: item, many: false }));
 	if (fits(KINDS87, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -9492,7 +9492,7 @@ const seats102 = (value: unknown): Found | undefined => {
 };
 const seats104 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats104(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -9508,7 +9508,7 @@ const seats104 = (value: unknown): Found | undefined => {
 };
 const seats101 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats101(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'elements');
@@ -9643,7 +9643,7 @@ const seats105 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats105(item) ?? { found: item, many: false }));
 	if (fits(KINDS90, value)) return { found: value, many: false };
 	if (fits(KINDS41, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -9693,7 +9693,7 @@ const seats107 = (value: unknown): Found | undefined => {
 };
 const seats106 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats106(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'type');
 	if (next0 === undefined || next0 === null) {
@@ -9858,7 +9858,7 @@ const seats111 = (value: unknown): Found | undefined => {
 };
 const seats108 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats108(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'type');
 	if (next0 === undefined || next0 === null) {
@@ -10011,7 +10011,7 @@ const seats116 = (value: unknown): Found | undefined => {
 };
 const seats115 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats115(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'type');
 	if (next0 === undefined || next0 === null) {
@@ -10523,7 +10523,7 @@ const route137 = (node: Node): Routed | undefined => {
 const seats129 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats129(item) ?? { found: item, many: false }));
 	if (fits(KINDS86, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -10628,7 +10628,7 @@ const seats133 = (value: unknown): Found | undefined => {
 const seats132 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats132(item) ?? { found: item, many: false }));
 	if (fits(KINDS109, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'items');
@@ -10685,7 +10685,7 @@ const route143 = (node: Node): Routed | undefined => {
 };
 const seats135 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats135(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'body');
 	if (next0 === undefined || next0 === null) {
@@ -10814,7 +10814,7 @@ const seats139 = (value: unknown): Found | undefined => {
 	if (fits(KINDS51, value)) return { found: value, many: false };
 	if (fits(KINDS52, value)) return { found: value, many: false };
 	if (fits(KINDS53, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'methodDefinition');
 	if (next0 === undefined || next0 === null) {
@@ -10847,7 +10847,7 @@ const seats143 = (value: unknown): Found | undefined => {
 	if (fits(KINDS50, value)) return { found: value, many: true };
 	if (fits(KINDS50, value)) return { found: value, many: true };
 	if (fits(KINDS50, value)) return { found: value, many: true };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'methodDefinition');
 	if (next0 === undefined || next0 === null) {
@@ -10877,7 +10877,7 @@ const seats143 = (value: unknown): Found | undefined => {
 };
 const seats138 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats138(item) ?? { found: item, many: false }));
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let empty = false;
 	let vacant = false;
 	const next0 = slotOf(value, 'members');
@@ -10958,7 +10958,7 @@ const seats145 = (value: unknown): Found | undefined => {
 	if (fits(KINDS35, value)) return { found: value, many: false };
 	if (fits(KINDS35, value)) return { found: value, many: false };
 	if (fits(KINDS35, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'type');
 	if (next0 === undefined || next0 === null) {
@@ -11503,7 +11503,7 @@ const seats160 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats160(item) ?? { found: item, many: false }));
 	if (fits(KINDS89, value)) return { found: value, many: false };
 	if (fits(KINDS41, value)) return { found: value, many: false };
-	if (!isNode(value)) return undefined;
+	if (!hasKind(value)) return undefined;
 	let vacant = false;
 	const next0 = slotOf(value, 'content');
 	if (next0 === undefined || next0 === null) {
@@ -20436,7 +20436,7 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 		}
 		return tokenText(value, seats) ?? value;
 	}
-	if (!isNode(value)) return value;
+	if (!hasKind(value)) return value;
 	if (erred(value) || opaque(value)) return value;
 	switch (value.$type) {
 		case K.Identifier:

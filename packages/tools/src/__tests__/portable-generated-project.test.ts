@@ -1,7 +1,7 @@
 import { isDeepStrictEqual } from 'node:util';
 import { createEngine } from '@sittir/common';
 import { portableRuntime } from '@sittir/common/engine';
-import { isNode, textOf, type Node } from '@sittir/common/portable/utils';
+import { hasKind, textOf, type Node } from '@sittir/common/portable/utils';
 import { describe, expect, it } from 'vitest';
 import { languageByName } from '../languages.ts';
 import { loadCorpusEntries } from '../validate/common.ts';
@@ -31,7 +31,7 @@ const isStructure = (value: unknown): value is Readonly<Record<string, unknown>>
 const plain = (value: unknown): unknown => {
 	if (Array.isArray(value)) return value.map(plain);
 	if (isStructure(value)) return Object.fromEntries(Object.entries(value).map(([key, member]) => [key, plain(member)]));
-	if (isNode(value)) return { $type: value.$type, $text: textOf(value, {}) };
+	if (hasKind(value)) return { $type: value.$type, $text: textOf(value, {}) };
 	return value;
 };
 
@@ -79,7 +79,7 @@ const slotValues = (node: object): Record<string, unknown> =>
 
 const nodesUnder = (value: unknown, into: Node[] = []): Node[] => {
 	if (Array.isArray(value)) for (const item of value) nodesUnder(item, into);
-	else if (isNode(value)) {
+	else if (hasKind(value)) {
 		into.push(value);
 		for (const member of Object.values(slotValues(value))) nodesUnder(member, into);
 	}

@@ -65,11 +65,11 @@ const IMPORTS = [
 	'fits',
 	'flagsSetOn',
 	'floatOf',
+	'hasKind',
 	'holderOf',
 	'holdsKey',
 	'integerOf',
 	'integerValue',
-	'isNode',
 	'itemsAt',
 	'joined',
 	'kindIn',
@@ -265,7 +265,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 			case 'is':
 				return self ? has(plan.types, (reached as { readonly one: Primary }).one) : call(dot(paren(subjectsOf(reached, plan)), 'some'), lambda(has(plan.types, id('x')), 'x'));
 			case 'child':
-				return call(dot(paren(anchored(call(dot(paren(subjectsOf(reached, plan)), 'filter'), id('isNode')), plan.anchor)), 'some'), lambda(compilePlan(plan.of, { one: id(item) }, depth + 1), item));
+				return call(dot(paren(anchored(call(dot(paren(subjectsOf(reached, plan)), 'filter'), id('hasKind')), plan.anchor)), 'some'), lambda(compilePlan(plan.of, { one: id(item) }, depth + 1), item));
 			case 'not':
 				return not(paren(compilePlan(plan.of, reached, depth)));
 			case 'and':
@@ -289,7 +289,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 		const fit = seat.kinds.length > 0 ? call(id('fits'), kindsOf(seat.kinds), id('value')) : seat.leaf !== undefined ? call(id('leafFits'), id('value')) : truth(false);
 		if (seat.refined === undefined || seat.refined.length === 0) return fit;
 		for (const kind of seat.refined) refinedKinds.add(kind);
-		return and([fit, not(paren(and([call(id('isNode'), id('value')), has(seat.refined, id('value')), binary(call(id('classify'), id('value')), '===', id('undefined'))])))]);
+		return and([fit, not(paren(and([call(id('hasKind'), id('value')), has(seat.refined, id('value')), binary(call(id('classify'), id('value')), '===', id('undefined'))])))]);
 	};
 	const resolverOf = (pending: readonly Pending[]): string => {
 		const signature = JSON.stringify(
@@ -308,7 +308,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 			statements.push(ret(id('undefined')));
 		} else {
 			const emptyAt = new Set(keys.filter((k) => pending.some(({ seat, containers }) => seat.many === true && containers[0]?.key === k)));
-			statements.push(when(not(call(id('isNode'), id('value'))), ret(id('undefined'))));
+			statements.push(when(not(call(id('hasKind'), id('value'))), ret(id('undefined'))));
 			if (emptyAt.size > 0) statements.push(t.lexicalDeclaration({ kind: 'let', declarators: [t.variableDeclaratorPlain({ name: 'empty', value: t.false })] }));
 			statements.push(t.lexicalDeclaration({ kind: 'let', declarators: [t.variableDeclaratorPlain({ name: 'vacant', value: t.false })] }));
 			keys.forEach((k, i) => {
@@ -426,7 +426,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 					fact.same === undefined
 						? []
 						: [call(id('sameText'), textsCall(viaOf({ one: id('item') }, fact.same.item) ?? t.array(id('item'))), textsCall(viaOf({ one: id('node'), kind }, fact.same.node) ?? t.array(id('node'))))];
-				const test = lambda(and([not(call(dot(id('taken'), 'has'), id('i'))), call(id('isNode'), id('item')), paren(compilePlan(fact.test, { one: id('item') })), ...same]), 'item', 'i');
+				const test = lambda(and([not(call(dot(id('taken'), 'has'), id('i'))), call(id('hasKind'), id('item')), paren(compilePlan(fact.test, { one: id('item') })), ...same]), 'item', 'i');
 				const spelling = fact.spelled === undefined || fact.same !== undefined ? id('undefined') : lambda(call(id('one'), textsCall(slotItemsOf(at(id('items'), id('index')) as Primary, fact.spelled))), 'index');
 				const record = t.expressionStatement(call(id('place'), id('placed'), id('taken'), id('items'), str(fact.name), str(fact.slot), test, spelling, fact.path === undefined ? id('undefined') : str(fact.path), fact.flag === undefined ? id('undefined') : str(fact.flag)));
 				inner.push(...(fact.own === undefined ? [record] : guard(compilePlan(fact.own, { one: id('node'), kind }), record)));
@@ -727,7 +727,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 					binary(t.unaryExpression({ operator: 'typeof', argument: id('value') }), '===', str('number')),
 					block(...(tokens.length === 0 ? [] : [t.switchStatement({ value: paren(id('value')), body: t.switchBody(...tokens) })]), ret(binary(call(id('tokenText'), id('value'), id('seats')), '??', id('value'))))
 				),
-				when(not(call(id('isNode'), id('value'))), ret(id('value'))),
+				when(not(call(id('hasKind'), id('value'))), ret(id('value'))),
 				when(or([call(id('erred'), id('value')), call(id('opaque'), id('value'))]), ret(id('value'))),
 				t.switchStatement({ value: paren(dot(id('value'), '$type')), body: t.switchBody(...readKinds.map((kind) => t.switchCase({ value: kindRef(kind), bodies: [ret(call(id(fnName(kind)), id('value'), id('seats')))] }))) }),
 				ret(binary(call(id('unclaimedText'), id('value'), id('seats'), id('FIXED')), '??', id('value')))
