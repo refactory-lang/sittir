@@ -666,40 +666,6 @@ fn a_read_writes_the_sides_it_placed_on_a_record_once_leaving_no_word_unattribut
     assert_eq!(attributed, tally.chunk_words, "every word the read wrote is a live entry's");
 }
 
-/// The median of 21 bare tree-sitter parses of `source` under `grammar`.
-fn reparse<G: EngineGrammar + Copy>(grammar: G, source: &str) -> std::time::Duration {
-    let mut parser = sittir_core::tree_sitter::Parser::new();
-    grammar.configure_parser(&mut parser).expect("a parser");
-    let mut times: Vec<std::time::Duration> = (0..21)
-        .map(|_| {
-            let started = std::time::Instant::now();
-            let tree = parser.parse(source, None).expect("a tree");
-            let took = started.elapsed();
-            drop(tree);
-            took
-        })
-        .collect();
-    times.sort_unstable();
-    times[times.len() / 2]
-}
-
-#[test]
-#[ignore = "the time one reparse of the largest source of a corpus named by the environment takes, run by hand"]
-fn reparse_cost() {
-    let grammar = std::env::var("SITTIR_CENSUS_GRAMMAR").expect("SITTIR_CENSUS_GRAMMAR");
-    let sources = sources_of(&std::env::var("SITTIR_CENSUS_SOURCES").expect("SITTIR_CENSUS_SOURCES"));
-    let (label, source) = sources.iter().max_by_key(|(_, source)| source.len()).expect("a source");
-    let took = match grammar.as_str() {
-        "rust" => reparse(sittir_rust::RustGrammar, source),
-        "typescript" => reparse(sittir_typescript::TypeScriptGrammar, source),
-        "python" => reparse(sittir_python::PythonGrammar, source),
-        "regex" => reparse(sittir_regex::RegexGrammar, source),
-        "scm" => reparse(sittir_scm::ScmGrammar, source),
-        other => panic!("no grammar {other}"),
-    };
-    eprintln!("reparse\t{grammar}\t{label}\t{} bytes\t{took:?}", source.len());
-}
-
 #[test]
 #[ignore = "a census over corpora named by the environment, run by hand"]
 fn read_census() {

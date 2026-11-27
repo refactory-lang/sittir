@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { sharedEngine } from '@sittir/common/testing';
+import { writeUnitSides } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 
 const engine = await sharedEngine(() => createEngine(rust, { nodeStorage: 'arena' }));
@@ -103,6 +104,43 @@ describe('a side written to a parsed node replaces its range of the source, and 
 		};
 		expect(written('fn f() {\n    let c = |x| -> T { a(); };\n}\n')).toBe('fn f() {\n    let c = |x| -> T { // c\n            a(); };\n}\n');
 		expect(written('fn f() {\n    let c = |x| { a(); };\n}\n')).toBe('fn f() {\n    let c = |x| { // c\n        a(); };\n}\n');
+	});
+
+	describe("a side written to a parsed node's unit", () => {
+		const assignmentIn = (root: Root) => {
+			const assignment = root.$query().$descendants.ofType(engine.kinds.CompoundAssignmentExpr).at(0);
+			if (assignment === undefined || typeof assignment !== 'object') throw new Error('expected a compound assignment');
+			return assignment;
+		};
+		const block = (text: string) => build.blockComment(build.blockCommentRegular(text));
+
+		it('inserts a leading side where the unit starts, and every other byte stays', () => {
+			const root = engine.parse('fn f() {\n    x  +=  1;\n}\n');
+			writeUnitSides(assignmentIn(root), [{ slot: '_operator', item: 0, leading: [block(' c ')] }]);
+			rendersAs(root, 'fn f() {\n    x  /* c */ +=  1;\n}\n');
+		});
+
+		it('finds the unit by the parse, past its text inside a comment', () => {
+			const root = engine.parse('fn f() {\n    x /* += */ +=  1;\n}\n');
+			writeUnitSides(assignmentIn(root), [{ slot: '_operator', item: 0, trailing: [block(' t ')] }]);
+			rendersAs(root, 'fn f() {\n    x /* += */ += /* t */  1;\n}\n');
+		});
+
+		it("finds a list's unit by counting the list's items", () => {
+			const root = engine.parse('fn f() {\n    x();  ;\n}\n');
+			const body = root.$query().$descendants.ofType(engine.kinds.Block).at(0);
+			if (body === undefined || typeof body !== 'object') throw new Error('expected a block');
+			writeUnitSides(body, [{ slot: '_statements', item: 1, leading: [block(' c ')] }]);
+			rendersAs(root, 'fn f() {\n    x();  /* c */ ;\n}\n');
+		});
+
+		it('breaks a line written before the unit mid-line at the levels down to its holder', () => {
+			const root = engine.parse('fn f() { if c { x += 1; } }\n');
+			writeUnitSides(assignmentIn(root), [{ slot: '_operator', item: 0, leading: [build.lineComment(' c')] }]);
+			rendersAs(root, 'fn f() { if c { x // c\n        += 1; } }\n');
+		});
+
+		it.todo('renders each of these the same in object storage, once its parsed tree keeps the list of replaced ranges');
 	});
 
 	it('moves a written parsed node with its source when a built holder reindents it', () => {

@@ -57,14 +57,13 @@ impl<G: RecordGrammar> Engine<G> {
     /// of replaced ranges, at the offset where the side's bytes start. A
     /// leading or inner side starts where the first record its parse
     /// placed there starts, else where the node starts, and a trailing side
-    /// where the node ends. A unit kept as its kind alone has no bytes of
-    /// its own, so a side of one starts where its holder starts, but for a
-    /// leading or inner side whose parse placed a record there.
+    /// where the node ends. A unit kept as its kind alone has no row to
+    /// give its bytes, so a parse finds them (`unit_span`).
     ///
     /// # Errors
     ///
     /// `ArenaError::Malformed` for a name whose record is address 0 or names
-    /// no source.
+    /// no source, and what finding a unit's bytes refuses.
     pub fn write_read_side(&self, name: crate::types::NodeId, side: TriviaSide, entries: &[TriviaEntry<G::Trivia>]) -> Result<(), ArenaError> {
         let record = Address(name.address()).record()?;
         let (placed, unit) = {
@@ -75,18 +74,59 @@ impl<G: RecordGrammar> Engine<G> {
             (self.written().placed_records(name, side, built)?, matches!(site, super::NodeSite::Unit(_)))
         };
         let spanned = if unit { crate::types::NodeId::record(record.0) } else { name };
-        let offset = self.read_named(spanned, |tree, index| {
-            use crate::nodes::Nodes as _;
-            let mut nodes = tree.nodes();
-            let node = nodes.kid(index);
-            match (side, placed.first().and_then(|&at| tree.index_named(crate::types::NodeId::record(at.0)))) {
-                (TriviaSide::Trailing, _) if !unit => node.end,
-                (TriviaSide::Leading | TriviaSide::Inner, Some(first)) => nodes.kid(first).start,
-                _ => node.start,
-            }
-        })?
-        .ok_or(ArenaError::Malformed { what: "read node", word: record.0 })?;
+        let offset = self
+            .read_named(spanned, |tree, index| {
+                use crate::nodes::Nodes as _;
+                let mut nodes = tree.nodes();
+                let node = nodes.kid(index);
+                let span = if unit { self.unit_span(crate::engine::Backing::source(tree), node, name)? } else { node.span() };
+                Ok::<_, ArenaError>(match (side, placed.first().and_then(|&at| tree.index_named(crate::types::NodeId::record(at.0)))) {
+                    (TriviaSide::Trailing, _) => span.end,
+                    (TriviaSide::Leading | TriviaSide::Inner, Some(first)) => nodes.kid(first).start,
+                    _ => span.start,
+                })
+            })?
+            .ok_or(ArenaError::Malformed { what: "read node", word: record.0 })??;
         self.written().write_read_held_side(name, side, entries, offset)
+    }
+
+    /// The bytes of the unit `name` names in `holder`, a node a read left
+    /// over `source`. A parse of `source`, made for this call and dropped
+    /// when it returns, finds the node with `holder`'s span and kinds, told
+    /// from a node sharing its bytes by its kinds; its children are routed
+    /// to slots as its read routes them (`Router::Children`), and the unit
+    /// is the child the slot at the site's word (`RecordGrammar::slot_key`)
+    /// holds at the site's item.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for a source the parse finds no such node
+    /// or unit in, or a kind that routes no children.
+    fn unit_span(&self, source: &str, holder: crate::read::Kid, name: crate::types::NodeId) -> Result<crate::types::Span, ArenaError> {
+        use crate::nodes::Nodes as _;
+        let Some([word, item]) = name.site() else { return Ok(holder.span()) };
+        let malformed = |what| ArenaError::Malformed { what, word: name.address() };
+        let kind = self.written().built().readable()?.header_kind(Address(name.address()), G::KIND_BITS)?;
+        let key = G::slot_key(kind, word).ok_or(malformed("unit slot word"))?;
+        let Some(crate::read::Router::Children(_, _, routes)) = self.grammar().router(holder.grammar, holder.display) else { return Err(malformed("unit holder routes")) };
+        let mut parser = crate::tree_sitter::Parser::new();
+        self.grammar().configure_parser(&mut parser).map_err(|_| malformed("unit parser"))?;
+        let tree = parser.parse(source, None).ok_or(malformed("unit parse"))?;
+        let work = crate::layout::LayoutWorkCounter::default();
+        let mut nodes = crate::nodes::TreeNodes::new(&tree, source, &work);
+        let mut at = nodes.kid(NodeIndex::ROOT);
+        while (at.span(), at.grammar, at.display) != (holder.span(), holder.grammar, holder.display) {
+            at = nodes.kids(at.index).iter().copied().find(|kid| kid.start <= holder.start && holder.end <= kid.end && kid.end > kid.start).ok_or(malformed("unit holder"))?;
+        }
+        let routed = routes(&mut nodes, &at).ok_or(malformed("unit holder routes"))?;
+        routed
+            .children
+            .iter()
+            .zip(&routed.routes)
+            .filter(|&(_, route)| matches!(route, crate::read::Route::Slot { slot, .. } if routed.keys.get(slot.index()) == Some(&key)))
+            .nth(item as usize)
+            .map(|(child, _)| child.span())
+            .ok_or(malformed("unit site item"))
     }
 
     /// What `f` answers of the node a read left a record of at `at`: the
@@ -193,13 +233,15 @@ impl<G: RecordGrammar> Engine<G> {
 
     /// The units the built record at `at` holds have the sides `units`
     /// gives, in place of every unit side it had; its render then writes
-    /// them.
+    /// them. For a record a read left, whose records stay as its parse left
+    /// them, each side `units` gives is written as `write_read_side` writes
+    /// one, and every other side of its units stays.
     ///
     /// # Errors
     ///
-    /// What `ArenaRead::header_kind` and `TriviaStore::write_units` refuse,
-    /// and `ArenaError::UnknownSlot` for a slot the record's kind has no
-    /// cell for.
+    /// What `ArenaRead::header_kind`, `TriviaStore::write_units` and
+    /// `write_read_side` refuse, and `ArenaError::UnknownSlot` for a slot
+    /// the record's kind has no cell for.
     pub fn write_built_unit_sides(&self, at: Address, units: Vec<crate::layout::UnitSides<G::Trivia>>) -> Result<(), ArenaError> {
         let kind = self.written().built().readable()?.header_kind(at, G::KIND_BITS)?;
         let units = units
@@ -209,6 +251,15 @@ impl<G: RecordGrammar> Engine<G> {
                 Ok((word, unit.item, unit.trivia))
             })
             .collect::<Result<Vec<_>, ArenaError>>()?;
+        if self.written().built().read_record(at) {
+            return units.into_iter().try_for_each(|(word, item, trivia)| {
+                let name = crate::types::NodeId::try_leaf(at.0, word, item.0).ok_or(ArenaError::Malformed { what: "unit site", word })?;
+                [(TriviaSide::Leading, trivia.leading), (TriviaSide::Trailing, trivia.trailing), (TriviaSide::Inner, trivia.inner)]
+                    .into_iter()
+                    .filter_map(|(side, entries)| Some((side, entries?)))
+                    .try_for_each(|(side, entries)| self.write_read_side(name, side, &entries))
+            });
+        }
         self.written().write_units(at, &units)
     }
 

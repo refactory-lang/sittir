@@ -474,9 +474,11 @@ pub trait Backing<G: EngineGrammar>: Sized {
     fn edited_in(&self, nodes: &mut dyn Nodes<'_>, index: NodeIndex, own_sides: bool) -> (bool, u64);
 
     /// Each side the list of replaced ranges of the read this backer is over
-    /// names: its node, by the id this call gives it, its side, and where its
-    /// range starts in the source; none for a backer over no read.
-    fn replaced_sides(&self) -> Vec<(NodeIndex, TriviaSide, u32)> {
+    /// names: its node, by the id this call gives it, or for a unit, which
+    /// has no id of its own, its holder's id and the unit's name; its side;
+    /// and where its range starts in the source. None for a backer over no
+    /// read.
+    fn replaced_sides(&self) -> Vec<(NodeIndex, Option<crate::types::NodeId>, TriviaSide, u32)> {
         Vec::new()
     }
 
@@ -1362,7 +1364,7 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
     /// a hole in the bytes of a node above it (`Lookups::holes`).
     fn edited_in(&self, _: &mut dyn Nodes<'_>, index: NodeIndex, _: bool) -> (bool, u64) {
         let replaced = self.replaced_sides();
-        (replaced.iter().any(|&(at, side, _)| at == index && side == TriviaSide::Inner), u64::try_from(replaced.len()).unwrap_or(u64::MAX))
+        (replaced.iter().any(|&(at, unit, side, _)| at == index && unit.is_none() && side == TriviaSide::Inner), u64::try_from(replaced.len()).unwrap_or(u64::MAX))
     }
 
     fn under(&self, _: &mut dyn Nodes<'_>, holder: NodeIndex, index: NodeIndex) -> bool {
@@ -1374,12 +1376,21 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
         self.replaced_list() != crate::arena::CellWord(0)
     }
 
-    fn replaced_sides(&self) -> Vec<(NodeIndex, TriviaSide, u32)> {
+    fn replaced_sides(&self) -> Vec<(NodeIndex, Option<crate::types::NodeId>, TriviaSide, u32)> {
         let list = self.replaced_list();
         if list == crate::arena::CellWord(0) {
             return Vec::new();
         }
-        crate::arena::Replaced::read(self.built, list).ok().into_iter().flatten().filter_map(|entry| Some((self.index_named(entry.node)?, entry.side, entry.offset))).collect()
+        crate::arena::Replaced::read(self.built, list)
+            .ok()
+            .into_iter()
+            .flatten()
+            .filter_map(|entry| match self.index_named(entry.node) {
+                Some(index) => Some((index, None, entry.side, entry.offset)),
+                None if entry.node.site().is_some() => Some((self.index_named(crate::types::NodeId::record(entry.node.address()))?, Some(entry.node), entry.side, entry.offset)),
+                None => None,
+            })
+            .collect()
     }
 
     fn set_apart(&self, index: NodeIndex) -> Option<crate::layout_kinds::LayoutKinds> {
@@ -2090,16 +2101,7 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
         let tree = self.tree;
         let stored = match tree.place(index) {
             #[cfg(feature = "arena")]
-            Some(place) => {
-                let list = tree.replaced_list();
-                let stored = tree.reads().and_then(|arena| tree.store().side_in(place, side, list, arena).ok().flatten()).unwrap_or_default();
-                let edited = tree.reads().is_some_and(|arena| crate::trivia_store::TriviaStore::<G::Trivia>::edited(place, side, list, arena).unwrap_or(false));
-                let placed = stored.into_iter().filter_map(|entry| self.parse_placed(entry, layout || edited));
-                if !edited {
-                    return placed.collect();
-                }
-                return placed.map(|entry| SideEntry::Written(entry.into_entry())).collect();
-            }
+            Some(place) => return self.seated_at(place, side, layout),
             #[cfg(not(feature = "arena"))]
             Some(_) => Vec::new(),
             None => match tree.written_side(index, side) {
@@ -2109,6 +2111,22 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
             },
         };
         stored.into_iter().map(SideEntry::Written).collect()
+    }
+
+    /// `side` of the node or site at `place`, as `seated` seats a node this
+    /// tree's read keeps: the entries its parse placed, or the row its
+    /// read's list of replaced ranges holds for the side in their place.
+    #[cfg(feature = "arena")]
+    fn seated_at(&mut self, place: crate::trivia_store::Place, side: TriviaSide, layout: bool) -> Vec<SideEntry<G::Trivia>> {
+        let tree = self.tree;
+        let list = tree.replaced_list();
+        let stored = tree.reads().and_then(|arena| tree.store().side_in(place, side, list, arena).ok().flatten()).unwrap_or_default();
+        let edited = tree.reads().is_some_and(|arena| crate::trivia_store::TriviaStore::<G::Trivia>::edited(place, side, list, arena).unwrap_or(false));
+        let placed = stored.into_iter().filter_map(|entry| self.parse_placed(entry, layout || edited));
+        if !edited {
+            return placed.collect();
+        }
+        placed.map(|entry| SideEntry::Written(entry.into_entry())).collect()
     }
 
     /// The index of the node this tree's read left `entry`'s record for,
@@ -2393,7 +2411,13 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
         let Some(holder) = self.kid(at.index).filter(|holder| holder.span() == at.span) else { return Vec::new() };
         let framed = self.framed_items(holder.index);
         let mut holes = Vec::new();
-        for (index, side, offset) in replaced {
+        for (index, unit, side, offset) in replaced {
+            if let Some(unit) = unit {
+                if index == holder.index || self.tree.under(&mut self.nodes, holder.index, index) {
+                    holes.extend(self.unit_hole(holder, index, unit, side, offset).map(|hole| (index, hole)));
+                }
+                continue;
+            }
             if index == holder.index || framed.contains(&(index, side)) || !self.tree.under(&mut self.nodes, holder.index, index) {
                 continue;
             }
@@ -2464,6 +2488,51 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
     /// line `node` starts on: the first node of that line within `holder`,
     /// from which a break inside one of `node`'s ranges counts the levels
     /// its template opens; `node` itself when it starts that line.
+    /// The hole a written side of the unit `unit`, of the node at `owner`,
+    /// makes in the bytes of `holder`, the node a render slices: from
+    /// `offset` to where the unit starts, past the records its parse placed
+    /// on the side and the whitespace after them, for a leading side, and
+    /// from `offset` to where the last of those ends for a trailing side;
+    /// filled by the side's entries as its read seats them (`seated_at`).
+    /// A unit has no inside. A render writes the unit from its kind within
+    /// a slice of its owner, so a break in the hole counts the levels down
+    /// to the owner, the last node that render slices, from the first node
+    /// of the unit's line, when the owner starts on that line.
+    #[cfg(feature = "arena")]
+    fn unit_hole(&mut self, holder: Kid, owner: NodeIndex, unit: crate::types::NodeId, side: TriviaSide, offset: u32) -> Option<crate::trivia::Hole> {
+        let tree = self.tree;
+        let [word, item] = unit.site()?;
+        let place = crate::trivia_store::Place::site(crate::trivia_store::Site { holder: crate::arena::Address(unit.address()), word, item: crate::types::ItemIndex(item) });
+        let placed = self.placed_spans(place, side);
+        let source = tree.source().as_bytes();
+        let (range, line) = match side {
+            TriviaSide::Leading => {
+                let start = placed.iter().map(|span| span.end).max().map_or(offset, |end| end + crate::types::narrow(source[end as usize..].iter().take_while(|byte| byte.is_ascii_whitespace()).count()));
+                (offset..start, start)
+            }
+            TriviaSide::Trailing => (offset..placed.iter().map(|span| span.end).fold(offset, u32::max), offset),
+            TriviaSide::Inner => return None,
+        };
+        let entries: Vec<_> = self.seated_at(place, side, true).into_iter().map(SideEntry::into_entry).collect();
+        let fill = crate::trivia::NodeTrivia { leading: (side == TriviaSide::Leading).then(|| entries.clone()), trailing: (side == TriviaSide::Trailing).then_some(entries), inner: None };
+        let node = self.render_name(owner)?;
+        let owned = self.kid(owner)?;
+        let line_start = |at: u32| source[..at as usize].iter().rposition(|&byte| byte == b'\n').map_or(0, |at| at + 1);
+        let from = if line_start(owned.start) == line_start(line) {
+            let first = self.line_node(holder, owned);
+            if first == owner { None } else { self.render_name(first) }
+        } else {
+            None
+        };
+        Some(crate::trivia::Hole { range, side, fill: Box::new(fill), line, ends_in: None, node, from })
+    }
+
+    #[cfg(not(feature = "arena"))]
+    fn unit_hole(&mut self, holder: Kid, owner: NodeIndex, unit: crate::types::NodeId, side: TriviaSide, offset: u32) -> Option<crate::trivia::Hole> {
+        let _ = (&self, holder, owner, unit, side, offset);
+        None
+    }
+
     fn line_node(&mut self, holder: Kid, node: Kid) -> NodeIndex {
         let line = crate::types::narrow(self.tree.source()[..node.start as usize].rfind('\n').map_or(0, |at| at + 1));
         let tree = self.tree;
@@ -2481,20 +2550,27 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
     fn placed_end(&mut self, index: NodeIndex, side: TriviaSide) -> Option<u32> {
         #[cfg(feature = "arena")]
         {
-            let tree = self.tree;
-            let place = tree.place(index)?;
-            let arena = tree.reads()?;
-            let stored = tree.store().side_in(place, side, crate::arena::CellWord(0), arena).ok().flatten()?;
-            stored.into_iter().filter_map(|entry| match self.parse_placed(entry, true)? {
-                SideEntry::Source { span, .. } => Some(span.end),
-                _ => None,
-            }).max()
+            let place = self.tree.place(index)?;
+            self.placed_spans(place, side).into_iter().map(|span| span.end).max()
         }
         #[cfg(not(feature = "arena"))]
         {
             let _ = (&self, index, side);
             None
         }
+    }
+
+    /// The bytes of each record the parse placed on `side` of the node or
+    /// site at `place`, the list's writes aside.
+    #[cfg(feature = "arena")]
+    fn placed_spans(&mut self, place: crate::trivia_store::Place, side: TriviaSide) -> Vec<Span> {
+        let tree = self.tree;
+        let Some(arena) = tree.reads() else { return Vec::new() };
+        let stored = tree.store().side_in(place, side, crate::arena::CellWord(0), arena).ok().flatten().unwrap_or_default();
+        stored.into_iter().filter_map(|entry| match self.parse_placed(entry, true)? {
+            SideEntry::Source { span, .. } => Some(span),
+            _ => None,
+        }).collect()
     }
 
     /// What `SourceTable::for_each_descendant` answers for the node at
