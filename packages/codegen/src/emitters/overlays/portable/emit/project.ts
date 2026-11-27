@@ -60,6 +60,7 @@ const IMPORTS = [
 	'decimalOf',
 	'delimited',
 	'enclose',
+	'erred',
 	'fill',
 	'fits',
 	'flagsSetOn',
@@ -709,6 +710,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 					block(...(tokens.length === 0 ? [] : [t.switchStatement({ value: paren(id('value')), body: t.switchBody(...tokens) })]), ret(binary(call(id('tokenText'), id('value'), id('seats')), '??', id('value'))))
 				),
 				when(not(call(id('isNode'), id('value'))), ret(id('value'))),
+				when(call(id('erred'), id('value')), ret(id('value'))),
 				t.switchStatement({ value: paren(dot(id('value'), '$type')), body: t.switchBody(...readKinds.map((kind) => t.switchCase({ value: kindRef(kind), bodies: [ret(call(id(fnName(kind)), id('value'), id('seats')))] }))) }),
 				ret(binary(call(id('unclaimedText'), id('value'), id('seats'), id('FIXED')), '??', id('value')))
 			),

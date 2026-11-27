@@ -3,6 +3,7 @@ import { TSKindId as K } from '../kinds.js';
 import {
 	contradicted,
 	enclose,
+	erred,
 	fill,
 	fits,
 	flagsSetOn,
@@ -24593,6 +24594,7 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 		return tokenText(value, seats) ?? value;
 	}
 	if (!isNode(value)) return value;
+	if (erred(value)) return value;
 	switch (value.$type) {
 		case K.Identifier:
 			return readIdentifier(value, seats);

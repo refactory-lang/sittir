@@ -1,6 +1,7 @@
-import type { PortableContainer, PortableDecimalParts, PortablePreset, PortableSlotStep, PortableTemplate, QuerySlotEntry } from '@sittir/types';
+import type { ErrorRegion, PortableContainer, PortableDecimalParts, PortablePreset, PortableSlotStep, PortableTemplate, QuerySlotEntry } from '@sittir/types';
 import { spelledMember } from '../spelled.ts';
-import { nodeText, sourceTextOf } from '../node-data.ts';
+import { nodeText, parseErrorsOf, sidesOf, sourceTextOf, spanOf } from '../node-data.ts';
+import { isErrorNode } from '../utils.ts';
 import { rebuilds, setsOn, spelledText, tokenText, type SeatText } from './facts.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
@@ -42,6 +43,30 @@ export interface Candidate {
 const holders = new WeakMap<object, Node>();
 
 const containerFlags = new WeakMap<object, readonly string[]>();
+
+const missingHolders = new WeakMap<readonly ErrorRegion[], ReadonlySet<string>>();
+
+const holderKey = (kind: number, span: { readonly start: number; readonly end: number }): string => `${kind}:${span.start}:${span.end}`;
+
+const missingHoldersOf = (errors: readonly ErrorRegion[]): ReadonlySet<string> => {
+	const known = missingHolders.get(errors);
+	if (known !== undefined) return known;
+	const found = new Set(errors.flatMap((region) => (region.kind === 'missing' ? [holderKey(region.holder.kind, region.holder.span)] : [])));
+	missingHolders.set(errors, found);
+	return found;
+};
+
+const holdsMissing = (node: Node, errors: readonly ErrorRegion[]): boolean => {
+	const span = spanOf(node);
+	return span !== undefined && missingHoldersOf(errors).has(holderKey(node.$type, span));
+};
+
+export const erred = (node: Node): boolean => {
+	if (isErrorNode(node)) return true;
+	const errors = parseErrorsOf(node);
+	if (errors?.length === 0) return false;
+	return Object.values(sidesOf(node) ?? {}).some((entries) => entries.some(isErrorNode)) || (errors !== undefined && holdsMissing(node, errors));
+};
 
 export const isNode = (value: unknown): value is Node => typeof value === 'object' && value !== null && typeof (value as Node).$type === 'number';
 

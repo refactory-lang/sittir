@@ -1833,3 +1833,7 @@ Whether any item is a delimiter spelled read-only: for an item whose kind has re
 ### `packages/common/src/portable/project.ts::sameText`
 
 Whether two lists of texts are each exactly one text, and the same one: a `same` fact's test, comparing the text an item's steps reach with the text the node's steps reach (a python setter's decorator names the property it sets).
+
+### `packages/common/src/portable/project.ts::erred`
+
+Whether a parse error sits on a node. An `ERROR` node does; a node of a parse with no error regions (`parseErrorsOf` is empty) doesn't. Otherwise a node does when one of its sides holds an `ERROR` node, or when its parse's regions record it as the holder of a missing token (matched by kind and span). Today's read keeps such a node whole as an `error` carry, and a generated projection's `project` checks it before reading any node, so the build keeps the source text the parse could not place.
