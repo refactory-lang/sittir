@@ -6025,7 +6025,7 @@ const ROW49: QuerySlotEntry = ['abstract', 3, 'abstract', '_abstract', 134];
 const ROW50: QuerySlotEntry = ['static', 2, 'static', '_static', 52];
 const ROW51: QuerySlotEntry = ['override', 4, 'override', '_override', 327];
 const ROW52: QuerySlotEntry = ['name', 5, undefined, '_name'];
-const MEANING0 = {};
+const MEANING0: Readonly<Record<number, readonly string[]>> = {};
 const PRESETS59: ReadonlyArray<PortablePreset> = [
 	{ steps: [{ key: 'abstract', optional: true }], kind: 134, presence: true }
 ];

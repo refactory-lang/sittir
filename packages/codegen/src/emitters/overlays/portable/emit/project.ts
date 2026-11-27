@@ -103,7 +103,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 	const { table } = input;
 	const { querySlots, flags, facts, fixedText, textBuilt, unwrap, numbers, readOnlyHolders } = input.rows;
 	const syntax = syntaxOf(t);
-	const { dot, call, str, num, binary, ret, block, constant, lambda, obj } = syntax;
+	const { dot, call, str, num, binary, ret, block, constant, lambda, obj, typeRef } = syntax;
 	const used = new Set<string>();
 	const id = (name: string) => {
 		used.add(name);
@@ -113,6 +113,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 		used.add(name);
 		return name;
 	};
+	const numberRecord = (value: TypeNode) => typeRef('Readonly', typeRef('Record', 'number', value));
 	const known = new WeakMap<object, boolean>();
 	const truthOf = (value: Expression): boolean | undefined => (value === t.true ? true : value === t.false ? false : typeof value === 'object' && value !== null ? known.get(value) : undefined);
 	const truth = (value: boolean): Operand => (value ? t.true : t.false);
@@ -409,7 +410,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 			const entry = number === undefined ? undefined : slotEntry(container, number);
 			const inner: Statement[] = [
 				constant('items', entry === undefined ? t.array() : call(id('rowItems'), holder(), rowOf(entry))),
-				declare('taken', t.genericType({ name: 'Set', typeArguments: t.typeArguments('number') }), t.newExpression({ function: 'Set', arguments: t.arguments() }))
+				declare('taken', typeRef('Set', 'number'), t.newExpression({ function: 'Set', arguments: t.arguments() }))
 			];
 			for (const fact of list) {
 				const same =
@@ -473,7 +474,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 	const unset = (name: string): Operand => not(call(id('holdsKey'), id('structure'), str(name)));
 
 	const presetsOf = (presets: readonly PortablePreset[]): Primary =>
-		intern('PRESETS', presets, (name) => declare(name, t.genericType({ name: 'ReadonlyArray', typeArguments: t.typeArguments(typeName('PortablePreset')) }), literal(presets)));
+		intern('PRESETS', presets, (name) => declare(name, typeRef('ReadonlyArray', typeName('PortablePreset')), literal(presets)));
 	const spellingsOf = (): Primary =>
 		intern('SPELLINGS', null, (name) => declare(name, 'Spellings', literal(Object.fromEntries(Object.entries(table.delimiters ?? {}).flatMap(([kind, token]) => (token.spellings === undefined ? [] : [[kind, token.spellings] as const]))))));
 	const builtAt = (path: string | undefined, kind: number): string | undefined => {
@@ -528,7 +529,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 			constant('flags', call(dot(t.array(...flagged, t.spreadElement(call(id('flagsSetOn'), id('node')))), 'filter'), lambda(binary(call(dot(id('self'), 'indexOf'), id('flag')), '===', id('i')), 'flag', 'i', 'self'))),
 			declare(
 				'structure',
-				t.genericType({ name: 'Record', typeArguments: t.typeArguments('string', 'unknown') }),
+				typeRef('Record', 'string', 'unknown'),
 				obj([
 					['$path', str(path)],
 					t.spreadElement(paren(ternary(binary(dot(id('flags'), 'length'), '===', num(0)), obj([]), obj([['$flags', id('flags')]])))),
@@ -566,7 +567,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 		for (const route of arms.flatMap(routesOf)) if ((route.list ?? route.multiple) && route.emptyContainer !== true && !emptied.has(route.name) && emptied.add(route.name)) statements.push(when(unset(route.name), setSlot(route.name, t.array())));
 		for (const test of arms.flatMap((arm) => arm.when)) if ('empty' in test) for (const name of test.empty) if (!emptied.has(name) && emptied.add(name)) statements.push(when(unset(name), setSlot(name, t.array())));
 		const closers = closersFor(arms.flatMap(routesOf));
-		if (Object.keys(closers).length > 0) statements.push(t.expressionStatement(call(id('closersInto'), id('structure'), slotItemsOfKind(kind), intern('CLOSERS', closers, (name) => declare(name, t.genericType({ name: 'Readonly', typeArguments: t.typeArguments(t.genericType({ name: 'Record', typeArguments: t.typeArguments('number', typeName('Closer')) })) }), literal(closers))), id('FIXED'))));
+		if (Object.keys(closers).length > 0) statements.push(t.expressionStatement(call(id('closersInto'), id('structure'), slotItemsOfKind(kind), intern('CLOSERS', closers, (name) => declare(name, numberRecord(typeName('Closer')), literal(closers))), id('FIXED'))));
 		const templates = Object.fromEntries(
 			readable.flatMap((flag) => {
 				const template = arms.map((arm) => arm.flags[flag]?.template).find((found) => found !== undefined);
@@ -578,7 +579,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 		const lost = value === undefined ? (input.rows.unread[kind]?.[path] ?? []) : [];
 		if (lost.length > 0) {
 			const meaning = Object.fromEntries(Object.entries(table.delimiters ?? {}).map(([at, token]) => [at, token.meaning] as const));
-			const meanings = intern('MEANING', meaning, (name) => declare(name, undefined, literal(meaning)));
+			const meanings = intern('MEANING', meaning, (name) => declare(name, numberRecord(t.readonlyType(t.arrayType('string'))), literal(meaning)));
 			const unreadIn = lost.map(({ accessor, otherTested, flags: reading }) => {
 				const entry = (querySlots[kind] ?? []).find(([name]) => name === accessor);
 				if (entry === undefined) throw new Error(`portable projection: ${input.kinds[kind]} has no query slot ${accessor}`);
@@ -732,7 +733,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 	) });
 	const fixed = declare(
 		'FIXED',
-		t.genericType({ name: 'Readonly', typeArguments: t.typeArguments(t.genericType({ name: 'Record', typeArguments: t.typeArguments('number', 'string') })) }),
+		numberRecord('string'),
 		obj(Object.entries(fixedText).map(([kind, text]) => [kind, str(text)] as const))
 	);
 	const importedTypes = (names: readonly string[], source: string) => {
