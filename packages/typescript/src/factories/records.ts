@@ -4127,7 +4127,11 @@ export function buildFinallyClause<A extends Admit<T.Statement[]>>(
 ): ReturnType<typeof _buildFinallyClause>;
 export function buildFinallyClause(...args: unknown[]) {
 	if (args.length === 0 || args[0] === undefined) {
-		return _buildFinallyClause(buildStatementBlock() as Parameters<typeof _buildFinallyClause>[0]);
+		return _buildFinallyClause(
+			(buildStatementBlock as (...a: unknown[]) => unknown)(...args.slice(1)) as Parameters<
+				typeof _buildFinallyClause
+			>[0]
+		);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildFinallyClause(args[0] as Parameters<typeof _buildFinallyClause>[0]);
@@ -16902,7 +16906,11 @@ export function buildTypeQueryCallExpression<A extends Admit<((T.Expression | T.
 ): ReturnType<typeof _buildTypeQueryCallExpression>;
 export function buildTypeQueryCallExpression(...args: unknown[]) {
 	if (args.length === 0 || args[0] === undefined) {
-		return _buildTypeQueryCallExpression(buildArguments() as Parameters<typeof _buildTypeQueryCallExpression>[0]);
+		return _buildTypeQueryCallExpression(
+			(buildArguments as (...a: unknown[]) => unknown)(...args.slice(1)) as Parameters<
+				typeof _buildTypeQueryCallExpression
+			>[0]
+		);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypeQueryCallExpression(args[0] as Parameters<typeof _buildTypeQueryCallExpression>[0]);
@@ -21509,7 +21517,9 @@ export function buildAmbientDeclarationGlobal<A extends Admit<T.Statement[]>>(
 export function buildAmbientDeclarationGlobal(...args: unknown[]) {
 	if (args.length === 0 || args[0] === undefined) {
 		return _buildAmbientDeclarationGlobal(
-			buildStatementBlock() as Parameters<typeof _buildAmbientDeclarationGlobal>[0]
+			(buildStatementBlock as (...a: unknown[]) => unknown)(...args.slice(1)) as Parameters<
+				typeof _buildAmbientDeclarationGlobal
+			>[0]
 		);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {

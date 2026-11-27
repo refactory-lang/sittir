@@ -2516,7 +2516,7 @@ function fieldCarryingFactoryText(
 			);
 		} else {
 			if (!directParamOptional && targetTakesNoArgs) {
-				wrapper.push(`  if (args.length === 0 || args[0] === undefined) {`, `    return _${fn}(${targetEmpty} as Parameters<typeof _${fn}>[0]);`, `  }`);
+				wrapper.push(`  if (args.length === 0 || args[0] === undefined) {`, `    return _${fn}(${targetBuilt('...args.slice(1)')} as Parameters<typeof _${fn}>[0]);`, `  }`);
 			}
 			wrapper.push(
 				`  if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {`,

@@ -13643,7 +13643,9 @@ export function buildConstBlock<
 ): ReturnType<typeof _buildConstBlock>;
 export function buildConstBlock(...args: unknown[]) {
 	if (args.length === 0 || args[0] === undefined) {
-		return _buildConstBlock(buildBlock() as Parameters<typeof _buildConstBlock>[0]);
+		return _buildConstBlock(
+			(buildBlock as (...a: unknown[]) => unknown)(...args.slice(1)) as Parameters<typeof _buildConstBlock>[0]
+		);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildConstBlock(args[0] as Parameters<typeof _buildConstBlock>[0]);
@@ -14193,7 +14195,9 @@ export function buildUnsafeBlock<
 ): ReturnType<typeof _buildUnsafeBlock>;
 export function buildUnsafeBlock(...args: unknown[]) {
 	if (args.length === 0 || args[0] === undefined) {
-		return _buildUnsafeBlock(buildBlock() as Parameters<typeof _buildUnsafeBlock>[0]);
+		return _buildUnsafeBlock(
+			(buildBlock as (...a: unknown[]) => unknown)(...args.slice(1)) as Parameters<typeof _buildUnsafeBlock>[0]
+		);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildUnsafeBlock(args[0] as Parameters<typeof _buildUnsafeBlock>[0]);
@@ -14439,7 +14443,9 @@ export function buildTryBlock<
 ): ReturnType<typeof _buildTryBlock>;
 export function buildTryBlock(...args: unknown[]) {
 	if (args.length === 0 || args[0] === undefined) {
-		return _buildTryBlock(buildBlock() as Parameters<typeof _buildTryBlock>[0]);
+		return _buildTryBlock(
+			(buildBlock as (...a: unknown[]) => unknown)(...args.slice(1)) as Parameters<typeof _buildTryBlock>[0]
+		);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTryBlock(args[0] as Parameters<typeof _buildTryBlock>[0]);

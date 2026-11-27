@@ -17478,7 +17478,9 @@ export function buildSuiteBlock<A extends Admit<T.Statement[]>>(
 ): ReturnType<typeof _buildSuiteBlock>;
 export function buildSuiteBlock(...args: unknown[]) {
 	if (args.length === 0 || args[0] === undefined) {
-		return _buildSuiteBlock(buildBlock() as Parameters<typeof _buildSuiteBlock>[0]);
+		return _buildSuiteBlock(
+			(buildBlock as (...a: unknown[]) => unknown)(...args.slice(1)) as Parameters<typeof _buildSuiteBlock>[0]
+		);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSuiteBlock(args[0] as Parameters<typeof _buildSuiteBlock>[0]);
@@ -18677,7 +18679,9 @@ export function buildSuiteBlockClassDeclaration<A extends Admit<T.StatementClass
 export function buildSuiteBlockClassDeclaration(...args: unknown[]) {
 	if (args.length === 0 || args[0] === undefined) {
 		return _buildSuiteBlockClassDeclaration(
-			buildBlockClassDeclaration() as Parameters<typeof _buildSuiteBlockClassDeclaration>[0]
+			(buildBlockClassDeclaration as (...a: unknown[]) => unknown)(...args.slice(1)) as Parameters<
+				typeof _buildSuiteBlockClassDeclaration
+			>[0]
 		);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {

@@ -78,6 +78,17 @@ const patternEnd = {
 	options: "options: { inner: { 'inner_comma:': preference('blank') } }"
 };
 
+const emptyInner = {
+	rules: [
+		'source: ($) => repeat($.outer)',
+		"outer: ($) => field('inner', $.inner)",
+		"inner: ($) => seq(optional(field('base', $.base)), optional(field('inner_comma', $.comma)))",
+		"base: ($) => seq(optional(field('name', $.identifier)), optional(field('base_bang', $.bang)))",
+		...tokens
+	],
+	options: "options: { inner: { 'inner_comma:': preference('blank') } }"
+};
+
 const transparentOverTwoLevel = {
 	rules: [
 		'source: ($) => repeat($.top)',
@@ -219,6 +230,25 @@ describe('a forwarder whose option bag is one hop away is supported', () => {
 		expect(recorded.map((r) => r.builder)).toEqual(['buildInner', '_buildOuter']);
 		expect(recorded[0]!.args[1]).toEqual({ innerComma: ',' });
 		expect(() => buildOuter({ $type: 'Inner' }, { innerComma: ',' })).toThrow('carries its own options');
+	});
+});
+
+describe('an omitted outer input still forwards the inner options, in both storage emitters', () => {
+	it('passes the inner options to the outer builder when the inner target takes no arguments', async () => {
+		const { pkg } = await emitted(emptyInner);
+		for (const text of [pkg.factories, pkg.factoriesRecords]) {
+			const recorded: Recorded[] = [];
+			const stub = (builder: string) => (...args: unknown[]) => {
+				recorded.push({ builder, args });
+				return { $type: builder, args };
+			};
+			const source = `${emittedFunction(text, 'buildOuter')}\nreturn buildOuter;`;
+			const kinds = new Proxy({}, { get: (_target, key) => String(key) });
+			const buildOuter = new Function('_buildOuter', 'buildInner', 'TSKindId', source)(stub('_buildOuter'), stub('buildInner'), kinds) as (...args: unknown[]) => unknown;
+			buildOuter(undefined, { innerComma: ',' });
+			expect(recorded.map((r) => r.builder)).toEqual(['buildInner', '_buildOuter']);
+			expect(recorded[0]!.args).toEqual([{ innerComma: ',' }]);
+		}
 	});
 });
 
