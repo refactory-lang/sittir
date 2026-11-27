@@ -2,7 +2,8 @@
 //! (`Engine::parse_records`), and every word of every chunk the read wrote
 //! hashes to the value recorded here. How a walk moves through the tree
 //! leaves these words as they are; a change to what a record holds changes
-//! them, and the values with it.
+//! them, and the values with it. A record's facts pack field ids, so renumbering
+//! a grammar's fields moves its hash.
 #![cfg(feature = "arena")]
 
 use sittir_core::arena::{ArenaRead, HydrateNode, RecordCells, MAX_CHUNKS};
@@ -124,10 +125,6 @@ fn the_rust_fixture_tree_reads_to_the_same_words() {
 #[test]
 fn the_typescript_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), &probe_input("create-engine.ts"));
-    // The field table gained `field_trailing_comma` at id 73, so every later
-    // field id rose by one. A packed node fact holds its field id in bits 16
-    // to 24, so each fact whose field id is 73 or above moved by one; the
-    // other facts did not. The hash moves with those ids and nothing else.
     assert_eq!(words, ArenaWords { chunks: 2, words: 29202, hash: 4_861_319_303_437_670_113 });
 }
 
