@@ -1816,10 +1816,7 @@ interface ForwardedConstruction {
 
 export function twoLevelTarget(node: FieldCarryingNode, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): AssembledNode | undefined {
 	const forwarded = forwardedOptionsTarget(node, nodeMap);
-	if (forwarded !== undefined) {
-		refuseChainInto(node, forwarded, nodeMap, kindEntries);
-		return undefined;
-	}
+	if (forwarded !== undefined) return undefined;
 	if (spellingTypeOf(node, nodeMap, kindEntries) === undefined) return undefined;
 	const target = forwardedConstructorTarget(node, nodeMap, kindEntries);
 	if (target === null) return undefined;

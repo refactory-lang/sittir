@@ -344,10 +344,83 @@ describe('a three-level forwarder with options on each level', () => {
 		});
 	});
 
-	it('refuses a transparent wrapper whose target is a two-level chain, on the wrapper kind', async () => {
-		await expect(emitted(transparentOverTwoLevel)).rejects.toMatchObject({
-			blocking: [expect.objectContaining({ code: 'three-level-option-chain', ownerKind: 'top' })]
-		});
+});
+
+describe('a transparent wrapper over a two-level chain', () => {
+	let factories: string;
+	let pkg: EmitAllResult;
+
+	beforeAll(async () => {
+		({ factories, pkg } = await emitted(transparentOverTwoLevel));
+	});
+
+	it('type-checks: the four declared calls pass and the wrong-bag calls are refused', async () => {
+		const diagnostics = await typeProbe(
+			pkg,
+			[
+				"import { buildBase, buildComma, buildIdentifier, buildInner, buildOuter, buildTop } from './factories.ts';",
+				"import { TSKindId } from './kinds.ts';",
+				'const config = { name: buildIdentifier("x") };',
+				'const innerOpts = { innerComma: buildComma };',
+				'const outerOpts = { outerEnd: TSKindId.Semi } as const;',
+				'const builtInner = buildInner(buildBase(config));',
+				'const builtOuter = buildOuter(builtInner);',
+				'export const configWithInner = buildTop(config, innerOpts);',
+				'export const builtInnerAlone = buildTop(builtInner);',
+				'export const builtOuterAlone = buildTop(builtOuter);',
+				'export const configWithBoth = buildTop(config, innerOpts, outerOpts);',
+				"// @ts-expect-error a built inner takes no inner options; the bag beside it is the outer's",
+				'export const builtInnerWrongBag = buildTop(builtInner, innerOpts);',
+				"// @ts-expect-error a config takes only its own level's bag first",
+				'export const configWrongBag = buildTop(config, outerOpts);',
+				'// @ts-expect-error a built outer owns its options, so no options are passed with it',
+				'export const builtOuterWithOptions = buildTop(builtOuter, outerOpts);'
+			].join('\n')
+		);
+		expect(diagnostics.map((d) => d.head)).toEqual([]);
+	}, 300_000);
+
+	function topStubs(recorded: Recorded[]): (...args: unknown[]) => unknown {
+		const stub = (builder: string) => (...args: unknown[]) => {
+			recorded.push({ builder, args });
+			return { $type: builder, args };
+		};
+		const source = `${emittedFunction(factories, 'buildOuter')}\n${emittedFunction(factories, 'buildTop')}\nreturn buildTop;`;
+		const kinds = new Proxy({}, { get: (_target, key) => String(key) });
+		return new Function('_buildOuter', 'buildInner', '_buildTop', 'TSKindId', source)(stub('_buildOuter'), stub('buildInner'), stub('_buildTop'), kinds) as (...args: unknown[]) => unknown;
+	}
+
+	const cfg = { name: 'x' };
+	const inner = { innerComma: ',' };
+	const outer = { outerEnd: ';' };
+
+	it('gives the inner bag to the inner builder when a config is given with it', () => {
+		const recorded: Recorded[] = [];
+		topStubs(recorded)(cfg, inner);
+		expect(recorded.map((r) => r.builder)).toEqual(['buildInner', '_buildOuter', '_buildTop']);
+		expect(recorded[0]!.args[1]).toEqual(inner);
+		expect(recorded[1]!.args[1]).toBeUndefined();
+	});
+
+	it('gives each bag to its own builder when a config is given with both', () => {
+		const recorded: Recorded[] = [];
+		topStubs(recorded)(cfg, inner, outer);
+		expect(recorded.map((r) => r.builder)).toEqual(['buildInner', '_buildOuter', '_buildTop']);
+		expect(recorded[0]!.args[1]).toEqual(inner);
+		expect(recorded[1]!.args[1]).toEqual(outer);
+	});
+
+	it('builds from a built inner alone, and from a built outer alone', () => {
+		const recordedInner: Recorded[] = [];
+		topStubs(recordedInner)({ $type: 'Inner' });
+		expect(recordedInner.map((r) => r.builder)).toEqual(['_buildOuter', '_buildTop']);
+		const recordedOuter: Recorded[] = [];
+		topStubs(recordedOuter)({ $type: 'Outer' });
+		expect(recordedOuter.map((r) => r.builder)).toEqual(['_buildTop']);
+	});
+
+	it('throws for a built outer given its options, as the built-node rule requires', () => {
+		expect(() => topStubs([])({ $type: 'Outer' }, outer)).toThrow('carries its own options');
 	});
 });
 
