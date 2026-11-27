@@ -163,7 +163,7 @@ describe('ofType holds only for an element of the view\'s language, as the guard
 	const mapped = (): View => descendants(rs, 'fn f() {}').map(() => foreign);
 
 	it('rejects a node of another language whose kind id the view\'s kind would accept', () => {
-		expect(foreign).toBeTypeOf('object');
+		expect(foreign, "no typescript node in the source has rust function_item's kind id: write the typescript kind that now shares it into the source").toBeTypeOf('object');
 		const is = rust.is as unknown as Record<string, Guard> & { portable: { declaration: { function: Guard } } };
 		expect([is.functionItem!(foreign), is.portable.declaration.function(foreign)]).toEqual([false, false]);
 		expect([...mapped().ofType(rs.kinds.FunctionItem)]).toEqual([]);
