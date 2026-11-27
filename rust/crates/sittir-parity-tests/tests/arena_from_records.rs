@@ -428,15 +428,14 @@ fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_native
     }
 }
 
-/// A built empty node's inner side is the leading side of its record's
-/// inside site: its record's store keeps it at that site, and reads it
-/// there. It renders from its record as natively.
+/// A built empty node's inner side is its record's inner row, in the side
+/// record of rows its header names. It renders from its record as
+/// natively.
 #[test]
-fn a_built_empty_node_s_inner_side_is_kept_as_the_leading_side_of_its_inside_site() {
+fn a_built_empty_node_s_inner_side_is_kept_as_its_record_s_inner_row() {
     use sittir_core::arena::{Cell, Linked, RecordSink};
     use sittir_core::trivia_store::Place;
     use sittir_core::trivia_table::TriviaSide;
-    use sittir_core::types::NodeId;
     use sittir_rust::render::node::BlockNode;
     use sittir_rust::render::AnyNode;
     let options = sittir_rust::render::options::defaults();
@@ -462,9 +461,9 @@ fn a_built_empty_node_s_inner_side_is_kept_as_the_leading_side_of_its_inside_sit
     };
     {
         let built = over.engine.written().built();
-        let site = Place::Node(NodeId::leaf(at.0, NodeId::INSIDE_WORD, 0));
-        assert_eq!(over.engine.written().side(site, TriviaSide::Leading, &*built).expect("a side").map(|entries| entries.len()), Some(line_comment("// inside").len()), "the inside site's leading side keeps the comment");
-        assert_eq!(over.engine.written().side(Place::record(at), TriviaSide::Inner, &*built).expect("a side"), over.engine.written().side(site, TriviaSide::Leading, &*built).expect("a side"), "the record's inner side reads as that site's leading side");
+        let rows = sittir_core::arena::RowFields::of_record(&*built, at).expect("its rows").2.expect("a side record of rows");
+        assert!(rows.inner.is_some() && rows.sites.is_empty(), "the record's own inner row keeps the comment, at no site: {rows:?}");
+        assert_eq!(over.engine.written().side(Place::record(at), TriviaSide::Inner, &*built).expect("a side").map(|entries| entries.len()), Some(line_comment("// inside").len()), "the record's inner side reads as its inner row");
     }
     assert_eq!(over.render_at(at, sittir_core::slot::ChangedEdges::default(), &options, false).expect("a record render"), native);
     assert!(native.contains("// inside"), "{native:?}");

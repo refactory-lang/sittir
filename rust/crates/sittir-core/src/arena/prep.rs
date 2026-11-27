@@ -228,10 +228,11 @@ impl RecordKey {
     }
 
     /// The sides writes gave the node at `place` (`TriviaStore::sides`),
-    /// the record's header read from the key when `place` is the record's.
-    fn stored_sides<T: Clone + crate::trivia::FromTriviaText>(&self, prep: &RecordPrep<'_, T>, place: Place) -> Result<Option<NodeTrivia<T>>, ArenaError> {
+    /// the record's header read from the key and `rows` its side record's
+    /// rows when `place` is the record's.
+    fn stored_sides<T: Clone + crate::trivia::FromTriviaText>(&self, prep: &RecordPrep<'_, T>, place: Place, rows: &super::RowFields) -> Result<Option<NodeTrivia<T>>, ArenaError> {
         match self.at {
-            Some(at) if place.as_record() == Some(at) => prep.store.sides_under(place, self.header, prep.built),
+            Some(at) if place.as_record() == Some(at) => prep.store.sides_under(place, self.header, rows, prep.built),
             _ => prep.store.sides(place, prep.built),
         }
     }
@@ -378,18 +379,21 @@ impl<T: Clone + crate::trivia::FromTriviaText + 'static> LayoutAt<'_, T> {
         if self.enveloped() {
             return Ok((None, Vec::new()));
         }
+        let side = self.key.side(prep)?;
         let units = |id: crate::types::NodeId| -> Result<Vec<UnitSides<T>>, ArenaError> {
             let key_of = |word: u32| (self.keys)(word).ok_or(malformed("slot word", word));
-            prep.store.units(Address(id.address()), prep.built)?.into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect()
+            let holder = Address(id.address());
+            let units = if self.key.at == Some(holder) { prep.store.units_in(holder, &side.rows, prep.built)? } else { prep.store.units(holder, prep.built)? };
+            units.into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect()
         };
         let (mut trivia, units) = match (self.at(prep)?, self.key.place) {
             (Some(at), PrepPlace::Stored(Place::Node(id))) if id.site().is_none() => (source_sides(prep, at), units(id)?),
             (Some(at), _) => (source_sides(prep, at), Vec::new()),
-            (None, PrepPlace::Stored(place @ Place::Node(id))) if id.site().is_none() => (read_entries(prep, self.key.stored_sides(prep, place)?)?, units(id)?),
-            (None, PrepPlace::Stored(place @ (Place::Node(_) | Place::RootLeaf))) => (read_entries(prep, self.key.stored_sides(prep, place)?)?, Vec::new()),
+            (None, PrepPlace::Stored(place @ Place::Node(id))) if id.site().is_none() => (read_entries(prep, self.key.stored_sides(prep, place, &side.rows)?)?, units(id)?),
+            (None, PrepPlace::Stored(place @ (Place::Node(_) | Place::RootLeaf))) => (read_entries(prep, self.key.stored_sides(prep, place, &side.rows)?)?, Vec::new()),
             _ => return Err(malformed("record place", 0)),
         };
-        merge_source_sides(&mut trivia, self.rebuilt_from(prep)?.as_ref().map(NodeIdOrOwnedCoordinate::at), prep.sources);
+        merge_source_sides(&mut trivia, side.sides.map(super::Sides::at).as_ref().map(NodeIdOrOwnedCoordinate::at), prep.sources);
         Ok((trivia, units))
     }
 
@@ -852,7 +856,7 @@ pub fn seat_through<T, C: PrepareRecord<T>>(prep: &RecordPrep<'_, T>, at: CellAt
 pub fn record_snapshot_edge<T: Prepare + Clone + crate::trivia::FromTriviaText>(prep: &RecordPrep<'_, T>, at: CellAt, claims: fn(KindId) -> bool) -> Option<SnapshotEdge> {
     let key = RecordKey::of(prep, at, claims).ok()?;
     let side = key.side(prep).ok()?;
-    crate::layout::snapshot_edge(side.span, key.place.stored().and_then(|place| key.stored_sides(prep, place).ok().flatten()).as_ref())
+    crate::layout::snapshot_edge(side.span, key.place.stored().and_then(|place| key.stored_sides(prep, place, &side.rows).ok().flatten()).as_ref())
 }
 
 /// `KindOf::kind_in` of the value `at` names, read through its view `V`.

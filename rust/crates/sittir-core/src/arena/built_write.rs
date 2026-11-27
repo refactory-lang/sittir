@@ -89,12 +89,12 @@ impl<'a> ReadWriter<'a> {
         if let Some(read) = self.read_side {
             self.chunks.name_read_side(source, read)?;
             self.chunks.hold_more(read, self.sourced)?;
-            self.chunks.release(super::count::Held::Side(read), false, &mut |_| Vec::new())?;
+            self.chunks.release(super::count::Held::Side(read), false)?;
         }
         for record in self.unwritten {
-            self.chunks.release(super::count::Held::Record(record), false, &mut |_| Vec::new())?;
+            self.chunks.release(super::count::Held::Record(record), false)?;
         }
-        self.chunks.release(super::count::Held::Text(source), false, &mut |_| Vec::new())?;
+        self.chunks.release(super::count::Held::Text(source), false)?;
         root.map_or(Ok(()), |root| self.chunks.hand_to_handle(root))
     }
 
@@ -110,7 +110,7 @@ impl<'a> ReadWriter<'a> {
         for span in self.spans {
             self.chunks.retire_placed(span)?;
         }
-        self.chunks.release(super::count::Held::Text(source), false, &mut |_| Vec::new())
+        self.chunks.release(super::count::Held::Text(source), false)
     }
 
     /// The record at `at` is named by no run, and is released once the

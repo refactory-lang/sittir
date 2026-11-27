@@ -258,9 +258,6 @@ impl NodeId {
     /// The most leaf items a list slot holds: one past the last item a
     /// site names.
     pub const SITE_ITEMS: u32 = 1 << Self::ITEM_BITS;
-    /// The word of a record's inside site: the record's second word, which
-    /// holds no cell, so no slot's site names it, in every kind.
-    pub const INSIDE_WORD: u32 = 1;
     const SITE_BITS: u32 = Self::ITEM_BITS + Self::WORD_BITS;
 
     /// The record at the address `at`.
@@ -323,27 +320,6 @@ impl NodeId {
             return None;
         }
         Some([word, ((self.0 >> Self::WORD_BITS) & ((1 << Self::ITEM_BITS) - 1)) as u32])
-    }
-
-    /// The inside site of the record this id names, whose leading side is
-    /// the record's inside; none for an id with a site, which names no
-    /// record.
-    #[must_use]
-    pub const fn inside(self) -> Option<NodeId> {
-        if self.site().is_some() {
-            return None;
-        }
-        Self::try_leaf(self.address(), Self::INSIDE_WORD, 0)
-    }
-
-    /// The record whose inside site this id names (`inside`); none for any
-    /// other id.
-    #[must_use]
-    pub const fn inside_of(self) -> Option<NodeId> {
-        match self.site() {
-            Some([Self::INSIDE_WORD, 0]) => Some(Self::record(self.address())),
-            _ => None,
-        }
     }
 
     /// Refuses, when a constant is evaluated, a kind whose record takes
@@ -496,10 +472,6 @@ mod name_tests {
     fn an_id_names_its_record_or_its_holder_and_site() {
         assert_eq!((NodeId::record(9).address(), NodeId::record(9).site()), (9, None));
         assert_eq!((NodeId::leaf(9, 4, 6).address(), NodeId::leaf(9, 4, 6).site()), (9, Some([4, 6])));
-        assert_eq!(NodeId::record(9).inside(), Some(NodeId::leaf(9, NodeId::INSIDE_WORD, 0)));
-        assert_eq!(NodeId::leaf(9, NodeId::INSIDE_WORD, 0).inside_of(), Some(NodeId::record(9)));
-        assert_eq!(NodeId::leaf(9, 4, 6).inside(), None);
-        assert_eq!(NodeId::leaf(9, 4, 6).inside_of(), None);
     }
 
     #[test]

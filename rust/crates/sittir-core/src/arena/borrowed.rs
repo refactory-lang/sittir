@@ -87,6 +87,33 @@ pub(crate) fn side_of(arena: &dyn ArenaRead, at: Address) -> Result<Address, Are
     Ok(side_in(arena.words(at.record()?, HEADER_WORDS)?))
 }
 
+/// The header word of the record at `at`, the address of its side record
+/// (`side_of`), and that side record's mask when it lies in the record's
+/// chunk, all from one lookup of the chunk.
+///
+/// # Errors
+///
+/// As `side_of`.
+pub(crate) fn header_side_mask(arena: &dyn ArenaRead, at: Address) -> Result<(u32, Address, Option<u32>), ArenaError> {
+    let at = at.record()?;
+    let words = arena.chunk(at.chunk()).ok_or_else(|| if arena.freed(at.chunk()) { ArenaError::Released(at) } else { ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len: HEADER_WORDS } })?;
+    let header = &words[word_range(at, HEADER_WORDS, words.len())?];
+    let side = side_in(header);
+    let mask = if side != Address::NONE && side.chunk() == at.chunk() { words.get(side.word() as usize).copied() } else { None };
+    Ok((header_word(header), side, mask))
+}
+
+/// Names `side` as the side record of the record at `at` in `chunks`: its
+/// header's second word (`side_of`).
+///
+/// # Errors
+///
+/// As `side_of`.
+pub(crate) fn set_side_of(chunks: &mut super::BuiltChunks, at: Address, side: Address) -> Result<(), ArenaError> {
+    chunks.words_mut(at.record()?, HEADER_WORDS)?[1] = side.0;
+    Ok(())
+}
+
 /// The `len` words of the record at `at`, `len` at least its header's,
 /// with the kind its header names (`header_kind`) and the address of its
 /// side record (`side_of`), from one read of its words.

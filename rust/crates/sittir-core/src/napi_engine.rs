@@ -846,6 +846,20 @@ macro_rules! napi_engine {
             pub const SIDE_FIELD_DELIMITER: u32 = $crate::arena::side::field::DELIMITER;
             #[::napi_derive::napi]
             pub const SIDE_FIELD_SEPARATOR_KIND: u32 = $crate::arena::side::field::SEPARATOR_KIND;
+            /// A side record of rows' fields, each one's mask bit, and the
+            /// words a site takes in its table (`arena::side::RowFields`).
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_NEXT: u32 = $crate::arena::side::field::NEXT;
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_LEADING: u32 = $crate::arena::side::field::LEADING;
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_TRAILING: u32 = $crate::arena::side::field::TRAILING;
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_INNER: u32 = $crate::arena::side::field::INNER;
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_SITES: u32 = $crate::arena::side::field::SITES;
+            #[::napi_derive::napi]
+            pub const SIDE_WORDS_SITE: u32 = $crate::arena::side::field::SITE_WORDS;
 
             /// Whether the records a read of `source` leaves answer its nodes
             /// as the tree a parse of it gives does (`Engine::backer_parity`):

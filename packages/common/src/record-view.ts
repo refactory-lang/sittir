@@ -16,6 +16,7 @@ import {
 	decodeSideSeparatorKind,
 	headerKind,
 	sideListSettingOffset,
+	sideUnderRows,
 	wordOf,
 	type CellSite,
 	type RecordCell
@@ -80,7 +81,7 @@ function sideWordsAt(records: RecordWords, side: number): { readonly words: Chun
 /** The address of the side record of the record at `at`, 0 for none. */
 function sideOf(records: RecordWords, at: number): number {
 	const { words, start } = wordsAt(records, at, 2);
-	return words[start + 1]!;
+	return sideUnderRows(records, words[start + 1]!);
 }
 
 /** The header kind of the record a read left at `at` of the built arena `tree`, with the span and the coordinate's kind its side record stamps. */
@@ -88,7 +89,7 @@ function readRow(tree: TreeHandle, at: number): { readonly kind: number; readonl
 	const records = recordsOf(tree);
 	const { words, start } = wordsAt(records, at, 2);
 	const kind = headerKind(words[start]!, records.format);
-	const side = words[start + 1]!;
+	const side = sideUnderRows(records, words[start + 1]!);
 	if (side === 0) throw new Error(`a read's record of kind ${kind} names no side record, so no span`);
 	const sides = sideWordsAt(records, side);
 	const row = decodeSideRow(sides.words, sides.start, records.format);

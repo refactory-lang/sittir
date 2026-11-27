@@ -41,6 +41,12 @@ export interface RecordCodecConstants {
 	readonly SIDE_FIELD_CHANGED_TRAILING: number;
 	readonly SIDE_FIELD_DELIMITER: number;
 	readonly SIDE_FIELD_SEPARATOR_KIND: number;
+	readonly SIDE_FIELD_NEXT: number;
+	readonly SIDE_FIELD_LEADING: number;
+	readonly SIDE_FIELD_TRAILING: number;
+	readonly SIDE_FIELD_INNER: number;
+	readonly SIDE_FIELD_SITES: number;
+	readonly SIDE_WORDS_SITE: number;
 	readonly NODE_ID_HOLDER_BITS: number;
 	readonly NODE_ID_ITEM_BITS: number;
 	readonly NODE_ID_WORD_BITS: number;
@@ -57,6 +63,15 @@ export interface NodeIdFormat {
 export interface SideField {
 	readonly bit: number;
 	readonly words: number;
+}
+
+export interface SideRowFields {
+	readonly next: number;
+	readonly leading: number;
+	readonly trailing: number;
+	readonly inner: number;
+	readonly sites: number;
+	readonly siteWords: number;
 }
 
 /** The forms a parsed cell holds, as a slot's `forms` stamp names them. */
@@ -97,6 +112,7 @@ export interface CellFormat {
 	readonly sideChanged: { readonly leading: number; readonly trailing: number };
 	/** The mask bit of a list's chosen separator, the one word after its delimiters setting. */
 	readonly sideSeparatorKind: number;
+	readonly sideRows: SideRowFields;
 	readonly nodeId: NodeIdFormat;
 }
 
@@ -177,6 +193,12 @@ const CODEC_KEYS = [
 	'SIDE_FIELD_CHANGED_TRAILING',
 	'SIDE_FIELD_DELIMITER',
 	'SIDE_FIELD_SEPARATOR_KIND',
+	'SIDE_FIELD_NEXT',
+	'SIDE_FIELD_LEADING',
+	'SIDE_FIELD_TRAILING',
+	'SIDE_FIELD_INNER',
+	'SIDE_FIELD_SITES',
+	'SIDE_WORDS_SITE',
 	'NODE_ID_HOLDER_BITS',
 	'NODE_ID_ITEM_BITS',
 	'NODE_ID_WORD_BITS'
@@ -216,6 +238,7 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		sideSides: { bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
 		sideChanged: { leading: codec.SIDE_FIELD_CHANGED_LEADING, trailing: codec.SIDE_FIELD_CHANGED_TRAILING },
 		sideSeparatorKind: codec.SIDE_FIELD_SEPARATOR_KIND,
+		sideRows: { next: codec.SIDE_FIELD_NEXT, leading: codec.SIDE_FIELD_LEADING, trailing: codec.SIDE_FIELD_TRAILING, inner: codec.SIDE_FIELD_INNER, sites: codec.SIDE_FIELD_SITES, siteWords: codec.SIDE_WORDS_SITE },
 		nodeId: { holderBits: codec.NODE_ID_HOLDER_BITS, itemBits: codec.NODE_ID_ITEM_BITS, wordBits: codec.NODE_ID_WORD_BITS }
 	};
 }
@@ -359,6 +382,15 @@ export function decodeSideRow(words: ArrayLike<number>, at: number, format: Cell
 		return value;
 	};
 	return { kind: word(1), span: { start: word(2), end: word(3) } };
+}
+
+export function sideUnderRows(records: RecordWords, side: number): number {
+	if (side === 0) return 0;
+	const start = wordOf(side, records.format);
+	const rows = records.format.sideRows;
+	const mask = records.words(side, 1)[start]!;
+	if ((mask & (rows.next | rows.leading | rows.trailing | rows.inner | rows.sites)) === 0) return side;
+	return (mask & rows.next) === 0 ? 0 : records.words(side, 2)[start + 1]!;
 }
 
 export function decodeSideDelimiter(words: ArrayLike<number>, at: number, format: CellFormat): number | undefined {

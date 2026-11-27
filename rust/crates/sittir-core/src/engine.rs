@@ -1145,16 +1145,11 @@ impl<'a, G: EngineGrammar> Records<'a, G> {
         Some(std::borrow::Cow::Owned(starts))
     }
 
-    /// Where each side a write gave a node of the source is kept, the inside
-    /// of a record as that record's `inner`.
+    /// Where each side a write gave a node of the source is kept.
     fn written_sites(&self) -> Option<Vec<(crate::arena::NodeSite, TriviaSide)>> {
         let spans = crate::arena::read_spans(self.built, self.source).ok()?;
         let (shape, bits, _) = self.shape;
-        let site_of = |name: crate::types::NodeId, side: TriviaSide| match name.inside_of() {
-            Some(record) if side == TriviaSide::Leading => Some((crate::arena::NodeSite::Record(crate::arena::Address(record.address())), TriviaSide::Inner)),
-            _ => Some((crate::arena::site::node_site(self.built, shape, bits, name).ok()?, side)),
-        };
-        Some(self.store.written(&spans).into_iter().filter_map(|(name, side)| site_of(name, side)).collect())
+        Some(self.store.written(&spans).into_iter().filter_map(|(name, side)| Some((crate::arena::site::node_site(self.built, shape, bits, name).ok()?, side))).collect())
     }
 }
 
@@ -3875,7 +3870,7 @@ mod tests {
         second.write_trivia_side(f, TriviaSide::Trailing, Vec::new()).expect("a side write");
         assert!(first.edited_within(NodeIndex::ROOT, false));
         assert_eq!(second.trivia_side(f, TriviaSide::Leading), first.trivia_side(f, TriviaSide::Trailing), "each tree reads its own writes");
-        assert_eq!((first.sides.len(), second.sides.len(), engine.written.len()), (1, 1, 0), "each tree holds its own writes, and the engine's store none");
+        assert_eq!((first.sides.len(), second.sides.len()), (1, 1), "each tree holds its own writes");
         drop(first);
         assert!(second.edited_within(NodeIndex::ROOT, false));
     }

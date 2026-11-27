@@ -997,7 +997,7 @@ The required numeric codec exports supplied by each native addon. JavaScript val
 
 ### `packages/common/src/record-cell.ts::CellFormat`
 
-The checked JavaScript decoder format derived from native codec exports. It carries cell tags, the inline-record header size, packed chunk addressing and ordered side fields. Slot capacities remain literal arguments from generated accessors rather than runtime format lookups.
+The checked JavaScript decoder format derived from native codec exports. It carries cell tags, the inline-record header size, packed chunk addressing, ordered side fields, and the fields of a side record of rows (`sideRows`, `SideRowFields`). Slot capacities remain literal arguments from generated accessors rather than runtime format lookups.
 
 ### `packages/common/src/record-cell.ts::RecordCell`
 
@@ -1022,6 +1022,23 @@ Splits a record header word into its kind and its flags. `headerKind` refuses fl
 ### `packages/common/src/record-cell.ts::leafItemPastNames`
 
 The one refusal for a leaf at an item a node's name cannot hold, shared by the arena's list write and `packedSite`, so both refuse it alike and name object storage as the storage that holds such a list.
+
+### `packages/common/src/record-cell.ts::SideRowFields`
+
+The mask bits of a side record of rows' fields (NEXT, LEADING, TRAILING, INNER and SITES) and the words one site takes in its table. They are read from the addon's `SIDE_FIELD_*` and `SIDE_WORDS_SITE` exports, napi consts over `arena::side::field`, so the native side is their one source. A side record of rows sits over a record's own side record. Word 1 of a record whose sides were written names it, and its NEXT names the side record under it. JavaScript reads these bits for two jobs: to step past the rows (`sideUnderRows`), and to copy them when it rebuilds a record in place. It never writes rows into a read record's side record.
+
+### `packages/common/src/record-cell.ts::sideUnderRows`
+
+The side record under `side`'s rows. It answers:
+- `side` itself, when its mask sets no row field (`SideRowFields`);
+- the record named by NEXT, when `side` is a side record of rows;
+- 0, for a side record of rows with no NEXT (a record whose own side record is empty), and for 0.
+
+Two groups read a record's word 1 through it, so the rows a native side write leaves stay invisible to them:
+- the readers that want a record's spans, edges, sides or delimiter (`sideOf`, `readRow`);
+- a copy that shares only the record's own side record.
+
+It costs one read of the mask, plus one of NEXT when rows are there.
 
 ### `packages/common/src/source-stamp.ts::sourceOf`
 

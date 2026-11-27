@@ -8,7 +8,7 @@ import type { ChunkWords, TreeHandle, TriviaSideName } from './read.ts';
 import type { TreeQuery } from './query.ts';
 import { BLANK_KIND_ID } from './blank-arm.ts';
 import { checkedKindId } from './kind-id.ts';
-import { addressOf, chunkOf, headerKind, headerOf, kindField, leafItemPastNames, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
+import { addressOf, chunkOf, headerKind, headerOf, kindField, leafItemPastNames, sideUnderRows, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, leafSitesOf, liveRecordAt, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { cacheOf, freedRecord, recordDelimiter, recordFlag, recordSeparator, recordSlot, recordSlots, readLeaf, readPosition } from './record-view.ts';
 import { isParsedPosition, isRecordPosition, type LeafMaker, type RecordHandle, type RecordPosition } from './handle.ts';
@@ -914,8 +914,9 @@ export class BuiltArena {
 		const words = this.#widthOf(kind);
 		const data = this.#chunk(from, words);
 		if (side) {
-			this.holdCell(data[head + 1]! * 4);
-			to.data[to.base + 1] = data[head + 1]!;
+			const shared = sideUnderRows(this, data[head + 1]!);
+			this.holdCell(shared * 4);
+			to.data[to.base + 1] = shared;
 		}
 		const cells = this.#views.cells[kind] ?? words;
 		for (let word = 2; word < cells; word++) to.data[to.base + word] = data[head + word]!;
@@ -1313,14 +1314,14 @@ export class BuiltArena {
 			const words = this.#chunk(at, 2);
 			const head = wordOf(at, this.format);
 			const side = words[head + 1]!;
-			words[head + 1] = this.#sidesNaming(side, naming);
+			words[head + 1] = this.#sidesNaming(side, naming, true);
 			if (side !== 0) this.drop(side, this.format.held.side);
 			return node;
 		}
 		return this.scope(() => {
 			const kind = this.kindAt(at);
 			const record = this.record(kind);
-			record.data[record.base + 1] = this.#sidesNaming(this.words(at, 2)[wordOf(at, this.format) + 1]!, naming);
+			record.data[record.base + 1] = this.#sidesNaming(this.words(at, 2)[wordOf(at, this.format) + 1]!, naming, false);
 			this.#copyCells(at, kind, record, false);
 			this.#copySites(at, record.at, []);
 			const last = this.#placedLast;
@@ -1334,7 +1335,26 @@ export class BuiltArena {
 		return counts[index] === (this.format.countOwned | 1);
 	}
 
-	#sidesNaming(side: number, sides: readonly number[]): number {
+	#sidesNaming(side: number, sides: readonly number[], keepRows: boolean): number {
+		const under = sideUnderRows(this, side);
+		const named = this.#baseNaming(under, sides);
+		return keepRows && under !== side ? this.#rowsOver(side, named) : named;
+	}
+
+	#rowsOver(rows: number, under: number): number {
+		const fields = this.format.sideRows;
+		const start = wordOf(rows, this.format);
+		const mask = this.#chunk(rows, 1)[start]!;
+		const own = [fields.leading, fields.trailing, fields.inner].filter((bit) => (mask & bit) !== 0).length;
+		const after = (mask & fields.next) === 0 ? 1 : 2;
+		const sites = (mask & fields.sites) === 0 ? 0 : 1 + this.#chunk(rows, after + own + 1)[start + after + own]! * fields.siteWords;
+		const cells = Array.from(this.#chunk(rows, after + own + sites).subarray(start + after, start + after + own + sites));
+		for (let n = 0; n < own; n++) this.holdCell(cells[n]!);
+		for (let n = own + 2; n < cells.length; n += fields.siteWords) this.holdCell(cells[n]!);
+		return this.push(under === 0 ? [(mask & ~fields.next) >>> 0, ...cells] : [(mask | fields.next) >>> 0, under, ...cells], 1);
+	}
+
+	#baseNaming(side: number, sides: readonly number[]): number {
 		const { sideBeforeDelimiter, sideSides, sideDelimiter, sideSeparatorKind } = this.format;
 		this.hold(sides[0]!);
 		if (side === 0) return this.push([sideSides.bit, ...sides], 1);

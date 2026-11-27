@@ -130,15 +130,19 @@ describe('a built arena rendered natively', () => {
 		expect(renderer.render(renderer.build.expressionStatement(renderer.build.identifier('y'))).toString()).toBe('y;');
 	});
 
-	it('reads and writes the sides of a built record by its address, refusing address 0', () => {
+	it('reads and writes the sides of a built record by its address, refusing address 0 and an address no record was written at', () => {
 		const native = arenaEngine();
-		expect(native.builtTriviaSide(5, 'leading')).toBeNull();
-		native.writeBuiltTriviaSide(5, 'leading', []);
-		expect(native.builtTriviaSide(5, 'leading')).toEqual([]);
-		expect(native.builtTriviaSide(6, 'leading')).toBeNull();
+		const { chunk } = native.words([TSKindId.ExpressionStatement, 0, TSKindId.ExpressionStatement, 0]);
+		const [one, other, past] = [native.at(chunk, 0), native.at(chunk, 2), native.at(chunk, 9)];
+		expect(native.builtTriviaSide(one, 'leading')).toBeNull();
+		native.writeBuiltTriviaSide(one, 'leading', []);
+		expect(native.builtTriviaSide(one, 'leading')).toEqual([]);
+		expect(native.builtTriviaSide(other, 'leading')).toBeNull();
 		expect(() => native.builtTriviaSide(0, 'leading')).toThrow(/record address 0/);
 		expect(() => native.writeBuiltTriviaSide(0, 'leading', [])).toThrow(/record address 0/);
-		expect(() => native.builtTriviaSide(5, 'beside' as never)).toThrow();
+		expect(() => native.builtTriviaSide(past, 'leading')).toThrow(/past what the arena wrote/);
+		expect(() => native.writeBuiltTriviaSide(past, 'leading', [])).toThrow(/past what the arena wrote/);
+		expect(() => native.builtTriviaSide(one, 'beside' as never)).toThrow();
 	});
 
 	it('writes a side of a built leaf at each site it names, refusing holder 0 and anything but triples before writing any', async () => {

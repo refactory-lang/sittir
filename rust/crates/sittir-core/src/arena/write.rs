@@ -96,13 +96,7 @@ impl<'a, T: Clone + HeapBytes> RecordSink<'a, T> {
         };
         let write = self.trivia;
         let cell = write(value, self)?;
-        match Cell::decode_built(cell, &self.writer, self.writer.kind_bits())? {
-            Cell::Unit { kind, .. } if kind != KindId::BLANK => Ok(CompactEntry::Layout { kind }),
-            Cell::Child { kind, at, .. } => Ok(CompactEntry::Record { kind, at }),
-            Cell::BuiltLeaf { kind, .. } => Ok(CompactEntry::Text { kind, at: cell.address() }),
-            Cell::BuiltText { .. } => Ok(CompactEntry::Text { kind: KindId::BLANK, at: cell.address() }),
-            _ => Err(ArenaError::Unwritable("a trivia value written as no record, layout member or leaf entry")),
-        }
+        CompactEntry::of_cell(cell, &self.writer, self.writer.kind_bits())
     }
 
     /// The record a read left of the node `coordinate` names by its own
@@ -630,7 +624,7 @@ mod tests {
         let unit = UnitSides { slot: "_gone".to_owned(), item: ItemIndex(0), trivia: NodeTrivia::default() };
         let node = pair(Some(Box::new(NodeLayout { trivia, units: vec![unit], ..NodeLayout::default() })), name("x", None), Vec::new());
         assert_eq!(node.write_cell(&mut RecordSink::built(&mut chunks, &store, &mut unlinked)), Err(ArenaError::UnknownSlot("_gone".into())));
-        assert_eq!(store.len(), 0);
+        assert_eq!(chunks.reads, None, "no row was placed");
     }
 
     #[test]

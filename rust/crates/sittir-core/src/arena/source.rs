@@ -193,7 +193,7 @@ mod tests {
         let mut arena = chunks();
         let source = Source { text: "fn f() {}\n", breaks_lf: true };
         let first = arena.write_source(&source).expect("room");
-        arena.release(crate::arena::count::Held::Text(first), false, &mut |_| Vec::new()).expect("the source's one count");
+        arena.release(crate::arena::count::Held::Text(first), false).expect("the source's one count");
         let second = arena.write_source(&source).expect("a chunk to write in");
         assert_eq!(Source::read(&arena, second), Ok(source));
     }

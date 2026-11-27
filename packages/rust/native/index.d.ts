@@ -623,17 +623,33 @@ export declare const SIDE_FIELD_DELIMITER: number
 
 export declare const SIDE_FIELD_EDGES: number
 
+export declare const SIDE_FIELD_INNER: number
+
+export declare const SIDE_FIELD_LEADING: number
+
+/**
+ * r" A side record of rows' fields, each one's mask bit, and the
+ * r" words a site takes in its table (`arena::side::RowFields`).
+ */
+export declare const SIDE_FIELD_NEXT: number
+
 export declare const SIDE_FIELD_SEPARATOR_KIND: number
 
 export declare const SIDE_FIELD_SIDES: number
 
+export declare const SIDE_FIELD_SITES: number
+
 export declare const SIDE_FIELD_SPAN: number
+
+export declare const SIDE_FIELD_TRAILING: number
 
 export declare const SIDE_WORDS_AT: number
 
 export declare const SIDE_WORDS_EDGES: number
 
 export declare const SIDE_WORDS_SIDES: number
+
+export declare const SIDE_WORDS_SITE: number
 
 export declare const SIDE_WORDS_SPAN: number
 

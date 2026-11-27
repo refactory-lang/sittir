@@ -1,9 +1,9 @@
 //! A record's side record: the layout facts beside its slots. Word 0 is a
 //! mask of the fields present, and the fields follow in a fixed order:
 //! `at` (kind, byte start, byte end), `edges`, `span`, `sides`, `delimiter`,
-//! `separator_kind`, `flanks`, `slots`. `changed` is two bits of the mask. It holds no trivia and no unit sides: a written side is
-//! in the engine's store of written sides ([`crate::trivia_store`]), and a
-//! parsed node's assigned sides in its tree's trivia table.
+//! `separator_kind`, `flanks`, `slots`. `changed` is two bits of the mask.
+//! The record's sides and its unit and leaf sites' are in a side record of
+//! rows (`RowFields`) written over it, which names it.
 
 use super::cell::CellWord;
 use super::{Address, ArenaError, ArenaRead, RecordSpace};
@@ -11,6 +11,7 @@ use crate::options::{EdgeArm, Edges};
 use crate::points::{Point, PointSpan};
 use crate::slot::ChangedEdges;
 use crate::spacing::SeamStrength;
+use crate::trivia_table::TriviaSide;
 use crate::types::{Delimiter, FieldId, KindId, NodeIndex, Span, TreeId};
 
 /// The fields a reader of a record finds before a list's delimiters
@@ -101,6 +102,14 @@ impl RowFields {
         ((word << crate::types::NodeId::ITEM_BITS) | item) << Self::SIDE_BITS | side
     }
 
+    /// The slot word, the item and the side (0 leading, 1 trailing) a
+    /// site's key holds (`site_key`).
+    #[must_use]
+    pub const fn site_of(key: u32) -> (u32, u32, u32) {
+        let site = key >> Self::SIDE_BITS;
+        (site >> crate::types::NodeId::ITEM_BITS, site & ((1 << crate::types::NodeId::ITEM_BITS) - 1), key & ((1 << Self::SIDE_BITS) - 1))
+    }
+
     /// Whether the side record holds no row and names no side record.
     #[must_use]
     pub fn is_empty(&self) -> bool {
@@ -110,6 +119,155 @@ impl RowFields {
     /// Each row's list cell, the sites' among them, empty rows included.
     pub fn cells(&self) -> impl Iterator<Item = CellWord> + '_ {
         [self.leading, self.trailing, self.inner].into_iter().flatten().chain(self.sites.iter().map(|&(_, cell)| cell))
+    }
+
+    /// Whether it holds a row, `next` aside.
+    #[must_use]
+    pub fn holds_rows(&self) -> bool {
+        self.cells().next().is_some()
+    }
+
+    /// The row of the record's own `side`.
+    #[must_use]
+    pub const fn side_row(&self, side: TriviaSide) -> Option<CellWord> {
+        match side {
+            TriviaSide::Leading => self.leading,
+            TriviaSide::Trailing => self.trailing,
+            TriviaSide::Inner => self.inner,
+        }
+    }
+
+    /// The row of the record's own `side`, to set.
+    pub fn side_row_mut(&mut self, side: TriviaSide) -> &mut Option<CellWord> {
+        match side {
+            TriviaSide::Leading => &mut self.leading,
+            TriviaSide::Trailing => &mut self.trailing,
+            TriviaSide::Inner => &mut self.inner,
+        }
+    }
+
+    /// The row of the site whose key is `key` (`site_key`).
+    #[must_use]
+    pub fn site_row(&self, key: u32) -> Option<CellWord> {
+        self.sites.binary_search_by_key(&key, |&(key, _)| key).ok().map(|n| self.sites[n].1)
+    }
+
+    /// The site whose key is `key` holds the row `cell`, or none, the sites
+    /// kept in key order.
+    pub fn set_site_row(&mut self, key: u32, cell: Option<CellWord>) {
+        match (self.sites.binary_search_by_key(&key, |&(key, _)| key), cell) {
+            (Ok(n), Some(cell)) => self.sites[n].1 = cell,
+            (Ok(n), None) => {
+                self.sites.remove(n);
+            }
+            (Err(n), Some(cell)) => self.sites.insert(n, (key, cell)),
+            (Err(_), None) => {}
+        }
+    }
+
+    /// The header word of the record at `at`, the side record its header
+    /// names, and that side record's rows when it is a side record of rows
+    /// (`of_side`): one lookup of the record's chunk for a record whose side
+    /// record lies there and holds no rows.
+    ///
+    /// # Errors
+    ///
+    /// What reading the record's header and its side record refuses.
+    pub fn of_record(arena: &dyn ArenaRead, at: Address) -> Result<(u32, Address, Option<RowFields>), ArenaError> {
+        let (header, side, mask) = super::header_side_mask(arena, at)?;
+        Ok((header, side, Self::of_side(arena, side, mask)?))
+    }
+
+    /// The rows of the side record at `side`, `mask` its mask when its
+    /// caller read it: none for address 0 and for a side record of other
+    /// fields, which `mask` tells without a read.
+    ///
+    /// # Errors
+    ///
+    /// What reading the side record refuses.
+    pub fn of_side(arena: &dyn ArenaRead, side: Address, mask: Option<u32>) -> Result<Option<RowFields>, ArenaError> {
+        if side == Address::NONE || mask.is_some_and(|mask| mask & mask::ROWS == 0) {
+            return Ok(None);
+        }
+        Self::read(arena, side)
+    }
+
+    /// The cells of the row whose list cell is `cell`: none for an empty
+    /// row.
+    ///
+    /// # Errors
+    ///
+    /// What reading the run refuses.
+    pub fn row_cells(arena: &dyn ArenaRead, cell: CellWord) -> Result<impl Iterator<Item = CellWord> + '_, ArenaError> {
+        Ok(super::ListCell::of_word(cell, arena)?.items(arena, 1)?.map(|item| CellWord(item[0])))
+    }
+
+    /// The row of `cells` placed in `chunks` as a run, held once by the
+    /// cell answered; the empty row for none.
+    ///
+    /// # Errors
+    ///
+    /// What placing the run refuses.
+    pub fn place_row(chunks: &mut super::BuiltChunks, cells: &[CellWord]) -> Result<CellWord, ArenaError> {
+        if cells.is_empty() {
+            return Ok(CellWord(0));
+        }
+        let mut words = Vec::with_capacity(cells.len() + 1);
+        words.push(u32::try_from(cells.len()).map_err(|_| ArenaError::Full)?);
+        words.extend(cells.iter().map(|cell| cell.0));
+        super::ListCell::word(super::ReadWriter::new(chunks).push(&words)?)
+    }
+
+    /// The record at `at`, whose header names the side record `side` with
+    /// the rows `old` (`of_record`), holds the rows `rows` in their place,
+    /// each row new to it already placed and held once. A side record of
+    /// rows names the side record it was written over, whose count word 1
+    /// held. One held only by `at` and of the same fields is rewritten in
+    /// place; any other is written anew, holding once more each run it
+    /// keeps and the side record under it, and `at`'s count of the old one
+    /// given back. A run the record no longer names is released.
+    ///
+    /// # Errors
+    ///
+    /// What reading or releasing the entries refuses, and what `words`
+    /// refuses.
+    pub fn write_over(chunks: &mut super::BuiltChunks, at: Address, side: Address, old: Option<&RowFields>, mut rows: RowFields) -> Result<(), ArenaError> {
+        use super::count::Held;
+        rows.next = match old {
+            Some(old) => old.next,
+            None => (side != Address::NONE).then_some(side),
+        };
+        let Some(old) = old else {
+            if rows.holds_rows() {
+                let new = super::ReadWriter::new(chunks).push(&rows.words()?)?;
+                super::set_side_of(chunks, at, new)?;
+            }
+            return Ok(());
+        };
+        if !rows.holds_rows() {
+            let under = rows.next.unwrap_or(Address::NONE);
+            if under != Address::NONE {
+                chunks.hold(under)?;
+            }
+            super::set_side_of(chunks, at, under)?;
+            return chunks.release(Held::Side(side), false);
+        }
+        let words = rows.words()?;
+        let same_fields = words.len() == old.words()?.len() && old.sites.iter().map(|&(key, _)| key).eq(rows.sites.iter().map(|&(key, _)| key)) && [old.leading, old.trailing, old.inner].map(|row| row.is_some()) == [rows.leading, rows.trailing, rows.inner].map(|row| row.is_some());
+        if same_fields && chunks.count_of(side)? == 1 {
+            let dropped: Vec<CellWord> = old.cells().zip(rows.cells()).filter(|&(was, now)| was != now && was.0 != 0).map(|(was, _)| was).collect();
+            chunks.words_mut(side, u32::try_from(words.len()).map_err(|_| ArenaError::Full)?)?.copy_from_slice(&words);
+            return chunks.release_batch(dropped.into_iter().map(|run| (Held::Run(run.address()), false)));
+        }
+        for kept in rows.cells().filter(|&cell| cell.0 != 0 && old.cells().any(|was| was == cell)) {
+            chunks.hold(kept.address())?;
+        }
+        if let Some(next) = rows.next {
+            chunks.hold(next)?;
+        }
+        let new = super::ReadWriter::new(chunks).push(&words)?;
+        super::set_side_of(chunks, at, new)?;
+        chunks.release(Held::Side(side), false)
     }
 
     /// The side record's words: its mask, then `next`, `leading`,

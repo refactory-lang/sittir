@@ -53,6 +53,8 @@ struct Tally {
     record_gap_words: u64,
     side_records: Count,
     side_encoded_words: u64,
+    side_rows: Count,
+    side_row_runs: Count,
     side_fields: BTreeMap<String, Count>,
     read_sides: Count,
     side_at_zero_width: u64,
@@ -180,7 +182,18 @@ fn walk_record<G: EngineGrammar>(arena: &dyn ArenaRead, at: Address, bits: u32, 
     if kind == KindId::ERROR {
         tally.records_error += 1;
     }
-    let side = SideRecord::read(arena, side_at).expect("a side record");
+    let mut side = SideRecord::read(arena, side_at).expect("a side record");
+    let rows = std::mem::take(&mut side.rows);
+    let side_at = if rows.is_empty() { side_at } else { rows.next.unwrap_or(Address::NONE) };
+    if !rows.is_empty() {
+        let written = rows.words().expect("a side record of rows encodes");
+        let at = Address(header[1]);
+        assert_eq!(arena.words(at, u32::try_from(written.len()).expect("within a chunk")).expect("its words"), written.as_slice(), "the side record of rows at {at:?} reads back as its encoder writes it");
+        tally.side_rows.add(written.len() as u64);
+        for cell in rows.cells().filter(|cell| cell.0 != 0) {
+            tally.side_row_runs.add(1 + u64::from(ListCell::of_word(cell, arena).expect("a row").len));
+        }
+    }
     let extra = side.node.is_some_and(|facts| facts.extra);
     if extra {
         tally.records_extra += 1;
@@ -628,8 +641,9 @@ fn the_side_words_a_census_attributes_are_the_words_their_encoder_writes() {
     let source = "// lead\nfn f<T>(a: u8, b: T,) -> Vec<u8> {\n    let x = [1, 2,];\n    x.len(); /* t */\n}\n\nstruct S { a: u8, }\n";
     let tally = census::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, "rust", "guard", &[("guard".to_string(), source.to_string())]);
     assert!(tally.side_records.n > 0, "the source's records keep side records");
-    let attributed = tally.records.words + tally.side_records.words + tally.list_runs.words + tally.link_records.words + tally.read_sides.words;
-    assert_eq!(attributed, tally.chunk_words, "every word of a one-chunk read is a record's, a side record's, a list run's or the read's own side record's");
+    let attributed = tally.records.words + tally.side_records.words + tally.side_rows.words + tally.side_row_runs.words + tally.list_runs.words + tally.link_records.words + tally.read_sides.words;
+    assert_eq!(attributed, tally.chunk_words, "every word of a one-chunk read is a record's, a side record's, a side record of rows' or one of its rows', a list run's or the read's own side record's");
+    assert!(tally.side_rows.n > 0, "the source's comments are rows of its records");
     assert_eq!(tally.side_records.words, tally.side_encoded_words, "words attributed to side record fields, flags word included, against the words their encoder writes");
     let run = &tally.side_fields["run"];
     let entries = tally.rows.values().map(|count| count.words).sum::<u64>() + tally.run_records.words;
