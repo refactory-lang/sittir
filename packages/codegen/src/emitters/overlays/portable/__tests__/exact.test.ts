@@ -76,6 +76,10 @@ describe('exactSlotsOf', () => {
 		expect(reasonsAt(exact, 'expression.call', 'arguments', 'argument')).toEqual(['opaque']);
 	});
 
+	it("decides a kind a test reads by text the grammar doesn't fix, one case per subset of the tests: a string literal's opening, tested for b and c prefixes", () => {
+		expect(reasonsAt(exact, 'expression.call', 'arguments', 'string_literal')).toEqual(['opaque']);
+	});
+
 	it('puts a raw arm whose reasons are all decided per value in the per-value group', () => {
 		expect(rawGroupOf(['preset', 'scalar'])).toBe('value');
 		expect(rawGroupOf(['opaque', 'unread'])).toBe('kind');
@@ -91,7 +95,7 @@ describe('exactSlotsOf, python', () => {
 	}, 120_000);
 
 	it("gives no preset reason to a name its read entry tests with eq: __init__ reads as a constructor", () => {
-		expect(reasonsAt(python, 'statement.block', 'statements', 'method_declaration')).not.toContain('preset');
+		expect(setIn(python, 'statement.block', 'statements').raw.map((arm) => arm.kind)).not.toContain('method_declaration');
 	});
 
 	it("gives no preset reason to a string's delimiters, which its claim spells", () => {
