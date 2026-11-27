@@ -456,7 +456,13 @@ The generated grammar bindings use it: each derived kind rename (§2.4) is a `re
   - A `reauthored` rule declares at least one cause. One that declares none is refused, is never witness-verified, and counts toward the hand-written rule ratchet.
   - A rule with two or more causes lists each with its own witnesses, and each cause is judged on its own. A rule is witness-verified when every one of its causes is a witnessed cause.
   - The witnessed causes take witness arrays. `accepts-invalid-syntax` and `ruled-narrowing` make the same claim: upstream derives each witness form and the authored rule does not. An `accepts-invalid-syntax` witness cites the production that excludes the form. A `ruled-narrowing` witness states, in words, the maintainer ruling's constraint that excludes it, never a PR, spec or task number.
-  - A `vocabulary` entry is verified when every authored or upstream rule that reaches it is a witness-verified `reauthored` rule. The hand-written rule ratchet counts every other entry and every undeclared rule.
+  - `vocabulary({ serves: rule }, body)` declares a helper that serves a witnessed reauthoring. It is verified on its own when two things hold:
+    - the rule `serves` names is `reauthored` with witnessed causes only, each judged clean (otherwise `vocabulary-serves-unwitnessed`);
+    - the helper's body references that rule, or another helper that serves it (otherwise `vocabulary-serves-unrelated`). The link runs from the helper to the served rule only.
+
+    Rust's `block` is reauthored with `accepts-invalid-syntax` to drop the label rustc rejects on a body. `label_block_expression` serves it: the labelled block the reauthoring moves out of `block`. `_block_or_label_block_expression` serves it too, admitting both where an expression ends with a block.
+  - A `vocabulary` entry without `serves` is verified when every authored or upstream rule that reaches it is a witness-verified `reauthored` rule or a verified helper. The hand-written rule ratchet counts every other entry and every undeclared rule.
+  - A rule that adds or excludes a form takes a witnessed cause. A redefinition that changes no accepted form is not written: the positions that need a narrower form take named copies of the rule (§4.1).
   - They are layer-1 only, since a generated layer has no `rules:`.
 - **`role(symbol, 'indent' | 'dedent' | 'newline')`,** in the `externals` callback, is unchanged. The pass calls that callback, so it records the roles in the layer record.
 - **`preference(arm)`,** in `options:`, is unchanged. `options:` stays its own key:
@@ -497,7 +503,9 @@ A copy is a rule made from a source rule for one context. Every rule a verb make
   - `path` selects the part copied. It is omitted, or `.`, for the whole rule; `'2'` copies the third member, one arm of a choice. A part is reached by index and field segments only.
   - `name` gives the copy its own name, in place of the name from its context. It is passed with `path` as an options object: `copy('_pattern', { name: '_pattern_no_top_alt' })`.
 - **Context.** The kind whose `edits` entry or `rules:` callback makes the copy. A helper sets its own: the lead copies in the context of its field or its item (§5.2).
-- **Body.** The source's body, or the selected part.
+- **Body.** The source's body, or the selected part. `copy()` reads the layered body, a `rules:` redefinition included.
+- **`copy.base(source, path? | { path?, name? })`** reads the source's base body instead: upstream's rule with the source's own `edits:` entries applied, before any `rules:` redefinition. Its naming, reference and options are `copy`'s. It lets a rule's redefinition seed a copy from the body it replaces. A source with no upstream rule has no base, and `copy.base` of it is `edit-entry-invalid`.
+- **Edits address the base body.** A rule's `edits:` entries apply to its base body even when `rules:` redefines it. They apply first, and reach the redefinition only through what it takes with `copy.base`, so an edit on an arm travels into the copy that holds the arm. A path the base body lacks is `edit-entry-invalid`, as for any edit.
 - **Name.** A copy is always hidden.
   - A whole copy is `_<source>_<context>`, with the source's and the context's own leading underscores dropped. So `_declaration_statement` copied in `impl_item_body` gives `_declaration_statement_impl_item_body`, as split clones and lead mints are named today, and `formal_parameters` copied in `_get_accessor_signature` gives `_formal_parameters_get_accessor_signature`.
   - A part copy puts the part's segments between the two: `_<source>_<part>_<context>`, so arm 2 of `_declaration` in `impl_item_body` gives `_declaration_2_impl_item_body`.
