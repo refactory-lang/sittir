@@ -1860,15 +1860,11 @@ interface GapWalkCtx {
 	readonly conditional: boolean;
 }
 
-interface SlotEmptinessCtx {
-	readonly slotById: ReadonlyMap<RuleId, AssembledNonterminal>;
-}
-
-function slotEmptiness(root: RenderRule, { slotById }: SlotEmptinessCtx): EmptinessCtx<RenderRule> {
+function slotEmptiness(root: RenderRule, owned: OwnedSlotsCtx): EmptinessCtx<RenderRule> {
 	return {
 		settled(rule) {
 			if (rule.multiplicity === 'optional' || rule.multiplicity === 'array' || rule.optionalElement === true) return true;
-			const slot = rule.id === undefined ? undefined : slotById.get(rule.id);
+			const slot = slotWrittenAt(rule, owned);
 			if (slot !== undefined && (rule !== root || isRequired(slot))) return false;
 			return renderRuleWalker.childrenOf(rule).length === 0 ? true : undefined;
 		},
@@ -1945,7 +1941,7 @@ function slotsBesideEachOther(
 	readonly found: ReadonlySet<AssembledNonterminal>;
 	readonly pairs: ReadonlyMap<AssembledNonterminal, ReadonlySet<AssembledNonterminal>>;
 } {
-	const slotById = new Map(ctx.slots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const)));
+	const owned = { owned: ownedSlotsOf(ctx.slots) };
 	const found = new Set<AssembledNonterminal>();
 	const pairs = new Map<AssembledNonterminal, Set<AssembledNonterminal>>();
 	const pair = ([a, b]: readonly [AssembledNonterminal, AssembledNonterminal]): void => {
@@ -1954,7 +1950,7 @@ function slotsBesideEachOther(
 		pairs.set(a, beside);
 	};
 	const walk = (rule: RenderRule): readonly AssembledNonterminal[] => {
-		const slot = rule === root || rule.id === undefined ? undefined : slotById.get(rule.id);
+		const slot = rule === root ? undefined : slotWrittenAt(rule, owned);
 		if (slot !== undefined) {
 			found.add(slot);
 			return [slot];
@@ -2107,12 +2103,12 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	get innerGaps(): readonly InnerGap[] {
 		if (this.triviaInterior) return [];
 		const root = this.renderRule;
-		const slotById = new Map(this._slots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const)));
-		if (!realizesEmpty(root, slotEmptiness(root, { slotById }))) return [];
+		const owned = { owned: ownedSlotsOf(this._slots) };
+		if (!realizesEmpty(root, slotEmptiness(root, owned))) return [];
 		const occurrences: { readonly slot: AssembledNonterminal; readonly precedingTokens: number }[] = [];
 		const immediateTokens: boolean[] = [];
 		const walk = (rule: RenderRule, ctx: GapWalkCtx): void => {
-			const slot = rule === root || rule.id === undefined ? undefined : slotById.get(rule.id);
+			const slot = rule === root ? undefined : slotWrittenAt(rule, owned);
 			if (slot !== undefined) {
 				occurrences.push({ slot, precedingTokens: immediateTokens.length });
 				return;
@@ -2139,7 +2135,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		}
 		if (tokens === 0) {
 			if (!this.grammarRoot) return [];
-			const rootSlot = root.id === undefined ? undefined : slotById.get(root.id);
+			const rootSlot = slotWrittenAt(root, owned);
 			const repeat =
 				occurrences.find((occurrence) => isMultiple(occurrence.slot))?.slot ??
 				(rootSlot !== undefined && isMultiple(rootSlot) ? rootSlot : undefined);
@@ -2820,6 +2816,10 @@ export function elementsAdmitOnlyTight(rule: TightPosition, { tight }: AdmitsOnl
 
 export interface OwnedSlotsCtx {
 	readonly owned: ReadonlyMap<RuleId, AssembledNonterminal> | undefined;
+}
+
+export function ownedSlotsOf(slots: readonly AssembledNonterminal[]): ReadonlyMap<RuleId, AssembledNonterminal> {
+	return new Map(slots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const)));
 }
 
 export function slotWrittenAt(rule: RenderRule, { owned }: OwnedSlotsCtx): AssembledNonterminal | undefined {

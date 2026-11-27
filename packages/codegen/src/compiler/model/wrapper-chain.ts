@@ -13,8 +13,10 @@ import {
 	isNonEmpty,
 	isRequired,
 	kindsOf,
+	slotWrittenAt,
 	valueParseKindsOf,
 	type AssembledNode,
+	type OwnedSlotsCtx,
 	type SlotCardinality,
 	type AssembledNonterminal
 } from './node-map.ts';
@@ -28,7 +30,7 @@ export interface WrapperChain {
 	readonly slots: readonly AssembledNonterminal[];
 }
 
-interface Walk {
+interface Walk extends OwnedSlotsCtx {
 	readonly nodeMap: NodeMap;
 	readonly slot: AssembledNonterminal;
 	readonly forms: boolean;
@@ -38,7 +40,7 @@ interface Walk {
 
 function isTheSlot(rule: RenderRule, walk: Walk): boolean {
 	if (rule.fieldName !== undefined) return rule.fieldName === walk.slot.fieldName;
-	return walk.slot.fieldName === undefined && rule.type !== SEQ && rule.id !== undefined && walk.slot.sourceRuleIds.includes(rule.id);
+	return walk.slot.fieldName === undefined && slotWrittenAt(rule, walk) === walk.slot;
 }
 
 function visit(rule: RenderRule, certain: boolean, walk: Walk): void {
@@ -107,7 +109,7 @@ function wrapperSlotOf(nodeMap: NodeMap, kind: string): AssembledNonterminal | u
 	const slot = slots.length === 1 ? slots[0]! : undefined;
 	if (slot === undefined || !holdsOnlyNodes(slot)) return undefined;
 	if (node instanceof AssembledList) return slot;
-	const walk: Walk = { nodeMap, slot, forms: node instanceof AssembledPolymorph, slotSeen: false, failed: false };
+	const walk: Walk = { nodeMap, owned: nodeMap.slotByRuleId.get(kind), slot, forms: node instanceof AssembledPolymorph, slotSeen: false, failed: false };
 	visit(node.renderRule, true, walk);
 	return walk.slotSeen && !walk.failed ? slot : undefined;
 }

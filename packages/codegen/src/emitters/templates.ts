@@ -2,7 +2,7 @@ import { flatOrderParses, flatSlotOrder, slotNameInBody, type ChoicePartition, t
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { CHOICE, DEDENT, EOF, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
-import { isBuilderTextLeaf, seamNeedsSpace, slotWrittenAt, wordCharPredicate } from '../compiler/model/node-map.ts';
+import { isBuilderTextLeaf, ownedSlotsOf, seamNeedsSpace, slotWrittenAt, wordCharPredicate } from '../compiler/model/node-map.ts';
 import { isNonterminalRuleType, collectFixedLiteral, ruleListParts } from '../dsl/rule-patterns.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import {
@@ -453,8 +453,7 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 		const separator = (r as { separator?: RuleSeparator }).separator;
 		if (separator === undefined || (multiplicity !== 'array' && multiplicity !== 'nonEmptyArray')) return;
 		const token = separatorToString(r);
-		const id = r.id;
-		const slot = id === undefined ? undefined : node.slots.find((candidate) => candidate.sourceRuleIds.includes(id));
+		const slot = slotWrittenAt(r, { owned: ownedSlotsOf(node.slots) });
 		if (token === undefined || slot === undefined || !bodyHasSlot(body, slot.name)) return;
 		const written = listDelimitersOf(slot, node);
 		const writes = (mode: ListDelimiters['leadingDelimiter']): boolean => mode === 'mandatory' && written.separator === token;

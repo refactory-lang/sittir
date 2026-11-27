@@ -4433,7 +4433,7 @@ Where an inner comment can sit in an empty node of this kind: one `InnerGap` per
 - A literal token is a text rule or a non-slot symbol of a fixed-text kind (`nonterminal: false`). A grammar that exposes a zero-width scanner token as a named kind (python's `indent` / `dedent`) keeps it as that symbol instead of inlining its text, and it counts in `precedingTokens` as the inlined text did, so exposing it does not remove the kind's empty form.
 - A gap whose closing token is immediate is not a gap: tree-sitter lexes no extra before an immediate token. The same holds for the slotless `interior` gap's second token.
 - Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
-- A slot is found by its source rule ids, never at the rule root.
+- A slot is found where a rule writes it (`slotWrittenAt`), never at the rule root.
 - When several slots share a span, only the first in render order keys it, and the gap's `slots` lists all of them (by storage key, `storageKeyOf`). A slot outside the span, such as typescript's automatic-semicolon terminator after `}`, is not in it. The root gap's `slots` are every slot with no token before it, plus its repeat slot.
 - A kind with several gaps still has one inner side (`innerSite`).
 - A gap before the kind's first token or after its last is not inner: tree-sitter gives an extra outside a node's own tokens to the parent. A kind with no unconditional token is the exception only when it is the grammar root (`grammarRoot`), since only the root can hold an extra there (rust `source_file`, python `module`, typescript `program`). Its one gap is its first repeat slot in render order, or the root's own rule when that is the repeat slot (scm `program`), because `inner` carries the comments of an empty repeat: a comment-only file is a root whose statements are empty. An optional single slot before it (`shebang`, `hash_bang_line`) never owns the gap.
@@ -4463,11 +4463,7 @@ How this kind's text can begin, read from its own rule by `ruleEdgeTerminals`. S
 
 ### `packages/codegen/src/compiler/model/node-map.ts::slotEmptiness`
 
-The emptiness reader `innerGaps` passes to the shared law (`realizesEmpty`): whether a render rule can realise with no slot value. Optional, repeat and optional-element rules can; a slot occurrence cannot; a rule with no children (a token, a non-slot symbol) can. The root is a slot occurrence only when its slot is required, because a kind's sole slot also carries the root's id while the root is the whole body around it.
-
-### `packages/codegen/src/compiler/model/node-map.ts::SlotEmptinessCtx`
-
-The slots of the kind whose emptiness `slotEmptiness` reads, by source rule id.
+The emptiness reader `innerGaps` passes to the shared law (`realizesEmpty`): whether a render rule can realise with no slot value. Optional, repeat and optional-element rules can; a slot occurrence (a rule that writes a slot, `slotWrittenAt`) cannot; a rule with no children (a token, a non-slot symbol) can. A root that writes a slot, which is never a sequence, is a slot occurrence only when its slot is required, because a kind's sole slot also carries the root's id while the root is the whole body around it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::GapWalkCtx`
 
@@ -6359,11 +6355,15 @@ What `tightSlotArmsOf` answers for one slot, per kind of arm: `kind` for an arm 
 
 ### `packages/codegen/src/compiler/model/node-map.ts::slotWrittenAt`
 
-The slot a rule of an owner kind writes: the slot its own id maps to in the owner's entry of `NodeMap.slotByRuleId`. A sequence writes no slot of its own, since its members write theirs, even when its id is among a slot's `sourceRuleIds`; neither does a rule with no id. This is the one answer to where a slot is written, and every reader that asks which slot a rule holds reads it: the template emitter writes a slot reference there (`lookupSlot`), a minimal build fills it there (`armSeats`), the arms of its per-slot child enum are judged tight there (`tightSlotArmsOf`), the render rules find a list's slot, a spaced separator's slot, a literal's registered choice and a kind edge's slot there (`collectGaps`, `slotOf`, `literalSlotOf`, `withKindEdges`), and the choice partitions find the slot a choice or its arm holds there (`choicePartitionsOf`, `slotChoiceTextFailuresOf`).
+The slot a rule of an owner kind writes: the slot its own id maps to among the owner's slots (`OwnedSlotsCtx`). A sequence writes no slot of its own, since its members write theirs, even when its id is among a slot's `sourceRuleIds`; neither does a rule with no id. This is the one answer to which slot a rule holds, so the template emitter writes a slot reference where it says (`lookupSlot`) and every other reader that maps a rule to a slot asks it rather than looking a rule id up itself: the render rules, the choice partitions, the per-slot arms, a minimal build, a wrapper chain, the inner gaps and the emptiness they read, the slots beside each other, and the dropped-literal check.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::OwnedSlotsCtx`
 
-What `slotWrittenAt` reads: the owner kind's entry of `NodeMap.slotByRuleId`, or nothing when there is no owner. `slotByRuleId` is scoped to its owner because kinds that share a hidden rule's body hold the same rule ids in slots of their own.
+What `slotWrittenAt` reads: the owner kind's slots by source rule id (`ownedSlotsOf`), or nothing when there is no owner. The map is scoped to its owner because kinds that share a hidden rule's body hold the same rule ids in slots of their own.
+
+### `packages/codegen/src/compiler/model/node-map.ts::ownedSlotsOf`
+
+A kind's slots by source rule id: each of a slot's `sourceRuleIds` maps to that slot, and when two slots hold one id the later one keeps it. Assemble stores it per kind as `NodeMap.slotByRuleId`; a model fact computed from a node's own slots (`innerGaps`, `slotsBesideEachOther`) and an emitter holding only a node build it here, so every reader of `slotWrittenAt` reads one map built one way.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 

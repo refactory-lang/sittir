@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { RenderRule, RuleId } from '../../../types/rule.ts';
 import type { SeamRole } from '../../../types/spacing.ts';
 import type { GrammarRule } from '../../../grammar-shapes/grammar-json.ts';
-import { AssembledNonterminal, slotWrittenAt, tightSlotArmsOf, type AssembledNode } from '../node-map.ts';
+import { AssembledNonterminal, ownedSlotsOf, slotWrittenAt, tightSlotArmsOf, type AssembledNode } from '../node-map.ts';
 import { forEachSeamKey } from '../join-seams/grammar-view.ts';
 
 const sym = (name: string, extra: object = {}): RenderRule => ({ type: 'SYMBOL', name, nonterminal: true, ...extra }) as unknown as RenderRule;
@@ -24,7 +24,7 @@ const tight = (entries: Record<string, SeamRole>): ReadonlyMap<RuleId, ReadonlyS
 const armsOf = (slot: AssembledNonterminal, rules: Record<string, RenderRule>, entries: Record<string, SeamRole>) =>
 	tightSlotArmsOf(
 		{ owner: 'string', slot },
-		{ nodes, rules, tight: tight(entries), slotByRuleId: new Map([['string', new Map(slot.sourceRuleIds.map((id) => [id, slot] as const))]]) }
+		{ nodes, rules, tight: tight(entries), slotByRuleId: new Map([['string', ownedSlotsOf([slot])]]) }
 	);
 
 describe('tightSlotArmsOf', () => {

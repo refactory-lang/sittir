@@ -1,6 +1,6 @@
 import { emitShapeFailure, type EmitShapeFailure } from './diagnostics/emit-diagnostics.ts';
 import type { VariantChild } from './variant-structural.ts';
-import { isHiddenPunctuationLeaf } from './model/node-map.ts';
+import { isHiddenPunctuationLeaf, ownedSlotsOf } from './model/node-map.ts';
 import { irKeyOfTypeName, lowerCamelCase } from './model/casing.ts';
 import { computeFieldStorageInfo, compareOrdinal } from '../emitters/shared.ts';
 import {
@@ -341,7 +341,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		if (rule.id) nodeByRuleId.set(rule.id, node);
 	}
 	for (const [kind, node] of nodes) {
-		slotByRuleId.set(kind, new Map(node.slots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const))));
+		slotByRuleId.set(kind, ownedSlotsOf(node.slots));
 	}
 	const choicePartitions = choicePartitionsOf({ nodes, rules: normalized.normalizedRules, slotByRuleId });
 	for (const own of choicePartitions.values()) {
