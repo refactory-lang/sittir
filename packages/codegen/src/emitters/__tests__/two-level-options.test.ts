@@ -204,23 +204,10 @@ describe('a two-level forwarder with options on both levels', () => {
 	});
 });
 
-describe('a three-level forwarder, its overloads', () => {
-	let factories: string;
-
-	beforeAll(async () => {
-		({ factories } = await emitted(threeLevel));
-	});
-
-	it('names each option parameter once per overload', () => {
-		const declarations = factories
-			.split('\n')
-			.filter((line) => line.startsWith('export function buildOuter<') || line.startsWith('export function buildOuter('))
-			.filter((line) => line.endsWith(';'));
-		expect(declarations.length).toBeGreaterThan(0);
-		for (const line of declarations) {
-			const params = line.slice(line.indexOf('(') + 1, line.indexOf('):')).split(/, (?![^<{[]*[>}\]])/);
-			const names = params.map((param) => param.trim().split(/[?:\s]/)[0]!).filter((name) => /options$|Options$/.test(name));
-			expect(new Set(names).size, line).toBe(names.length);
-		}
+describe('a three-level forwarder with options on each level', () => {
+	it('refuses the chain at emit with a named diagnostic on the outer kind', async () => {
+		await expect(emitted(threeLevel)).rejects.toMatchObject({
+			blocking: [expect.objectContaining({ code: 'three-level-option-chain', ownerKind: 'outer' })]
+		});
 	});
 });

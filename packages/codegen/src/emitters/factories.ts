@@ -1818,7 +1818,17 @@ export function twoLevelTarget(node: FieldCarryingNode, nodeMap: NodeMap, kindEn
 	if (target === null) return undefined;
 	const targetNode = nodeMap.nodes.get(target)!;
 	const shape = classifyFactoryShape(targetNode, nodeMap);
-	return registeredSlots(targetNode).length === 0 || shape === 'spread' ? undefined : targetNode;
+	if (registeredSlots(targetNode).length === 0 || shape === 'spread') return undefined;
+	const deeper = isAuthoredCompound(targetNode) ? twoLevelTarget(targetNode, nodeMap, kindEntries) : undefined;
+	if (deeper !== undefined) {
+		throw emitShapeFailure({
+			code: 'three-level-option-chain',
+			ownerKind: node.kind,
+			message: `${node.kind} forwards its options through ${targetNode.kind}, which forwards its options through ${deeper.kind}; options on three levels of a forwarding chain are not supported`,
+			details: { middle: targetNode.kind, inner: deeper.kind }
+		});
+	}
+	return targetNode;
 }
 
 function positionalCount(params: string): number {
