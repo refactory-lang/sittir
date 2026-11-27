@@ -935,7 +935,7 @@ function buildTypedTemplateBody(
 				const f = struct.fields.find((field) => rustFieldIdent(field.name) === rustFieldIdent(name));
 				return f === undefined ? undefined : holderArmSeams(armSeams, node, f.name, shapeByName.get(f.name));
 			},
-			innerGap: (name) => node instanceof AbstractAssembledCompound && node.innerSite?.key === name
+			innerGap: (name) => node instanceof AbstractAssembledCompound && node.innerSite(joins)?.key === name
 		})
 	);
 	return lines;

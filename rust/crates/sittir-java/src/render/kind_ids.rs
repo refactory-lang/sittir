@@ -393,7 +393,7 @@ pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_co
     layout: &[],
     indent: KindId(155),
     dedent: KindId(156),
-    inner: &[KindId(157), KindId(191), KindId(193), KindId(205), KindId(209), KindId(214), KindId(215), KindId(216), KindId(238), KindId(241), KindId(253), KindId(265), KindId(269), KindId(275), KindId(280), KindId(285), KindId(326), KindId(327), KindId(328)],
+    inner: &[KindId(157), KindId(191), KindId(193), KindId(205), KindId(209), KindId(214), KindId(215), KindId(216), KindId(238), KindId(241), KindId(253), KindId(265), KindId(269), KindId(275), KindId(280), KindId(285), KindId(326)],
     named_extras: true,
 };
 

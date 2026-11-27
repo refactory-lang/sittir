@@ -11,4 +11,4 @@ export const TOKEN_INTERIORS = {
 } as const satisfies { readonly [kind: string]: TokenInterior };
 
 /** The kinds whose template renders an inner side, where an empty node of the kind holds its trivia. */
-export const INNER_SITES: ReadonlySet<string> = new Set<string>(['character_class']);
+export const INNER_SITES: ReadonlySet<string> = new Set<string>([]);

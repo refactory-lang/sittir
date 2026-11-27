@@ -13755,7 +13755,7 @@ A builder's reader for one slot: it hydrates when the slot's storage holds nodes
 
 ### `packages/codegen/src/emitters/node-members.ts::triviaInnerImports`
 
-The inner-trivia function a grammar's builder module imports: none when no kind has an inner side, `triviaInner` when some does. Unused imports would fail the lint of the generated file.
+The inner-trivia member a grammar's builder and wrap modules import: none when no kind has an inner side (`emptyForms` is empty), `objectInner` when some does. Unused imports would fail the lint of the generated file, and a grammar can have no kind with an inner side (regex).
 
 ### `packages/codegen/src/emitters/factories.ts::narrowedStorageExpr`
 
@@ -14943,7 +14943,7 @@ The table row each entry is emitted as, by entry name.
 
 ### `packages/codegen/src/emitters/overlays/build-table.ts::builderTables`
 
-Builds both builder tables for a node map, given the polymorph wires.
+Builds both builder tables for a node map and its tight join seams (`InnerSideCtx`, which the seated parents' empty forms read), given the polymorph wires.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::BUILDER_SURFACES`
 

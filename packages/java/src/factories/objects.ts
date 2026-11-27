@@ -12351,7 +12351,6 @@ function buildFormalParametersList$with$elements(this: Received<Held>, ...args: 
 	return buildFormalParametersList$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
-export function buildStringLiteralLine(): T.EmptyStringLiteralLine;
 export function buildStringLiteralLine<
 	A extends Admit<(T.StringFragment | T.EscapeSequence | T.StringInterpolation)[]>
 >(...children: A & RefuseUndeclared<A>): T.StringLiteralLine.Bound;
@@ -12378,7 +12377,7 @@ export function buildStringLiteralLine(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = { elements: buildStringLiteralLine$with$elements, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.StringLiteralLine.Bound;
 }
 
@@ -12396,7 +12395,6 @@ function buildStringLiteralLine$with$elements(this: Received<Held>, ...args: unk
 	return buildStringLiteralLine$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
-export function buildStringLiteralTextBlock(): T.EmptyStringLiteralTextBlock;
 export function buildStringLiteralTextBlock<
 	A extends Admit<(T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation)[]>
 >(...children: A & RefuseUndeclared<A>): T.StringLiteralTextBlock.Bound;
@@ -12423,7 +12421,7 @@ export function buildStringLiteralTextBlock(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = { elements: buildStringLiteralTextBlock$with$elements, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	checkDelimited(handle, node, _delimited_buildStringLiteralTextBlock, [_elements]);
 	return node as unknown as T.StringLiteralTextBlock.Bound;
 }

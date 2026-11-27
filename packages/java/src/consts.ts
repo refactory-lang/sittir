@@ -111,7 +111,5 @@ export const INNER_SITES: ReadonlySet<string> = new Set<string>([
 	'program',
 	'record_pattern_body',
 	'return_statement',
-	'string_literal_line',
-	'string_literal_text_block',
 	'type_arguments'
 ]);

@@ -261,7 +261,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			portableTyped: portable?.typed,
 			emitDiagnostics: [...accessorClassDiagnostics(nodeMap, cfg.grammar, leadEffectsOf(raw.bindingEffects)), ...vocabularyRecords, ...portableDiagnostics, ...emitDiagnostics],
 			is: emitted.is,
-			kindIds: emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
+			kindIds: emitKindIdRust({ grammar: cfg.grammar, nodeMap, tight: joins.tight, generatedIdTables }),
 			fieldIds: emitFieldIdRust(cfg.grammar, generatedIdTables),
 			nodeMap,
 			generatedIdTables,

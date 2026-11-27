@@ -1,6 +1,6 @@
 import type { QuerySlotEntry, StructureRow } from '@sittir/types';
 import type { NodeMap } from '../compiler/types.ts';
-import { innerRegions, whitespaceTrivia, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
+import { innerRegions, whitespaceTrivia, type InnerSideCtx, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
 import { compareOrdinal, expandToConcreteParseKinds, keywordPresenceStorage, type WireRoutes } from './shared.ts';
 import { AssembledSupertype, spelledReadOf, storageKeyOf, valueParseKindsOf, valueParseLabelsOf, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
@@ -9,9 +9,8 @@ import { nodeSlotNumbers } from './render-module.ts';
 import { EmitCollector, emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { layoutTriviaKindIds, listKindIds, namedUnitKindIds, rebuildWrapperKindIds } from './wrap.ts';
 
-export interface EmitClientUtilsConfig {
+export interface EmitClientUtilsConfig extends InnerSideCtx {
 	grammar: string;
-	nodeMap: NodeMap;
 	triviaKinds?: string[];
 	structure?: ReadonlyMap<number, StructureRow>;
 }
@@ -33,7 +32,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 			rebuildWrapperKindIds(config.nodeMap),
 			listKindIds(config.nodeMap),
 			layoutTriviaKindIds(config.nodeMap),
-			innerRegions(config.nodeMap),
+			innerRegions(config),
 			namedUnitKindIds(config.nodeMap)
 		),
 		'',

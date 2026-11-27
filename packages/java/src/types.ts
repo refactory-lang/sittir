@@ -11816,7 +11816,7 @@ export interface StringLiteralLineNs extends NodeNs<
 	never,
 	TSKindId.StringLiteralLine,
 	StringLiteralLine.Parsed,
-	EmptyStringLiteralLine
+	never
 > {
 	readonly BuildArgs: StringLiteralLine.BuildArgs;
 	readonly LooseArgs: StringLiteralLine.LooseArgs;
@@ -11830,7 +11830,7 @@ export interface StringLiteralTextBlockNs extends NodeNs<
 	never,
 	TSKindId.StringLiteralTextBlock,
 	StringLiteralTextBlock.Parsed,
-	EmptyStringLiteralTextBlock
+	never
 > {
 	readonly BuildArgs: StringLiteralTextBlock.BuildArgs;
 	readonly LooseArgs: StringLiteralTextBlock.LooseArgs;
@@ -17942,13 +17942,7 @@ export interface JavaTypeMap extends GrammarTypeMap {
 		| { readonly node: ArrayInitializer.Parsed; readonly empty: EmptyArrayInitializer.Parsed }
 		| { readonly node: FormalParametersList; readonly empty: EmptyFormalParametersList }
 		| { readonly node: FormalParametersList.Bound; readonly empty: EmptyFormalParametersList }
-		| { readonly node: FormalParametersList.Parsed; readonly empty: EmptyFormalParametersList.Parsed }
-		| { readonly node: StringLiteralLine; readonly empty: EmptyStringLiteralLine }
-		| { readonly node: StringLiteralLine.Bound; readonly empty: EmptyStringLiteralLine }
-		| { readonly node: StringLiteralLine.Parsed; readonly empty: EmptyStringLiteralLine.Parsed }
-		| { readonly node: StringLiteralTextBlock; readonly empty: EmptyStringLiteralTextBlock }
-		| { readonly node: StringLiteralTextBlock.Bound; readonly empty: EmptyStringLiteralTextBlock }
-		| { readonly node: StringLiteralTextBlock.Parsed; readonly empty: EmptyStringLiteralTextBlock.Parsed };
+		| { readonly node: FormalParametersList.Parsed; readonly empty: EmptyFormalParametersList.Parsed };
 	readonly trivia: BlockComment | Layout | LineComment;
 }
 
@@ -18091,22 +18085,5 @@ export interface EmptyFormalParametersList extends FormalParametersList.Bound {
 export namespace EmptyFormalParametersList {
 	export type Parsed = FormalParametersList.Parsed & {
 		readonly $trivia: TriviaSetterOf<EmptyFormalParametersList.Parsed> & InnerTrivia<EmptyFormalParametersList.Parsed>;
-	};
-}
-export interface EmptyStringLiteralLine extends StringLiteralLine.Bound {
-	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
-}
-export namespace EmptyStringLiteralLine {
-	export type Parsed = StringLiteralLine.Parsed & {
-		readonly $trivia: TriviaSetterOf<EmptyStringLiteralLine.Parsed> & InnerTrivia<EmptyStringLiteralLine.Parsed>;
-	};
-}
-export interface EmptyStringLiteralTextBlock extends StringLiteralTextBlock.Bound {
-	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
-}
-export namespace EmptyStringLiteralTextBlock {
-	export type Parsed = StringLiteralTextBlock.Parsed & {
-		readonly $trivia: TriviaSetterOf<EmptyStringLiteralTextBlock.Parsed> &
-			InnerTrivia<EmptyStringLiteralTextBlock.Parsed>;
 	};
 }

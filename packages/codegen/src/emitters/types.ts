@@ -123,13 +123,12 @@ import type { RefineKindInfo } from './refine-emit.ts';
 import { layoutKindAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
 import type { SitePreference } from '../compiler/model/site-preferences.ts';
 import { displayNameOf, displayedKinds, ownsItsDisplay } from '../compiler/model/display-name.ts';
-import { continuationTriviaKinds, emptyForms } from '../compiler/model/trivia.ts';
+import { continuationTriviaKinds, emptyForms, type InnerSideCtx } from '../compiler/model/trivia.ts';
 
 type StructuralNode = SlotBearingCompound;
 
-export interface EmitTypesConfig {
+export interface EmitTypesConfig extends InnerSideCtx {
 	grammar: string;
-	nodeMap: NodeMap;
 	generatedIdTables: GeneratedIdTables;
 	sites?: readonly SitePreference[];
 	addresses?: AddressTables;
@@ -286,7 +285,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 				? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 				: undefined,
 			coercerRowArgs(kind, node, nodeMap, kindEntries),
-			emptyForms(nodeMap).get(kind)?.typeName
+			emptyForms(config).get(kind)?.typeName
 		);
 	}
 	const keywordNamespaceKinds = leafKinds.filter((kind) => {
@@ -373,7 +372,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 			node,
 			refineInfoByKind.get(kind),
 			kindDiscriminantOrLiteral(kind, nodeMap, kindEntries),
-			nodeMap,
+			config,
 			kindEntries,
 			wires
 		);
@@ -384,7 +383,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 		const surface = isKindIdStored(node) ? undefined : builtTypeSurfaceOf(node, nodeMap, kindEntries);
 		lines.push(`export namespace ${node.typeName} {`);
 		for (const member of ['Config', 'Bound', 'Parsed', 'Loose', 'LooseConfig', 'BuildArgs', 'LooseArgs']) {
-			if (member === 'Bound' && surface !== undefined) emitNodeSurfaceInterfaces(lines, node, nodeMap, surface, '  ');
+			if (member === 'Bound' && surface !== undefined) emitNodeSurfaceInterfaces(lines, node, config, surface, '  ');
 			else if (member === 'Parsed' && surface !== undefined) continue;
 			else if (member === 'Parsed') lines.push(`  export type Parsed = ${ns}['Bound'];`);
 			else lines.push(`  export type ${member} = ${ns}['${member}'];`);
@@ -394,8 +393,8 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	}
 	lines.push('');
 
-	lines.push(...emitGrammarTypeMap(grammar, nodeMap, config.triviaKinds ?? []));
-	for (const [kind, empty] of emptyForms(nodeMap)) {
+	lines.push(...emitGrammarTypeMap(config));
+	for (const [kind, empty] of emptyForms(config)) {
 		const node = nodeMap.nodes.get(kind)!;
 		const innerTrivia = (self: string): string => `readonly $trivia: TriviaSetterOf<${self}> & InnerTrivia<${self}>;`;
 		lines.push(
@@ -524,10 +523,12 @@ const VOCABULARY_IMPORTS = [
 	'SetterRefusesEmpty'
 ];
 
-function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[]): string[] {
+function emitGrammarTypeMap(config: EmitTypesConfig): string[] {
+	const { grammar, nodeMap } = config;
+	const triviaKinds = config.triviaKinds ?? [];
 	const map = grammarTypeMapName(grammar);
 	const trivia = `${map}['trivia']`;
-	const empties = [...emptyForms(nodeMap)].flatMap(([kind, empty]) => {
+	const empties = [...emptyForms(config)].flatMap(([kind, empty]) => {
 		const typeName = nodeMap.nodes.get(kind)!.typeName;
 		return [
 			`{ readonly node: ${typeName}; readonly empty: ${empty.typeName} }`,
@@ -963,8 +964,8 @@ function emitNamespaceInterfaceLine(
 	);
 }
 
-function emitNodeSurfaceInterfaces(lines: string[], node: AssembledNode, nodeMap: NodeMap, surface: BuiltTypeSurface, indent: string, shapesOf?: 'FlatShapesOf' | 'BranchShapesOf'): void {
-	const methods = triviaPositionsOf(node.kind, nodeMap) === undefined ? 'NodeMethods' : 'NodeMethodsOf';
+function emitNodeSurfaceInterfaces(lines: string[], node: AssembledNode, ctx: InnerSideCtx, surface: BuiltTypeSurface, indent: string, shapesOf?: 'FlatShapesOf' | 'BranchShapesOf'): void {
+	const methods = triviaPositionsOf(node.kind, ctx) === undefined ? 'NodeMethods' : 'NodeMethodsOf';
 	const saves = node.grammarRoot ? ', SavesFile' : '';
 	const emit = (name: string, extendsList: string, withNode: boolean, self = 'this', exported = true): void => {
 		lines.push(`${indent}${exported ? 'export ' : ''}interface ${name} extends ${extendsList} {`);
@@ -1438,15 +1439,16 @@ function emitNamespaceSugarBlock(
 	node: AssembledNode,
 	refineInfo: RefineKindInfo | undefined,
 	nsKey: string,
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	kindEntries: readonly KindEnumEntry[],
 	wires: PolymorphWires
 ): void {
+	const { nodeMap } = ctx;
 	lines.push(`export namespace ${node.typeName} {`);
 	const declaredDefault = refineDefaultOf(nodeMap, kind);
 	const fullConfig = widenSlotInputs(omitRegistered(`ConfigFor<${nsKey}>`, node), node, nodeMap);
 	if (refineInfo && refineInfo.forms.length > 0) {
-		emitRefineFormSubNamespaces(lines, node, refineInfo, nsKey, nodeMap, kindEntries);
+		emitRefineFormSubNamespaces(lines, node, refineInfo, nsKey, ctx, kindEntries);
 		if (declaredDefault !== undefined) {
 			lines.push(`  /** Default form: '${declaredDefault.form.name}' (declared). */`);
 			lines.push(`  export type Config = ${omittableWithDefault(fullConfig, declaredDefault.pinnedProperties)};`);
@@ -1464,7 +1466,7 @@ function emitNamespaceSugarBlock(
 	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 		: undefined;
-	if (surface !== undefined) emitNodeSurfaceInterfaces(lines, node, nodeMap, surface, '  ', groupSeatHints(node, nodeMap, kindEntries).length > 0 ? 'FlatShapesOf' : coOptionalBranchOfNode(node) === undefined ? undefined : 'BranchShapesOf');
+	if (surface !== undefined) emitNodeSurfaceInterfaces(lines, node, ctx, surface, '  ', groupSeatHints(node, nodeMap, kindEntries).length > 0 ? 'FlatShapesOf' : coOptionalBranchOfNode(node) === undefined ? undefined : 'BranchShapesOf');
 	else {
 		lines.push(`  export type Bound = BoundFor<${nsKey}>;`);
 		lines.push(`  export type Parsed = BoundFor<${nsKey}>;`);
@@ -1516,9 +1518,10 @@ function emitRefineFormSubNamespaces(
 	node: AssembledNode,
 	refineInfo: RefineKindInfo,
 	nsKey: string,
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	kindEntries: readonly KindEnumEntry[]
 ): void {
+	const { nodeMap } = ctx;
 	const parentTypeName = node.typeName;
 	for (const form of refineInfo.forms) {
 		const formType = refineFormTypeName(parentTypeName, form.name);
@@ -1534,7 +1537,7 @@ function emitRefineFormSubNamespaces(
 		if (formSpelling !== undefined) lines.push(`    export type Options = ${formSpelling};`);
 		const surface = refineFormBuiltTypeSurfaceOf(node, form, refineInfo, nodeMap, kindEntries);
 		if (surface !== undefined) {
-			emitNodeSurfaceInterfaces(lines, node, nodeMap, surface, '    ');
+			emitNodeSurfaceInterfaces(lines, node, ctx, surface, '    ');
 			lines.push(`    export type BuildArgs = ${surface.buildArgs};`);
 			lines.push(`    export type LooseArgs = ${surface.looseArgs};`);
 		}

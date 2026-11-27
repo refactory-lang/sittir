@@ -496,7 +496,6 @@ function leafPatternCharacter(tree: TreeHandle, entry: BuiltText, site: LeafSite
 	return node;
 }
 
-export function buildCharacterClass(): T.EmptyCharacterClass;
 export function buildCharacterClass<ClassAtomsSlot extends T.CharacterClass.Config['classAtoms']>(
 	config?: RefusingConfig<Partial<T.CharacterClass.Config>, { classAtoms: ClassAtomsSlot }>
 ): T.CharacterClass.Bound;

@@ -13,6 +13,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import { buildableMembersOf, delimiterPreferenceOf, holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted, storesNodes, spelledReadOf } from '../compiler/model/node-map.ts';
 import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
+import type { InnerSideCtx } from '../compiler/model/trivia.ts';
 import {
 	interiorSlotGuards,
 	numberInputType,
@@ -157,9 +158,8 @@ function sharedImportLine(declarations: readonly string[]): string | undefined {
 	return names.length === 0 ? undefined : `import { ${names.join(', ')} } from './objects.js';`;
 }
 
-export interface EmitFactoriesConfig {
+export interface EmitFactoriesConfig extends InnerSideCtx {
 	grammar: string;
-	nodeMap: NodeMap;
 	strict?: boolean;
 	generatedIdTables: GeneratedIdTables;
 	inlineKinds?: readonly string[];
@@ -559,12 +559,13 @@ export namespace factory {
 		backend: Backend,
 		output: string[],
 		node: AssembledNode,
-		nodeMap: NodeMap,
+		ctx: InnerSideCtx,
 		leafReConsts: Map<string, string>,
 		kindEntries: readonly KindEnumEntry[],
 		views: BuiltViewTable | undefined
 	): void {
 		if (!node.rawFactoryName) return;
+		const { nodeMap } = ctx;
 		let result: string | undefined;
 		switch (node.modelType) {
 			case 'pattern': {
@@ -582,12 +583,12 @@ export namespace factory {
 								'text',
 								guard,
 								kindEntries,
-								nodeMap,
+								ctx,
 								'',
 								shape === undefined ? undefined : numericLiteralSignature(node.rawFactoryName, shape, 'text', `T.${node.typeName}.Bound`),
 								views
 							)
-						: emitTextFactory(backend, node, `text: W extends ${reservedType} ? never : W`, 'text', guard, kindEntries, nodeMap, '<const W extends string>', undefined, views);
+						: emitTextFactory(backend, node, `text: W extends ${reservedType} ? never : W`, 'text', guard, kindEntries, ctx, '<const W extends string>', undefined, views);
 				break;
 			}
 			case 'keyword':
@@ -603,7 +604,7 @@ export namespace factory {
 		if (result && node.kind === nodeMap.word) {
 			const placed = [...nodeMap.nodes.values()].find((candidate) => placedAlias(candidate, nodeMap));
 			const unreserved = placed === undefined ? undefined : unreservedWordFactory(placed as AssembledAlias, nodeMap);
-			if (unreserved !== undefined) output.push(emitUnreservedWordFactory(backend, unreserved, nodeMap, leafReConsts, kindEntries, views));
+			if (unreserved !== undefined) output.push(emitUnreservedWordFactory(backend, unreserved, ctx, leafReConsts, kindEntries, views));
 		}
 	}
 
@@ -611,17 +612,18 @@ export namespace factory {
 		backend: Backend,
 		output: string[],
 		node: FieldCarryingNode,
-		nodeMap: NodeMap,
+		ctx: InnerSideCtx,
 		kindEntries: readonly KindEnumEntry[],
 		leafReConsts: Map<string, string>,
 		views: BuiltViewTable | undefined
 	): void {
+		const { nodeMap } = ctx;
 		if (!(node instanceof AssembledAlias) || !placedAlias(node, nodeMap)) {
-			output.push(emitFieldCarryingFactory(backend, node, node.slots, nodeMap, kindEntries, leafReConsts, views));
+			output.push(emitFieldCarryingFactory(backend, node, node.slots, ctx, kindEntries, leafReConsts, views));
 			return;
 		}
 		const core = Object.create(node, { rawFactoryName: { value: `${node.rawFactoryName}Content` } }) as FieldCarryingNode;
-		output.push(emitFieldCarryingFactory(backend, core, node.slots, nodeMap, kindEntries, leafReConsts, views));
+		output.push(emitFieldCarryingFactory(backend, core, node.slots, ctx, kindEntries, leafReConsts, views));
 		output.push(emitPlacedAliasFactory(node, core.rawFactoryName!, nodeMap, kindEntries));
 	}
 
@@ -629,11 +631,11 @@ export namespace factory {
 		backend: Backend,
 		output: string[],
 		node: AssembledList,
-		nodeMap: NodeMap,
+		ctx: InnerSideCtx,
 		kindEntries: readonly KindEnumEntry[],
 		views: BuiltViewTable | undefined
 	): void {
-		const result = emitSeparatedListFactory(backend, node, nodeMap, kindEntries, views);
+		const result = emitSeparatedListFactory(backend, node, ctx, kindEntries, views);
 		if (result) output.push(result);
 	}
 }
@@ -689,7 +691,7 @@ function emitPlacedAliasFactory(
 function emitUnreservedWordFactory(
 	backend: Backend,
 	unreserved: UnreservedWordFactory,
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	leafReConsts: Map<string, string>,
 	kindEntries: readonly KindEnumEntry[],
 	views: BuiltViewTable | undefined
@@ -704,7 +706,7 @@ function emitUnreservedWordFactory(
 		'text',
 		buildLeafGuards(leaf, consts).join(' '),
 		kindEntries,
-		nodeMap,
+		ctx,
 		'',
 		undefined,
 		views
@@ -2102,13 +2104,13 @@ function emitFieldCarryingFactory(
 	backend: Backend,
 	node: FieldCarryingNode,
 	slots: readonly AssembledNonterminal[],
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	kindEntries: readonly KindEnumEntry[],
 	leafReConsts: ReadonlyMap<string, string>,
 	views: BuiltViewTable | undefined
 ): string {
 	const after: string[] = [];
-	const text = fieldCarryingFactoryText(backend, node, slots, nodeMap, kindEntries, leafReConsts, views, after);
+	const text = fieldCarryingFactoryText(backend, node, slots, ctx, kindEntries, leafReConsts, views, after);
 	return after.length === 0 ? text : [text, '', ...after].join('\n');
 }
 
@@ -2116,12 +2118,13 @@ function fieldCarryingFactoryText(
 	backend: Backend,
 	node: FieldCarryingNode,
 	slots: readonly AssembledNonterminal[],
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	kindEntries: readonly KindEnumEntry[],
 	leafReConsts: ReadonlyMap<string, string>,
 	views: BuiltViewTable | undefined,
 	after: string[]
 ): string {
+	const { nodeMap } = ctx;
 	const exportName = node.rawFactoryName!;
 	const fn = exportName;
 	const exportKw = 'export ';
@@ -2320,7 +2323,7 @@ function fieldCarryingFactoryText(
 	lines.push(...(view?.prelude ?? []));
 	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.propertyName, f.storageKey] as const)));
 	const seated = seatedSetters(withHoists(inSlotOrder(setters, node.slots), node, nodeMap, kindEntries), plan);
-	const trivia = triviaPositionsOf(typeKind, nodeMap);
+	const trivia = triviaPositionsOf(typeKind, ctx);
 	const typeExpr = factoryTypeDiscriminant(typeKind, nodeMap, kindEntries);
 	const held: FactoryHeld[] = [
 		...(spreadFacts !== null && registered.length > 0 ? [{ local: 'children', type: strictParamType(surface.param), key: 'INPUT' as const, recorded: 'inputs.elements' }] : []),
@@ -2385,7 +2388,7 @@ function fieldCarryingFactoryText(
 			.map((kind) => `(args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(kind, nodeMap, kindEntries)})`)
 			.join(' || ');
 		const prebuiltCheck = splicedEnvelope === undefined ? prebuiltTest : `(${prebuiltTest})`;
-		const wrapper = withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, [
+		const wrapper = withEmptyOverload(ctx, node.kind, `${exportKw}function ${fn}`, [
 			...forwarded.overloads.map((declared) => declaredOverload(`${exportKw}function ${fn}`, declared, `ReturnType<typeof _${fn}>`)),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		]);
@@ -2433,7 +2436,7 @@ function fieldCarryingFactoryText(
 	const declared = declarationOf(publicParams(surface));
 	if (leadingOptions !== undefined) {
 		return renameUnusedConfigParam(
-			withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, [
+			withEmptyOverload(ctx, node.kind, `${exportKw}function ${fn}`, [
 				declaredOverload(`${exportKw}function ${fn}`, declared, builtName),
 				declaredOverload(`${exportKw}function ${fn}`, ledByOptions(leadingOptions.type, declared), builtName),
 				...lines
@@ -2442,7 +2445,7 @@ function fieldCarryingFactoryText(
 	}
 	return renameUnusedConfigParam(
 		withEmptyOverload(
-			nodeMap,
+			ctx,
 			node.kind,
 			`${exportKw}function ${fn}`,
 			surface.generic === undefined ? lines : [declaredOverload(`${exportKw}function ${fn}`, declared, builtName), ...lines],
@@ -2563,10 +2566,11 @@ function emitRefineFormFactory(
 	node: AssembledNode,
 	form: RefineFormInfo,
 	info: RefineKindInfo,
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	kindEntries: readonly KindEnumEntry[],
 	views: BuiltViewTable | undefined
 ): string | undefined {
+	const { nodeMap } = ctx;
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return undefined;
 	const baseFn = node.rawFactoryName;
 	if (!baseFn) return undefined;
@@ -2631,7 +2635,7 @@ function emitRefineFormFactory(
 	}
 	lines.push(...builderHandleLines(node.kind, allSlots.map((f) => [f.propertyName, f.storageKey] as const)));
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
-	const trivia = triviaPositionsOf(node.kind, nodeMap);
+	const trivia = triviaPositionsOf(node.kind, ctx);
 	const hoisted: string[] = [];
 	const hoistedFormSetters = withHoists(formSetters, node, nodeMap, kindEntries);
 	if (backend === 'records') {
@@ -3315,11 +3319,12 @@ export function leadingOptionsSplit(options: LeadingOptions, restName: string, r
 function emitSeparatedListFactory(
 	backend: Backend,
 	node: AssembledList,
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	kindEntries: readonly KindEnumEntry[],
 	views: BuiltViewTable | undefined
 ): string | undefined {
 	if (!node.rawFactoryName) return undefined;
+	const { nodeMap } = ctx;
 	const fn = node.rawFactoryName;
 
 	const isMultiField = node.slots.length > 1;
@@ -3404,7 +3409,7 @@ function emitSeparatedListFactory(
 		lines.push(...builderHandleLines(node.kind, [[contentAccessorName, contentStorageKey]]));
 		const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
 		const seated = seatedSetters(withHoists(setters, node, nodeMap, kindEntries), plan);
-		const trivia = triviaPositionsOf(node.kind, nodeMap);
+		const trivia = triviaPositionsOf(node.kind, ctx);
 		const after: string[] = [];
 		const held: FactoryHeld[] = [
 			...(hasSeparatorKindOption || hasDelimiterOption ? [{ local: 'elements', type: elementsType, key: 'INPUT' as const, recorded: 'inputs.elements' }] : []),
@@ -3506,23 +3511,24 @@ function emitTextFactory(
 	textExpr: string,
 	guard: string | undefined,
 	kindEntries: readonly KindEnumEntry[],
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	typeParams: string,
 	publicSignature: string | undefined,
 	views: BuiltViewTable | undefined
 ): string {
+	const { nodeMap } = ctx;
 	const fn = node.rawFactoryName!;
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
 	const body: string[] = publicSignature === undefined ? [] : [publicSignature];
 	body.push(`export function ${fn}${typeParams}(${params}): T.${node.typeName}.Bound {`);
 	if (guard) body.push(`  ${guard}`);
 	body.push(...builderHandleLines(node.kind, []));
-	const members = nodeMemberParts({ accessors: [], text: textExpr, trivia: triviaPositionsOf(node.kind, nodeMap) });
+	const members = nodeMemberParts({ accessors: [], text: textExpr, trivia: triviaPositionsOf(node.kind, ctx) });
 	if (backend === 'objects') {
 		body.push('  const node = {', `    $type: ${typeExpr},`, ...members.members, '  };', ...members.after, `  return node as unknown as T.${node.typeName}.Bound;`, '}');
 		return body.join('\n');
 	}
-	const leaf = viewTable(views).leaf({ kind: node.kind, kindId: nodeMap.nodes.get(node.kind)?.kindId, typeName: node.typeName }, typeExpr, triviaPositionsOf(node.kind, nodeMap));
+	const leaf = viewTable(views).leaf({ kind: node.kind, kindId: nodeMap.nodes.get(node.kind)?.kindId, typeName: node.typeName }, typeExpr, triviaPositionsOf(node.kind, ctx));
 	body.push(...leafAdoptLines(leaf.name, textExpr, `T.${node.typeName}.Bound`), '}');
 	return [...body, ...(leaf.lines.length === 0 ? [] : ['', ...leaf.lines])].join('\n');
 }
@@ -3541,7 +3547,7 @@ interface MapEntry {
 }
 
 export class FactoryEmitter implements CodegenEmitter<string> {
-	readonly #nodeMap: NodeMap;
+	readonly #ctx: EmitFactoriesConfig;
 	readonly #kindEntries: readonly KindEnumEntry[];
 	readonly #inlineKinds: readonly string[] | undefined;
 	readonly #synthesizedKinds: ReadonlySet<string> | undefined;
@@ -3571,7 +3577,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
 		lines.push(`import type { ${OBJECT_MEMBER_TYPES.join(', ')} } from '@sittir/common/utils';`);
-		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...(anyShapes(nodeMap, kindEntries) ? ['hasSlot'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', ...OBJECT_MEMBER_VALUES, ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...spelledReadImports(nodeMap), ...(usesElementWrap ? ['toElement'] : []), ...storageCoercionImports];
+		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...(anyShapes(nodeMap, kindEntries) ? ['hasSlot'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', ...OBJECT_MEMBER_VALUES, ...triviaInnerImports(config), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...spelledReadImports(nodeMap), ...(usesElementWrap ? ['toElement'] : []), ...storageCoercionImports];
 		const utilsImportAt = lines.length;
 		lines.push(utilsImportLine(utilsImports));
 		lines.push('');
@@ -3589,7 +3595,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			refineByKind.set(info.kind, info);
 		}
 
-		this.#nodeMap = nodeMap;
+		this.#ctx = config;
 		this.#kindEntries = kindEntries;
 		this.#inlineKinds = inlineKinds;
 		this.#synthesizedKinds = synthesizedKinds;
@@ -3602,20 +3608,20 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	}
 
 	emitLeaf(node: AssembledPattern | AssembledKeyword | AssembledPunctuation | AssembledEnum): void {
-		factory.leaf('objects', this.#output, node, this.#nodeMap, this.#leafReConsts, this.#kindEntries, undefined);
-		factory.leaf('records', this.#records, node, this.#nodeMap, this.#leafReConsts, this.#kindEntries, this.#views);
+		factory.leaf('objects', this.#output, node, this.#ctx, this.#leafReConsts, this.#kindEntries, undefined);
+		factory.leaf('records', this.#records, node, this.#ctx, this.#leafReConsts, this.#kindEntries, this.#views);
 	}
 
 	emitBranch(node: FieldCarryingNode): void {
-		factory.branch('objects', this.#output, node, this.#nodeMap, this.#kindEntries, this.#leafReConsts, undefined);
-		factory.branch('records', this.#records, node, this.#nodeMap, this.#kindEntries, this.#leafReConsts, this.#views);
-		this.#recordStructure(node, compoundStructureRow(node, this.#nodeMap, this.#kindEntries));
+		factory.branch('objects', this.#output, node, this.#ctx, this.#kindEntries, this.#leafReConsts, undefined);
+		factory.branch('records', this.#records, node, this.#ctx, this.#kindEntries, this.#leafReConsts, this.#views);
+		this.#recordStructure(node, compoundStructureRow(node, this.#ctx.nodeMap, this.#kindEntries));
 	}
 
 	emitSeparatedList(node: AssembledList): void {
-		factory.separatedList('objects', this.#output, node, this.#nodeMap, this.#kindEntries, undefined);
-		factory.separatedList('records', this.#records, node, this.#nodeMap, this.#kindEntries, this.#views);
-		this.#recordStructure(node, listStructureRow(node, this.#nodeMap));
+		factory.separatedList('objects', this.#output, node, this.#ctx, this.#kindEntries, undefined);
+		factory.separatedList('records', this.#records, node, this.#ctx, this.#kindEntries, this.#views);
+		this.#recordStructure(node, listStructureRow(node, this.#ctx.nodeMap));
 	}
 
 	#recordStructure(node: AssembledNode, row: StructureRow | undefined): void {
@@ -3630,16 +3636,16 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const refineInfo = this.#refineByKind.get(kind);
 		if (!refineInfo) return;
 		for (const form of refineInfo.forms) {
-			const formSource = emitRefineFormFactory('objects', node, form, refineInfo, this.#nodeMap, this.#kindEntries, undefined);
+			const formSource = emitRefineFormFactory('objects', node, form, refineInfo, this.#ctx, this.#kindEntries, undefined);
 			if (formSource === undefined) continue;
 			this.#output.push(formSource);
-			this.#records.push(emitRefineFormFactory('records', node, form, refineInfo, this.#nodeMap, this.#kindEntries, this.#views)!);
+			this.#records.push(emitRefineFormFactory('records', node, form, refineInfo, this.#ctx, this.#kindEntries, this.#views)!);
 		}
 	}
 
 	dispatchNode(kind: string, node: AssembledNode): void {
 		const emission = classifyFactoryEmission(kind, node, {
-			nodeMap: this.#nodeMap,
+			nodeMap: this.#ctx.nodeMap,
 			kindEntries: this.#kindEntries,
 			inlineKinds: this.#inlineKinds,
 			synthesizedKinds: this.#synthesizedKinds
@@ -3706,7 +3712,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			'',
 			...[...dispatched].map(([name, isFunction]) => (isFunction ? `export const ${name} = dispatched(() => backend().${name});` : `export const ${name} = O.${name};`)),
 			'',
-			...emitFactoryMapConst(buildFactoryMapEntries(this.#nodeMap, this.#kindEntries))
+			...emitFactoryMapConst(buildFactoryMapEntries(this.#ctx.nodeMap, this.#kindEntries))
 		];
 		return lines.join('\n');
 	}
@@ -3723,7 +3729,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			lines.push('');
 		}
 
-		const mapEntries = buildFactoryMapEntries(this.#nodeMap, this.#kindEntries);
+		const mapEntries = buildFactoryMapEntries(this.#ctx.nodeMap, this.#kindEntries);
 		lines.push(...emitFluentKindMap(mapEntries));
 		lines.push('');
 		lines.push(...emitFactoryMapConst(mapEntries));

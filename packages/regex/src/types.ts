@@ -1434,7 +1434,7 @@ export interface CharacterClassNs extends NodeNs<
 	never,
 	TSKindId.CharacterClass,
 	CharacterClass.Parsed,
-	EmptyCharacterClass
+	never
 > {
 	readonly BuildArgs: CharacterClass.BuildArgs;
 	readonly LooseArgs: CharacterClass.LooseArgs;
@@ -3158,22 +3158,10 @@ export namespace UnicodePropertyName {
 
 export interface RegexTypeMap extends GrammarTypeMap {
 	readonly namespaces: NamespaceMap;
-	readonly empty:
-		| { readonly node: CharacterClass; readonly empty: EmptyCharacterClass }
-		| { readonly node: CharacterClass.Bound; readonly empty: EmptyCharacterClass }
-		| { readonly node: CharacterClass.Parsed; readonly empty: EmptyCharacterClass.Parsed };
+	readonly empty: never;
 	readonly trivia: Layout;
 }
 
 export type NodeMethodsOf = NodeMethods & HoldsTrivia<RegexTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, RegexTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, RegexTypeMap['trivia']>;
-
-export interface EmptyCharacterClass extends CharacterClass.Bound {
-	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
-}
-export namespace EmptyCharacterClass {
-	export type Parsed = CharacterClass.Parsed & {
-		readonly $trivia: TriviaSetterOf<EmptyCharacterClass.Parsed> & InnerTrivia<EmptyCharacterClass.Parsed>;
-	};
-}

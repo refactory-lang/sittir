@@ -15,7 +15,7 @@ export interface EmittedTables {
 }
 
 export function emitTables(nodeMap: NodeMap): EmittedTables {
-	const { files } = builderTables(nodeMap, collectPolymorphWires(nodeMap));
+	const { files } = builderTables({ nodeMap, wires: collectPolymorphWires(nodeMap) });
 	return {
 		wiring: files['factories/build-table.ts']!,
 		combinators: files['factories/combinators.ts']!,

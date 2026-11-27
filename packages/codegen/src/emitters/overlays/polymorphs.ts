@@ -2,6 +2,7 @@ import { isBlankVariantName } from '../../dsl/primitives/variant.ts';
 import type { PortableMountCall } from '@sittir/types';
 import { emitShapeFailure } from '../../compiler/diagnostics/emit-diagnostics.ts';
 import type { NodeMap } from '../../compiler/types.ts';
+import type { InnerSideCtx } from '../../compiler/model/trivia.ts';
 import { AbstractAssembledCompound, AssembledEnum, AssembledList, AssembledSupertype, delimiterPreferenceOf, isKindIdStored, isNodeRef, isRequired, separatorRequired, storageKindOfRef, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
 	classifyFactoryShape,
@@ -396,7 +397,7 @@ function composeSeats(
 	seats: readonly SeatEmission[],
 	wireSet: PolymorphWireSet,
 	wires: PolymorphWires,
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	out: ChunkOut
 ): SeatedParent | undefined {
 	if (seats.length === 0) return undefined;
@@ -417,7 +418,7 @@ function composeSeats(
 		});
 	}
 	const name = seatedKeyOf(wireSet.parentKey);
-	const seated = seatedDeclarationOf(wireSet.node, name, nodeMap);
+	const seated = seatedDeclarationOf(wireSet.node, name, ctx);
 	out.seated.strict.push(seated('strict', `T.${wireSet.node.typeName}.BuildArgs`, `ReturnType<${p.strict.type}>`, strictExpr));
 	out.seated.loose.push(seated('loose', `T.${wireSet.node.typeName}.LooseArgs`, `ReturnType<${p.coerce.type}>`, coerceExpr));
 	const ref = tableRef(name);
@@ -427,12 +428,13 @@ function composeSeats(
 function seatedDeclarationOf(
 	node: AssembledNode,
 	name: string,
-	nodeMap: NodeMap
+	ctx: InnerSideCtx
 ): (surface: 'strict' | 'loose', argsType: string, returnType: string, expr: string) => string {
+	const { nodeMap } = ctx;
 	const branch = coOptionalBranchOfNode(node);
 	return (surface, argsType, returnType, expr) =>
 		seatDeclaration(
-			nodeMap,
+			ctx,
 			node.kind,
 			name,
 			functionTypeOf(
@@ -444,7 +446,7 @@ function seatedDeclarationOf(
 		);
 }
 
-function composeBranch(wireSet: PolymorphWireSet, wires: PolymorphWires, nodeMap: NodeMap, out: ChunkOut): SeatedParent {
+function composeBranch(wireSet: PolymorphWireSet, wires: PolymorphWires, ctx: InnerSideCtx, out: ChunkOut): SeatedParent {
 	const p = seatParentRefs(wireSet.node, wires.coerceEmitted);
 	if (p.coerce === undefined) {
 		throw emitShapeFailure({
@@ -459,7 +461,7 @@ function composeBranch(wireSet: PolymorphWireSet, wires: PolymorphWires, nodeMap
 		`export const ${m} = <PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>`,
 		'	(...args: readonly unknown[]): R => _s<R>(parent)(...args);'
 	);
-	const branched = seatedDeclarationOf(wireSet.node, name, nodeMap);
+	const branched = seatedDeclarationOf(wireSet.node, name, ctx);
 	out.seated.strict.push(branched('strict', `T.${wireSet.node.typeName}.BuildArgs`, `ReturnType<${p.strict.type}>`, `K.${m}(${p.strict.value})`));
 	out.seated.loose.push(branched('loose', `T.${wireSet.node.typeName}.LooseArgs`, `ReturnType<${p.coerce.type}>`, `K.${m}(${p.coerce.value})`));
 	const ref = tableRef(name);
@@ -1107,11 +1109,12 @@ function entryRowsByIrPath(
 	return new Map([...out].sort(([a], [b]) => compareOrdinal(a, b)));
 }
 
-export function emitPolymorphsOverlay(config: {
-	readonly nodeMap: NodeMap;
-	readonly wires: PolymorphWires;
-	readonly refined: ReadonlyMap<string, RefinedEntry>;
-}): PolymorphsOverlay {
+export function emitPolymorphsOverlay(
+	config: InnerSideCtx & {
+		readonly wires: PolymorphWires;
+		readonly refined: ReadonlyMap<string, RefinedEntry>;
+	}
+): PolymorphsOverlay {
 	const { nodeMap, wires, refined } = config;
 	const rowKindByPath = new Map<string, string>();
 	const sharedSetByPath = new Map<string, string>();
@@ -1138,7 +1141,7 @@ export function emitPolymorphsOverlay(config: {
 		if (wireSet.branched === true && seats.length > 0) {
 			throw new Error(`[polymorphs] kind '${wireSet.node.kind}': an optional branch beside a seat is not typed`);
 		}
-		const seated = wireSet.branched === true ? composeBranch(wireSet, wires, nodeMap, out) : composeSeats(seats, wireSet, wires, nodeMap, out);
+		const seated = wireSet.branched === true ? composeBranch(wireSet, wires, config, out) : composeSeats(seats, wireSet, wires, config, out);
 		if (seated !== undefined) for (const seat of seats) if (seat.child.set !== undefined) uses.add(seat.child.set);
 		const armEntries = new Map<string, ArmEntry>();
 		const flat: { readonly name: string; readonly ref: Ref }[] = [];

@@ -108,7 +108,7 @@ import {
 	kindDiscriminantExprForId,
 	kindDiscriminantExprForLiteral
 } from './kind-discriminant.ts';
-import { emptyForms } from '../compiler/model/trivia.ts';
+import { emptyForms, type InnerSideCtx } from '../compiler/model/trivia.ts';
 
 export { isRequired, isMultiple, isNonEmpty, hasOptionalElements, deriveSlotCardinality, deriveChildrenCardinality };
 
@@ -1494,13 +1494,13 @@ export function functionTypeOf(refusing: RefusingParams, returnType: string, bra
 }
 
 export function withEmptyOverload(
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	kind: string,
 	head: string,
 	lines: readonly string[],
 	general?: string
 ): string[] {
-	const empty = emptyForms(nodeMap).get(kind);
+	const empty = emptyForms(ctx).get(kind);
 	if (empty === undefined) return [...lines];
 	return [`${head}(): T.${empty.typeName};`, ...(general === undefined ? [] : [general]), ...lines];
 }
@@ -1511,10 +1511,10 @@ export interface Implementation {
 	readonly body: readonly string[];
 }
 
-export function seatFunction(nodeMap: NodeMap, kind: string, name: string, seats: readonly RefusingParams[], implementation: Implementation): string {
+export function seatFunction(ctx: InnerSideCtx, kind: string, name: string, seats: readonly RefusingParams[], implementation: Implementation): string {
 	const head = `export function ${name}`;
 	return [
-		...withEmptyOverload(nodeMap, kind, head, [
+		...withEmptyOverload(ctx, kind, head, [
 			...seats.map((seat) => declaredOverload(head, seat, implementation.returnType)),
 			`${head}(${implementation.params}): ${implementation.returnType} {`
 		]),
@@ -1523,8 +1523,8 @@ export function seatFunction(nodeMap: NodeMap, kind: string, name: string, seats
 	].join('\n');
 }
 
-export function seatDeclaration(nodeMap: NodeMap, kind: string, name: string, type: string, expr: string): string {
-	const empty = emptyForms(nodeMap).get(kind);
+export function seatDeclaration(ctx: InnerSideCtx, kind: string, name: string, type: string, expr: string): string {
+	const empty = emptyForms(ctx).get(kind);
 	return empty === undefined
 		? `export const ${name}: ${type} = ${expr};`
 		: `export const ${name}: EmptyForm<T.${empty.typeName}, ${type}> = withEmptyForm(${expr});`;

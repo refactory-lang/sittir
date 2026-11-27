@@ -6223,7 +6223,6 @@ fn render_character_class<N: CharacterClassFields + ?Sized>(node: &N, w: &mut dy
     let negation = View::new(::sittir_core::view::Presence::new(node.negation(), NegationNode::Negation), "{}");
     let trailing = View::new(node.trailing(), "-");
     w.text("[")?;
-    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
     negation.render(w)?;
     if leading.is_present() {
         leading.render(w)?;

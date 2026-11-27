@@ -2096,29 +2096,29 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		return lead.value;
 	}
 
-	get innerSite(): InnerGap | undefined {
-		return this.innerGaps.at(-1);
+	innerSite(ctx: AdmitsOnlyTightCtx): InnerGap | undefined {
+		return this.innerGaps(ctx).at(-1);
 	}
 
-	get innerGaps(): readonly InnerGap[] {
+	innerGaps(ctx: AdmitsOnlyTightCtx): readonly InnerGap[] {
 		if (this.triviaInterior) return [];
 		const root = this.renderRule;
 		const owned = { owned: ownedSlotsOf(this._slots) };
 		if (!realizesEmpty(root, slotEmptiness(root, owned))) return [];
 		const occurrences: { readonly slot: AssembledNonterminal; readonly precedingTokens: number }[] = [];
 		const immediateTokens: boolean[] = [];
-		const walk = (rule: RenderRule, ctx: GapWalkCtx): void => {
+		const walk = (rule: RenderRule, gap: GapWalkCtx): void => {
 			const slot = rule === root ? undefined : slotWrittenAt(rule, owned);
 			if (slot !== undefined) {
 				occurrences.push({ slot, precedingTokens: immediateTokens.length });
 				return;
 			}
 			if (rule.type === STRING || (rule.type === SYMBOL && rule.nonterminal === false)) {
-				if (!ctx.conditional) immediateTokens.push(rule.immediate === true);
+				if (!gap.conditional) immediateTokens.push(admitsOnlyTight(rule, ctx));
 				return;
 			}
 			const inner =
-				ctx.conditional ||
+				gap.conditional ||
 				rule.type === CHOICE ||
 				rule.multiplicity === 'optional' ||
 				rule.multiplicity === 'array' ||

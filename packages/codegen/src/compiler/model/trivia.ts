@@ -9,7 +9,8 @@ import {
 	AssembledPunctuation,
 	AssembledSupertype,
 	isNodeRef,
-	storageKindOfRef
+	storageKindOfRef,
+	type AdmitsOnlyTightCtx
 } from './node-map.ts';
 import { leadingRegex } from './leaf-pattern.ts';
 import { endsWithLineBreak, opensLineEnd, patternDfa, requiresNonSpace } from './pattern-automaton.ts';
@@ -293,43 +294,55 @@ export interface EmptyForm {
 	readonly typeName: string;
 }
 
-const innerKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();
-
-export function innerKinds(nodeMap: NodeMap): ReadonlySet<string> {
-	const cached = innerKindsByNodeMap.get(nodeMap);
-	if (cached !== undefined) return cached;
-	const kinds = new Set<string>();
-	for (const [kind, node] of nodeMap.nodes) {
-		if (node instanceof AbstractAssembledCompound && node.innerSite !== undefined) kinds.add(kind);
-	}
-	innerKindsByNodeMap.set(nodeMap, kinds);
-	return kinds;
+export interface InnerSideCtx extends AdmitsOnlyTightCtx {
+	readonly nodeMap: NodeMap;
 }
 
-export function innerRegions(nodeMap: NodeMap): ReadonlyMap<number, readonly string[]> {
+const NO_TIGHT = {};
+
+function perRun<T>(cache: WeakMap<NodeMap, WeakMap<object, T>>, ctx: InnerSideCtx, compute: () => T): T {
+	const byTight = cache.get(ctx.nodeMap) ?? new WeakMap<object, T>();
+	cache.set(ctx.nodeMap, byTight);
+	const key = ctx.tight ?? NO_TIGHT;
+	if (!byTight.has(key)) byTight.set(key, compute());
+	return byTight.get(key)!;
+}
+
+const innerKindsByRun = new WeakMap<NodeMap, WeakMap<object, ReadonlySet<string>>>();
+
+export function innerKinds(ctx: InnerSideCtx): ReadonlySet<string> {
+	return perRun(innerKindsByRun, ctx, () => {
+		const kinds = new Set<string>();
+		for (const [kind, node] of ctx.nodeMap.nodes) {
+			if (node instanceof AbstractAssembledCompound && node.innerSite(ctx) !== undefined) kinds.add(kind);
+		}
+		return kinds;
+	});
+}
+
+export function innerRegions(ctx: InnerSideCtx): ReadonlyMap<number, readonly string[]> {
 	const regions = new Map<number, readonly string[]>();
-	for (const node of nodeMap.nodes.values()) {
-		const site = node instanceof AbstractAssembledCompound ? node.innerSite : undefined;
+	for (const node of ctx.nodeMap.nodes.values()) {
+		const site = node instanceof AbstractAssembledCompound ? node.innerSite(ctx) : undefined;
 		if (site !== undefined && node.kindId !== undefined) regions.set(node.kindId, site.slots);
 	}
 	return new Map([...regions].sort(([a], [b]) => a - b));
 }
 
-const emptyFormsByNodeMap = new WeakMap<NodeMap, ReadonlyMap<string, EmptyForm>>();
+const emptyFormsByRun = new WeakMap<NodeMap, WeakMap<object, ReadonlyMap<string, EmptyForm>>>();
 
-export function emptyForms(nodeMap: NodeMap): ReadonlyMap<string, EmptyForm> {
-	const cached = emptyFormsByNodeMap.get(nodeMap);
-	if (cached !== undefined) return cached;
-	const typeNames = new Set([...nodeMap.nodes.values()].map((node) => node.typeName));
-	const forms = new Map<string, EmptyForm>();
-	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AbstractAssembledCompound) || node.factoryName === undefined || !innerKinds(nodeMap).has(kind)) continue;
-		const typeName = `Empty${node.typeName}`;
-		if (typeNames.has(typeName)) throw emitShapeFailure({ code: 'trivia-empty-form-name-taken', message: `trivia: '${kind}' would name its empty form ${typeName}, which a kind already names` });
-		forms.set(kind, { typeName });
-	}
-	emptyFormsByNodeMap.set(nodeMap, forms);
-	return forms;
+export function emptyForms(ctx: InnerSideCtx): ReadonlyMap<string, EmptyForm> {
+	return perRun(emptyFormsByRun, ctx, () => {
+		const typeNames = new Set([...ctx.nodeMap.nodes.values()].map((node) => node.typeName));
+		const forms = new Map<string, EmptyForm>();
+		for (const [kind, node] of ctx.nodeMap.nodes) {
+			if (!(node instanceof AbstractAssembledCompound) || node.factoryName === undefined || !innerKinds(ctx).has(kind)) continue;
+			const typeName = `Empty${node.typeName}`;
+			if (typeNames.has(typeName)) throw emitShapeFailure({ code: 'trivia-empty-form-name-taken', message: `trivia: '${kind}' would name its empty form ${typeName}, which a kind already names` });
+			forms.set(kind, { typeName });
+		}
+		return forms;
+	});
 }
 
 const lineTerminatedKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();

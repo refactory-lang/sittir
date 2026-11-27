@@ -17985,7 +17985,6 @@ function withFormalParametersList(node: object, setter: string, args: readonly u
 	throw new Error(`formal_parameters_list has no $with.${setter}`);
 }
 
-export function buildStringLiteralLine(): T.EmptyStringLiteralLine;
 export function buildStringLiteralLine<
 	A extends Admit<(T.StringFragment | T.EscapeSequence | T.StringInterpolation)[]>
 >(...children: A & RefuseUndeclared<A>): T.StringLiteralLine.Bound;
@@ -18034,7 +18033,6 @@ function withStringLiteralLine(node: object, setter: string, args: readonly unkn
 	throw new Error(`string_literal_line has no $with.${setter}`);
 }
 
-export function buildStringLiteralTextBlock(): T.EmptyStringLiteralTextBlock;
 export function buildStringLiteralTextBlock<
 	A extends Admit<(T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation)[]>
 >(...children: A & RefuseUndeclared<A>): T.StringLiteralTextBlock.Bound;

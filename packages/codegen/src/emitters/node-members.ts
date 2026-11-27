@@ -1,5 +1,5 @@
 import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
-import { emptyForms } from '../compiler/model/trivia.ts';
+import { emptyForms, type InnerSideCtx } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isRequired, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { chainWrapExpr, wrapperChainFor, type WrapperChain } from '../compiler/model/wrapper-chain.ts';
@@ -94,12 +94,12 @@ export function withHoists(setters: readonly SetterEntry[], node: { readonly kin
 export const ROOT_ERRORS_LINE = '    $errors: (data as { readonly $errors?: unknown }).$errors,';
 export const ROOT_SAVE_LINE = '    $save: handleSave,';
 
-export function triviaPositionsOf(kind: string, nodeMap: NodeMap): TriviaPositions | undefined {
-	return nodeMap.nodes.get(kind)?.triviaInterior ? undefined : { inner: emptyForms(nodeMap).has(kind) };
+export function triviaPositionsOf(kind: string, ctx: InnerSideCtx): TriviaPositions | undefined {
+	return ctx.nodeMap.nodes.get(kind)?.triviaInterior ? undefined : { inner: emptyForms(ctx).has(kind) };
 }
 
-export function triviaInnerImports(nodeMap: NodeMap): readonly string[] {
-	if (emptyForms(nodeMap).size === 0) return [];
+export function triviaInnerImports(ctx: InnerSideCtx): readonly string[] {
+	if (emptyForms(ctx).size === 0) return [];
 	return ['objectInner'];
 }
 

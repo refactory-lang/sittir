@@ -19,7 +19,7 @@ const KNOWN: Readonly<Record<string, Readonly<Record<string, string>>>> = {
 	scm: { 'Missing keyword: missing_node': NATIVE_COUNTS_ANYWHERE }
 };
 
-describe.each(['python', 'regex', 'rust', 'scm', 'typescript'])('%s: inner-gap emptiness agrees with the parsed rule', (grammar) => {
+describe.each(['python', 'rust', 'scm', 'typescript'])('%s: inner-gap emptiness agrees with the parsed rule', (grammar) => {
 	it('gives every parsed node of an inner kind in the corpus the answer its tree gives', async () => {
 		const language = await languageByName(grammar);
 		using engine = await createEngine(language, { nodeStorage: 'object' });

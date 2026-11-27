@@ -16,6 +16,8 @@ import {
 import { assertWhitespaceAdmitted } from '../../assemble.ts';
 import { evaluateTempGrammar } from '../../../__tests__/helpers/temp-grammar.ts';
 import type { NodeMap } from '../../types.ts';
+import type { RenderRule, RuleId } from '../../../types/rule.ts';
+import type { AdmitsOnlyTightCtx } from '../node-map.ts';
 
 const nodeMaps = new Map<string, Promise<NodeMap>>();
 
@@ -32,9 +34,20 @@ function nodeMapOf(grammar: string): Promise<NodeMap> {
 
 beforeAll(() => Promise.all(['rust', 'python', 'typescript', 'scm'].map(nodeMapOf)), 120_000);
 
-function innerGapsOf(nodeMap: NodeMap, kind: string): unknown {
+function innerGapsOf(nodeMap: NodeMap, kind: string, ctx: AdmitsOnlyTightCtx = {}): unknown {
 	const node = nodeMap.nodes.get(kind);
-	return node instanceof AbstractAssembledCompound ? node.innerGaps : undefined;
+	return node instanceof AbstractAssembledCompound ? node.innerGaps(ctx) : undefined;
+}
+
+function idOfText(rule: RenderRule | undefined, text: string): RuleId | undefined {
+	if (rule === undefined) return undefined;
+	if (rule.type === 'STRING' && rule.value === text) return rule.id;
+	const { members = [], content } = rule as { members?: RenderRule[]; content?: RenderRule };
+	for (const child of [...members, content]) {
+		const found = idOfText(child, text);
+		if (found !== undefined) return found;
+	}
+	return undefined;
 }
 
 describe('trivia model facts', () => {
@@ -148,6 +161,13 @@ describe('trivia model facts', () => {
 		expect(innerGapsOf(scm, 'named_node_supertyped')).toEqual([]);
 		expect(innerGapsOf(scm, 'missing_node')).toEqual([{ key: 'name', precedingTokens: 2, slots: ['_name'] }]);
 		expect(innerGapsOf(await nodeMapOf('python'), 'comprehension_clauses')).toEqual([]);
+	});
+
+	it('gives no inner gap before a closing token the join seams prove tight', async () => {
+		const rust = await nodeMapOf('rust');
+		const closing = idOfText(rust.normalizedRules?.['arguments'], ')')!;
+		expect(innerGapsOf(rust, 'arguments')).toEqual([{ key: 'elements', precedingTokens: 1, slots: ['_elements'] }]);
+		expect(innerGapsOf(rust, 'arguments', { tight: new Map([[closing, new Set(['before'] as const)]]) })).toEqual([]);
 	});
 
 	it('counts a zero-width kind between the slots as a token, as it did when the grammar hid it', async () => {

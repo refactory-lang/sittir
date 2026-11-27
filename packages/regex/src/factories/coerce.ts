@@ -807,7 +807,6 @@ export function resolveCharacterClass_trailing(
 	return _resolveBooleanKeyword(value);
 }
 
-export function coerceToCharacterClass(): T.EmptyCharacterClass;
 export function coerceToCharacterClass<const I extends T.CharacterClass.Loose | undefined>(
 	input: RefusingInput<I, T.CharacterClass.Loose>
 ): ReturnType<typeof F.buildCharacterClass>;

@@ -32,7 +32,6 @@ import {
 	applySetter,
 	objectLeading,
 	objectTrailing,
-	objectInner,
 	textOf,
 	isRecordPosition,
 	positionWords,
@@ -529,7 +528,7 @@ export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.
 		trailing: wrapCharacterClass$with$trailing,
 		[RECEIVER]: node
 	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CharacterClass.Parsed;
 }
 function wrapCharacterClass$with(node: Held, setter: string, args: readonly unknown[]): unknown {
@@ -2376,7 +2375,7 @@ function viewCharacterClass(data: RecordPosition, tree: TreeHandle): T.Character
 		trailing: $with$trailing,
 		[RECEIVER]: node
 	};
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.CharacterClass.Parsed;
 }
 
@@ -3134,9 +3133,6 @@ function $trivia$leading(this: Received<RecordPosition>, ...items: unknown[]): u
 }
 function $trivia$trailing(this: Received<RecordPosition>, ...items: unknown[]): unknown {
 	return handleTrivia(receiverOf(this, '$trivia.trailing'), _wrap, 'trailing', items);
-}
-function $trivia$inner(this: Received<RecordPosition>, ...items: unknown[]): unknown {
-	return handleTrivia(receiverOf(this, '$trivia.inner'), _wrap, 'inner', items);
 }
 function $with$characterClassEscapeText2(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.characterClassEscapeText2'), _wrap, 'characterClassEscapeText2', args);

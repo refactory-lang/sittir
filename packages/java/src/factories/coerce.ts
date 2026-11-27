@@ -6973,7 +6973,6 @@ export function coerceToFormalParametersList(
 	});
 }
 
-export function coerceToStringLiteralLine(): T.EmptyStringLiteralLine;
 export function coerceToStringLiteralLine<const A extends T.StringLiteralLine.LooseArgs>(
 	...args: RefusingInput<A, T.StringLiteralLine.LooseArgs>
 ): ReturnType<typeof F.buildStringLiteralLine>;
@@ -7000,7 +6999,6 @@ export function coerceToStringLiteralLine(
 	);
 }
 
-export function coerceToStringLiteralTextBlock(): T.EmptyStringLiteralTextBlock;
 export function coerceToStringLiteralTextBlock<const A extends T.StringLiteralTextBlock.LooseArgs>(
 	...args: RefusingInput<A, T.StringLiteralTextBlock.LooseArgs>
 ): ReturnType<typeof F.buildStringLiteralTextBlock>;

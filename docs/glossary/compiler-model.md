@@ -4431,7 +4431,7 @@ Where an inner comment can sit in an empty node of this kind: one `InnerGap` per
 - A kind has gaps only when its render rule can realise with no slot value (`realizesEmpty` over `slotEmptiness`). A filled required slot, a required choice between slots, or a repeat1 gives every comment a named neighbour, so leading or trailing always holds it.
 - A trivia-interior kind (`triviaInterior`) has no gaps: it is lexically one unit.
 - A literal token is a text rule or a non-slot symbol of a fixed-text kind (`nonterminal: false`). A grammar that exposes a zero-width scanner token as a named kind (python's `indent` / `dedent`) keeps it as that symbol instead of inlining its text, and it counts in `precedingTokens` as the inlined text did, so exposing it does not remove the kind's empty form.
-- A gap whose closing token is immediate is not a gap: tree-sitter lexes no extra before an immediate token. The same holds for the slotless `interior` gap's second token.
+- A gap whose closing token admits only a tight join is not a gap: tree-sitter lexes no extra there. The token is authored immediate, or the join seams in the caller's context prove it tight (`admitsOnlyTight`), so the answer depends on the run's seams and the gaps are asked for with that context. The same holds for the slotless `interior` gap's second token.
 - Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
 - A slot is found where a rule writes it (`slotWrittenAt`), never at the rule root.
 - When several slots share a span, only the first in render order keys it, and the gap's `slots` lists all of them (by storage key, `storageKeyOf`). A slot outside the span, such as typescript's automatic-semicolon terminator after `}`, is not in it. The root gap's `slots` are every slot with no token before it, plus its repeat slot.
@@ -4565,11 +4565,11 @@ The alternatives a kind's text can begin with (`LeadAlternative`): each literal,
 
 ### `packages/codegen/src/compiler/model/trivia.ts::emptyForms`
 
-The kinds a builder can make with nothing in them, keyed by kind: every compound with a factory and an inner side (`innerKinds`). Having an inner gap already means the kind realizes empty, so no emitter checks emptiness again. Each gets an `Empty<TypeName>` form, and it throws when another kind already names that type. The result is cached per node map because five emitters read it.
+The kinds a builder can make with nothing in them, keyed by kind: every compound with a factory and an inner side (`innerKinds`). Having an inner gap already means the kind realizes empty, so no emitter checks emptiness again. Each gets an `Empty<TypeName>` form, and it throws when another kind already names that type. The result is cached per node map and tight seams (`InnerSideCtx`) because five emitters read it.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::innerKinds`
 
-The kinds whose template renders an inner side (`innerSite`), cached per node map. The emitted `INNER_SITES` and `emptyForms` read it, so the surface, the facts and the render agree on which kinds take `inner`.
+The kinds whose template renders an inner side (`innerSite`), cached per node map and tight seams (`InnerSideCtx`), since a run with join seams can close a gap a run without them keeps. The emitted `INNER_SITES` and `emptyForms` read it, so the surface, the facts and the render agree on which kinds take `inner`.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::EmptyForm`
 
@@ -5080,6 +5080,10 @@ The trivia kinds that are a line continuation. A kind is one when its default ar
 ### `packages/codegen/src/compiler/model/trivia.ts::innerRegions`
 
 The slots inside each kind's inner gap, keyed by kind id: the `slots` of its `innerSite`, sorted by kind id. Emitted as `TriviaFacts.innerRegions` (`emitTriviaFacts`). A built node is empty when nothing that owns sides is stored there (`storesNothingIn`), the stored counterpart of the parsed rule that no child holds sides. So a slot outside the gap, such as a terminator after the closing brace, never makes a node non-empty. `inner-region-parity.test.ts` holds the two rules to the same answer over every corpus.
+
+### `packages/codegen/src/compiler/model/trivia.ts::InnerSideCtx`
+
+What the inner-side facts read (`innerKinds`, `innerRegions`, `emptyForms`, and through them `triviaPositionsOf`, `withEmptyOverload`, `seatFunction` and `seatDeclaration`): the node map and the run's tight join seams (`AdmitsOnlyTightCtx`), which `innerGaps` reads to decide whether a closing token leaves room for an inner comment. Each emitter's config extends it and `emitAll` sets `tight` from the join facts once, so every emitter answers the inner side from the same seams; the kind-id emitter gets the same map from `generate`. Without `tight` only authored immediates count as tight.
 
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::endsWithLineBreak`
 

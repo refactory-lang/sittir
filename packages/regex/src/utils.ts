@@ -13,7 +13,7 @@ export const triviaFacts = Object.freeze({
 	rebuildWrappers: new Set<number>([78, 79, 80, 81, 82, 84, 85, 86]),
 	listKinds: new Set<number>([]),
 	layout: new Set<number>([47, 48, 49, 50]),
-	innerRegions: new Map<number, readonly string[]>([[58, ['_negation', '_leading', '_class_atoms', '_trailing']]]),
+	innerRegions: new Map<number, readonly string[]>([]),
 	namedUnits: new Set<number>([2, 4, 5, 6, 19, 54, 77, 83]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\r?\n))+)$/u,

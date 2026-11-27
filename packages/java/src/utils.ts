@@ -45,9 +45,7 @@ export const triviaFacts = Object.freeze({
 		[275, ['_elements']],
 		[280, ['_elements']],
 		[285, ['_variable_initializers']],
-		[326, ['_receiver_parameter', '_element']],
-		[327, ['_elements']],
-		[328, ['_elements']]
+		[326, ['_receiver_parameter', '_element']]
 	]),
 	namedUnits: new Set<number>([5, 6, 16, 67, 109, 110, 115, 116, 251]),
 	whitespace: Object.freeze({

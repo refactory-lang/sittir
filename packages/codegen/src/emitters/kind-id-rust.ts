@@ -6,12 +6,11 @@ import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { findEntryForKindName, treeNameOf } from '../dsl/symbol-table.ts';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import { layoutMemberKindIds, elementWrapperKindIds, listKindIds, rootKindIds, unitKindIds } from './wrap.ts';
-import { innerRegions, namedExtras } from '../compiler/model/trivia.ts';
+import { innerRegions, namedExtras, type InnerSideCtx } from '../compiler/model/trivia.ts';
 import { rustStringLiteral } from '../util/string-literal.ts';
 
-export interface EmitKindIdRustConfig {
+export interface EmitKindIdRustConfig extends InnerSideCtx {
 	grammar: string;
-	nodeMap: NodeMap;
 	generatedIdTables: GeneratedIdTables;
 }
 
@@ -126,7 +125,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	const members = depthMembersOf(nodeMap);
 	const [indent, dedent] = [members.indent, members.dedent].map((kind) => (kind === undefined ? 0 : (findEntryForKindName(entries, kind)?.id ?? 0)));
 	lines.push(`    indent: KindId(${indent}),`, `    dedent: KindId(${dedent}),`);
-	lines.push(`    inner: &[${kindIds([...innerRegions(nodeMap).keys()])}],`);
+	lines.push(`    inner: &[${kindIds([...innerRegions(config).keys()])}],`);
 	lines.push(`    named_extras: ${namedExtras(nodeMap)},`);
 	lines.push(`};`);
 	lines.push('');

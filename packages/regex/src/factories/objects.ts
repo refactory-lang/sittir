@@ -28,7 +28,6 @@ import {
 	objectLeading,
 	objectTrailing,
 	handleSave,
-	objectInner,
 	describeValue,
 	restItems,
 	admitHoles,
@@ -405,7 +404,6 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 	return node as unknown as T.PatternCharacter.Bound;
 }
 
-export function buildCharacterClass(): T.EmptyCharacterClass;
 export function buildCharacterClass<ClassAtomsSlot extends T.CharacterClass.Config['classAtoms']>(
 	config?: RefusingConfig<Partial<T.CharacterClass.Config>, { classAtoms: ClassAtomsSlot }>
 ): T.CharacterClass.Bound;
@@ -452,7 +450,7 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 		trailing: buildCharacterClass$with$trailing,
 		[RECEIVER]: node
 	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CharacterClass.Bound;
 }
 

@@ -12473,7 +12473,7 @@ export function wrapStringLiteralLine(data: T.StringLiteralLine, tree: TreeHandl
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = { elements: wrapStringLiteralLine$with$elements, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.StringLiteralLine.Parsed;
 }
 function wrapStringLiteralLine$with(node: Held, setter: string, args: readonly unknown[]): unknown {
@@ -12531,7 +12531,7 @@ export function wrapStringLiteralTextBlock(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = { elements: wrapStringLiteralTextBlock$with$elements, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.StringLiteralTextBlock.Parsed;
 }
 function wrapStringLiteralTextBlock$with(node: Held, setter: string, args: readonly unknown[]): unknown {
@@ -18949,7 +18949,7 @@ function viewStringLiteralLine(data: RecordPosition, tree: TreeHandle): T.String
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = { elements: $with$elements, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.StringLiteralLine.Parsed;
 }
 
@@ -18983,7 +18983,7 @@ function viewStringLiteralTextBlock(data: RecordPosition, tree: TreeHandle): T.S
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = { elements: $with$elements, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.StringLiteralTextBlock.Parsed;
 }
 

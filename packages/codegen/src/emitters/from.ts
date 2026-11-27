@@ -105,10 +105,10 @@ import {
 } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
+import type { InnerSideCtx } from '../compiler/model/trivia.ts';
 
-export interface EmitFromConfig {
+export interface EmitFromConfig extends InnerSideCtx {
 	grammar: string;
-	nodeMap: NodeMap;
 	generatedIdTables: GeneratedIdTables;
 }
 
@@ -220,33 +220,33 @@ export namespace from {
 	export function leaf(
 		output: string[],
 		node: AssembledNode,
-		nodeMap: NodeMap,
+		ctx: InnerSideCtx,
 		_kindEntries: readonly KindEnumEntry[]
 	): void {
 		if (!node.rawFactoryName || !node.fromFunctionName) return;
 		const form = leafFromForm(node);
-		if (form === 'string') output.push(emitStringLikeFrom(node, numericLeafShape(node.kind, node), nodeMap));
+		if (form === 'string') output.push(emitStringLikeFrom(node, numericLeafShape(node.kind, node), ctx));
 		else if (form === 'keyword') output.push(emitKeywordFrom(node));
 	}
 
 	export function branch(
 		output: string[],
 		node: BranchLikeForFrom,
-		nodeMap: NodeMap,
+		ctx: InnerSideCtx,
 		intern: KindInterner,
 		kindEntries: readonly KindEnumEntry[]
 	): void {
-		output.push(emitBranchFrom(node, nodeMap, intern, kindEntries));
+		output.push(emitBranchFrom(node, ctx, intern, kindEntries));
 	}
 
 	export function separatedList(
 		output: string[],
 		node: AssembledList,
-		nodeMap: NodeMap,
+		ctx: InnerSideCtx,
 		intern: KindInterner,
 		kindEntries: readonly KindEnumEntry[]
 	): void {
-		const result = emitSeparatedListFrom(node, kindEntries, nodeMap, intern);
+		const result = emitSeparatedListFrom(node, kindEntries, ctx, intern);
 		if (result) output.push(result);
 	}
 }
@@ -354,10 +354,11 @@ function hoistedSlotDefault(slot: AssembledNonterminal, nodeMap: NodeMap, kindEn
 
 function emitBranchFrom(
 	node: FormChildForFrom,
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	intern: KindInterner,
 	kindEntries: readonly KindEnumEntry[]
 ): string {
+	const { nodeMap } = ctx;
 	if (fromEmitsChildrenCoercer(node, nodeMap)) {
 		return emitChildrenFrom(
 			{
@@ -370,7 +371,7 @@ function emitBranchFrom(
 				leadingOptions: leadingOptionsOf(node, nodeMap)
 			},
 			kindEntries,
-			nodeMap,
+			ctx,
 			intern
 		);
 	}
@@ -479,8 +480,8 @@ function emitBranchFrom(
 	const head = `export function ${fn}`;
 	let declare = (body: readonly string[]): string[] =>
 		config === undefined
-			? [...withEmptyOverload(nodeMap, node.kind, head, [...publicOverloads, signature]), ...body, '}']
-			: [seatFunction(nodeMap, node.kind, fn, [config], { params: `input${opt}: ${inputType}`, returnType, body })];
+			? [...withEmptyOverload(ctx, node.kind, head, [...publicOverloads, signature]), ...body, '}']
+			: [seatFunction(ctx, node.kind, fn, [config], { params: `input${opt}: ${inputType}`, returnType, body })];
 	if (spreadTarget !== null) {
 		if (spelledType !== undefined || refusal !== undefined) {
 			throw emitShapeFailure({
@@ -498,7 +499,7 @@ function emitBranchFrom(
 		declare =
 			config === undefined
 				? (body) => [
-						...withEmptyOverload(nodeMap, node.kind, head, [
+						...withEmptyOverload(ctx, node.kind, head, [
 							declaredOverload(head, row, returnType),
 							...publicOverloads,
 							`${head}(...args: unknown[]): ${returnType} {`,
@@ -508,7 +509,7 @@ function emitBranchFrom(
 						'}'
 					]
 				: (body) => [
-						seatFunction(nodeMap, node.kind, fn, [row, config], {
+						seatFunction(ctx, node.kind, fn, [row, config], {
 							params: '...args: unknown[]',
 							returnType,
 							body: [...prelude, ...body]
@@ -649,11 +650,12 @@ function emitRestParamFromResolver(
 	elementType: string,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[],
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	unwrapConfigKey: string | undefined,
 	buildCallExpr: (varExpr: string) => string,
 	leadingOptions?: LeadingOptions
 ): string {
+	const { nodeMap } = ctx;
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
 	const source = leadingOptions === undefined ? 'input' : '_rest';
 	const split = leadingOptions === undefined ? [] : leadingOptionsSplit(leadingOptions, source, 'readonly unknown[]', 'input');
@@ -676,7 +678,7 @@ function emitRestParamFromResolver(
 	const inputType = `${tName}.LooseArgs`;
 	const freshVar = unwrapConfigKey === undefined ? source : '_elems';
 	const refusing = refusingParam('input', inputType, { rest: true, loose: looseRefusal(nodeMap) });
-	const seat = (body: readonly string[]): string => seatFunction(nodeMap, kind, fn, [refusing], { params: `...input: ${inputType}`, returnType, body });
+	const seat = (body: readonly string[]): string => seatFunction(ctx, kind, fn, [refusing], { params: `...input: ${inputType}`, returnType, body });
 	if (!hasNumericDiscriminant || holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)) {
 		return seat([...admit, ...split, ...unwrap, `  return ${buildCallExpr(freshVar)};`]);
 	}
@@ -698,10 +700,11 @@ function emitRepeatedChildrenFrom(
 	slot: AssembledNonterminal,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[],
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	intern: KindInterner,
 	leadingOptions?: LeadingOptions
 ): string {
+	const { nodeMap } = ctx;
 	const resolvable = resolvesLooseInput(slot, nodeMap);
 	const call = (spread: string): string =>
 		leadingOptions === undefined
@@ -714,7 +717,7 @@ function emitRepeatedChildrenFrom(
 		resolvable ? looseElementType(elementType, slot, nodeMap) : elementType,
 		kind,
 		kindEntries,
-		nodeMap,
+		ctx,
 		slot.propertyName,
 		(varExpr) => call(resolvable ? resolveFieldCall(varExpr, slot, true, nodeMap, intern, false, elementType, kindEntries) : varExpr),
 		leadingOptions
@@ -730,18 +733,19 @@ function emitSingularChildrenFrom(
 	intern: KindInterner,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[],
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	inputWiden?: string
 ): string {
+	const { nodeMap } = ctx;
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
 	const hasNumericDiscriminant = findOwnKindEntry(kindEntries, kind) !== undefined;
 	if (!hasNumericDiscriminant) {
-		return optionalConfigCoercer(nodeMap, kind, fn, `${elementType} | ${tName}`, factoryReturnTypeExpr(factory), [
+		return optionalConfigCoercer(ctx, kind, fn, `${elementType} | ${tName}`, factoryReturnTypeExpr(factory), [
 			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`
 		]);
 	}
 	const inputType = `${resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}`;
-	return optionalConfigCoercer(nodeMap, kind, fn, inputType, factoryReturnTypeExpr(factory), [
+	return optionalConfigCoercer(ctx, kind, fn, inputType, factoryReturnTypeExpr(factory), [
 		...(holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)
 			? []
 			: [
@@ -755,8 +759,9 @@ function emitSingularChildrenFrom(
 	]);
 }
 
-function optionalConfigCoercer(nodeMap: NodeMap, kind: string, fn: string, input: string, returnType: string, body: readonly string[]): string {
-	return seatFunction(nodeMap, kind, fn, [refusingParam('input', input, { optional: true, loose: looseRefusal(nodeMap) })], {
+function optionalConfigCoercer(ctx: InnerSideCtx, kind: string, fn: string, input: string, returnType: string, body: readonly string[]): string {
+	const { nodeMap } = ctx;
+	return seatFunction(ctx, kind, fn, [refusingParam('input', input, { optional: true, loose: looseRefusal(nodeMap) })], {
 		params: `input?: ${input}`,
 		returnType,
 		body
@@ -766,9 +771,10 @@ function optionalConfigCoercer(nodeMap: NodeMap, kind: string, fn: string, input
 function emitChildrenFrom(
 	node: ChildrenFromNode,
 	kindEntries: readonly KindEnumEntry[],
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	intern: KindInterner
 ): string {
+	const { nodeMap } = ctx;
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const tName = `T.${node.typeName}`;
@@ -785,7 +791,7 @@ function emitChildrenFrom(
 		}
 	}
 	if (facts === null) {
-		return optionalConfigCoercer(nodeMap, node.kind, fn, `${elementType} | ${tName}`, factoryReturnTypeExpr(factory), [
+		return optionalConfigCoercer(ctx, node.kind, fn, `${elementType} | ${tName}`, factoryReturnTypeExpr(factory), [
 			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`
 		]);
 	}
@@ -798,7 +804,7 @@ function emitChildrenFrom(
 			facts.slot,
 			node.kind,
 			kindEntries,
-			nodeMap,
+			ctx,
 			intern,
 			node.leadingOptions
 		);
@@ -812,7 +818,7 @@ function emitChildrenFrom(
 		intern,
 		node.kind,
 		kindEntries,
-		nodeMap,
+		ctx,
 		inputWiden
 	);
 }
@@ -820,9 +826,10 @@ function emitChildrenFrom(
 function emitSeparatedListFrom(
 	node: AssembledList,
 	kindEntries: readonly KindEnumEntry[],
-	nodeMap: NodeMap,
+	ctx: InnerSideCtx,
 	intern: KindInterner
 ): string | undefined {
+	const { nodeMap } = ctx;
 	if (!node.rawFactoryName || !node.fromFunctionName) return undefined;
 	const fn = node.fromFunctionName;
 	const factory = `F.${node.rawFactoryName}`;
@@ -856,7 +863,7 @@ function emitSeparatedListFrom(
 		elemType,
 		node.kind,
 		kindEntries,
-		nodeMap,
+		ctx,
 		undefined,
 		(varExpr) =>
 			leadingOptions === undefined
@@ -883,11 +890,12 @@ export function keywordLeafArity(node: AssembledNode): number | undefined {
 	return leafFromForm(node) === 'keyword' ? 1 : undefined;
 }
 
-function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined, nodeMap: NodeMap): string {
+function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined, ctx: InnerSideCtx): string {
+	const { nodeMap } = ctx;
 	const factory = `F.${node.rawFactoryName!}`;
 	const returnType = factoryReturnTypeExpr(factory);
 	const input = `T.${node.typeName}.Loose`;
-	return seatFunction(nodeMap, node.kind, node.fromFunctionName!, [refusingParam('input', input, { loose: looseRefusal(nodeMap) })], {
+	return seatFunction(ctx, node.kind, node.fromFunctionName!, [refusingParam('input', input, { loose: looseRefusal(nodeMap) })], {
 		params: `input: ${input}`,
 		returnType,
 		body: [
@@ -1904,7 +1912,7 @@ function emitResolverHelpers(
 }
 
 export class FromEmitter implements CodegenEmitter<string> {
-	readonly #nodeMap: NodeMap;
+	readonly #ctx: EmitFromConfig;
 	readonly #kindEntries: readonly KindEnumEntry[];
 	readonly #internKinds: KindInterner;
 	readonly #kindTableLiterals: string[];
@@ -1926,7 +1934,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 		emitNamespaceImports(lines);
 		emitFromFieldInputType(lines);
 
-		this.#nodeMap = nodeMap;
+		this.#ctx = config;
 		this.#kindEntries = kindEntries;
 		this.#internKinds = internKinds;
 		this.#kindTableLiterals = kindTableLiterals;
@@ -1935,21 +1943,21 @@ export class FromEmitter implements CodegenEmitter<string> {
 	}
 
 	emitLeaf(node: AssembledPattern | AssembledEnum | AssembledKeyword | AssembledPunctuation): void {
-		from.leaf(this.#output, node, this.#nodeMap, this.#kindEntries);
+		from.leaf(this.#output, node, this.#ctx, this.#kindEntries);
 	}
 
 	emitBranch(node: BranchLikeForFrom): void {
-		from.branch(this.#output, node, this.#nodeMap, this.#internKinds, this.#kindEntries);
+		from.branch(this.#output, node, this.#ctx, this.#internKinds, this.#kindEntries);
 	}
 
 	emitSeparatedList(node: AssembledList): void {
-		from.separatedList(this.#output, node, this.#nodeMap, this.#internKinds, this.#kindEntries);
+		from.separatedList(this.#output, node, this.#ctx, this.#internKinds, this.#kindEntries);
 	}
 
 	dispatchNode(kind: string, node: AssembledNode): void {
 		if (
 			classifyFromEmission(kind, node, {
-				nodeMap: this.#nodeMap,
+				nodeMap: this.#ctx.nodeMap,
 				kindEntries: this.#kindEntries
 			}) !== 'emit'
 		) {
@@ -1970,14 +1978,14 @@ export class FromEmitter implements CodegenEmitter<string> {
 
 	finalize(): string {
 		const lines = [...this.#preambleLines];
-		emitResolverHelpers(lines, this.#nodeMap, this.#kindEntries);
+		emitResolverHelpers(lines, this.#ctx.nodeMap, this.#kindEntries);
 		lines.push('');
 		emitInternedKindTable(lines, this.#namedEntries, this.#kindTableLiterals);
 		for (const block of this.#output) {
 			lines.push(block);
 			lines.push('');
 		}
-		emitFromMapDeclaration(lines, this.#nodeMap, this.#kindEntries);
+		emitFromMapDeclaration(lines, this.#ctx.nodeMap, this.#kindEntries);
 		const body = lines.filter((l) => !l.startsWith('import ')).join('\n');
 		const usesArgs = lines.some((l) => l !== ARGS_HELPER && /\b_Args</.test(l));
 		const pruned = lines.flatMap((l) => {

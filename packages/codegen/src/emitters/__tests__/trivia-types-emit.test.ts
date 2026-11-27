@@ -27,10 +27,10 @@ describe('empty forms in the emitted types', () => {
 	});
 
 	it('emits an empty form only for a kind with an inner side', () => {
-		for (const kind of emptyForms(nodeMap).keys()) {
+		for (const kind of emptyForms({ nodeMap }).keys()) {
 			const node = nodeMap.nodes.get(kind);
-			expect(node instanceof AbstractAssembledCompound ? node.innerGaps.length : 0).toBe(1);
-			expect(innerKinds(nodeMap).has(kind)).toBe(true);
+			expect(node instanceof AbstractAssembledCompound ? node.innerGaps({}).length : 0).toBe(1);
+			expect(innerKinds({ nodeMap }).has(kind)).toBe(true);
 		}
 	});
 
@@ -48,9 +48,9 @@ describe('empty forms in the emitted types', () => {
 
 	it('puts the inner side of a kind with two inner gaps at its last', () => {
 		const twoGaps = Object.create(AbstractAssembledCompound.prototype, {
-			innerGaps: { value: [{ key: 'initializer', precedingTokens: 1 }, { key: 'elements', precedingTokens: 2 }] }
+			innerGaps: { value: () => [{ key: 'initializer', precedingTokens: 1 }, { key: 'elements', precedingTokens: 2 }] }
 		});
-		expect(twoGaps.innerSite).toEqual({ key: 'elements', precedingTokens: 2 });
-		expect(innerKinds({ nodes: new Map([['switch', twoGaps]]) } as NodeMap)).toEqual(new Set(['switch']));
+		expect(twoGaps.innerSite({})).toEqual({ key: 'elements', precedingTokens: 2 });
+		expect(innerKinds({ nodeMap: { nodes: new Map([['switch', twoGaps]]) } as NodeMap })).toEqual(new Set(['switch']));
 	});
 });

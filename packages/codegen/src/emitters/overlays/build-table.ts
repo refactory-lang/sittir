@@ -1,4 +1,5 @@
 import type { NodeMap } from '../../compiler/types.ts';
+import type { InnerSideCtx } from '../../compiler/model/trivia.ts';
 import { flattenedVariantParents, type IrMember } from '../../compiler/model/ir-surface.ts';
 import { irModulePath, emitIrModule, irNamespaceOf } from '../ir.ts';
 import {
@@ -32,9 +33,10 @@ export interface BuilderTables {
 	readonly entryRows: ReadonlyMap<string, string>;
 }
 
-export function builderTables(nodeMap: NodeMap, wires: PolymorphWires): BuilderTables {
+export function builderTables(config: InnerSideCtx & { readonly wires: PolymorphWires }): BuilderTables {
+	const { nodeMap, wires } = config;
 	const refined = refinedEntries(nodeMap);
-	const { chunks, entryRows } = emitPolymorphsOverlay({ nodeMap, wires, refined });
+	const { chunks, entryRows } = emitPolymorphsOverlay({ ...config, refined });
 	return { files: emitBuilderTables({ nodeMap, wires, chunks, refined }), entryRows };
 }
 

@@ -129,9 +129,11 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 	});
 	const sitePreferences = collectSitePreferences({ nodeMap, kindEntries, renderRules, options: optionsBlock });
 
+	const { tight } = joins;
 	const factoryEmitter = new FactoryEmitter({
 		grammar,
 		nodeMap,
+		tight,
 		strict,
 		generatedIdTables,
 		inlineKinds,
@@ -143,12 +145,14 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 	const fromEmitter = new FromEmitter({
 		grammar,
 		nodeMap,
+		tight,
 		generatedIdTables
 	});
 
 	const wrapEmitter = new WrapEmitter({
 		grammar,
 		nodeMap,
+		tight,
 		generatedIdTables,
 		inlineKinds,
 		synthesizedKinds,
@@ -191,7 +195,7 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 	const renderModule = templates === undefined ? undefined : collector.guard(() => renderModuleEmitterInst?.finalize(templates));
 
 	const wires = collector.guard(() => collectPolymorphWires(nodeMap));
-	const tables = wires === undefined ? undefined : collector.guard(() => builderTables(nodeMap, wires));
+	const tables = wires === undefined ? undefined : collector.guard(() => builderTables({ nodeMap, tight, wires }));
 	const typeModules =
 		wires === undefined || tables === undefined
 			? undefined
@@ -199,6 +203,7 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 					emitTypesModules({
 						grammar,
 						nodeMap,
+						tight,
 						generatedIdTables,
 						sites: sitePreferences,
 						addresses: addressTables,
@@ -207,11 +212,11 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 						entryRows: tables.entryRows
 					})
 				);
-	const consts = collector.guard(() => emitConsts({ grammar, nodeMap }));
+	const consts = collector.guard(() => emitConsts({ grammar, nodeMap, tight }));
 	const options = collector.guard(() => emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }));
 	const is = collector.guard(() => emitIs({ grammar, nodeMap, generatedIdTables }));
 	const tests = templates === undefined ? undefined : collector.guard(() => emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies }));
-	const utils = collector.guard(() => emitClientUtils({ grammar, nodeMap, triviaKinds, structure: factoryEmitter.structure }));
+	const utils = collector.guard(() => emitClientUtils({ grammar, nodeMap, tight, triviaKinds, structure: factoryEmitter.structure }));
 
 	collector.assertClear();
 	if (
