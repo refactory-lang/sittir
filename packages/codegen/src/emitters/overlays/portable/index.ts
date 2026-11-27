@@ -13,7 +13,7 @@ import { emitPortableNodeModel } from './node-model.ts';
 import { familyCoverageOf } from './covered.ts';
 import type { Body } from '../../render-body.ts';
 import { ownTextClaimsOf, portableFactOf, portableReadRowsOf, presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
-import { classifierOf, containerSlots, portablePathHasFacts, readableEntries, textBuilt } from '@sittir/common/engine';
+import { classifierOf, containerSlots, portablePathHasFacts, readableEntries, testedSlots, textBuilt } from '@sittir/common/engine';
 import { querySlotRows } from '../../client-utils.ts';
 import { emitPortableSurface } from './surface.ts';
 import { emitPortableTyped, type PortableTypedOutput } from './typed.ts';
@@ -86,9 +86,9 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		if (id === undefined) throw new Error(`portable: ${kind} has no kind id`);
 		return id;
 	};
+	const rows = portableReadRowsOf(routes.readEntries, readTest, factOf, kindNumberOf);
+	const querySlots = Object.fromEntries(querySlotRows(nodeMap));
 	const projectInputOf = (): PortableProjectInput<PortableBuildTable, PortableProjectRows<PortableSeat>> => {
-		const rows = portableReadRowsOf(routes.readEntries, readTest, factOf, kindNumberOf);
-		const querySlots = Object.fromEntries(querySlotRows(nodeMap));
 		const flags = Object.fromEntries([...plansByKind].map(([kind, plans]) => [kindNumberOf(kind), Object.fromEntries(plans)]));
 		const fixedText = Object.fromEntries(fixedTextKinds(nodeMap, kindEntries).map(([kind, text]) => [kindNumberOf(kind), text]));
 		const classify = classifierOf({ table: { paths: {}, entries: Object.fromEntries(rows.entries), facts: Object.fromEntries(rows.facts), fixedText, literals: [] }, querySlots, flags });
@@ -130,7 +130,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			imports: { kinds: moduleSpecifier(PORTABLE_PROJECT_FILE, 'kinds.ts'), utils: '@sittir/common/portable/utils' }
 		};
 	};
-	const typed = emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, presetCarried: build.presetCarried, covered: new Set(coverage.map(({ entry }) => entry)), totalIntegerReads: build.totalIntegerReads, freeTextClosedBy: build.freeTextClosedBy, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) });
+	const typed = emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, tested: (kind) => testedSlots(rows.entries.get(kind) ?? [], kind, querySlots[kind] ?? []), table: build.table, presetCarried: build.presetCarried, covered: new Set(coverage.map(({ entry }) => entry)), totalIntegerReads: build.totalIntegerReads, freeTextClosedBy: build.freeTextClosedBy, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) });
 	return {
 		build: build.source,
 		emit: {

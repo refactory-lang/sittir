@@ -1838,6 +1838,26 @@ Whether two lists of texts are each exactly one text, and the same one: a `same`
 
 A built node's text, rendered by the engine that built it and kept per node. A parsed node (one with a tree) has its source text instead and gets none here, as does a node whose engine is gone or disposed. A claim test that compares text reads a built node's through it, so a rebuilt `r"…"` string still reads as raw.
 
+### `packages/common/src/portable/classify.ts::testedSlots`
+
+Each read path of a kind, with the slots its read tests read, by accessor (`PathTests`). `own` is what the path's own test conditions name for the kind: each condition plan's `slots` keyed by the kind's id. `others` is what another path's test names and this one's doesn't. The classifier reads a node's tested slots (`readSlots`, together with the slots of the flags that hold) and the slots other paths test (`otherTested`) from it. Codegen's typed emitter derives a path's unread slots from the same function over the read rows the grammar ships (`exact.ts`, through `PortableTypedInput::tested`). So the typed module's raw arms and the read's unread carry come from one fact.
+
+### `packages/common/src/portable/classify.ts::PathTests`
+
+One read path's tested slots, by accessor, as `testedSlots` gives them.
+
+### `packages/common/src/portable/classify.ts::PathTests::own`
+
+The slots the path's own test reads.
+
+### `packages/common/src/portable/classify.ts::PathTests::others`
+
+The slots another path's test of the kind reads and this path's test doesn't. A fixed token in one of them counts as content an unread check must keep.
+
+### `packages/common/src/portable/classify.ts::flagSlots`
+
+The accessors that the given flag plans read for a kind. The classifier counts the slots of a flag that holds as read, beside the path's own tested slots (`testedSlots`).
+
 ### `packages/common/src/portable/project.ts::erred`
 
 Whether a parse error sits on a node. An `ERROR` node does; a node of a parse with no error regions (`parseErrorsOf` is empty) doesn't. Otherwise a node does when one of its sides holds an `ERROR` node, or when its parse's regions record it as the holder of a missing token (matched by kind and span). Today's read keeps such a node whole as an `error` carry, and a generated projection's `project` checks it before reading any node, so the build keeps the source text the parse could not place.

@@ -122,7 +122,7 @@ These layers are hard to follow and to change. They also give the wrong answer a
 
 ### Raw reads
 
-- **What they are:** for some claimed kinds the portable reader returns the low-level node itself, because a portable read would lose something (reasons such as opaque, preset, flags or text).
+- **What they are:** for some claimed kinds the portable reader returns the low-level node itself, because a portable read would lose something (reasons such as opaque, preset, flags or text), or because the node is a form of the kind that no path claims (reason unclaimed). A claimed kind gets the unclaimed reason when a case of it reads as no path, or when its cases can't be decided, since then no claim is shown to cover every form; a refined container doesn't, because the read takes its unclaimed forms through its element.
 - **Typed honestly:** each slot that can hold such a kind gets a raw-node arm. For single-grammar code it's the grammar's exact low-level node type; under a contract it's opaque.
 - **Shrinking:** a ratchet counts raw-node arms, and the count only goes down.
 - **Tokens:** a token reads as its text, per the standing ruling that portable tokens are text. Where the reader returns a kind id for a token today, it returns the text instead.

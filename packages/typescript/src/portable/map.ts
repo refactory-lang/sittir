@@ -366,6 +366,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -540,6 +541,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -852,6 +854,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -1127,6 +1130,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -1366,6 +1370,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -1614,7 +1619,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
-				| V.Unmapped<'typescript:using_declaration'>;
+				| V.Unmapped<'typescript:using_declaration'>
+				| T.InterfaceDeclaration.Parsed;
 			readonly $forms: V.Form<'body'>;
 		};
 		readonly 'declaration.function': {
@@ -1832,6 +1838,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -2090,6 +2097,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -2278,6 +2286,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -2466,6 +2475,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -2654,6 +2664,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -5305,6 +5316,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -5679,6 +5691,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -6053,6 +6066,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -6427,6 +6441,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -8641,6 +8656,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -9004,6 +9020,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -9367,6 +9384,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -9730,6 +9748,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -11052,6 +11071,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -11370,6 +11390,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -11688,6 +11709,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -12006,6 +12028,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -15401,6 +15424,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -15582,6 +15606,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -15764,6 +15789,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -29981,6 +30007,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -30667,6 +30694,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -33430,6 +33458,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -33468,6 +33497,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'import'
 				| 'this'
 				| V.Unmapped<'typescript:type_query_subscript_expression'>
+				| T.TypeQueryCallExpression.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpression.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
@@ -34225,6 +34255,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -34271,7 +34302,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
-				| V.Unmapped<'typescript:using_declaration'>;
+				| V.Unmapped<'typescript:using_declaration'>
+				| T.InterfaceDeclaration.Parsed;
 			readonly decorators:
 				| V.Read<TypeScriptMap, 'attribute.call'>
 				| V.Read<TypeScriptMap, 'attribute.member'>
@@ -34441,7 +34473,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
-				| V.Unmapped<'typescript:using_declaration'>;
+				| V.Unmapped<'typescript:using_declaration'>
+				| T.InterfaceDeclaration.Parsed;
 			readonly decorators:
 				| V.Read<TypeScriptMap, 'attribute.call'>
 				| V.Read<TypeScriptMap, 'attribute.member'>
@@ -34736,6 +34769,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -34943,6 +34977,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -35524,6 +35559,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -35701,6 +35737,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -35882,6 +35919,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -36059,6 +36097,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -36368,6 +36407,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -36689,6 +36729,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
 				| T.InstantiationExpression.Parsed
+				| T.InterfaceDeclaration.Parsed
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
@@ -37783,6 +37824,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.import'>
 				| 'this'
 				| V.Unmapped<'typescript:type_query_subscript_expression'>
+				| T.TypeQueryCallExpression.Parsed
+				| T.TypeQueryInstantiationExpression.Parsed
 				| T.TypeQueryMemberExpression.Parsed;
 			readonly $forms: V.Form<'expression'>;
 		};

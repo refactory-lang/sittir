@@ -175,6 +175,39 @@ export const textOf = (item: unknown, fixed: Readonly<Record<number, string>>): 
 
 export const sameText = (a: readonly string[], b: readonly string[]): boolean => a.length === 1 && b.length === 1 && a[0] === b[0];
 
+const numbersIn = (value: unknown, kind: number, into: Set<number>): Set<number> => {
+	if (Array.isArray(value)) for (const item of value) numbersIn(item, kind, into);
+	else if (typeof value === 'object' && value !== null)
+		for (const [key, held] of Object.entries(value)) {
+			if (key === 'slots' && typeof held === 'object' && held !== null) {
+				const number = (held as Readonly<Record<number, number>>)[kind];
+				if (number !== undefined) into.add(number);
+			} else numbersIn(held, kind, into);
+		}
+	return into;
+};
+
+const accessorsOf = (numbers: ReadonlySet<number>, rows: readonly QuerySlotEntry[]): ReadonlySet<string> => new Set(rows.flatMap(([accessor, number]) => (numbers.has(number) ? [accessor] : [])));
+
+export interface PathTests {
+	readonly own: ReadonlySet<string>;
+	readonly others: ReadonlySet<string>;
+}
+
+export const testedSlots = (entries: readonly Pick<PortableReadEntry, 'path' | 'test'>[], kind: number, rows: readonly QuerySlotEntry[]): ReadonlyMap<string, PathTests> => {
+	const paths = [...new Set(entries.map((entry) => entry.path))];
+	const own = new Map(paths.map((path) => [path, entries.reduce((numbers, entry) => (entry.path === path ? numbersIn(entry.test, kind, numbers) : numbers), new Set<number>())] as const));
+	return new Map(
+		paths.map((path) => {
+			const mine = own.get(path)!;
+			const others = new Set(paths.flatMap((other) => (other === path ? [] : [...own.get(other)!].filter((number) => !mine.has(number)))));
+			return [path, { own: accessorsOf(mine, rows), others: accessorsOf(others, rows) }] as const;
+		})
+	);
+};
+
+export const flagSlots = (plans: readonly unknown[], kind: number, rows: readonly QuerySlotEntry[]): ReadonlySet<string> => accessorsOf(plans.reduce<Set<number>>((numbers, plan) => numbersIn(plan, kind, numbers), new Set()), rows);
+
 function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 	const itemsIn = (node: Node, subject: SlotSubject): readonly unknown[] => {
 		const number = subject.slots[node.$type];
@@ -221,45 +254,20 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 	};
 	const slotsOf = (node: Node): readonly (readonly [string, readonly unknown[]])[] =>
 		(querySlots[node.$type] ?? []).map((row) => [row[0], itemsOf(node, row)] as const);
-	const numbersIn = (value: unknown, kind: number, into: Set<number>): void => {
-		if (Array.isArray(value)) for (const item of value) numbersIn(item, kind, into);
-		else if (typeof value === 'object' && value !== null)
-			for (const [key, held] of Object.entries(value)) {
-				if (key === 'slots' && typeof held === 'object' && held !== null) {
-					const number = (held as Readonly<Record<number, number>>)[kind];
-					if (number !== undefined) into.add(number);
-				} else numbersIn(held, kind, into);
-			}
+	const NONE: ReadonlySet<string> = new Set();
+	const tested = new Map<number, ReadonlyMap<string, PathTests>>();
+	const testedBy = (kind: number): ReadonlyMap<string, PathTests> => {
+		let known = tested.get(kind);
+		if (known === undefined) tested.set(kind, (known = testedSlots(table.entries[kind] ?? [], kind, querySlots[kind] ?? [])));
+		return known;
 	};
 	const readSlots = (node: Node, path: string, flagNames: readonly string[]): ReadonlySet<string> => {
 		const kind = node.$type;
-		const numbers = new Set<number>();
-		for (const entry of table.entries[kind] ?? []) if (entry.path === path) numbersIn(entry.test, kind, numbers);
-		for (const flag of flagNames) numbersIn(flags[kind]?.[flag], kind, numbers);
-		return new Set((querySlots[kind] ?? []).flatMap(([accessor, number]) => (numbers.has(number) ? [accessor] : [])));
+		const own = testedBy(kind).get(path)?.own ?? NONE;
+		if (flagNames.length === 0) return own;
+		return new Set([...own, ...flagSlots(flagNames.map((flag) => flags[kind]?.[flag]), kind, querySlots[kind] ?? [])]);
 	};
-	const NONE: ReadonlySet<string> = new Set();
-	const tested = new Map<number, ReadonlyMap<string, ReadonlySet<string>>>();
-	const testedBy = (kind: number): ReadonlyMap<string, ReadonlySet<string>> => {
-		const known = tested.get(kind);
-		if (known !== undefined) return known;
-		const entries = table.entries[kind] ?? [];
-		const paths = [...new Set(entries.map((entry) => entry.path))];
-		const slotsAt = (path: string): Set<number> => {
-			const numbers = new Set<number>();
-			for (const entry of entries) if (entry.path === path) numbersIn(entry.test, kind, numbers);
-			return numbers;
-		};
-		const own = new Map(paths.map((path) => [path, slotsAt(path)] as const));
-		const others = new Map<string, ReadonlySet<string>>();
-		for (const path of paths) {
-			const numbers = new Set(paths.flatMap((other) => (other === path ? [] : [...own.get(other)!].filter((number) => !own.get(path)!.has(number)))));
-			if (numbers.size > 0) others.set(path, new Set((querySlots[kind] ?? []).flatMap(([accessor, number]) => (numbers.has(number) ? [accessor] : []))));
-		}
-		tested.set(kind, others);
-		return others;
-	};
-	const otherTested = (node: Node, path: string): ReadonlySet<string> => testedBy(node.$type).get(path) ?? NONE;
+	const otherTested = (node: Node, path: string): ReadonlySet<string> => testedBy(node.$type).get(path)?.others ?? NONE;
 	const builtReadsAs = (path: string, node: Node): boolean => {
 		const entries = (table.entries[node.$type] ?? []).filter((entry) => portablePathHasFacts(path, entry.path));
 		if (entries.length === 0 || !entries.every(unplaced)) return true;

@@ -1,13 +1,14 @@
-import { nullaryBuilt, readableEntries, textBuilt, type PortableCarry } from '@sittir/common/engine';
+import { nullaryBuilt, readableEntries, textBuilt, type PathTests, type PortableCarry } from '@sittir/common/engine';
 import type { PortableBuildArm } from '@sittir/types';
 import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { derive, levelSlots, type Derivation, type Scalar } from '../../../bindings/derive.ts';
 import { capturedKinds, concreteKinds, entryRoutes, guaranteedBy, modelNode, readEntriesLookup, valueTokensOf, type ReadEntry } from '../../../bindings/routes.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { findKindEntry, fixedTextKinds } from '../../kind-discriminant.ts';
+import { heldReadsOf, type HeldReads } from './covered.ts';
 import type { PortableTypedInput } from './typed.ts';
 
-export type RawReason = Exclude<PortableCarry['reason'], 'unclaimed' | 'error'>;
+export type RawReason = Exclude<PortableCarry['reason'], 'error'>;
 
 export interface RawArm {
 	readonly kind: string;
@@ -25,7 +26,9 @@ export interface ExactSet {
 
 export type ExactSlots = ReadonlyMap<string, ReadonlyMap<string, ExactSet>>;
 
-const KIND_REASONS: ReadonlySet<RawReason> = new Set<RawReason>(['flags', 'readOnly', 'unread', 'text']);
+const NO_TESTS: PathTests = { own: new Set(), others: new Set() };
+
+const KIND_REASONS: ReadonlySet<RawReason> = new Set<RawReason>(['flags', 'readOnly', 'unread', 'text', 'unclaimed']);
 
 export const rawGroupOf = (reasons: readonly RawReason[]): 'kind' | 'value' => (reasons.some((reason) => KIND_REASONS.has(reason)) ? 'kind' : 'value');
 
@@ -166,13 +169,25 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		if (id === undefined || list === undefined) return [];
 		return readPathsOf(list).flatMap((path) => (table.paths[path]?.arms ?? []).filter((arm) => arm.kind === id));
 	};
-	const reached = (kind: string): ReadonlySet<string> => {
-		const out = new Set<string>();
-		for (const entry of entriesFor(kind) ?? []) {
-			for (const route of entryRoutes(entry)) for (const step of route.path ?? []) if (step.owner === kind) out.add(step.slot);
-			for (const slot of [...entry.pins.map((pin) => pin.slot), ...entry.absent, ...entry.present]) out.add(slot);
-		}
-		return out;
+	const lostAt = (kind: string, heldReads: HeldReads | undefined): ReadonlyMap<string, readonly string[]> => {
+		const node = nodeOf(kind);
+		const id = idOf(kind);
+		if (node === undefined || id === undefined) return new Map();
+		const list = entriesFor(kind) ?? [];
+		const tests = input.tested(id);
+		const accessorOf = new Map((input.nodeMap.nodes.get(kind)?.slots ?? []).map((slot) => [slot.name, slot.propertyName] as const));
+		return new Map(
+			readPathsOf(list).map((path) => {
+				const stepped = new Set(list.filter((entry) => entry.vocab === path).flatMap((entry) => entryRoutes(entry).flatMap((route) => (route.path ?? []).flatMap((step) => (step.owner === kind ? [step.slot] : [])))));
+				const { own, others } = tests.get(path) ?? NO_TESTS;
+				const lost = node.slots.filter((slot) => {
+					const accessor = accessorOf.get(slot.name) ?? slot.name;
+					if (heldReads !== undefined && heldReads.varied.has(slot.name) && heldReads.held.get(path)?.has(slot.name) !== true) return false;
+					return !stepped.has(slot.name) && !own.has(accessor) && (others.has(accessor) || concreteKinds(model, slot.kinds).some((k) => !token(k)));
+				});
+				return [path, lost.map((slot) => slot.name)] as const;
+			})
+		);
 	};
 	const reasonsCache = new Map<string, readonly RawReason[]>();
 	const reasonsOf = (kind: string): readonly RawReason[] => {
@@ -203,8 +218,11 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		if (readsText && !structural.every((arm) => textBuilt(table, arm))) out.push('text');
 		const readable = new Set(structural.flatMap((arm) => arm.readableFlags ?? []));
 		if ((flags.get(kind) ?? []).some((flag) => !readable.has(flag))) out.push('flags');
-		const touched = reached(kind);
-		if (structural.length > 0 && node.slots.some((slot) => !touched.has(slot.name) && concreteKinds(model, slot.kinds).some((k) => !token(k)))) out.push('unread');
+		if (structural.length > 0) {
+			const heldReads = heldReadsOf(kind, entriesFor(kind) ?? [], input.nodeMap, input.readTest);
+			if ([...lostAt(kind, heldReads).values()].some((lost) => lost.length > 0)) out.push('unread');
+			if (routes.containers.get(kind)?.refined !== true && (heldReads === undefined || heldReads.unclaimed.length > 0)) out.push('unclaimed');
+		}
 		reasonsCache.set(kind, out);
 		return out;
 	};

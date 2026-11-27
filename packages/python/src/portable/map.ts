@@ -415,6 +415,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -687,6 +688,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -1187,6 +1189,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -1458,6 +1461,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -1624,6 +1628,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -2002,6 +2007,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -2104,6 +2110,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.tuple.bare'>
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.Await.Parsed
@@ -2374,6 +2381,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -2515,6 +2523,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -2774,6 +2783,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -2915,6 +2925,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -3194,6 +3205,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -3335,6 +3347,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -3613,6 +3626,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -3754,6 +3768,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -3944,6 +3959,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -4078,6 +4094,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4229,6 +4246,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4370,6 +4388,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -4625,6 +4644,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4847,6 +4867,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5231,6 +5252,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -5251,6 +5273,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.IfStatement.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
+				| T.MethodDeclaration.Parsed
 				| T.NamedExpression.Parsed
 				| T.NotOperator.Parsed
 				| T.ParenthesizedExpression.Parsed
@@ -5378,6 +5401,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5493,6 +5517,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5627,6 +5652,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5729,6 +5755,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.tuple.bare'>
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.Await.Parsed
@@ -17673,6 +17700,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -17813,6 +17841,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17931,6 +17960,7 @@ export interface PythonMap extends V.GrammarMap {
 								| T.FloatPoint.Parsed
 								| T.FloatScientific.Parsed
 								| T.GeneratorExpression.Parsed
+								| T.GenericType.Parsed
 								| T.Lambda.Parsed
 								| T.ListComprehension.Parsed
 								| T.NamedExpression.Parsed
@@ -19216,6 +19246,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -19236,6 +19267,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.IfStatement.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
+				| T.MethodDeclaration.Parsed
 				| T.NamedExpression.Parsed
 				| T.NotOperator.Parsed
 				| T.ParenthesizedExpression.Parsed
@@ -19744,6 +19776,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -20046,6 +20079,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -20319,6 +20353,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -20816,6 +20851,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -21312,6 +21348,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Unmapped<'python:as_pattern'>
 				| T.AssertStatement.Parsed
 				| T.AssignmentEq.Parsed
+				| T.AssignmentType.Parsed
 				| T.AssignmentTyped.Parsed
 				| T.Attribute.Parsed
 				| T.AugmentedAssignment.Parsed
@@ -21448,6 +21485,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -21560,6 +21598,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -21676,6 +21715,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -21791,6 +21831,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -21806,7 +21847,8 @@ export interface PythonMap extends V.GrammarMap {
 			readonly type:
 				| V.Read<PythonMap, 'identifier'>
 				| V.Read<PythonMap, 'type.generic'>
-				| V.Read<PythonMap, 'type.nullable'>;
+				| V.Read<PythonMap, 'type.nullable'>
+				| T.GenericType.Parsed;
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'type.union': {
@@ -21913,6 +21955,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -22025,6 +22068,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
+				| T.GenericType.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed

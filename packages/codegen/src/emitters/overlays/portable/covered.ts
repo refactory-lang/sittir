@@ -3,7 +3,7 @@ import { entriesHolding, type PlanItems } from '@sittir/common/portable/utils';
 import type { PortableCondition, QueryPlan, QuerySubject } from '@sittir/types';
 import type { ReadEntry } from '../../../bindings/routes.ts';
 import { emitShapeFailures, type EmitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
-import { isMultiple, isNodeRef, isNonEmpty, isRequired, isTerminalValue, isUnresolvedRef, type NodeRef } from '../../../compiler/model/node-map.ts';
+import { fixedTextOfKind, isMultiple, isNodeRef, isNonEmpty, isRequired, isTerminalValue, isUnresolvedRef, type NodeRef } from '../../../compiler/model/node-map.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { findKindEntry } from '../../kind-discriminant.ts';
 import { membershipKindsOf } from '../../membership.ts';
@@ -45,7 +45,8 @@ class Case {
 	constructor(
 		readonly $type: number,
 		readonly kind: string,
-		readonly slots: ReadonlyMap<number, CaseSlot>
+		readonly slots: ReadonlyMap<number, CaseSlot>,
+		readonly text: string | undefined
 	) {}
 }
 
@@ -64,7 +65,7 @@ const caseItems: PlanItems<Case> = {
 		const number = subject.slots[node.$type];
 		return number === undefined ? [] : (node.slots.get(number)?.items ?? []);
 	},
-	textOf: (item) => (item instanceof Leaf && item.text !== undefined ? item.text : undecided(`a test reads the text of ${describe(item)}, which the grammar does not fix`)),
+	textOf: (item) => ((item instanceof Leaf || item instanceof Case) && item.text !== undefined ? item.text : undecided(`a test reads the text of ${describe(item)}, which the grammar does not fix`)),
 	typeOf: (item) => (item instanceof Case ? [item.$type] : undecided(`a test reads the kind of the token ${describe(item)}`)),
 	delimiterOf: (item) => undecided(`a test reads the delimiter of ${describe(item)}`)
 };
@@ -124,7 +125,8 @@ function casesOf(kind: string, nodeMap: NodeMap, { slots: tested, longest }: Tes
 			cases = cases.flatMap((held) => lists.map((items) => new Map(held).set(number, { name: at.slot.name, multiple: isMultiple(at.slot), items })));
 			if (cases.length > CASE_LIMIT) return undecided(`${kind} has more than ${CASE_LIMIT} cases`);
 		}
-		return cases.map((held) => new Case(id, kind, held));
+		const text = fixedTextOfKind(node);
+		return cases.map((held) => new Case(id, kind, held, text));
 	};
 	const alternativesOf = (value: NodeRef, seen: ReadonlySet<string>): readonly Item[] => {
 		if (isTerminalValue(value)) return [new Leaf(value.value)];
@@ -152,6 +154,34 @@ type Readable = ReturnType<typeof readableOf>[number];
 
 const readableOf = (list: readonly ReadEntry[], readTest: PortableTypedInput['readTest']) =>
 	readableEntries(list.map((entry) => ({ entry, path: entry.vocab, within: entry.claim.within, test: readTest(entry) })));
+
+export interface HeldReads {
+	readonly varied: ReadonlySet<string>;
+	readonly held: ReadonlyMap<string, ReadonlySet<string>>;
+	readonly unclaimed: readonly string[];
+}
+
+export function heldReadsOf(kind: string, list: readonly ReadEntry[], nodeMap: NodeMap, readTest: PortableTypedInput['readTest']): HeldReads | undefined {
+	const readable = readableOf(list, readTest);
+	try {
+		const varied = new Set<string>();
+		const held = new Map<string, Set<string>>();
+		const unclaimed: string[] = [];
+		for (const value of casesOf(kind, nodeMap, testedOf(readable.flatMap(({ test }) => test)))) {
+			const [path] = entriesHolding(readable, value, caseItems).map((entry) => entry.path);
+			if (path === undefined) unclaimed.push(describe(value));
+			const at = path === undefined ? undefined : (held.get(path) ?? held.set(path, new Set()).get(path)!);
+			for (const { name, items } of value.slots.values()) {
+				varied.add(name);
+				if (items.length > 0) at?.add(name);
+			}
+		}
+		return { varied, held, unclaimed };
+	} catch (error) {
+		if (error instanceof Undecided) return undefined;
+		throw error;
+	}
+}
 
 function coverageOf(kind: string, base: Readable, readable: readonly Readable[], nodeMap: NodeMap): Covering {
 	let cases: readonly Case[];

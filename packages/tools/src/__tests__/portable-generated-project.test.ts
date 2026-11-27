@@ -53,6 +53,11 @@ const compare = (today: unknown, generated: unknown, listed: Readonly<Record<str
 
 type Builder = (config: Readonly<Record<string, unknown>>) => unknown;
 
+interface KindBuilder {
+	readonly name: string;
+	readonly build: Builder;
+}
+
 const slotKeys = (node: object): readonly string[] =>
 	Object.keys(node).filter((key) => !key.startsWith('$') && key !== 'toString' && key !== 'toJSON' && !(key in Array.prototype) && typeof Reflect.get(node, key) === 'function');
 
@@ -75,15 +80,25 @@ const nodesUnder = (value: unknown, into: Node[] = []): Node[] => {
 	return into;
 };
 
-const configBuilders = async (grammar: (typeof GRAMMARS)[number], build: object): Promise<ReadonlyMap<number, Builder>> => {
+const attempt = (builder: KindBuilder, config: Readonly<Record<string, unknown>>): unknown => {
+	try {
+		const built = builder.build(config);
+		String(built);
+		return built;
+	} catch {
+		return undefined;
+	}
+};
+
+const configBuilders = async (grammar: (typeof GRAMMARS)[number], build: object): Promise<ReadonlyMap<number, KindBuilder>> => {
 	const { TSKindId } = (await import(`../../../${grammar}/src/kinds.ts`)) as { readonly TSKindId: Readonly<Record<number, string>> };
 	const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as { readonly build: { readonly builders: Readonly<Record<string, string>> } };
-	const builders = new Map<number, Builder>();
+	const builders = new Map<number, KindBuilder>();
 	for (const [id, name] of Object.entries(TSKindId)) {
 		if (!/^\d+$/.test(id) || typeof name !== 'string') continue;
 		const builder = `${name[0]!.toLowerCase()}${name.slice(1)}`;
 		const call: unknown = Reflect.get(build, builder);
-		if (table.builders[builder] === 'config' && typeof call === 'function') builders.set(Number(id), (config) => Reflect.apply(call, build, [config]));
+		if (table.builders[builder] === 'config' && typeof call === 'function') builders.set(Number(id), { name, build: (config) => Reflect.apply(call, build, [config]) });
 	}
 	return builders;
 };
@@ -100,14 +115,10 @@ describe.each(GRAMMARS)('the generated portable projection of %s', (grammar) => 
 			for (const node of nodesUnder(engine.parse(source))) {
 				const builder = builders.get(node.$type);
 				if (builder === undefined) continue;
-				let built: unknown;
-				try {
-					built = builder(slotValues(node));
-				} catch {
-					continue;
-				}
+				const built = attempt(builder, slotValues(node));
+				if (built === undefined) continue;
 				rebuilt++;
-				compare(plain(runtime.read(built as never)), plain(project(built)), LISTED[grammar], `${name} (rebuilt kind ${node.$type})`, found);
+				compare(plain(runtime.read(built as never)), plain(project(built)), LISTED[grammar], `${name} (rebuilt ${builder.name})`, found);
 			}
 		}
 		expect(rebuilt).toBeGreaterThan(0);

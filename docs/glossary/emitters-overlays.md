@@ -359,6 +359,10 @@ Emits one grammar's typed portable module as source text, with the reads the emi
 
 The text of the tsconfig that type-checks the typed module together with the grammar's portable type tests. It is written beside the module in the `.sittir` directory.
 
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedInput::tested`
+
+For a kind id, each read path's tested slots (`classify.ts::testedSlots`) over the read rows the grammar ships. `emitPortable` builds it from the same rows the projection and the classifier read. `exact.ts`'s unread reason counts a slot as covered on a path when the path's routes step on it or its own test reads it.
+
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapFlagsOf`
 
 Per path in the portable map, the sorted unique flags of its build arms, in codepoint order. Paths are listed in codepoint order, so the output is stable across runs.
@@ -537,7 +541,27 @@ A kind that reads as a family path that builds none of the kind, with that path 
 
 ### `packages/codegen/src/emitters/overlays/portable/covered.ts::familyCoverageOf`
 
-Each kind whose readable entries hold a test-less one whose path builds none of the kind: no arm of the path in the build table builds the kind's id (`kind-discriminant.ts::findKindEntry`), either because the path has no arms or because its arms build other kinds. It builds every case the node map allows over the slots the kind's entries' tests read (numbered as plans number them, `render-module.ts::numberedSlotsOf`): each value of a slot, a fixed-text terminal or each concrete kind a node value names, built the same way; no item when the slot is optional; and lists of up to two items, longer when a `count` test needs it. It reads each case as the classifier reads a node (`facts.ts::entriesHolding`), and a case is covered when the first entry it reads as is not the family path. A test that reads a text, a kind or a delimiter the grammar does not fix, a kind that holds itself through a tested slot, or more than 4096 cases leaves a case undecided, and an undecided case counts as uncovered. On a path with no arms a kind with an uncovered case is refused (`portable-family-uncovered`), naming each case, so a path no build takes is never in a read type a parse can return. On a path with arms the kind is covered only when its entries hold a refinement of the path and every case is covered; otherwise its entry stays, since a read of the kind can return the path. `emitPortable` runs it once with the grammar's kind entries; the typed emitter's read paths leave out the covered entries (`typed.ts::PortableTypedInput`, `covered`), so a read and an input share one slot type and neither offers a path no read of that kind returns, and the node model stamps each kind's coverage (`node-model.ts::emitPortableNodeModel`).
+Each kind whose readable entries hold a test-less one whose path builds none of the kind: no arm of the path in the build table builds the kind's id (`kind-discriminant.ts::findKindEntry`), either because the path has no arms or because its arms build other kinds. It builds every case the node map allows over the slots the kind's entries' tests read (numbered as plans number them, `render-module.ts::numberedSlotsOf`): each value of a slot, a fixed-text terminal or each concrete kind a node value names, built the same way; no item when the slot is optional; and lists of up to two items, longer when a `count` test needs it. It reads each case as the classifier reads a node (`facts.ts::entriesHolding`), and a case is covered when the first entry it reads as is not the family path. A case of a kind whose text the grammar fixes reads as that text. A test that reads a text, a kind or a delimiter the grammar does not fix, a kind that holds itself through a tested slot, or more than 4096 cases leaves a case undecided, and an undecided case counts as uncovered. On a path with no arms a kind with an uncovered case is refused (`portable-family-uncovered`), naming each case, so a path no build takes is never in a read type a parse can return. On a path with arms the kind is covered only when its entries hold a refinement of the path and every case is covered; otherwise its entry stays, since a read of the kind can return the path. `emitPortable` runs it once with the grammar's kind entries; the typed emitter's read paths leave out the covered entries (`typed.ts::PortableTypedInput`, `covered`), so a read and an input share one slot type and neither offers a path no read of that kind returns, and the node model stamps each kind's coverage (`node-model.ts::emitPortableNodeModel`).
+
+### `packages/codegen/src/emitters/overlays/portable/covered.ts::heldReadsOf`
+
+For one kind, the paths it reads as while each of its tested slots holds a value. It builds every case the node map allows over the slots the kind's tests read, the cases the family coverage check builds, and reads each case as the classifier does (`facts.ts::entriesHolding`). It returns undefined when a case is undecided. `exact.ts` gives a claimed kind the unclaimed reason when this returns undefined or finds a case that reads as no path, unless the kind is a refined container. `exact.ts`'s unread reason counts a slot that the cases vary as lost on a path only when some case reads as that path while holding it. So a base path that the classifier reaches only with the slot empty, because a sibling path's test claims every form the slot's kinds allow, doesn't carry the slot.
+
+### `packages/codegen/src/emitters/overlays/portable/covered.ts::HeldReads`
+
+What `heldReadsOf` finds for one kind.
+
+### `packages/codegen/src/emitters/overlays/portable/covered.ts::HeldReads::varied`
+
+The kind's slots that the cases vary, by slot name: the ones its read tests read.
+
+### `packages/codegen/src/emitters/overlays/portable/covered.ts::HeldReads::held`
+
+Each path, with the varied slots that some case holds while it reads as that path.
+
+### `packages/codegen/src/emitters/overlays/portable/covered.ts::HeldReads::unclaimed`
+
+The cases that read as no path, each described as the family coverage check describes an uncovered case.
 
 ### `packages/codegen/src/emitters/overlays/portable/spelled-facts.ts::portableSpellingOf`
 

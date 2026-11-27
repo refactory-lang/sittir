@@ -72,9 +72,14 @@ describe('exactSlotsOf', () => {
 		expect([...set.kinds, ...set.unmapped, ...set.raw.map((arm) => arm.kind)]).toEqual([]);
 	});
 
+	it("reads a refined container's form no claim holds through its element, so it gets no unclaimed reason: an argument with no attribute reads as its value", () => {
+		expect(reasonsAt(exact, 'expression.call', 'arguments', 'argument')).toEqual(['opaque']);
+	});
+
 	it('puts a raw arm whose reasons are all decided per value in the per-value group', () => {
 		expect(rawGroupOf(['preset', 'scalar'])).toBe('value');
 		expect(rawGroupOf(['opaque', 'unread'])).toBe('kind');
+		expect(rawGroupOf(['opaque', 'unclaimed'])).toBe('kind');
 	});
 });
 
@@ -86,7 +91,7 @@ describe('exactSlotsOf, python', () => {
 	}, 120_000);
 
 	it("gives no preset reason to a name its read entry tests with eq: __init__ reads as a constructor", () => {
-		expect(setIn(python, 'statement.block', 'statements').raw.map((arm) => arm.kind)).not.toContain('method_declaration');
+		expect(reasonsAt(python, 'statement.block', 'statements', 'method_declaration')).not.toContain('preset');
 	});
 
 	it("gives no preset reason to a string's delimiters, which its claim spells", () => {
@@ -117,9 +122,13 @@ describe('exactSlotsOf, typescript', () => {
 		expect(kinds).not.toContain('export_statement_default_declaration');
 	});
 
-	it('reads an alias that only relaxes the identifier it holds as that identifier, while a kind with a slot no claim reads stays raw', () => {
+	it('reads an alias that only relaxes the identifier it holds as that identifier, while a kind whose cases no claim is shown to cover stays raw as unclaimed', () => {
 		expect(setIn(typescript, 'identifier.qualified', 'name').raw).toEqual([]);
 		expect(setIn(typescript, 'statement.labeled', 'label').raw).toEqual([]);
-		expect(reasonsAt(typescript, 'identifier.qualified', 'qualifier', 'type_query_call_expression_in_type_annotation')).toEqual(['unread']);
+		expect(reasonsAt(typescript, 'identifier.qualified', 'qualifier', 'type_query_call_expression_in_type_annotation')).toEqual(['unclaimed']);
+	});
+
+	it('makes a kind with a form no path claims raw as unclaimed: an interface whose body mixes { with |}', () => {
+		expect(reasonsAt(typescript, 'declaration.function', 'statements', 'interface_declaration')).toEqual(['unclaimed']);
 	});
 });

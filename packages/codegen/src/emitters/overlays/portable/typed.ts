@@ -5,6 +5,7 @@ import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { PORTABLE_MAP_FILE, PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
 import { capturedKinds, concreteKinds, guaranteedBy, modelNode, portableClaims, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type SlotRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import type { PortableBuildTable, PortableCondition } from '@sittir/types';
+import type { PathTests } from '@sittir/common/engine';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { wrapperChainFor } from '../../../compiler/model/wrapper-chain.ts';
 import { storageKeyOf } from '../../../compiler/model/node-map.ts';
@@ -18,6 +19,7 @@ export interface PortableTypedInput {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
+	readonly tested: (kind: number) => ReadonlyMap<string, PathTests>;
 	readonly table: PortableBuildTable;
 	readonly presetCarried: ReadonlySet<ReadEntry>;
 	readonly covered: ReadonlySet<ReadEntry>;
