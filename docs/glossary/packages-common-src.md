@@ -1872,16 +1872,12 @@ Whether an item is a node holding verbatim text (`$verbatim`), as a parse gives 
 
 ### `packages/common/src/portable/project.ts::checksFrame`
 
-Whether a read result is a structure without a `$value`: the only result today's read checks its frame for, and the only one a generated projection's `closeFrame` gives up for its node.
+Whether a read result is a structure without a `$value`: the only result a read checks its frame for (`framed`, and today's read's unread check).
 
 ### `packages/common/src/portable/project.ts::touch`
 
-Notes that a read touched a node, where today's read adds a node to its frame: when the node is `erred`, the frame the read opened (`openFrame`) keeps its node. A generated projection touches each node `step` reads from, each container a seat resolver reads a key of, and each token whose facet it reads (closers and the read-only check), the places today's read calls `accessed`.
+Notes that a read touched a node, where today's read adds a node to its frame: when the node is `erred`, the frame the read runs in (`framed`) keeps its node. Today's read touches each node it reads through `accessed`. A generated projection touches each node `step` reads from, each container a seat resolver reads a key of, and each token whose facet it reads (closers and the read-only check), the places today's read calls `accessed`.
 
-### `packages/common/src/portable/project.ts::openFrame`
+### `packages/common/src/portable/project.ts::framed`
 
-Starts the frame of one node's read, as today's read pushes a frame: returns whether the enclosing read had touched an `erred` node so far, and clears that for this read. The generated `project` opens one for each node it reads and closes it with `closeFrame`.
-
-### `packages/common/src/portable/project.ts::closeFrame`
-
-Ends the frame `openFrame` started. When the read touched an `erred` node (`touch`) and its result is a structure without a `$value` (`checksFrame`), the node takes the result's place, as today's read keeps it with reason error. Either way, the enclosing read's state comes back.
+Reads one node in its own frame: the rule that a read which touched an `erred` node keeps that node, in one place for both reads. It clears the touched state, runs `read`, and when the read touched an `erred` node (`touch`) and its result is a structure without a `$value` (`checksFrame`), returns `keep(node)` in place of the result. The enclosing frame's state comes back in a `finally`, so a read that throws leaves no frame open. Today's read passes a `keep` that carries the node with reason error, and runs its unread check inside `read`, over the nodes and keys its own frame records. A generated projection's `project` passes `projectNode` and keeps the node itself.

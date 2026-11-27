@@ -324,14 +324,13 @@ export const touch = (node: unknown): void => {
 	if (!touched && hasKind(node) && erred(node)) touched = true;
 };
 
-export const openFrame = (): boolean => {
+export const framed = <S>(node: Node, seats: S, read: (node: Node, seats: S) => unknown, keep: (node: Node) => unknown = (held) => held): unknown => {
 	const outer = touched;
 	touched = false;
-	return outer;
-};
-
-export const closeFrame = (outer: boolean, node: Node, result: unknown): unknown => {
-	const kept = touched && checksFrame(result);
-	touched = outer;
-	return kept ? node : result;
+	try {
+		const result = read(node, seats);
+		return touched && checksFrame(result) ? keep(node) : result;
+	} finally {
+		touched = outer;
+	}
 };

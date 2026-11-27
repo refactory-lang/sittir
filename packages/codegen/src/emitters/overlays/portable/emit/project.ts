@@ -54,7 +54,6 @@ const seatText = (seat: PortableSeat): Readonly<Record<string, unknown>> => Obje
 
 const IMPORTS = [
 	'atOf',
-	'closeFrame',
 	'closersInto',
 	'closerTexts',
 	'contradicted',
@@ -66,6 +65,7 @@ const IMPORTS = [
 	'fits',
 	'flagsSetOn',
 	'floatOf',
+	'framed',
 	'hasKind',
 	'holderOf',
 	'holdsKey',
@@ -80,7 +80,6 @@ const IMPORTS = [
 	'one',
 	'only',
 	'opaque',
-	'openFrame',
 	'place',
 	'placedPath',
 	'present',
@@ -744,8 +743,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 				),
 				when(not(call(id('hasKind'), id('value'))), ret(id('value'))),
 				when(or([call(id('erred'), id('value')), call(id('opaque'), id('value'))]), ret(id('value'))),
-				constant('outer', call(id('openFrame'))),
-				ret(call(id('closeFrame'), id('outer'), id('value'), call(id('projectNode'), id('value'), id('seats'))))
+				ret(call(id('framed'), id('value'), id('seats'), id('projectNode')))
 			),
 			'unknown',
 			['value', 'unknown'],

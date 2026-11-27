@@ -7,7 +7,7 @@ import { containerSlots, isNumberSlots, meaningfulText, rebuilds, setsOn, spelle
 import { slotItems } from '../query-holds.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
-import { checksFrame, erred, opaque, templated } from './project.ts';
+import { checksFrame, erred, framed, opaque, templated, touch } from './project.ts';
 
 export type PortableCarry =
 	| { readonly reason: 'unclaimed' | 'scalar' | 'text' | 'preset' | 'opaque' | 'readOnly' }
@@ -78,12 +78,15 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 	}
 	const frames: Map<object, Read>[] = [];
 	const touched = new Map<object, Set<string>>();
-	const touch = (node: object): Read => {
+	const readOf = (node: object): Read => {
 		const frame = frames.at(-1)!;
 		return frame.get(node) ?? frame.set(node, { keys: new Set() }).get(node)!;
 	};
 	const accessed = (node: object, key: string, stored?: string): unknown => {
-		if (frames.length > 0) touch(node).keys.add(key);
+		if (frames.length > 0) {
+			touch(node);
+			readOf(node).keys.add(key);
+		}
 		(touched.get(node) ?? touched.set(node, new Set()).get(node)!).add(key);
 		if (stored !== undefined) return storedSlotRead(node, key, stored);
 		const read = slotReader(node, key);
@@ -269,10 +272,17 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		if (erred(value)) return kept(value, { reason: 'error' }, carried);
 		frames.push(new Map());
 		try {
-			const result = readValue(value, carried, seats);
-			if (!checksFrame(result)) return result;
-			const carry = unreadIn(frames.at(-1)!);
-			return carry === undefined ? result : kept(value, carry, carried);
+			return framed(
+				value,
+				seats,
+				(node, at) => {
+					const result = readValue(node, carried, at);
+					if (!checksFrame(result)) return result;
+					const carry = unreadIn(frames.at(-1)!);
+					return carry === undefined ? result : kept(node, carry, carried);
+				},
+				(node) => kept(node, { reason: 'error' }, carried)
+			);
 		} finally {
 			frames.pop();
 		}
@@ -333,7 +343,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		const unreadable = [...new Set([...flagsOf(kind).filter((flag) => flagHolds(node, flag)), ...spelled])].filter((flag) => !readable.has(flag));
 		if (unreadable.length > 0) return kept(node, { reason: 'flags', flags: unreadable }, carried);
 		const flags = [...new Set([...[...readable].filter((flag) => flagHolds(node, flag) || spelled.includes(flag)), ...(containerSet.get(node) ?? [])])];
-		Object.assign(touch(node), { path, flags });
+		Object.assign(readOf(node), { path, flags });
 		const at = Object.fromEntries(placed.map(({ fact, index, spelling }) => [fact.name, spelling === undefined ? { index } : { index, spelling }]));
 		const structure: Record<string, unknown> = { $path: path, ...(flags.length === 0 ? {} : { $flags: flags }), ...(placed.length === 0 ? {} : { $at: at }), ...(scalar === undefined ? {} : { $value: scalar.value }) };
 		type Chosen = { readonly value: unknown; readonly route: PortableSlotRoute; readonly fitted: boolean; readonly extra?: string };
@@ -359,7 +369,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		for (const name of new Set(readArms.flatMap((arm) => readRoutesOf(arm).map((slot) => slot.name)))) {
 			const pick = chosen.get(name);
 			if (pick === undefined) continue;
-			if (pick.extra !== undefined) touch(node).extra ??= pick.extra;
+			if (pick.extra !== undefined) readOf(node).extra ??= pick.extra;
 			structure[name] = read(pick.value, carried, pick.route.seats);
 		}
 		const taken = (slot: PortableSlotRoute, items: unknown): unknown => {
@@ -383,7 +393,6 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 	};
 	const unreadIn = (frame: ReadonlyMap<object, Read>): PortableCarry | undefined => {
 		for (const [node, { path, flags, extra }] of frame) {
-			if (erred(node as Node)) return { reason: 'error' };
 			if (extra !== undefined) return { reason: 'unread', slot: extra };
 			const keys = touched.get(node) ?? new Set<string>();
 			const tested = path === undefined ? new Set<string>() : readSlots(node as Node, path, flags ?? []);
