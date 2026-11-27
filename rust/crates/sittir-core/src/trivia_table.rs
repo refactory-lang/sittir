@@ -113,6 +113,15 @@ fn same_row(source: &str, a: u32, b: u32) -> bool {
     !source.as_bytes()[low..high].contains(&b'\n')
 }
 
+/// Whether bytes starting at `start` of `source` lie on the row a node
+/// ending at `end` ends on: no line break between them, and the node's text
+/// does not end in one, since a token whose text ends in a line break has
+/// ended its line (go's `\n` terminator takes a whole run of them).
+fn on_row_ending_at(source: &str, end: u32, start: u32) -> bool {
+    let ended = end > 0 && source.as_bytes().get(end as usize - 1) == Some(&b'\n');
+    !ended && same_row(source, end, start)
+}
+
 /// Where the bytes of an entry start against the token before them.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Before {
@@ -210,7 +219,8 @@ pub fn with_line_breaks<E>(side: TriviaSide, entries: impl IntoIterator<Item = (
 /// Where the extra or `ERROR` spanning `entry` goes, `before` and `after`
 /// its siblings in source order, the first answer that holds:
 /// 1. trailing the holder before it with only entries between, when it
-///    starts on the row that holder ends on;
+///    starts on the row that holder ends on (`on_row_ending_at`: a holder
+///    whose text ends in a line break has ended its row);
 /// 2. leading the holder after it with only entries between;
 /// 3. trailing the holder before it with only entries between;
 /// 4. leading the nearest holder after it, else trailing the nearest before
@@ -230,7 +240,7 @@ pub fn owner(before: &[Sibling], entry: Span, after: &[Sibling], source: &str) -
     let passed = |sibling: &Sibling| sibling.entry || (!sibling.holder && sibling.span.start == sibling.span.end);
     let beside_before = before.iter().rposition(|sibling| !passed(sibling)).filter(|&at| holds(&before[at]));
     let beside_after = after.iter().position(|sibling| !passed(sibling) && !sibling.flag).filter(|&at| holds(&after[at]));
-    if let Some(at) = beside_before.filter(|&at| same_row(source, before[at].span.end, entry.start)) {
+    if let Some(at) = beside_before.filter(|&at| on_row_ending_at(source, before[at].span.end, entry.start)) {
         return Owner::Trailing { at };
     }
     match (beside_after, beside_before) {
@@ -600,6 +610,16 @@ mod tests {
         assert_eq!(owner(&[a, sibling(10, 10, false)], Span { start: 10, end: 14 }, &[b], source), Owner::Trailing { at: 0 });
         let source = "a\n// c\nb";
         assert_eq!(owner(&[sibling(0, 1, true)], Span { start: 2, end: 6 }, &[sibling(7, 7, false), sibling(7, 8, true)], source), Owner::Leading { at: 1 });
+    }
+
+    #[test]
+    fn owner_gives_an_entry_after_a_holder_whose_text_ends_its_line_to_the_holder_after() {
+        let source = "a\n\n/* c */\nb\n";
+        assert_eq!(owner(&[sibling(0, 3, true)], Span { start: 3, end: 10 }, &[sibling(11, 13, true)], source), Owner::Leading { at: 0 });
+        let source = "a\n/* c */";
+        assert_eq!(owner(&[sibling(0, 2, true)], Span { start: 2, end: 9 }, &[], source), Owner::Trailing { at: 0 });
+        let source = "a /* c */\nb";
+        assert_eq!(owner(&[sibling(0, 1, true)], Span { start: 2, end: 9 }, &[sibling(10, 11, true)], source), Owner::Trailing { at: 0 });
     }
 
     #[test]
