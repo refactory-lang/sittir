@@ -132,7 +132,11 @@ function casesOf(kind: string, nodeMap: NodeMap, { slots: tested, longest }: Tes
 		if (isTerminalValue(value)) return [new Leaf(value.value)];
 		if (!isNodeRef(value)) return [new Leaf(undefined)];
 		if (isUnresolvedRef(value.node)) return undecided('a slot a test reads holds a kind the node map does not resolve');
-		return membershipKindsOf([value.node.kind], nodeMap).flatMap((member) => of(member, seen));
+		return membershipKindsOf([value.node.kind], nodeMap).flatMap(storagesOf).flatMap((member) => of(member, seen));
+	};
+	const storagesOf = (kind: string): readonly string[] => {
+		const storages = nodeMap.nodes.has(kind) ? [] : (nodeMap.displayUnions?.get(kind) ?? []).flatMap(({ storage }) => (nodeMap.nodes.has(storage) ? [storage] : []));
+		return storages.length > 0 ? membershipKindsOf(storages, nodeMap) : [kind];
 	};
 	const listsOf = ({ slot, forceOptional }: StructSlot, seen: ReadonlySet<string>): readonly (readonly Item[])[] => {
 		const alternatives = slot.values.flatMap((value) => alternativesOf(value, seen));

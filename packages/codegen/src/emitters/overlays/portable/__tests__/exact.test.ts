@@ -128,6 +128,10 @@ describe('exactSlotsOf, typescript', () => {
 		expect(reasonsAt(typescript, 'identifier.qualified', 'qualifier', 'type_query_call_expression_in_type_annotation')).toEqual(['unclaimed']);
 	});
 
+	it("decides a kind whose tested slot holds a display name by the display's storage kinds: a parameter whose pattern may be a left-hand side", () => {
+		expect(reasonsAt(typescript, 'declaration.function', 'parameters', 'required_parameter')).toEqual(['opaque']);
+	});
+
 	it('makes a kind with a form no path claims raw as unclaimed: an interface whose body mixes { with |}', () => {
 		expect(reasonsAt(typescript, 'declaration.function', 'statements', 'interface_declaration')).toEqual(['unclaimed']);
 	});
