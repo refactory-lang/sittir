@@ -21,12 +21,11 @@ const NO_SIDES: SideStore = {
 const noRead = (): never => {
 	throw new Error('no read wrote into this arena');
 };
-const NO_READS: Pick<Records, 'read' | 'parse' | 'text' | 'query' | 'reads'> = {
+const NO_READS: Pick<Records, 'read' | 'parse' | 'query' | 'reads'> = {
 	read: () => undefined,
 	parse: noRead,
-	text: noRead,
 	query: { descendants: noRead, planHolds: noRead },
-	reads: { snapshotLayouts: noRead, sides: noRead, unitSides: noRead, writeTriviaSide: noRead, slotLayouts: noRead, slotSeparator: noRead, isEmpty: noRead, sources: noRead }
+	reads: { snapshotLayouts: noRead, sides: noRead, unitSides: noRead, writeTriviaSide: noRead, slotLayouts: noRead, slotSeparator: noRead, isEmpty: noRead }
 };
 type Views = ConstructorParameters<typeof BuiltArena>[3];
 type WriteLeafSites = ConstructorParameters<typeof BuiltArena>[4];

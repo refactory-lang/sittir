@@ -211,12 +211,10 @@ export interface NativeEngineLike<TNode = unknown> {
 	crossReleases?(): void;
 	/** Parses `source` and keeps no tree, adopting its style as the engine's options under `options.adoptStyle`: as JSON `{ root, source, errors }`, the address of the root's record in the built arena, null when its reader writes none, the address of the source's entry, and its error regions. Present when the addon carries the record codec. */
 	parseRecords?(source: string, options?: ParseOptions): string;
-	/** Chunk `chunk` of the built arena, which a read wrote, and its meta, its counts included, over their native memory with no copy; null for a chunk no read wrote. Present when the addon carries the record codec. */
-	readWords?(chunk: number): { data: WritableWords; meta: Uint8Array } | null;
+	/** Chunk `chunk` of the built arena, which a read wrote, over its native memory with no copy, with its meta: `data` for a chunk of its records, `bytes` for a chunk of its sources; null for a chunk no read wrote. Present when the addon carries the record codec. */
+	readWords?(chunk: number): { data: WritableWords; meta: Uint8Array } | { bytes: Uint8Array; meta: Uint8Array } | null;
 	/** `renderAt` for the node a read left in the built arena that the key `node` names, from the arena alone. Present when the addon carries the record codec. */
 	readRenderAt?(node: number, leading: boolean, trailing: boolean, options?: object, templates?: boolean): string;
-	/** The text bytes `start` to `end` cover in the source the read's record at `node` of the built arena was read from. Refuses an address no read wrote and a span that is not one of the source's. Present when the addon carries the record codec. */
-	readText?(node: number, start: number, end: number): string;
 	/** `descendants` for a node a read left records of in the built arena: `from` and the batch name nodes as `{ $node, $site? }`. Present when the addon carries the record codec. */
 	readDescendants?: NativeEngineLike['descendants'];
 	/** `planHolds` for nodes a read left records of in the built arena, named as `{ $node, $site? }`. Present when the addon carries the record codec. */
@@ -237,8 +235,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	readSlotSeparator?(node: number): number | null;
 	/** `isEmpty` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
 	readIsEmpty?(node: number): boolean;
-	/** The address of the source entry each node a read left in the built arena that the keys `nodes` name was read from. Present when the addon carries the record codec. */
-	readSources?(nodes: readonly number[]): number[];
 	/** The bytes the built arena's chunks take, and of them its counts'. Present when the addon carries the record codec. */
 	builtMemory?(): { chunks: number; counts: number; live: number };
 	/** Refuses, by name, a runtime that does not allow external array buffers. Present when the addon carries the record codec. */
@@ -372,7 +368,6 @@ const ENGINE_FUNCTIONS = [
 	'parseRecords',
 	'readWords',
 	'readRenderAt',
-	'readText',
 	'readDescendants',
 	'readPlanHolds',
 	'readSnapshotLayouts',
@@ -383,7 +378,6 @@ const ENGINE_FUNCTIONS = [
 	'readSlotLayouts',
 	'readSlotSeparator',
 	'readIsEmpty',
-	'readSources',
 	'builtMemory',
 	'writeBuiltTriviaSide',
 	'writeBuiltUnitSides',
@@ -835,7 +829,7 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { writeBuiltTriviaSide, writeBuiltUnitSides, writeBuiltLeafSide, copyBuiltSites, builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readIsEmpty, readSources } = engine;
+	const { writeBuiltTriviaSide, writeBuiltUnitSides, writeBuiltLeafSide, copyBuiltSites, builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readIsEmpty } = engine;
 	if (
 		holdSaturated === undefined ||
 		releaseBuilt === undefined ||
@@ -848,7 +842,6 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		builtBytes === undefined ||
 		parseRecords === undefined ||
 		readWords === undefined ||
-		readText === undefined ||
 		readDescendants === undefined ||
 		readPlanHolds === undefined ||
 		readSnapshotLayouts === undefined ||
@@ -857,8 +850,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		readUnitSides === undefined ||
 		readSlotLayouts === undefined ||
 		readSlotSeparator === undefined ||
-		readIsEmpty === undefined ||
-		readSources === undefined
+		readIsEmpty === undefined
 	)
 		throw new Error(ARENA_FEATURE_REFUSED);
 	return {
@@ -872,7 +864,6 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		cross: () => crossReleases.call(engine),
 		read: (chunk) => readWords.call(engine, chunk) ?? undefined,
 		parse: (source, options) => JSON.parse(parseRecords.call(engine, source, options)) as ParsedRecords,
-		text: (node, start, end) => readText.call(engine, node, start, end),
 		query: queryOver(readDescendants.bind(engine), readPlanHolds.bind(engine)),
 		reads: {
 			snapshotLayouts: (node, holderByte) => readSnapshotLayouts.call(engine, node, holderByte),
@@ -881,8 +872,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 			writeTriviaSide: (node, side, entries) => writeReadTriviaSide.call(engine, node, side, entries),
 			slotLayouts: (node) => readSlotLayouts.call(engine, node),
 			slotSeparator: (node) => readSlotSeparator.call(engine, node) ?? undefined,
-			isEmpty: (node) => readIsEmpty.call(engine, node),
-			sources: (nodes) => readSources.call(engine, nodes)
+			isEmpty: (node) => readIsEmpty.call(engine, node)
 		},
 		trivia: {
 			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),

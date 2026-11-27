@@ -582,14 +582,20 @@ impl ArenaRead for Arena {
 enum BuiltChunk {
     /// `read` for a chunk a read took for its records.
     Words { mem: Arc<ChunkMem<u32>>, counts: count::CountTable, read: bool },
-    Bytes { mem: Arc<ChunkMem<u8>>, cells: Arc<ChunkMem<u8>> },
+    /// `read` for a chunk a read took for its sources.
+    Bytes {
+        mem: Arc<ChunkMem<u8>>,
+        cells: Arc<ChunkMem<u8>>,
+        #[cfg_attr(not(feature = "napi-bindings"), allow(dead_code, reason = "only the addon answers a read's sources chunk"))]
+        read: bool,
+    },
 }
 
 impl BuiltChunk {
     fn byte_len(&self) -> usize {
         match self {
             BuiltChunk::Words { mem, counts, .. } => mem.byte_len() + counts.byte_len(),
-            BuiltChunk::Bytes { mem, cells } => mem.byte_len() + cells.byte_len(),
+            BuiltChunk::Bytes { mem, cells, .. } => mem.byte_len() + cells.byte_len(),
         }
     }
 }
@@ -741,11 +747,19 @@ impl BuiltChunks {
         }
     }
 
+    /// The string chunk `chunk` a read wrote its sources into: its memory
+    /// and its meta, shared as `read_mem` shares a words chunk; none for any
+    /// other chunk.
+    #[cfg(feature = "napi-bindings")]
+    pub(crate) fn read_string_mem(&self, chunk: u32) -> Option<NewChunk<u8>> {
+        matches!(self.chunks.get(chunk as usize), Some(Some(BuiltChunk::Bytes { read: true, .. }))).then(|| self.strings_chunk(chunk)).flatten()
+    }
+
     /// A new string chunk of `len` bytes, zeroed, as `strings_chunk` answers
     /// it.
     fn alloc_bytes(&mut self, len: u32) -> Result<NewChunk<u8>, ArenaError> {
         let chunk = self.number(len)?;
-        self.put(chunk, BuiltChunk::Bytes { mem: ChunkMem::zeroed(len as usize), cells: ChunkMem::zeroed(count::CELLS_META_BYTES) });
+        self.put(chunk, BuiltChunk::Bytes { mem: ChunkMem::zeroed(len as usize), cells: ChunkMem::zeroed(count::CELLS_META_BYTES), read: false });
         self.opened(1, chunk, len <= STRING_CHUNK_BYTES);
         self.strings_chunk(chunk).ok_or(ArenaError::OutOfBounds { chunk, word: 0, len })
     }
@@ -754,7 +768,7 @@ impl BuiltChunks {
     /// cell count and the bytes builders wrote into it.
     fn strings_chunk(&self, chunk: u32) -> Option<NewChunk<u8>> {
         match self.chunks.get(chunk as usize) {
-            Some(Some(BuiltChunk::Bytes { mem, cells })) => Some(NewChunk { chunk, mem: Arc::clone(mem), meta: Arc::clone(cells), sealed: None }),
+            Some(Some(BuiltChunk::Bytes { mem, cells, .. })) => Some(NewChunk { chunk, mem: Arc::clone(mem), meta: Arc::clone(cells), sealed: None }),
             _ => None,
         }
     }

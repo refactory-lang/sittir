@@ -333,7 +333,7 @@ impl BuiltChunks {
     /// The memory and the meta of the string chunk `chunk`.
     pub(super) fn strings_of(&self, chunk: u32) -> Option<(&ChunkMem<u8>, &ChunkMem<u8>)> {
         match self.chunks.get(chunk as usize) {
-            Some(Some(BuiltChunk::Bytes { mem, cells })) => Some((&**mem, &**cells)),
+            Some(Some(BuiltChunk::Bytes { mem, cells, .. })) => Some((&**mem, &**cells)),
             _ => None,
         }
     }

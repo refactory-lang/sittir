@@ -145,17 +145,6 @@ impl<G: RecordGrammar> Engine<G> {
         self.read_named(crate::types::NodeId::record(at.0), f)
     }
 
-    /// The entry of the source each node `names` names was read from.
-    ///
-    /// # Errors
-    ///
-    /// `ARENA_RELEASED` once released, and what reading a record refuses.
-    pub fn sources_of(&self, names: &[crate::types::NodeId]) -> Result<Vec<Address>, ArenaError> {
-        let chunks = self.written().built();
-        let built = chunks.readable()?;
-        names.iter().map(|name| super::RunNodes::source_of(built, Address(name.address()))).collect()
-    }
-
     /// What `f` answers of the node a read left that `name` names: the tree
     /// over its source's records, made for this call, and the id the call
     /// gives the node. `None` for a name whose record no read wrote.

@@ -460,26 +460,10 @@ export declare function readSlotSeparator(engine: object, node: number): import(
 export declare function readSnapshotLayouts(engine: object, node: number, holderByte?: number | undefined | null): [number, object][]
 
 /**
- * r" The address of the source entry each node a read left that
- * r" the keys `nodes` name was read from, in order. Refuses an
- * r" engine already disposed and a number that is no key.
- */
-export declare function readSources(engine: object, nodes: Array<number>): Array<number>
-
-/**
  * r" `storedLayout` for the records of the source of the node a read
  * r" left that the key `node` names: `{ slots }`. A diagnostic.
  */
 export declare function readStoredLayout(engine: object, node: number): { slots: number }
-
-/**
- * r" The text bytes `start` to `end` cover in the source the
- * r" record at `node` of the built arena was read from: one string
- * r" of that span's characters, so the source itself never
- * r" crosses. Refuses a record no read wrote, an engine already
- * r" disposed, and a span that is not one of the source's.
- */
-export declare function readText(engine: object, node: number, start: number, end: number): string
 
 /**
  * r" `triviaSide` for the node a read left that the key `node`
@@ -491,16 +475,21 @@ export declare function readTriviaSide(engine: object, node: number, side: strin
 export declare function readUnitSides(engine: object, node: number): import('@sittir/types').UnitSidesWire[]
 
 /**
- * r" Chunk `chunk` of the built arena, which a read wrote its
- * r" records into: `data`, a `Uint32Array` over its native
- * r" memory, every word of it, and `meta`, a `Uint8Array` over its
- * r" meta, its counts included, as `builtWords` answers a chunk,
- * r" with no copy; null for a chunk no read wrote. Freeing the
- * r" chunk, or disposing the engine, detaches both. Refuses an
- * r" engine already disposed and a runtime that does not allow
- * r" external array buffers.
+ * r" Chunk `chunk` of the built arena, which a read wrote into, with
+ * r" no copy: for a chunk of its records, `data`, a `Uint32Array`
+ * r" over every word of it; for a chunk of its sources, `bytes`, a
+ * r" `Uint8Array` over every byte of it; and `meta`, a `Uint8Array`
+ * r" over its meta, as `builtWords` answers a chunk. Null for a
+ * r" chunk no read wrote. A chunk's memory never moves while the
+ * r" chunk lives, so a view taken once stays good and shows every
+ * r" later write: the entries a later read appends past an earlier
+ * r" one's in the open chunk they share, and a word written in
+ * r" place, such as a read's list of replaced ranges. A reader
+ * r" keeps no copy of such a word. Freeing the chunk, or disposing
+ * r" the engine, detaches both. Refuses an engine already disposed
+ * r" and a runtime that does not allow external array buffers.
  */
-export declare function readWords(engine: object, chunk: number): { data: Uint32Array; meta: Uint8Array } | null
+export declare function readWords(engine: object, chunk: number): { data: Uint32Array; meta: Uint8Array } | { bytes: Uint8Array; meta: Uint8Array } | null
 
 /**
  * r" The bits a record header's flags take above its kind field;

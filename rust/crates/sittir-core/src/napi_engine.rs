@@ -1118,16 +1118,6 @@ macro_rules! napi_engine {
                 with_read_node(engine, node, |tree, index| Ok(tree.slot_separator(index)))
             }
 
-            /// The address of the source entry each node a read left that
-            /// the keys `nodes` name was read from, in order. Refuses an
-            /// engine already disposed and a number that is no key.
-            #[::napi_derive::napi]
-            pub fn read_sources(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, nodes: Vec<f64>) -> ::napi::Result<Vec<f64>> {
-                let engine = engine_of(engine)?;
-                let names = nodes.into_iter().map($crate::napi_engine::named_key).collect::<::napi::Result<Vec<_>>>()?;
-                Ok(engine.sources_of(&names).map_err(|e| ::napi::Error::from_reason(e.to_string()))?.into_iter().map(|source| f64::from(source.0)).collect())
-            }
-
             /// `isEmpty` for the node a read left that the key `node` names.
             #[::napi_derive::napi]
             pub fn read_is_empty(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64) -> ::napi::Result<bool> {
@@ -1176,15 +1166,20 @@ macro_rules! napi_engine {
                 engine.plan_holds_of(&addresses, &plan).map_err(::napi::Error::from_reason)
             }
 
-            /// Chunk `chunk` of the built arena, which a read wrote its
-            /// records into: `data`, a `Uint32Array` over its native
-            /// memory, every word of it, and `meta`, a `Uint8Array` over its
-            /// meta, its counts included, as `builtWords` answers a chunk,
-            /// with no copy; null for a chunk no read wrote. Freeing the
-            /// chunk, or disposing the engine, detaches both. Refuses an
-            /// engine already disposed and a runtime that does not allow
-            /// external array buffers.
-            #[::napi_derive::napi(ts_return_type = "{ data: Uint32Array; meta: Uint8Array } | null")]
+            /// Chunk `chunk` of the built arena, which a read wrote into, with
+            /// no copy: for a chunk of its records, `data`, a `Uint32Array`
+            /// over every word of it; for a chunk of its sources, `bytes`, a
+            /// `Uint8Array` over every byte of it; and `meta`, a `Uint8Array`
+            /// over its meta, as `builtWords` answers a chunk. Null for a
+            /// chunk no read wrote. A chunk's memory never moves while the
+            /// chunk lives, so a view taken once stays good and shows every
+            /// later write: the entries a later read appends past an earlier
+            /// one's in the open chunk they share, and a word written in
+            /// place, such as a read's list of replaced ranges. A reader
+            /// keeps no copy of such a word. Freeing the chunk, or disposing
+            /// the engine, detaches both. Refuses an engine already disposed
+            /// and a runtime that does not allow external array buffers.
+            #[::napi_derive::napi(ts_return_type = "{ data: Uint32Array; meta: Uint8Array } | { bytes: Uint8Array; meta: Uint8Array } | null")]
             pub fn read_words(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, chunk: f64) -> ::napi::Result<Option<$crate::napi_engine::Made>> {
                 let engine = engine_of(engine)?;
                 let chunk: u32 = $crate::napi_engine::checked_whole(chunk, "chunk")?;
@@ -1369,17 +1364,6 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub fn external_buffers(env: ::napi::Env) -> ::napi::Result<()> {
                 $crate::napi_engine::check_external_buffers(&env)
-            }
-
-            /// The text bytes `start` to `end` cover in the source the
-            /// record at `node` of the built arena was read from: one string
-            /// of that span's characters, so the source itself never
-            /// crosses. Refuses a record no read wrote, an engine already
-            /// disposed, and a span that is not one of the source's.
-            #[::napi_derive::napi]
-            pub fn read_text(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64, start: f64, end: f64) -> ::napi::Result<String> {
-                let engine = engine_of(engine)?;
-                $crate::napi_engine::read_text(engine.written(), $crate::napi_engine::checked_whole(node, "node")?, $crate::napi_engine::checked_whole(start, "start")?, $crate::napi_engine::checked_whole(end, "end")?)
             }
 
             /// Writes the sides of every unit and leaf site of the built
@@ -2288,9 +2272,10 @@ where
     }
 }
 
-/// The buffers JavaScript reads chunk `chunk` of `store`'s built arena and
-/// counts its records through, `{ data, meta }`, when a read wrote the
-/// chunk: the meta held weakly, so freeing the chunk detaches it.
+/// The buffers JavaScript reads chunk `chunk` of `store`'s built arena
+/// through, when a read wrote the chunk: `{ data, meta }` for a words chunk
+/// of its records, `{ bytes, meta }` for a string chunk of its sources, the
+/// meta held weakly, so freeing the chunk detaches it.
 ///
 /// # Errors
 ///
@@ -2298,13 +2283,21 @@ where
 #[cfg(feature = "arena")]
 pub fn read_chunk<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<T>, chunk: u32) -> napi::Result<Option<Made>> {
     use napi::JsValue;
-    let Some(read) = store.built().read_mem(chunk) else { return Ok(None) };
+    let built = store.built();
     let mut buffers = store.buffers();
-    let Some(data) = buffers.view::<u32>(env, false, chunk, || Some(read.mem))? else { return Ok(None) };
-    let meta = external_view::<u8>(env, read.meta)?;
+    let (name, data, meta) = if let Some(read) = built.read_mem(chunk) {
+        let Some(data) = buffers.view::<u32>(env, false, chunk, || Some(read.mem))? else { return Ok(None) };
+        ("data", data, read.meta)
+    } else if let Some(read) = built.read_string_mem(chunk) {
+        let Some(data) = buffers.view::<u8>(env, true, chunk, || Some(read.mem))? else { return Ok(None) };
+        ("bytes", data, read.meta)
+    } else {
+        return Ok(None);
+    };
+    let meta = external_view::<u8>(env, meta)?;
     buffers.hold_meta(env, chunk, meta)?;
     let mut object = napi::bindgen_prelude::Object::new(env)?;
-    napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "data", data)?;
+    napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, name, data)?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "meta", Made(meta))?;
     Ok(Some(Made(object.raw())))
 }
@@ -2326,23 +2319,6 @@ pub fn named_key(key: f64) -> napi::Result<crate::types::NodeId> {
 #[must_use]
 pub fn node_key<G: crate::arena::RecordGrammar>(tree: &crate::engine::Records<'_, G>, index: crate::types::NodeIndex) -> Option<f64> {
     tree.name_at(index).map(crate::types::NodeId::key)
-}
-
-/// The text bytes `start` to `end` cover in the source the record at `node`
-/// of `store`'s built arena was read from.
-///
-/// # Errors
-///
-/// A record that names no source, as a builder's does, what reading the
-/// source's entry refuses, and a span that is not one of the source's: past
-/// its end, reversed, or splitting a character.
-#[cfg(feature = "arena")]
-pub fn read_text<T>(store: &crate::trivia_store::TriviaStore<T>, node: u32, start: u32, end: u32) -> napi::Result<String> {
-    let built = store.built();
-    let refused = |e: crate::arena::ArenaError| napi::Error::from_reason(e.to_string());
-    let source = crate::arena::RunNodes::source_of(&*built, crate::arena::Address(node)).map_err(refused)?;
-    let text = crate::arena::source::Source::read(&*built, source).map_err(refused)?.text;
-    text.get(start as usize..end as usize).map(str::to_owned).ok_or_else(|| napi::Error::from_reason(format!("{start}..{end} is not a span of the source of the record at {node}")))
 }
 
 /// Reports to V8 what `store`'s built arena holds natively now, and detaches

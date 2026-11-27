@@ -8,7 +8,7 @@ import type { ChunkWords, TreeHandle, TriviaSideName } from './read.ts';
 import type { TreeQuery } from './query.ts';
 import { BLANK_KIND_ID } from './blank-arm.ts';
 import { checkedKindId } from './kind-id.ts';
-import { addressOf, chunkOf, decodeListCell, decodeSideRows, headerGapKinds, headerKind, headerOf, kindField, leafItemPastNames, sideUnderRows, siteKey, siteOfKey, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
+import { addressOf, chunkOf, decodeListCell, decodeSideRows, decodeSideSource, headerGapKinds, headerKind, headerOf, kindField, leafItemPastNames, sideUnderRows, siteKey, siteOfKey, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, leafSitesOf, liveRecordAt, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { cacheOf, freedRecord, recordDelimiter, recordFlag, recordSeparator, recordSlot, recordSlots, readLeaf, readPosition } from './record-view.ts';
 import { isParsedPosition, isRecordPosition, type LeafMaker, type RecordHandle, type RecordPosition } from './handle.ts';
@@ -71,7 +71,6 @@ export interface BuiltRecords {
 	cross(): void;
 	read(chunk: number): ReadChunk | undefined;
 	parse(source: string, options?: ParseOptions): ParsedRecords;
-	text(node: number, start: number, end: number): string;
 	readonly query: TreeQuery;
 	readonly reads: ReadNodes;
 	readonly trivia: {
@@ -87,12 +86,9 @@ interface CountAt {
 	readonly index: number;
 }
 
-export interface ReadChunk {
-	readonly data: WritableWords;
-	readonly meta: Uint8Array;
-}
+export type ReadChunk = { readonly data: WritableWords; readonly meta: Uint8Array } | { readonly bytes: Uint8Array; readonly meta: Uint8Array };
 
-export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'writeTriviaSide' | 'slotLayouts' | 'slotSeparator' | 'isEmpty' | 'unitSides'>> & { sides(node: number): ReadSides; sources(nodes: readonly number[]): readonly number[] };
+export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'writeTriviaSide' | 'slotLayouts' | 'slotSeparator' | 'isEmpty' | 'unitSides'>> & { sides(node: number): ReadSides };
 
 export type ReadSides = Readonly<Record<TriviaSideName, readonly WireNode[]>>;
 
@@ -316,9 +312,7 @@ export class BuiltArena {
 	#releasing = false;
 	readonly #read: BuiltRecords['read'];
 	readonly #parse: BuiltRecords['parse'];
-	readonly #text: BuiltRecords['text'];
-	readonly #sources: ReadNodes['sources'];
-	readonly #reads: (WritableWords | undefined)[] = [];
+	readonly #reads: (WritableWords | Uint8Array | undefined)[] = [];
 	readonly #readSides = new Map<number, ReadSides>();
 	readonly #readUnits = new Map<number, readonly UnitSidesWire[]>();
 	readonly #roots = new Map<number, number>();
@@ -346,7 +340,7 @@ export class BuiltArena {
 	#pruneAt = DEFERRED_PRUNE;
 	#scopes = 0;
 
-	constructor({ format, owner, kinds, words, bytes, bump, release, cross, read, parse, text, query, reads, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
+	constructor({ format, owner, kinds, words, bytes, bump, release, cross, read, parse, query, reads, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
 		this.format = format;
 		this.owner = owner;
 		this.kinds = kinds;
@@ -358,8 +352,6 @@ export class BuiltArena {
 		this.#cross = cross;
 		this.#read = read;
 		this.#parse = parse;
-		this.#text = text;
-		this.#sources = reads.sources;
 		this.#wrap = wrap;
 		this.#handle = handle;
 		this.#views = views;
@@ -1129,6 +1121,16 @@ export class BuiltArena {
 	}
 
 	#readChunk(chunk: number): WritableWords | undefined {
+		const read = this.#readMemory(chunk);
+		return read instanceof Uint8Array ? undefined : read;
+	}
+
+	#readBytes(chunk: number): Uint8Array | undefined {
+		const read = this.#readMemory(chunk);
+		return read instanceof Uint8Array ? read : undefined;
+	}
+
+	#readMemory(chunk: number): WritableWords | Uint8Array | undefined {
 		if (chunk === 0 || this.#words.has(chunk) || this.#bytes.has(chunk)) return undefined;
 		const held = this.#reads[chunk];
 		if (held !== undefined && held.length !== 0) return held;
@@ -1137,6 +1139,7 @@ export class BuiltArena {
 		if (held !== undefined) this.#sweep([chunk]);
 		this.#words.vacate(chunk);
 		this.#bytes.vacate(chunk);
+		if ('bytes' in read) return (this.#reads[chunk] = read.bytes);
 		this.#tables[chunk] = { ...countViews(read.meta, read.data.length), ranked: 0 };
 		return (this.#reads[chunk] = read.data);
 	}
@@ -1290,7 +1293,24 @@ export class BuiltArena {
 
 	/** The text `span` covers in the source the read's record at `node` was read from. */
 	readText(node: number, span: { readonly start: number; readonly end: number }): string {
-		return this.#text(node, span.start, span.end);
+		const source = this.sourceOf(node);
+		const bytes = this.#readBytes(chunkOf(source, this.format));
+		if (bytes === undefined || bytes.length === 0) throw new Error(releasedRecord(node));
+		const at = wordOf(source, this.format);
+		const text = at + this.format.sourceEntry.headBytes;
+		const len = (bytes[at]! | (bytes[at + 1]! << 8) | (bytes[at + 2]! << 16) | (bytes[at + 3]! << 24)) >>> 0;
+		const { start, end } = span;
+		const boundary = (n: number): boolean => n === len || (bytes[text + n]! & 0xc0) !== 0x80;
+		if (!(start <= end && end <= len && boundary(start) && boundary(end))) throw new Error(`${start}..${end} is not a span of the source of the record at ${node}`);
+		return decoder.decode(bytes.subarray(text + start, text + end));
+	}
+
+	/** The address of the source entry the read's record at `at` was read from. */
+	sourceOf(at: number): number {
+		const side = sideUnderRows(this, this.words(at, 2)[wordOf(at, this.format) + 1]!);
+		const source = side === 0 ? undefined : decodeSideSource(this.words(side, 1), wordOf(side, this.format), this.format);
+		if (source === undefined) throw new Error(`the record at ${at} names no source, so no read wrote it`);
+		return source;
 	}
 
 	/** The node a read left that `name` names past a call: the handle of its record, or, for a node a cell of the record names, its read data. */
@@ -1328,7 +1348,7 @@ export class BuiltArena {
 	/** The ERROR and MISSING regions of the parse that left the node the key `node` names (`coordinateIndex`): none for a parse that had none. */
 	errorsOf(node: number): readonly unknown[] {
 		if (this.#errors.size === 0) return NO_ERRORS;
-		return this.#errors.get(this.#sources([node])[0]!) ?? NO_ERRORS;
+		return this.#errors.get(this.sourceOf(keyName(node, this.format.nodeId).node)) ?? NO_ERRORS;
 	}
 
 	withOf(kind: number): BuiltWith | undefined {
