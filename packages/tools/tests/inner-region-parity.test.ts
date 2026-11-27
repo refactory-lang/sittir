@@ -47,6 +47,13 @@ describe.each(['python', 'rust', 'scm', 'typescript'])('%s: inner-gap emptiness 
 	});
 });
 
+describe('regex: no kind has an inner side', () => {
+	it('has no inner regions, so the parity check has nothing of regex to read', async () => {
+		const { hooks } = (await import('@sittir/regex/api')) as { hooks: { trivia: TriviaFacts } };
+		expect([...hooks.trivia.innerRegions], 'regex has a kind with an inner side: move regex back into the parity check').toEqual([]);
+	});
+});
+
 describe.each(['python', 'regex', 'rust', 'scm', 'typescript'])('%s: the named units are the units the parser names', (grammar) => {
 	it('holds exactly the unit kind ids the parser marks named and visible', async () => {
 		const { language } = await loadLanguageForGrammar(grammar);
