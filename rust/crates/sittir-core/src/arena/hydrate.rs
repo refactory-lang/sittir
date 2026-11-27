@@ -1052,7 +1052,7 @@ impl<'a> Hydration<'a> {
                     holder.name(run.index, draft.at, run.depth, run.own, edges);
                 }
                 if parent.is_none() {
-                    let read = SideRecord { spans: self.tree.spans(), starts: self.starts.take().map(sorted), ..SideRecord::default() }.write_in(&mut *self.tree)?;
+                    let read = SideRecord { spans: self.tree.spans(), starts: self.starts.take().map(sorted), replaced: Some(super::cell::CellWord(0)), ..SideRecord::default() }.write_in(&mut *self.tree)?;
                     self.tree.keeps_read_side(read);
                 }
                 for at in 0..run.entries.len() {

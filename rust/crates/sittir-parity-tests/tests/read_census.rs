@@ -143,6 +143,7 @@ fn census<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(grammar: G, opt
         let read_side = SideRecord {
             spans: sittir_core::arena::read_spans(arena, source).expect("the read's spans"),
             starts: sittir_core::arena::read_entry_starts(arena, source).expect("the read's starts").map(<[u32]>::to_vec),
+            replaced: Some(CellWord(0)),
             ..SideRecord::default()
         };
         tally.read_sides.add(encoded(&read_side).len() as u64);

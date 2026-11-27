@@ -118,29 +118,29 @@ const SCM: &str = r#"; a comment
 #[test]
 fn the_rust_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults(), &probe_input("engine.rs"));
-    assert_eq!(words, ArenaWords { chunks: 4, words: 51951, hash: 4_571_672_372_945_063_489 });
+    assert_eq!(words, ArenaWords { chunks: 4, words: 51952, hash: 8_141_951_147_870_306_722 });
 }
 
 #[test]
 fn the_typescript_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), &probe_input("create-engine.ts"));
-    assert_eq!(words, ArenaWords { chunks: 2, words: 29202, hash: 12_216_211_177_870_384_515 });
+    assert_eq!(words, ArenaWords { chunks: 2, words: 29203, hash: 14_505_404_565_431_934_585 });
 }
 
 #[test]
 fn the_python_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), PYTHON);
-    assert_eq!(words, ArenaWords { chunks: 1, words: 5189, hash: 13_920_087_895_479_237_890 });
+    assert_eq!(words, ArenaWords { chunks: 1, words: 5190, hash: 4_634_949_324_642_380_751 });
 }
 
 #[test]
 fn the_regex_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_regex::render::AnyNode>(sittir_regex::RegexGrammar, sittir_regex::render::options::defaults(), REGEX);
-    assert_eq!(words, ArenaWords { chunks: 1, words: 1273, hash: 7_725_726_917_877_807_595 });
+    assert_eq!(words, ArenaWords { chunks: 1, words: 1274, hash: 14_783_186_015_294_061_473 });
 }
 
 #[test]
 fn the_scm_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_scm::render::AnyNode>(sittir_scm::ScmGrammar, sittir_scm::render::options::defaults(), SCM);
-    assert_eq!(words, ArenaWords { chunks: 1, words: 1395, hash: 2_741_493_534_474_251_069 });
+    assert_eq!(words, ArenaWords { chunks: 1, words: 1396, hash: 13_463_646_841_401_707_100 });
 }

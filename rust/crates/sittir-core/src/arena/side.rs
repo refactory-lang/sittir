@@ -41,6 +41,8 @@ pub mod field {
     pub const SITES: u32 = super::mask::SITES;
     pub const SITE_WORDS: u32 = 2;
     pub const NEXT: u32 = super::mask::NEXT;
+    pub const REPLACED: u32 = super::mask::REPLACED;
+    pub const REPLACED_WORDS: u32 = 4;
 }
 
 pub(crate) mod mask {
@@ -68,10 +70,11 @@ pub(crate) mod mask {
     pub const INNER: u32 = 1 << 21;
     pub const SITES: u32 = 1 << 22;
     pub const NEXT: u32 = 1 << 23;
+    pub const REPLACED: u32 = 1 << 24;
     /// The fields of a side record of rows (`RowFields`), which holds no
     /// other field.
     pub const ROWS: u32 = LEADING | TRAILING | INNER | SITES | NEXT;
-    pub const ALL: u32 = (1 << 24) - 1;
+    pub const ALL: u32 = (1 << 25) - 1;
 }
 
 /// A side record of rows: the side record it was written over, which holds
@@ -590,6 +593,62 @@ pub struct SideSlot {
     pub space_after: Option<KindId>,
 }
 
+/// A range of a read's source that a write replaced: the node whose side
+/// it is, by its record's address and its site; the side; where its bytes
+/// start in the original source; and the row whose entries now supply
+/// them. It is four words, its key word the node's packed site above the
+/// side, with a bit kept for a slot.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Replaced {
+    pub node: crate::types::NodeId,
+    pub side: TriviaSide,
+    pub offset: u32,
+    pub row: CellWord,
+}
+
+impl Replaced {
+    /// The bit of the key word that names a slot rather than a side.
+    pub const SLOT: u32 = 1 << 2;
+    const PART_BITS: u32 = 3;
+
+    /// Its words: the record's address, the key, the offset and the row.
+    #[must_use]
+    pub fn words(self) -> [u32; field::REPLACED_WORDS as usize] {
+        let side = match self.side {
+            TriviaSide::Leading => 0,
+            TriviaSide::Trailing => 1,
+            TriviaSide::Inner => 2,
+        };
+        [self.node.address(), self.node.packed_site() << Self::PART_BITS | side, self.offset, self.row.0]
+    }
+
+    /// The entry `words` hold (`words`).
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for a slot's key, which no write makes, and
+    /// for a key naming no side or no site.
+    pub fn of_words([at, key, offset, row]: [u32; field::REPLACED_WORDS as usize]) -> Result<Self, ArenaError> {
+        let side = match key & ((1 << Self::PART_BITS) - 1) {
+            0 => TriviaSide::Leading,
+            1 => TriviaSide::Trailing,
+            2 => TriviaSide::Inner,
+            _ => return Err(malformed("replaced range part", key)),
+        };
+        let node = crate::types::NodeId::of_packed(at, key >> Self::PART_BITS).ok_or(malformed("replaced range node", key))?;
+        Ok(Self { node, side, offset, row: CellWord(row) })
+    }
+
+    /// The entries of the list whose cell is `list`: none for the empty list.
+    ///
+    /// # Errors
+    ///
+    /// What reading the run refuses, and what `of_words` refuses.
+    pub fn read(arena: &dyn ArenaRead, list: CellWord) -> Result<Vec<Self>, ArenaError> {
+        super::ListCell::of_word(list, arena)?.items(arena, field::REPLACED_WORDS)?.map(|words| Self::of_words(words.try_into().map_err(|_| malformed("replaced range words", list.0))?)).collect()
+    }
+}
+
 /// What a side record holds.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct SideRecord {
@@ -638,6 +697,11 @@ pub struct SideRecord {
     /// write never writes them: they are a side record of their own
     /// (`RowFields::words`).
     pub rows: RowFields,
+    /// A read's own side record: the list of ranges of its source that
+    /// writes replaced (`Replaced`), a run of entries; the empty list until
+    /// a write replaces one. Every read writes it, one word, first after
+    /// the mask.
+    pub replaced: Option<CellWord>,
 }
 
 /// The words of one slot entry: word, before, after, separator and the two
@@ -774,6 +838,10 @@ impl SideRecord {
         }
         let mut flags = 0;
         let mut words = |words: &[u32]| words.iter().for_each(|&word| put(word));
+        if let Some(list) = self.replaced {
+            flags |= mask::REPLACED;
+            words(&[list.0]);
+        }
         if let Some(Row { kind, span }) = self.at {
             flags |= mask::AT;
             words(&[u32::from(kind.0), span.start, span.end]);
@@ -938,6 +1006,10 @@ impl SideRecord {
         record.changed = ChangedEdges { leading: has(mask::CHANGED_LEADING), trailing: has(mask::CHANGED_TRAILING) };
         record.content = has(mask::CONTENT);
         record.held_by_error = has(mask::HELD_BY_ERROR);
+        if has(mask::REPLACED) {
+            let [list] = fields.array()?;
+            record.replaced = Some(CellWord(list));
+        }
         if has(mask::AT) {
             let [kind, start, end]: [u32; field::AT_WORDS as usize] = fields.array()?;
             if start > end {
@@ -1257,6 +1329,7 @@ mod tests {
             spans: vec![Address(5)..Address(40), Address(3 << crate::arena::CHUNK_SHIFT)..Address(5 << crate::arena::CHUNK_SHIFT)],
             starts: Some(vec![0, 4, 11]),
             rows: RowFields::default(),
+            replaced: Some(CellWord(0)),
         }
     }
 
@@ -1268,6 +1341,30 @@ mod tests {
         assert_eq!(SideRecord::read(&arena, at), Ok(SideRecord { spans: Vec::new(), starts: None, ..record.clone() }), "a read leaves the spans and the starts where they lie");
         assert_eq!(SideRecord::spans_at(&arena, at), Ok(record.spans));
         assert_eq!(SideRecord::starts_at(&arena, at), Ok(record.starts.as_deref()));
+    }
+
+    #[test]
+    fn a_read_s_own_side_record_names_its_list_of_replaced_ranges_in_its_first_word() {
+        let mut arena = Arena::new();
+        let read = SideRecord { spans: vec![Address(4)..Address(9)], starts: Some(vec![3]), replaced: Some(CellWord(0)), ..SideRecord::default() };
+        let at = read.write_in(&mut arena).expect("written");
+        let words = arena.words(at, 2).expect("its words");
+        assert_ne!(words[0] & field::REPLACED, 0, "its mask holds the list");
+        assert_eq!(words[1], 0, "an empty list is its first word after the mask");
+        let back = SideRecord::read(&arena, at).expect("read back");
+        assert_eq!(back.replaced, Some(CellWord(0)));
+        assert_eq!(SideRecord::starts_at(&arena, at).expect("its starts"), Some(&[3][..]));
+    }
+
+    #[test]
+    fn a_replaced_range_keeps_its_node_side_offset_and_row_in_four_words_and_refuses_a_slot() {
+        use crate::types::NodeId;
+        for (node, side) in [(NodeId::record(40), TriviaSide::Leading), (NodeId::leaf(40, 3, 2), TriviaSide::Trailing), (NodeId::record(40), TriviaSide::Inner)] {
+            let entry = Replaced { node, side, offset: 17, row: CellWord(0x99 << 2) };
+            assert_eq!(Replaced::of_words(entry.words()), Ok(entry));
+        }
+        let [at, key, offset, row] = Replaced { node: NodeId::record(40), side: TriviaSide::Leading, offset: 17, row: CellWord(0) }.words();
+        assert!(Replaced::of_words([at, key | Replaced::SLOT, offset, row]).is_err(), "a slot, which no write replaces yet");
     }
 
     #[test]

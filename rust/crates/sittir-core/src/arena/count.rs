@@ -258,6 +258,9 @@ pub enum Held {
     Side(Address),
     /// A leaf entry, which a cell names: one count of its string chunk.
     Text(Address),
+    /// A read's list of replaced ranges, which its side record names: its
+    /// entries are no cells, and each holds its row.
+    Replaced(Address),
 }
 
 impl Held {
@@ -278,7 +281,7 @@ impl Held {
 
     fn at(self) -> Address {
         match self {
-            Held::Record(at) | Held::Run(at) | Held::Side(at) | Held::Text(at) => at,
+            Held::Record(at) | Held::Run(at) | Held::Side(at) | Held::Text(at) | Held::Replaced(at) => at,
         }
     }
 }
@@ -637,6 +640,16 @@ impl BuiltChunks {
                     if let Some(sides) = side.sides {
                         self.drop_cell(Address(sides.tree.0), walk)?;
                     }
+                    if let Some(list) = side.replaced.filter(|list| list.0 != 0) {
+                        self.drop_count(Held::Replaced(list.address()), walk)?;
+                    }
+                }
+            }
+            Held::Replaced(at) => {
+                for entry in super::side::Replaced::read(self, ListCell::word(at)?)? {
+                    if entry.row.0 != 0 {
+                        self.drop_count(Held::Run(entry.row.address()), walk)?;
+                    }
                 }
             }
             Held::Text(at) => return Err(malformed("text entry on the release stack", at.0)),
@@ -954,6 +967,27 @@ mod tests {
         let root = built.place(&[with_kind(LEAF, BITS).expect("a kind"), rows.0], OWNED | 1);
         built.release(root, true).expect("released");
         for (at, what) in [(root, "the record"), (rows, "its side record of rows"), (under, "the side record under it"), (row, "its leading row"), (comment, "what its leading row names"), (site_row, "a site's row"), (site_comment, "what a site's row names")] {
+            assert!(built.arena.released(at), "{what}");
+        }
+    }
+
+    #[test]
+    fn a_released_read_side_record_drops_its_list_of_replaced_ranges_and_each_entry_s_row() {
+        use crate::arena::side::{Replaced, SideRecord};
+        use crate::trivia_table::TriviaSide;
+        let mut built = Builder::new();
+        let (comment, other) = (built.leaf(), built.leaf());
+        let (row, other_row) = (built.run(&[comment]), built.run(&[other]));
+        let entries = [
+            Replaced { node: crate::types::NodeId::record(4), side: TriviaSide::Leading, offset: 3, row: ListCell::word(row).expect("a cell") },
+            Replaced { node: crate::types::NodeId::leaf(4, 2, 1), side: TriviaSide::Trailing, offset: 9, row: ListCell::word(other_row).expect("a cell") },
+        ];
+        let words: Vec<u32> = std::iter::once(2).chain(entries.iter().flat_map(|entry| entry.words())).collect();
+        let list = built.place(&words, 1);
+        let read = SideRecord { spans: vec![Address(4)..Address(9)], replaced: Some(ListCell::word(list).expect("a cell")), ..SideRecord::default() };
+        let read = read.write(&mut |words| Ok(built.place(words, 1))).expect("written");
+        built.arena.release(Held::Side(read), false).expect("released");
+        for (at, what) in [(read, "the read's side record"), (list, "its list"), (row, "an entry's row"), (comment, "what that row names"), (other_row, "another entry's row"), (other, "what that row names")] {
             assert!(built.arena.released(at), "{what}");
         }
     }
