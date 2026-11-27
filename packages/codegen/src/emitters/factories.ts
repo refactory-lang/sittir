@@ -1813,22 +1813,30 @@ interface ForwardedConstruction {
 }
 
 export function twoLevelTarget(node: FieldCarryingNode, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): AssembledNode | undefined {
-	if (forwardedOptionsTarget(node, nodeMap) !== undefined || spellingTypeOf(node, nodeMap, kindEntries) === undefined) return undefined;
+	const forwarded = forwardedOptionsTarget(node, nodeMap);
+	if (forwarded !== undefined) {
+		refuseChainInto(node, forwarded, nodeMap, kindEntries);
+		return undefined;
+	}
+	if (spellingTypeOf(node, nodeMap, kindEntries) === undefined) return undefined;
 	const target = forwardedConstructorTarget(node, nodeMap, kindEntries);
 	if (target === null) return undefined;
 	const targetNode = nodeMap.nodes.get(target)!;
 	const shape = classifyFactoryShape(targetNode, nodeMap);
 	if (registeredSlots(targetNode).length === 0 || shape === 'spread') return undefined;
-	const deeper = isAuthoredCompound(targetNode) ? twoLevelTarget(targetNode, nodeMap, kindEntries) : undefined;
-	if (deeper !== undefined) {
-		throw emitShapeFailure({
-			code: 'three-level-option-chain',
-			ownerKind: node.kind,
-			message: `${node.kind} forwards its options through ${targetNode.kind}, which forwards its options through ${deeper.kind}; options on three levels of a forwarding chain are not supported`,
-			details: { middle: targetNode.kind, inner: deeper.kind }
-		});
-	}
+	refuseChainInto(node, targetNode, nodeMap, kindEntries);
 	return targetNode;
+}
+
+function refuseChainInto(node: FieldCarryingNode, target: AssembledNode, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): void {
+	const inner = isAuthoredCompound(target) ? twoLevelTarget(target, nodeMap, kindEntries) : undefined;
+	if (inner === undefined) return;
+	throw emitShapeFailure({
+		code: 'three-level-option-chain',
+		ownerKind: node.kind,
+		message: `${node.kind} forwards its options through ${target.kind}, which forwards its options through ${inner.kind}; options on three levels of a forwarding chain are not supported`,
+		details: { middle: target.kind, inner: inner.kind }
+	});
 }
 
 function positionalCount(params: string): number {

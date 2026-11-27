@@ -204,10 +204,28 @@ describe('a two-level forwarder with options on both levels', () => {
 	});
 });
 
+const transparentOverTwoLevel = {
+	rules: [
+		"source: ($) => repeat($.top)",
+		"top: ($) => field('wrapped', $.outer)",
+		"outer: ($) => seq(field('inner', $.inner), optional(field('outer_end', $.semi)))",
+		"inner: ($) => seq(field('base', $.base), optional(field('inner_comma', $.comma)))",
+		"base: ($) => seq(field('name', $.identifier), optional(field('base_bang', $.bang)))",
+		...tokens
+	],
+	options: "options: { outer: { 'outer_end:': preference('blank') }, inner: { 'inner_comma:': preference('blank') } }"
+};
+
 describe('a three-level forwarder with options on each level', () => {
 	it('refuses the chain at emit with a named diagnostic on the outer kind', async () => {
 		await expect(emitted(threeLevel)).rejects.toMatchObject({
 			blocking: [expect.objectContaining({ code: 'three-level-option-chain', ownerKind: 'outer' })]
+		});
+	});
+
+	it('refuses a transparent wrapper whose target is a two-level chain, on the wrapper kind', async () => {
+		await expect(emitted(transparentOverTwoLevel)).rejects.toMatchObject({
+			blocking: [expect.objectContaining({ code: 'three-level-option-chain', ownerKind: 'top' })]
 		});
 	});
 });
