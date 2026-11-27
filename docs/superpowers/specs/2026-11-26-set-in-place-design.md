@@ -29,7 +29,7 @@ Arena storage holds both lists in its chunks: the parse's list on the read's sid
 1. **`$set`'s return value:** the receiver, so calls chain, or nothing.
 2. **What a `$set` admits:** the same value its slot's `$with` admits, through the same builder checks.
 3. **A `$set` on a slot holding a list:** whether it replaces the whole list, as `$with` does.
-4. **Object storage:** both storages must render the same tree the same way. Object storage's parsed nodes need the same list of replaced ranges, and its built nodes are already JS references.
+4. **Object storage:** both storages must render the same tree the same way. For comment writes this is settled: object storage's parsed trees gain the same list and template render in the same PR as arena storage's (the maintainer, 2026-11-26). Still open for `$set` on slots: its built nodes are already JS references, and whether a JS reference set in place needs anything further.
 5. **Counts:** a `$set` drops the old value's count and holds the new one. The arena's lists hold counts of what they name.
 6. **The built list's home and lookup cost.** A render checks it at each built record it meets, one check while it's empty.
 7. **Drafts and commit:** the node API spec's drafts and tree-sitter commit assume a tree, which an arena parse no longer keeps. What a later reparse of a source with replaced ranges does is left for that spec.
