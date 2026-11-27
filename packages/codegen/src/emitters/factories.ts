@@ -1906,6 +1906,14 @@ function forwardedConstruction(
 					? { typeParams: entry.typeParams, params: entry.params.replace(/\boptions\?: /, `${targetOptionsName}?: `) }
 					: withTrailingParam(entry, `${targetOptionsName}?: T.${twoLevelTargetNode!.typeName}.Options`)
 		);
+	if (twoLevelTargetNode !== undefined && /^\.\.\.value: \[value\?: /.test(publicParams(surface).params)) {
+		throw emitShapeFailure({
+			code: 'two-level-optional-input',
+			ownerKind: node.kind,
+			message: `${node.kind} takes an optional input that forwards its options through ${twoLevelTargetNode.kind}; an omitted input with options on a two-level chain is not supported`,
+			details: { inner: twoLevelTargetNode.kind }
+		});
+	}
 	const twoLevelDeclarations =
 		twoLevelTargetNode === undefined || trailingOptions === undefined
 			? undefined

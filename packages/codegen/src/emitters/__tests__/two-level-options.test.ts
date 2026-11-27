@@ -216,6 +216,26 @@ const transparentOverTwoLevel = {
 	options: "options: { outer: { 'outer_end:': preference('blank') }, inner: { 'inner_comma:': preference('blank') } }"
 };
 
+const optionalTwoLevel = {
+	rules: [
+		"source: ($) => repeat($.outer)",
+		"outer: ($) => seq(optional(field('inner', $.inner)), optional(field('outer_end', $.semi)), field('bar', $.pipe))",
+		"inner: ($) => seq(field('base', $.base), optional(field('inner_comma', $.comma)))",
+		"base: ($) => seq(field('name', $.identifier), optional(field('base_bang', $.bang)))",
+		"pipe: () => '|'",
+		...tokens
+	],
+	options: "options: { outer: { 'outer_end:': preference('blank') }, inner: { 'inner_comma:': preference('blank') } }"
+};
+
+describe('a two-level forwarder whose forwarded input is optional', () => {
+	it('refuses the chain at emit with a named diagnostic on the outer kind', async () => {
+		await expect(emitted(optionalTwoLevel)).rejects.toMatchObject({
+			blocking: [expect.objectContaining({ code: 'two-level-optional-input', ownerKind: 'outer' })]
+		});
+	});
+});
+
 describe('a three-level forwarder with options on each level', () => {
 	it('refuses the chain at emit with a named diagnostic on the outer kind', async () => {
 		await expect(emitted(threeLevel)).rejects.toMatchObject({
