@@ -68,6 +68,16 @@ const threeLevel = {
 		"options: { outer: { 'outer_end:': preference('blank') }, middle: { 'middle_end:': preference('blank') }, inner: { 'inner_comma:': preference('blank') } }"
 };
 
+const patternEnd = {
+	rules: [
+		'source: ($) => repeat($.outer)',
+		"outer: ($) => field('inner', $.inner)",
+		"inner: ($) => seq(field('base', $.identifier), optional(field('inner_comma', $.comma)))",
+		...tokens
+	],
+	options: "options: { inner: { 'inner_comma:': preference('blank') } }"
+};
+
 const transparentOverTwoLevel = {
 	rules: [
 		'source: ($) => repeat($.top)',
@@ -153,6 +163,12 @@ describe('an option chain is refused by name when an option bag is two or more h
 
 	it('refuses a transparent wrapper over a two-level chain, on the node that owns the second bag', async () => {
 		await expect(emitted(transparentOverTwoLevel)).rejects.toMatchObject({
+			blocking: [expect.objectContaining({ code: 'option-chain-depth', ownerKind: 'outer' })]
+		});
+	});
+
+	it('refuses an option bag that forwards into a pattern (pattern-ending), on the forwarder', async () => {
+		await expect(emitted(patternEnd)).rejects.toMatchObject({
 			blocking: [expect.objectContaining({ code: 'option-chain-depth', ownerKind: 'outer' })]
 		});
 	});
