@@ -216,6 +216,71 @@ const transparentOverTwoLevel = {
 	options: "options: { outer: { 'outer_end:': preference('blank') }, inner: { 'inner_comma:': preference('blank') } }"
 };
 
+const optionalTwoLevel = {
+	rules: [
+		"source: ($) => repeat($.outer)",
+		"outer: ($) => seq(optional(field('inner', $.inner)), optional(field('outer_end', $.semi)), field('bar', $.pipe))",
+		"inner: ($) => seq(field('base', $.base), optional(field('inner_comma', $.comma)))",
+		"base: ($) => seq(field('name', $.identifier), optional(field('base_bang', $.bang)))",
+		"pipe: () => '|'",
+		...tokens
+	],
+	options: "options: { outer: { 'outer_end:': preference('blank') }, inner: { 'inner_comma:': preference('blank') } }"
+};
+
+describe('a two-level forwarder whose forwarded input is optional', () => {
+	let factories: string;
+	const innerOpts = { innerComma: ',' };
+	const outerOpts = { outerEnd: ';' };
+
+	beforeAll(async () => {
+		({ factories } = await emitted(optionalTwoLevel));
+	});
+
+	function strictOptional(recorded: Recorded[]): (...args: unknown[]) => unknown {
+		const outerBuilder = (...args: unknown[]) => {
+			recorded.push({ builder: '_buildOuter', args });
+			return { $type: 'Outer', args };
+		};
+		const innerBuilder = (...args: unknown[]) => {
+			recorded.push({ builder: 'buildInner', args });
+			return { $type: 'Inner', args };
+		};
+		const source = emittedFunction(factories, 'buildOuter');
+		return new Function('_buildOuter', 'buildInner', 'TSKindId', `${source}\nreturn buildOuter;`)(outerBuilder, innerBuilder, {
+			Inner: 'Inner',
+			Outer: 'Outer',
+			Base: 'Base'
+		}) as (...args: unknown[]) => unknown;
+	}
+
+	it('declares the inner options and then the outer options in the optional-input overload', () => {
+		expect(factories).toContain('...value: [value?: V, innerOptions?: T.Inner.Options, options?: T.Outer.Options] & RefuseUndeclared<V>');
+	});
+
+	it('keeps the inner options when the input is omitted', () => {
+		const recorded: Recorded[] = [];
+		strictOptional(recorded)(undefined, innerOpts);
+		expect(recorded.map((r) => r.builder)).toEqual(['buildInner', '_buildOuter']);
+		expect(recorded[0]!.args).toEqual([undefined, innerOpts]);
+		expect(recorded[1]!.args[1]).toBeUndefined();
+	});
+
+	it('keeps the outer options when the inner options are omitted', () => {
+		const recorded: Recorded[] = [];
+		strictOptional(recorded)(undefined, undefined, outerOpts);
+		expect(recorded[0]!.args).toEqual([undefined, undefined]);
+		expect(recorded[1]!.args[1]).toEqual(outerOpts);
+	});
+
+	it('keeps both options when both are given with an omitted input', () => {
+		const recorded: Recorded[] = [];
+		strictOptional(recorded)(undefined, innerOpts, outerOpts);
+		expect(recorded[0]!.args).toEqual([undefined, innerOpts]);
+		expect(recorded[1]!.args[1]).toEqual(outerOpts);
+	});
+});
+
 describe('a three-level forwarder with options on each level', () => {
 	it('refuses the chain at emit with a named diagnostic on the outer kind', async () => {
 		await expect(emitted(threeLevel)).rejects.toMatchObject({

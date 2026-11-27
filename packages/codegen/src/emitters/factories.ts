@@ -121,6 +121,8 @@ import {
 	refuseUndeclared,
 	refusingParam,
 	appendParam,
+	fixedTupleOf,
+	optionalInput,
 	withTrailingParam,
 	type RefusingParams,
 	spelledReadImports
@@ -1840,6 +1842,8 @@ function refuseChainInto(node: FieldCarryingNode, target: AssembledNode, nodeMap
 }
 
 function positionalCount(params: string): number {
+	const tuple = fixedTupleOf(params);
+	if (tuple !== undefined) return positionalCount(tuple.elements);
 	if (params.trim() === '') return 0;
 	let depth = 0;
 	let count = 1;
@@ -1897,19 +1901,23 @@ function forwardedConstruction(
 		innerOverloads.some((other) => other.params.startsWith(`${entry.params}, `) && takesOptions(other.params.slice(entry.params.length + 2)));
 	const targetOptionsName =
 		twoLevelTargetNode === undefined ? 'options' : `${twoLevelTargetNode.typeName.charAt(0).toLowerCase()}${twoLevelTargetNode.typeName.slice(1)}Options`;
+	const variadic = (params: string): boolean => /\.\.\./.test(params) && fixedTupleOf(params) === undefined;
 	const innerForms = innerOverloads
 		.filter((entry) => !extendsShorter(entry))
 		.map((entry) =>
-			/\.\.\./.test(entry.params)
+			variadic(entry.params)
 				? entry
 				: takesOptions(entry.params)
 					? { typeParams: entry.typeParams, params: entry.params.replace(/\boptions\?: /, `${targetOptionsName}?: `) }
 					: withTrailingParam(entry, `${targetOptionsName}?: T.${twoLevelTargetNode!.typeName}.Options`)
 		);
+	const outerOptionsForms =
+		trailingOptions === undefined ? undefined : innerForms.map((entry) => (variadic(entry.params) ? entry : withTrailingParam(entry, trailingOptions)));
+	const optionalInputForms = /^\.\.\.value: \[value\?: /.test(publicParams(surface).params)
+		? (outerOptionsForms ?? []).flatMap((entry) => optionalInput(entry) ?? [])
+		: [];
 	const twoLevelDeclarations =
-		twoLevelTargetNode === undefined || trailingOptions === undefined
-			? undefined
-			: innerForms.map((entry) => (/\.\.\./.test(entry.params) ? entry : withTrailingParam(entry, trailingOptions)));
+		twoLevelTargetNode === undefined || outerOptionsForms === undefined ? undefined : [...outerOptionsForms, ...optionalInputForms];
 	const targetOverloads = withheld
 		? []
 		: targetSurface === undefined
