@@ -1134,9 +1134,11 @@ impl<T: Clone> TriviaStore<T> {
     /// as this store keeps them: its read's list of replaced ranges holds an
     /// entry for the side at `offset`, whose row is `kept` whole, in place
     /// of any entry it held for the side. The read's records stay as its
-    /// parse left them. Each record `kept` names is held once more, the
+    /// parse left them. The new row takes the count each entry of `kept`
+    /// already holds, as a built side's row does (`write_kept_in`); the
     /// list is written anew with every row it keeps held once more, and
-    /// the old list is released.
+    /// the old list is released, giving back the counts of the row it
+    /// held for the side.
     ///
     /// # Errors
     ///
@@ -1151,7 +1153,6 @@ impl<T: Clone> TriviaStore<T> {
         let (read, list) = crate::arena::replaced_list(&*chunks, Address(name.address()))?.ok_or(ArenaError::Unwritable("a side of a record no read left, as a read's"))?;
         let mut entries = crate::arena::Replaced::read(&*chunks, list)?;
         entries.retain(|entry| (entry.node, entry.side) != (name, side));
-        Self::hold_kept_in(chunks, kept)?;
         for entry in &entries {
             if entry.row.0 != 0 {
                 chunks.hold(entry.row.address())?;
