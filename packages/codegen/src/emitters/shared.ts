@@ -1446,23 +1446,11 @@ export function appendParam(params: string, param: string): string {
 	return params === '' ? param : `${params}, ${param}`;
 }
 
-export function fixedTupleOf(params: string): { name: string; elements: string; refusing: string } | undefined {
-	const match = OPTIONAL_REFUSING.exec(params);
-	return match === null ? undefined : { name: match[1]!, elements: match[2]!, refusing: match[3]! };
-}
-
-export function optionalInput(refusing: RefusingParams): RefusingParams | undefined {
-	const required = REQUIRED_REFUSING.exec(refusing.params);
-	return required === null
-		? undefined
-		: { typeParams: refusing.typeParams, params: `...${required[1]}: [${required[1]}?: ${required[2]}${required[4]}] & ${required[3]}` };
-}
-
 export function withTrailingParam(refusing: RefusingParams, trailing: string): RefusingParams {
-	const tuple = fixedTupleOf(refusing.params);
+	const optional = OPTIONAL_REFUSING.exec(refusing.params);
 	return {
 		typeParams: refusing.typeParams,
-		params: tuple === undefined ? appendParam(refusing.params, trailing) : `...${tuple.name}: [${tuple.elements}, ${trailing}] & ${tuple.refusing}`
+		params: optional === null ? appendParam(refusing.params, trailing) : `...${optional[1]}: [${optional[2]}, ${trailing}] & ${optional[3]}`
 	};
 }
 
