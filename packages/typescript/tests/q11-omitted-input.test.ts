@@ -1,5 +1,6 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import typescript from '../src/index.ts';
+import { TSKindId } from '../src/types.ts';
 
 const engines = {
 	object: await typescript.createEngine({ nodeStorage: 'object' }),
@@ -17,7 +18,7 @@ const render = (node: unknown): string => String((node as { $render(): unknown }
 
 describe.each(Object.entries(engines))('an omitted input in the %s storage', (_, engine) => {
 	const b = engine.build as unknown as Builders;
-	const options = { staticKeyword: { after: undefined } };
+	const terminated = { terminator: TSKindId.AutomaticSemicolon };
 
 	it('a spread target (a statement block inside a finally clause) builds its default with no value or undefined', () => {
 		expect(render(b.finallyClause())).toBe('finally {}');
@@ -32,6 +33,10 @@ describe.each(Object.entries(engines))('an omitted input in the %s storage', (_,
 	it('a value-plus-options target (a class static block) builds its default and keeps the options passed alongside undefined', () => {
 		expect(render(b.classStaticBlock())).toBe('static {}');
 		expect(render(b.classStaticBlock(undefined))).toBe('static {}');
-		expect(render(b.classStaticBlock(undefined, options))).toBe('static {}');
+		expect(render(b.classStaticBlock(undefined))).toBe('static {}');
+		expect(render(b.classStaticBlock(undefined, terminated))).toBe('static\n{}');
+		const landed = b.classStaticBlock(undefined, terminated) as { terminator(): unknown };
+		expect(landed.terminator()).toBe(TSKindId.AutomaticSemicolon);
+		expect((b.classStaticBlock() as { terminator(): unknown }).terminator()).toBeUndefined();
 	});
 });
