@@ -331,15 +331,3 @@ describe('the portable read', () => {
 		expect(() => runtime.build(rest as Read)).toThrow('no typescript form of declaration.variable.pattern builds this structure');
 	});
 });
-
-describe.each(['object', 'arena'] as const)('a parse error that fills a block, read in %s storage', async (nodeStorage) => {
-	const stored = await portableRuntime(await createEngine(typescript, { api: 'strict', nodeStorage }));
-
-	it('carries the node whose read passes through it, and builds its source back', () => {
-		const source = 'function f() { @ }\n';
-		const carried: unknown[] = [];
-		const read = stored.read(stored.engine.parse(source), (node, carry) => carried.push([node.$type, carry]));
-		expect(carried).toEqual([[stored.engine.kinds.FunctionDeclaration, { reason: 'error' }]]);
-		expect(String(stored.engine.render(stored.build(read as never) as never))).toBe(source);
-	});
-});

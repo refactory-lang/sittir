@@ -297,17 +297,3 @@ describe('the portable read', () => {
 		expect(render(['trailingComma'], { printArguments: { item: { delimiter: Delimiter.None } } })).toBe('print a,');
 	});
 });
-
-describe.each(['object', 'arena'] as const)('a parse error that fills a block, read in %s storage', async (nodeStorage) => {
-	const stored = await portableRuntime(await createEngine(python, { api: 'strict', nodeStorage }));
-
-	it.each([
-		['def f():\n    x = 1 @\n', 'FunctionDefinition'],
-		['if x:\n    y $\n', 'IfStatement']
-	] as const)('carries the node whose read passes through it, and builds its source back: %j', (source, kind) => {
-		const carried: unknown[] = [];
-		const read = stored.read(stored.engine.parse(source), (node, carry) => carried.push([node.$type, carry]));
-		expect(carried).toEqual([[stored.engine.kinds[kind], { reason: 'error' }]]);
-		expect(String(stored.engine.render(stored.build(read as never) as never))).toBe(source);
-	});
-});

@@ -1,11 +1,12 @@
-import type { ErrorRegion, PortableBuildArm, PortableBuildTable, PortableContainer, PortableDecimalParts, PortableSlotRoute, PortablePreset, PortableSeat, PortableSlotStep } from '@sittir/types';
-import { nodeText, parseErrorsOf, sidesOf, spanOf } from '../node-data.ts';
+import type { ErrorRegion, NodeTrivia, PortableBuildArm, PortableBuildTable, PortableContainer, PortableDecimalParts, PortableSlotRoute, PortablePreset, PortableSeat, PortableSlotStep, UnitSidesWire } from '@sittir/types';
+import { nodeText, parseErrorsOf, sidesOf, spanOf, unitSidesOf } from '../node-data.ts';
 import { integerValue } from '../number.ts';
 import { isErrorNode } from '../utils.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
 import { containerSlots, isNumberSlots, leafSeatOf, readableFlags, setsOn, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
+import { TRIVIA_SIDES } from '../trivia.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
 
@@ -58,7 +59,8 @@ const erred = (node: Node): boolean => {
 	if (isErrorNode(node)) return true;
 	const errors = parseErrorsOf(node);
 	if (errors?.length === 0) return false;
-	return Object.values(sidesOf(node) ?? {}).some((entries) => entries.some(isErrorNode)) || (errors !== undefined && holdsMissing(node, errors));
+	const holdsError = (sides: NodeTrivia | UnitSidesWire): boolean => TRIVIA_SIDES.some((side) => sides[side]?.some(isErrorNode) === true);
+	return holdsError(sidesOf(node) ?? {}) || (unitSidesOf(node) ?? []).some(holdsError) || (errors !== undefined && holdsMissing(node, errors));
 };
 
 const opaque = (item: unknown): boolean => hasKind(item) && typeof (item as { readonly $verbatim?: unknown }).$verbatim === 'string';

@@ -1091,7 +1091,7 @@ impl<'t> Placer<'t, '_, '_> {
         }
         let siblings = siblings.get_or_insert_with(|| self.siblings(shape));
         let kid = |at: usize| shape.segments[at].kid.map(|kid| shape.kids[kid]);
-        match owner(&siblings.before[..gap], entry.span(), &siblings.after[gap..], self.text()) {
+        match owner(&siblings.before[..gap], entry.span(), entry.display, &siblings.after[gap..], self.text()) {
             Owner::Trailing { at } => {
                 let segment = shape.segments[at];
                 let node = if at + 1 == gap {
@@ -1118,13 +1118,17 @@ impl<'t> Placer<'t, '_, '_> {
     /// once: a placement of the node asks once however many entries its
     /// gaps hold.
     fn siblings(&mut self, shape: &Shape) -> Siblings {
-        let mut flags: Vec<NodeIndex> = (self.routes)(&mut *self.nodes, &shape.node).map_or_else(Vec::new, |routed| routed.children.iter().zip(&routed.routes).filter(|(_, route)| route.is_flag(routed.flags)).map(|(kid, _)| kid.index).collect());
-        flags.sort_unstable();
+        let mut kept: Vec<(NodeIndex, bool)> = (self.routes)(&mut *self.nodes, &shape.node).map_or_else(Vec::new, |routed| {
+            routed.children.iter().zip(&routed.routes).filter(|(_, route)| route.keeps_as_fixed_token_or_flag(routed.flags)).map(|(kid, route)| (kid.index, route.is_flag(routed.flags))).collect()
+        });
+        kept.sort_unstable();
+        let kept_as = |kid: usize| kept.binary_search_by_key(&shape.kids[kid].index, |&(index, _)| index).ok().map(|at| kept[at].1);
         let sibling = |segment: &Segment, edge: fn(&Kid, &Segment) -> bool| Sibling {
             span: Span { start: segment.first.start, end: segment.last.end },
             holder: segment.kid.is_some_and(|kid| shape.kids[kid].holder() && edge(&shape.kids[kid], segment)),
             entry: false,
-            flag: segment.kid.is_some_and(|kid| flags.binary_search(&shape.kids[kid].index).is_ok()),
+            flag: segment.kid.and_then(kept_as).unwrap_or(false),
+            fixed: segment.kid.and_then(kept_as).is_some(),
         };
         Siblings {
             before: shape.segments.iter().map(|segment| sibling(segment, |kid, segment| kid.end == segment.last.end)).collect(),
