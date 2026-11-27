@@ -64529,7 +64529,7 @@
     "wrappedText": "class _H { Object _r = ( a & b ); }"
   },
   {
-    "expectedOutput": "\nSTR . \"Hello There\" ; STR . \"Hello \\{ x + y } \" ; STR . \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row } \" ; compPass ( \"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\" ) ;\n",
+    "expectedOutput": "\nSTR . \"Hello There\" ; STR . \"Hello \\{ x + y }\" ; STR . \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row }\" ; compPass ( \"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\" ) ;\n",
     "grammar": "java",
     "input": {
       "$errors": [],
@@ -64729,14 +64729,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program toplevel_statements: (expression_statement expression: (template_expression template_processor: (identifier) template_argument: (string_literal_line elements: (string_fragment)))) toplevel_statements: (expression_statement expression: (template_expression template_processor: (identifier) template_argument: (string_literal_line elements: (string_fragment) elements: (string_interpolation expression: (binary_expression left: (identifier) right: (identifier))) elements: (string_fragment)))) toplevel_statements: (expression_statement expression: (template_expression template_processor: (identifier) template_argument: (string_literal_line elements: (string_fragment) elements: (string_interpolation expression: (method_invocation name: (identifier) arguments: (argument_list expression: (identifier)))) elements: (string_fragment) elements: (string_interpolation expression: (field_access object: (identifier) field: (identifier))) elements: (string_fragment) elements: (string_interpolation expression: (identifier)) elements: (string_fragment)))) toplevel_statements: (expression_statement expression: (method_invocation name: (identifier) arguments: (argument_list expression: (string_literal_text_block elements: (multiline_string_fragment (multiline_string_fragment_text1)) elements: (multiline_string_literal_arm1 (escape_sequence_arm1)) elements: (multiline_string_fragment (multiline_string_fragment_text2)) elements: (multiline_string_fragment (multiline_string_fragment_text2)) elements: (multiline_string_literal_arm1 (escape_sequence_arm1)) elements: (multiline_string_fragment (multiline_string_fragment_text1)) elements: (multiline_string_literal_arm1 (escape_sequence_arm1)) elements: (multiline_string_fragment (multiline_string_fragment_text2)) elements: (multiline_string_fragment (multiline_string_fragment_text2)))))))",
-    "expectedSourceOut": "\nSTR . \"Hello There\" ; STR . \"Hello \\{ x + y } \" ; STR . \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row } \" ; compPass ( \"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\" ) ;\n",
+    "expectedReparseTree": "(program toplevel_statements: (expression_statement expression: (template_expression template_processor: (identifier) template_argument: (string_literal_line elements: (string_fragment)))) toplevel_statements: (expression_statement expression: (template_expression template_processor: (identifier) template_argument: (string_literal_line elements: (string_fragment) elements: (string_interpolation expression: (binary_expression left: (identifier) right: (identifier)))))) toplevel_statements: (expression_statement expression: (template_expression template_processor: (identifier) template_argument: (string_literal_line elements: (string_fragment) elements: (string_interpolation expression: (method_invocation name: (identifier) arguments: (argument_list expression: (identifier)))) elements: (string_fragment) elements: (string_interpolation expression: (field_access object: (identifier) field: (identifier))) elements: (string_fragment) elements: (string_interpolation expression: (identifier))))) toplevel_statements: (expression_statement expression: (method_invocation name: (identifier) arguments: (argument_list expression: (string_literal_text_block elements: (multiline_string_fragment (multiline_string_fragment_text1)) elements: (multiline_string_literal_arm1 (escape_sequence_arm1)) elements: (multiline_string_fragment (multiline_string_fragment_text2)) elements: (multiline_string_fragment (multiline_string_fragment_text2)) elements: (multiline_string_literal_arm1 (escape_sequence_arm1)) elements: (multiline_string_fragment (multiline_string_fragment_text1)) elements: (multiline_string_literal_arm1 (escape_sequence_arm1)) elements: (multiline_string_fragment (multiline_string_fragment_text2)) elements: (multiline_string_fragment (multiline_string_fragment_text2)))))))",
+    "expectedSourceOut": "\nSTR . \"Hello There\" ; STR . \"Hello \\{ x + y }\" ; STR . \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row }\" ; compPass ( \"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\" ) ;\n",
     "grammar": "java",
     "kind": "roundtrip",
     "pattern": "program",
     "sourceIn": "\nSTR.\"Hello There\";\nSTR.\"Hello \\{x + y}\";\nSTR.\"We can have \\{many(of)} \\{them.in} a \\{row}\";\ncompPass(\"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\");\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nSTR . \"Hello There\" ; STR . \"Hello \\{ x + y } \" ; STR . \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row } \" ; compPass ( \"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\" ) ;\n"
+    "wrappedText": "\nSTR . \"Hello There\" ; STR . \"Hello \\{ x + y }\" ; STR . \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row }\" ; compPass ( \"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\" ) ;\n"
   },
   {
     "expectedOutput": "STR . \"Hello There\" ;",
@@ -64774,6 +64774,144 @@
     "sourceIn": "STR.\"Hello There\";",
     "wrappedOffset": 0,
     "wrappedText": "STR . \"Hello There\" ;\n"
+  },
+  {
+    "expectedOutput": "STR . \"Hello \\{ x + y }\" ;",
+    "grammar": "java",
+    "input": {
+      "$type": 210,
+      "_expression": {
+        "$type": 188,
+        "_template_argument": {
+          "$type": 327,
+          "_elements": [
+            {
+              "$text": "Hello ",
+              "$type": 10
+            },
+            {
+              "$type": 167,
+              "_expression": {
+                "$type": 173,
+                "_left": {
+                  "$text": "x",
+                  "$type": 1
+                },
+                "_operator": 40,
+                "_right": {
+                  "$text": "y",
+                  "$type": 1
+                }
+              }
+            }
+          ]
+        },
+        "_template_processor": {
+          "$text": "STR",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "pattern": "expression_statement",
+    "source": "\nSTR.\"Hello There\";\nSTR.\"Hello \\{x + y}\";\nSTR.\"We can have \\{many(of)} \\{them.in} a \\{row}\";\ncompPass(\"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\");\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(expression_statement expression: (template_expression template_processor: (identifier) template_argument: (string_literal_line elements: (string_fragment) elements: (string_interpolation expression: (binary_expression left: (identifier) right: (identifier))))))",
+    "expectedSourceOut": "STR . \"Hello \\{ x + y }\" ;",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "expression_statement",
+    "sourceIn": "STR.\"Hello \\{x + y}\";",
+    "wrappedOffset": 0,
+    "wrappedText": "STR . \"Hello \\{ x + y }\" ;\n"
+  },
+  {
+    "expectedOutput": "STR . \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row }\" ;",
+    "grammar": "java",
+    "input": {
+      "$type": 210,
+      "_expression": {
+        "$type": 188,
+        "_template_argument": {
+          "$type": 327,
+          "_elements": [
+            {
+              "$text": "We can have ",
+              "$type": 10
+            },
+            {
+              "$type": 167,
+              "_expression": {
+                "$type": 190,
+                "_arguments": {
+                  "$type": 191,
+                  "_expression": [
+                    {
+                      "$text": "of",
+                      "$type": 1
+                    }
+                  ]
+                },
+                "_content": {
+                  "$text": "many",
+                  "$type": 1
+                }
+              }
+            },
+            {
+              "$text": " ",
+              "$type": 10
+            },
+            {
+              "$type": 167,
+              "_expression": {
+                "$type": 187,
+                "_field": {
+                  "$text": "in",
+                  "$type": 1
+                },
+                "_object": {
+                  "$text": "them",
+                  "$type": 1
+                },
+                "_super": false
+              }
+            },
+            {
+              "$text": " a ",
+              "$type": 10
+            },
+            {
+              "$type": 167,
+              "_expression": {
+                "$text": "row",
+                "$type": 1
+              }
+            }
+          ]
+        },
+        "_template_processor": {
+          "$text": "STR",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "pattern": "expression_statement",
+    "source": "\nSTR.\"Hello There\";\nSTR.\"Hello \\{x + y}\";\nSTR.\"We can have \\{many(of)} \\{them.in} a \\{row}\";\ncompPass(\"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\");\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(expression_statement expression: (template_expression template_processor: (identifier) template_argument: (string_literal_line elements: (string_fragment) elements: (string_interpolation expression: (method_invocation name: (identifier) arguments: (argument_list expression: (identifier)))) elements: (string_fragment) elements: (string_interpolation expression: (field_access object: (identifier) field: (identifier))) elements: (string_fragment) elements: (string_interpolation expression: (identifier)))))",
+    "expectedSourceOut": "STR . \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row }\" ;",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "expression_statement",
+    "sourceIn": "STR.\"We can have \\{many(of)} \\{them.in} a \\{row}\";",
+    "wrappedOffset": 0,
+    "wrappedText": "STR . \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row }\" ;\n"
   },
   {
     "expectedOutput": "compPass ( \"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\" ) ;",
@@ -64893,6 +65031,138 @@
     "wrappedText": "class _H { Object _r = STR . \"Hello There\"; }"
   },
   {
+    "expectedOutput": "STR . \"Hello \\{ x + y }\"",
+    "grammar": "java",
+    "input": {
+      "$type": 188,
+      "_template_argument": {
+        "$type": 327,
+        "_elements": [
+          {
+            "$text": "Hello ",
+            "$type": 10
+          },
+          {
+            "$type": 167,
+            "_expression": {
+              "$type": 173,
+              "_left": {
+                "$text": "x",
+                "$type": 1
+              },
+              "_operator": 40,
+              "_right": {
+                "$text": "y",
+                "$type": 1
+              }
+            }
+          }
+        ]
+      },
+      "_template_processor": {
+        "$text": "STR",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "pattern": "template_expression",
+    "source": "\nSTR.\"Hello There\";\nSTR.\"Hello \\{x + y}\";\nSTR.\"We can have \\{many(of)} \\{them.in} a \\{row}\";\ncompPass(\"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\");\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(template_expression template_processor: (identifier) template_argument: (string_literal_line elements: (string_fragment) elements: (string_interpolation expression: (binary_expression left: (identifier) right: (identifier)))))",
+    "expectedSourceOut": "STR . \"Hello \\{ x + y }\"",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "template_expression",
+    "sourceIn": "STR.\"Hello \\{x + y}\"",
+    "wrappedOffset": 23,
+    "wrappedText": "class _H { Object _r = STR . \"Hello \\{ x + y }\"; }"
+  },
+  {
+    "expectedOutput": "STR . \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row }\"",
+    "grammar": "java",
+    "input": {
+      "$type": 188,
+      "_template_argument": {
+        "$type": 327,
+        "_elements": [
+          {
+            "$text": "We can have ",
+            "$type": 10
+          },
+          {
+            "$type": 167,
+            "_expression": {
+              "$type": 190,
+              "_arguments": {
+                "$type": 191,
+                "_expression": [
+                  {
+                    "$text": "of",
+                    "$type": 1
+                  }
+                ]
+              },
+              "_content": {
+                "$text": "many",
+                "$type": 1
+              }
+            }
+          },
+          {
+            "$text": " ",
+            "$type": 10
+          },
+          {
+            "$type": 167,
+            "_expression": {
+              "$type": 187,
+              "_field": {
+                "$text": "in",
+                "$type": 1
+              },
+              "_object": {
+                "$text": "them",
+                "$type": 1
+              },
+              "_super": false
+            }
+          },
+          {
+            "$text": " a ",
+            "$type": 10
+          },
+          {
+            "$type": 167,
+            "_expression": {
+              "$text": "row",
+              "$type": 1
+            }
+          }
+        ]
+      },
+      "_template_processor": {
+        "$text": "STR",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "pattern": "template_expression",
+    "source": "\nSTR.\"Hello There\";\nSTR.\"Hello \\{x + y}\";\nSTR.\"We can have \\{many(of)} \\{them.in} a \\{row}\";\ncompPass(\"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\");\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(template_expression template_processor: (identifier) template_argument: (string_literal_line elements: (string_fragment) elements: (string_interpolation expression: (method_invocation name: (identifier) arguments: (argument_list expression: (identifier)))) elements: (string_fragment) elements: (string_interpolation expression: (field_access object: (identifier) field: (identifier))) elements: (string_fragment) elements: (string_interpolation expression: (identifier))))",
+    "expectedSourceOut": "STR . \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row }\"",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "template_expression",
+    "sourceIn": "STR.\"We can have \\{many(of)} \\{them.in} a \\{row}\"",
+    "wrappedOffset": 23,
+    "wrappedText": "class _H { Object _r = STR . \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row }\"; }"
+  },
+  {
     "expectedOutput": "\"Hello There\"",
     "grammar": "java",
     "input": {
@@ -64918,6 +65188,124 @@
     "sourceIn": "\"Hello There\"",
     "wrappedOffset": 23,
     "wrappedText": "class _H { Object _r = \"Hello There\"; }"
+  },
+  {
+    "expectedOutput": "\"Hello \\{ x + y }\"",
+    "grammar": "java",
+    "input": {
+      "$type": 327,
+      "_elements": [
+        {
+          "$text": "Hello ",
+          "$type": 10
+        },
+        {
+          "$type": 167,
+          "_expression": {
+            "$type": 173,
+            "_left": {
+              "$text": "x",
+              "$type": 1
+            },
+            "_operator": 40,
+            "_right": {
+              "$text": "y",
+              "$type": 1
+            }
+          }
+        }
+      ]
+    },
+    "kind": "render",
+    "pattern": "string_literal_line",
+    "source": "\nSTR.\"Hello There\";\nSTR.\"Hello \\{x + y}\";\nSTR.\"We can have \\{many(of)} \\{them.in} a \\{row}\";\ncompPass(\"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\");\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(string_literal_line elements: (string_fragment) elements: (string_interpolation expression: (binary_expression left: (identifier) right: (identifier))))",
+    "expectedSourceOut": "\"Hello \\{ x + y }\"",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "string_literal_line",
+    "sourceIn": "\"Hello \\{x + y}\"",
+    "wrappedOffset": 23,
+    "wrappedText": "class _H { Object _r = \"Hello \\{ x + y }\"; }"
+  },
+  {
+    "expectedOutput": "\"We can have \\{ many ( of ) } \\{ them . in } a \\{ row }\"",
+    "grammar": "java",
+    "input": {
+      "$type": 327,
+      "_elements": [
+        {
+          "$text": "We can have ",
+          "$type": 10
+        },
+        {
+          "$type": 167,
+          "_expression": {
+            "$type": 190,
+            "_arguments": {
+              "$type": 191,
+              "_expression": [
+                {
+                  "$text": "of",
+                  "$type": 1
+                }
+              ]
+            },
+            "_content": {
+              "$text": "many",
+              "$type": 1
+            }
+          }
+        },
+        {
+          "$text": " ",
+          "$type": 10
+        },
+        {
+          "$type": 167,
+          "_expression": {
+            "$type": 187,
+            "_field": {
+              "$text": "in",
+              "$type": 1
+            },
+            "_object": {
+              "$text": "them",
+              "$type": 1
+            },
+            "_super": false
+          }
+        },
+        {
+          "$text": " a ",
+          "$type": 10
+        },
+        {
+          "$type": 167,
+          "_expression": {
+            "$text": "row",
+            "$type": 1
+          }
+        }
+      ]
+    },
+    "kind": "render",
+    "pattern": "string_literal_line",
+    "source": "\nSTR.\"Hello There\";\nSTR.\"Hello \\{x + y}\";\nSTR.\"We can have \\{many(of)} \\{them.in} a \\{row}\";\ncompPass(\"\"\"\n        StringTemplate result = RAW.\\\"\"\"\n              \\\\{}\n              \\\"\"\";\n         \"\"\");\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(string_literal_line elements: (string_fragment) elements: (string_interpolation expression: (method_invocation name: (identifier) arguments: (argument_list expression: (identifier)))) elements: (string_fragment) elements: (string_interpolation expression: (field_access object: (identifier) field: (identifier))) elements: (string_fragment) elements: (string_interpolation expression: (identifier)))",
+    "expectedSourceOut": "\"We can have \\{ many ( of ) } \\{ them . in } a \\{ row }\"",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "string_literal_line",
+    "sourceIn": "\"We can have \\{many(of)} \\{them.in} a \\{row}\"",
+    "wrappedOffset": 23,
+    "wrappedText": "class _H { Object _r = \"We can have \\{ many ( of ) } \\{ them . in } a \\{ row }\"; }"
   },
   {
     "expectedOutput": "\\{ x + y }",

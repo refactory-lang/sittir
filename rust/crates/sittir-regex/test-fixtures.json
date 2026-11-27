@@ -17782,7 +17782,7 @@
     "wrappedText": "[\\x20-\\x5A]"
   },
   {
-    "expectedOutput": "\n(?aiLmsux)(?aiLmsux:\ntest\n)(?aiLmsux-imsx:\ntest\n)(?-imsx:\ntest\n)(?-imsx)\n",
+    "expectedOutput": "\n(?aiLmsux)(?aiLmsux:test)(?aiLmsux-imsx:test)(?-imsx:test)(?-imsx)\n",
     "grammar": "regex",
     "input": {
       "$errors": [],
@@ -17962,13 +17962,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(pattern (term (term_group (inline_flags_group_enable enabled: (flags))) (term_group (inline_flags_group_enable enabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_toggle enabled: (flags) disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_disable disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_disable disabled: (flags)))))",
-    "expectedSourceOut": "\n(?aiLmsux)(?aiLmsux:\ntest\n)(?aiLmsux-imsx:\ntest\n)(?-imsx:\ntest\n)(?-imsx)\n",
+    "expectedSourceOut": "\n(?aiLmsux)(?aiLmsux:test)(?aiLmsux-imsx:test)(?-imsx:test)(?-imsx)\n",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "pattern",
     "sourceIn": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n",
     "wrappedOffset": 0,
-    "wrappedText": "\n(?aiLmsux)(?aiLmsux:\ntest\n)(?aiLmsux-imsx:\ntest\n)(?-imsx:\ntest\n)(?-imsx)\n"
+    "wrappedText": "\n(?aiLmsux)(?aiLmsux:test)(?aiLmsux-imsx:test)(?-imsx:test)(?-imsx)\n"
   },
   {
     "expectedOutput": "\ntest\n",
@@ -18133,7 +18133,7 @@
     "wrappedText": "\ntest\n"
   },
   {
-    "expectedOutput": "(?aiLmsux)(?aiLmsux:\ntest\n)(?aiLmsux-imsx:\ntest\n)(?-imsx:\ntest\n)(?-imsx)",
+    "expectedOutput": "(?aiLmsux)(?aiLmsux:test)(?aiLmsux-imsx:test)(?-imsx:test)(?-imsx)",
     "grammar": "regex",
     "input": {
       "$type": 53,
@@ -18309,13 +18309,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(term (term_group (inline_flags_group_enable enabled: (flags))) (term_group (inline_flags_group_enable enabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_toggle enabled: (flags) disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_disable disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_disable disabled: (flags))))",
-    "expectedSourceOut": "(?aiLmsux)(?aiLmsux:\ntest\n)(?aiLmsux-imsx:\ntest\n)(?-imsx:\ntest\n)(?-imsx)",
+    "expectedSourceOut": "(?aiLmsux)(?aiLmsux:test)(?aiLmsux-imsx:test)(?-imsx:test)(?-imsx)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "term",
     "sourceIn": "(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)",
     "wrappedOffset": 0,
-    "wrappedText": "(?aiLmsux)(?aiLmsux:\ntest\n)(?aiLmsux-imsx:\ntest\n)(?-imsx:\ntest\n)(?-imsx)"
+    "wrappedText": "(?aiLmsux)(?aiLmsux:test)(?aiLmsux-imsx:test)(?-imsx:test)(?-imsx)"
   },
   {
     "expectedOutput": "test",
@@ -18499,7 +18499,7 @@
     "wrappedText": "(?aiLmsux)"
   },
   {
-    "expectedOutput": "(?aiLmsux:\ntest\n)",
+    "expectedOutput": "(?aiLmsux:test)",
     "grammar": "regex",
     "input": {
       "$type": 78,
@@ -18554,13 +18554,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(term_group (inline_flags_group_enable enabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))))",
-    "expectedSourceOut": "(?aiLmsux:\ntest\n)",
+    "expectedSourceOut": "(?aiLmsux:test)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "term_group",
     "sourceIn": "(?aiLmsux:test)",
     "wrappedOffset": 0,
-    "wrappedText": "(?aiLmsux:\ntest\n)"
+    "wrappedText": "(?aiLmsux:test)"
   },
   {
     "expectedOutput": "t",
@@ -18663,7 +18663,7 @@
     "wrappedText": "t"
   },
   {
-    "expectedOutput": "(?aiLmsux-imsx:\ntest\n)",
+    "expectedOutput": "(?aiLmsux-imsx:test)",
     "grammar": "regex",
     "input": {
       "$type": 78,
@@ -18722,13 +18722,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(term_group (inline_flags_group_toggle enabled: (flags) disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))))",
-    "expectedSourceOut": "(?aiLmsux-imsx:\ntest\n)",
+    "expectedSourceOut": "(?aiLmsux-imsx:test)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "term_group",
     "sourceIn": "(?aiLmsux-imsx:test)",
     "wrappedOffset": 0,
-    "wrappedText": "(?aiLmsux-imsx:\ntest\n)"
+    "wrappedText": "(?aiLmsux-imsx:test)"
   },
   {
     "expectedOutput": "t",
@@ -18831,7 +18831,7 @@
     "wrappedText": "t"
   },
   {
-    "expectedOutput": "(?-imsx:\ntest\n)",
+    "expectedOutput": "(?-imsx:test)",
     "grammar": "regex",
     "input": {
       "$type": 78,
@@ -18886,13 +18886,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(term_group (inline_flags_group_disable disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))))",
-    "expectedSourceOut": "(?-imsx:\ntest\n)",
+    "expectedSourceOut": "(?-imsx:test)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "term_group",
     "sourceIn": "(?-imsx:test)",
     "wrappedOffset": 0,
-    "wrappedText": "(?-imsx:\ntest\n)"
+    "wrappedText": "(?-imsx:test)"
   },
   {
     "expectedOutput": "t",
@@ -19048,7 +19048,7 @@
     "wrappedText": "(?aiLmsux)"
   },
   {
-    "expectedOutput": "(?aiLmsux:\ntest\n)",
+    "expectedOutput": "(?aiLmsux:test)",
     "grammar": "regex",
     "input": {
       "$type": 84,
@@ -19100,16 +19100,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(inline_flags_group_enable enabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))",
-    "expectedSourceOut": "(?aiLmsux:\ntest\n)",
+    "expectedSourceOut": "(?aiLmsux:test)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "inline_flags_group_enable",
     "sourceIn": "(?aiLmsux:test)",
     "wrappedOffset": 0,
-    "wrappedText": "(?aiLmsux:\ntest\n)"
+    "wrappedText": "(?aiLmsux:test)"
   },
   {
-    "expectedOutput": "(?aiLmsux-imsx:\ntest\n)",
+    "expectedOutput": "(?aiLmsux-imsx:test)",
     "grammar": "regex",
     "input": {
       "$type": 85,
@@ -19165,16 +19165,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(inline_flags_group_toggle enabled: (flags) disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))",
-    "expectedSourceOut": "(?aiLmsux-imsx:\ntest\n)",
+    "expectedSourceOut": "(?aiLmsux-imsx:test)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "inline_flags_group_toggle",
     "sourceIn": "(?aiLmsux-imsx:test)",
     "wrappedOffset": 0,
-    "wrappedText": "(?aiLmsux-imsx:\ntest\n)"
+    "wrappedText": "(?aiLmsux-imsx:test)"
   },
   {
-    "expectedOutput": "(?-imsx:\ntest\n)",
+    "expectedOutput": "(?-imsx:test)",
     "grammar": "regex",
     "input": {
       "$type": 86,
@@ -19226,13 +19226,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(inline_flags_group_disable disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))",
-    "expectedSourceOut": "(?-imsx:\ntest\n)",
+    "expectedSourceOut": "(?-imsx:test)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "inline_flags_group_disable",
     "sourceIn": "(?-imsx:test)",
     "wrappedOffset": 0,
-    "wrappedText": "(?-imsx:\ntest\n)"
+    "wrappedText": "(?-imsx:test)"
   },
   {
     "expectedOutput": "(?-imsx)",
