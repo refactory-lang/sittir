@@ -78,6 +78,8 @@ describe.each(['object', 'arena'] as const)('a read never drops an ERROR, in %s 
 	});
 
 	for (const [source] of MOVED) it.todo(`${JSON.stringify(source)} builds back exactly once an edited parsed node's render writes its source runs, in both storages`);
+	for (const [, source] of ROWS.filter(([grammar]) => grammar === 'python'))
+		it.todo(`${JSON.stringify(source)} keeps the ERROR when a comment is written after its block once an edited parsed node's render writes its source runs, in both storages`);
 
 	it("rebuilds a comment between a self parameter's tokens without it, carrying nothing", () => {
 		expect(roundTrip.rust('fn f(&mut /*c*/ self) {}\n')).toEqual({ carried: [], built: 'fn f(&mut self) {}\n' });
