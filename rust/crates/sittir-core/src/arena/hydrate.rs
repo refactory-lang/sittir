@@ -580,8 +580,8 @@ impl OpenRun {
     /// under it, on the side of the child it is placed on
     /// (`trivia_table::owner`, its siblings the children around it), the
     /// node that side is kept on its `target`, or the `inner` of the node
-    /// that holds it, where that node's kind has an inside
-    /// (`SurfaceKinds::holds_inner`).
+    /// that holds it, where the surface places it there
+    /// (`SurfaceKinds::places_inner`).
     fn placed(&self, kinds: Option<crate::trivia_table::SurfaceKinds>, text: &str, out: &mut Vec<Placed>) {
         use crate::trivia_table::{owner, Owner, Sibling, TriviaSide};
         if self.within || self.beside.iter().all(|beside| beside.extra.is_none()) {
@@ -602,7 +602,7 @@ impl OpenRun {
                 let (site, side, within) = match owner(&siblings[..position], span, &siblings[position + 1..], text) {
                     Owner::Trailing { at } => (self.target(children[at], false, kinds), TriviaSide::Trailing, siblings[at].span.end),
                     Owner::Leading { at } => (self.target(children[position + 1 + at], true, kinds), TriviaSide::Leading, siblings[position + 1 + at].span.start),
-                    Owner::Inner if kinds.is_some_and(|kinds| self.holder_facts(holder).is_some_and(|facts| !kinds.holds_inner(facts.kind) && !kinds.holds_inner(facts.display()))) => continue,
+                    Owner::Inner if kinds.is_some_and(|kinds| self.holder_facts(holder).is_some_and(|facts| !kinds.places_inner(kind, facts.kind, facts.display()))) => continue,
                     Owner::Inner => (holder.map_or(super::NodeSite::Record(self.at), |holder| self.site(holder)), TriviaSide::Inner, span.start),
                 };
                 if self.keeps_as_fixed_token_or_flag(site) {

@@ -339,6 +339,16 @@ impl SurfaceKinds {
         self.inner.contains(&kind)
     }
 
+    /// Whether an extra of kind `extra` that a node of `kind`, shown as
+    /// `display`, holds beside none of its children is placed on that
+    /// node's inner side: an `ERROR` always, since it is source content and
+    /// a read that drops it loses code; another extra only where either
+    /// kind holds an inner side (`holds_inner`).
+    #[must_use]
+    pub fn places_inner(&self, extra: KindId, kind: KindId, display: KindId) -> bool {
+        extra == KindId::ERROR || self.holds_inner(kind) || self.holds_inner(display)
+    }
+
     /// Whether `kind` is one of the grammar's depth members.
     #[must_use]
     pub fn is_depth_member(&self, kind: KindId) -> bool {
@@ -684,5 +694,15 @@ mod tests {
         assert_eq!(held("a\n\n\n\n\n// c\nb", TriviaSide::Trailing, &["// c"]), "dc");
         assert_eq!(held("{\n\n  /* a */\n}", TriviaSide::Inner, &["/* a */"]), "bcn");
         assert_eq!(held("a\n\n// c\nb", TriviaSide::Leading, &["// c"]), "cn");
+    }
+
+    #[test]
+    fn an_error_is_placed_inside_any_node_and_another_extra_only_inside_a_kind_that_holds_an_inner_side() {
+        let (holds, plain, comment) = (KindId(7), KindId(5), KindId(9));
+        let kinds = SurfaceKinds { inner: &[KindId(7)], ..SurfaceKinds::default() };
+        assert!(kinds.places_inner(KindId::ERROR, plain, plain));
+        assert!(kinds.places_inner(comment, holds, plain));
+        assert!(kinds.places_inner(comment, plain, holds));
+        assert!(!kinds.places_inner(comment, plain, plain));
     }
 }
