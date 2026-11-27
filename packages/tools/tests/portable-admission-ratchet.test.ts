@@ -8,9 +8,9 @@ const SLOTS: Readonly<Record<string, number>> = { python: 0, rust: 0, typescript
 const UNFORMED: Readonly<Record<string, number>> = { python: 0, rust: 0, typescript: 0 };
 
 const RAW: Readonly<Record<string, { readonly kind: number; readonly value: number }>> = {
-	python: { kind: 5, value: 50 },
-	rust: { kind: 9, value: 97 },
-	typescript: { kind: 9, value: 59 }
+	python: { kind: 4, value: 51 },
+	rust: { kind: 8, value: 98 },
+	typescript: { kind: 7, value: 61 }
 };
 
 const pinned = (name: string, count: number, ceiling: number, shown: string): void => {

@@ -80,6 +80,10 @@ describe('exactSlotsOf', () => {
 		expect(reasonsAt(exact, 'expression.call', 'arguments', 'string_literal')).toEqual(['opaque']);
 	});
 
+	it('decides a kind that holds itself through a tested slot, its cases ending at the depth the tests read: a call whose function is a call', () => {
+		expect(reasonsAt(exact, 'argument', 'value', 'call_expression')).toEqual(['opaque']);
+	});
+
 	it('puts a raw arm whose reasons are all decided per value in the per-value group', () => {
 		expect(rawGroupOf(['preset', 'scalar'])).toBe('value');
 		expect(rawGroupOf(['opaque', 'unread'])).toBe('kind');
