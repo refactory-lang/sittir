@@ -2614,14 +2614,27 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('imaginary_literal_arm3', () => {
+		it('factory produces correct type', () => {
+			const node = ir.imaginaryLiteralArm3('1');
+			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm3);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.imaginaryLiteralArm3('1');
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
 	describe('imaginary_literal_arm4', () => {
 		it('factory produces correct type', () => {
-			const node = ir.imaginaryLiteralArm4('1');
+			const node = ir.imaginaryLiteralArm4('000');
 			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm4);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.imaginaryLiteralArm4('1');
+			const node = ir.imaginaryLiteralArm4('000');
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -2629,12 +2642,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('imaginary_literal_arm5', () => {
 		it('factory produces correct type', () => {
-			const node = ir.imaginaryLiteralArm5('000');
+			const node = ir.imaginaryLiteralArm5('0x1');
 			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm5);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.imaginaryLiteralArm5('000');
+			const node = ir.imaginaryLiteralArm5('0x1');
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -2642,12 +2655,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('imaginary_literal_arm6', () => {
 		it('factory produces correct type', () => {
-			const node = ir.imaginaryLiteralArm6('0x1');
+			const node = ir.imaginaryLiteralArm6('1.0');
 			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm6);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.imaginaryLiteralArm6('0x1');
+			const node = ir.imaginaryLiteralArm6('1.0');
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -2655,12 +2668,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('imaginary_literal_arm7', () => {
 		it('factory produces correct type', () => {
-			const node = ir.imaginaryLiteralArm7('1.0');
+			const node = ir.imaginaryLiteralArm7('1e0');
 			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm7);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.imaginaryLiteralArm7('1.0');
+			const node = ir.imaginaryLiteralArm7('1e0');
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -2668,64 +2681,51 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('imaginary_literal_arm8', () => {
 		it('factory produces correct type', () => {
-			const node = ir.imaginaryLiteralArm8('1e0');
+			const node = ir.imaginaryLiteralArm8('.00');
 			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm8);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.imaginaryLiteralArm8('1e0');
+			const node = ir.imaginaryLiteralArm8('.00');
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 
-	describe('imaginary_literal_arm9', () => {
+	describe('imaginary_literal_arm9_arm1', () => {
 		it('factory produces correct type', () => {
-			const node = ir.imaginaryLiteralArm9('.00');
-			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm9);
+			const node = ir.imaginaryLiteralArm9Arm1('0x00.p00');
+			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm9Arm1);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.imaginaryLiteralArm9('.00');
+			const node = ir.imaginaryLiteralArm9Arm1('0x00.p00');
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 
-	describe('imaginary_literal_arm10_arm1', () => {
+	describe('imaginary_literal_arm9_arm2', () => {
 		it('factory produces correct type', () => {
-			const node = ir.imaginaryLiteralArm10Arm1('0x00.p00');
-			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm10Arm1);
+			const node = ir.imaginaryLiteralArm9Arm2('0x00p00');
+			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm9Arm2);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.imaginaryLiteralArm10Arm1('0x00.p00');
+			const node = ir.imaginaryLiteralArm9Arm2('0x00p00');
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 
-	describe('imaginary_literal_arm10_arm2', () => {
+	describe('imaginary_literal_arm9_arm3', () => {
 		it('factory produces correct type', () => {
-			const node = ir.imaginaryLiteralArm10Arm2('0x00p00');
-			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm10Arm2);
+			const node = ir.imaginaryLiteralArm9Arm3('0x.00p00');
+			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm9Arm3);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.imaginaryLiteralArm10Arm2('0x00p00');
-			const rendered = node.$render!();
-			expect(rendered.length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('imaginary_literal_arm10_arm3', () => {
-		it('factory produces correct type', () => {
-			const node = ir.imaginaryLiteralArm10Arm3('0x.00p00');
-			expect(node.$type).toBe(TSKindId.ImaginaryLiteralArm10Arm3);
-			expectBuiltNode(node);
-		});
-		it('render produces non-empty string', () => {
-			const node = ir.imaginaryLiteralArm10Arm3('0x.00p00');
+			const node = ir.imaginaryLiteralArm9Arm3('0x.00p00');
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});

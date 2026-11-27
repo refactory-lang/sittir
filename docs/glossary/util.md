@@ -108,7 +108,7 @@ Materialises `wordCharClass` over the 128 ASCII code points; it owns no regex pr
  */
 ```
 
-Besides word shapes, `nodelessExtrasRun` resolves a grammar's hidden SYMBOL extras through it.
+Besides word shapes, `nodelessExtrasRun` resolves a grammar's hidden SYMBOL extras through it, and the token-form split (`distributeTokenForms`) matches one arm against another arm's fixed text with it. It takes any rule with a string `type`, the shape both pipelines share.
 
 #### body
 

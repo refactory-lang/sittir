@@ -2,6 +2,7 @@
 import { ir as b } from '../ir-strict.js';
 import type { BuildInput, PathInput, TailInput, Text, Unmapped } from '@sittir/types/vocabulary';
 import type { RustMap } from './map.js';
+import { literalValueIs } from '@sittir/common/portable/utils';
 import type { RustNode } from '../types.js';
 import { isNode as isAnyNode } from '@sittir/common/utils';
 const isNode = (value: unknown): value is RustNode => isAnyNode(value);
@@ -115950,8 +115951,8 @@ const identifier_metavariable = (input: PathInput<RustMap, 'identifier.metavaria
 	return identifier_metavariable$131(input);
 };
 const literal_boolean = (input: PathInput<RustMap, 'literal.boolean'>) => {
-	if (input.$value === true) return literal_boolean$118(input);
-	if (input.$value === false) return literal_boolean$119(input);
+	if (literalValueIs(input.$value, true)) return literal_boolean$118(input);
+	if (literalValueIs(input.$value, false)) return literal_boolean$119(input);
 	throw new Error('portable build: no form of literal.boolean builds this structure');
 };
 const literal_boolean_false = (input: PathInput<RustMap, 'literal.boolean.false'>) => {

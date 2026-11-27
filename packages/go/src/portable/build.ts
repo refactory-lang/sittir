@@ -2,6 +2,7 @@
 import { ir as b } from '../ir-strict.js';
 import type { BuildInput, PathInput, TailInput, Text, Unmapped } from '@sittir/types/vocabulary';
 import type { GoMap } from './map.js';
+import { literalValueIs } from '@sittir/common/portable/utils';
 import type { GoNode } from '../types.js';
 import { isNode as isAnyNode } from '@sittir/common/utils';
 const isNode = (value: unknown): value is GoNode => isAnyNode(value);
@@ -63,11 +64,11 @@ const nonEmpty = <T>(owner: string, items: ReadonlyArray<T>): readonly [T, ...T[
 	if (first === undefined) throw new Error(owner + ' requires at least one element');
 	return [first, ...items.slice(1)];
 };
-type declaration_parameter_variadic$151_name$Item =
+type declaration_parameter_variadic$150_name$Item =
 	| Text<GoMap, 'identifier'>
 	| BuildInput<GoMap, 'identifier'>
 	| GoMap['nodes']['identifier'];
-const declaration_parameter_variadic$151_name = (value: declaration_parameter_variadic$151_name$Item) => {
+const declaration_parameter_variadic$150_name = (value: declaration_parameter_variadic$150_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -86,7 +87,7 @@ const declaration_parameter_variadic$151_name = (value: declaration_parameter_va
 			return unbuilt('declaration.parameter.variadic.name', value);
 	}
 };
-type declaration_parameter_variadic$151_type$Item =
+type declaration_parameter_variadic$150_type$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'type.primitive.boolean'>
 	| Text<GoMap, 'type.primitive.character'>
@@ -135,7 +136,7 @@ type declaration_parameter_variadic$151_type$Item =
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
-const declaration_parameter_variadic$151_type = (value: declaration_parameter_variadic$151_type$Item) => {
+const declaration_parameter_variadic$150_type = (value: declaration_parameter_variadic$150_type$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
@@ -319,12 +320,12 @@ const declaration_parameter_variadic$151_type = (value: declaration_parameter_va
 		return unnumbered('declaration.parameter.variadic.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
-		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [266])) return b.channelTypeBidirectional(value);
-		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [165]))
+		if (seated(value, [155, 156, 157, 159, 160, 162, 163, 170, 171, 172, 225, 298])) return value;
+		if (seated(value, [260])) return b.interfaceType(value);
+		if (seated(value, [265])) return b.channelTypeBidirectional(value);
+		if (seated(value, [266])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [164]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		return unseated('declaration.parameter.variadic.type', value);
 	}
@@ -336,26 +337,39 @@ const declaration_parameter_variadic$151_type = (value: declaration_parameter_va
 			return unbuilt('declaration.parameter.variadic.type', value);
 		case 'array':
 		case 'type.array':
-			if (value.element !== undefined && value.length === undefined) return type_array$163(value);
+			if (value.element !== undefined && value.length === undefined) return type_array$162(value);
 			return unbuilt('declaration.parameter.variadic.type', value);
 		case 'function':
 		case 'type.function':
 			return unbuilt('declaration.parameter.variadic.type', value);
 		case 'generic':
 		case 'type.generic':
-			return type_generic$158(value);
+			return type_generic$157(value);
 		case 'object':
 		case 'type.object':
 			return unbuilt('declaration.parameter.variadic.type', value);
 		case 'parenthesized':
 		case 'type.parenthesized':
-			return type_parenthesized$156(value);
+			return type_parenthesized$155(value);
 		case 'pointer':
 		case 'type.pointer':
-			return type_pointer$160(value);
+			return type_pointer$159(value);
 		default:
 			return unbuilt('declaration.parameter.variadic.type', value);
 	}
+};
+type literal_character$103_content$Item = string | '"' | "'" | '\\' | 'a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v';
+const literal_character$103_content = (value: literal_character$103_content$Item) => {
+	if (typeof value === 'string') {
+		return value;
+	}
+	if (typeof value === 'number') {
+		return unnumbered('literal.character.content', Number.isSafeInteger(value) ? 'integer' : 'float');
+	}
+	if (isNode(value)) {
+		return unseated('literal.character.content', value);
+	}
+	throw new Error('literal.character.content takes no structure');
 };
 type literal_character$104_content$Item = string | '"' | "'" | '\\' | 'a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v';
 const literal_character$104_content = (value: literal_character$104_content$Item) => {
@@ -412,19 +426,6 @@ const literal_character$107_content = (value: literal_character$107_content$Item
 type literal_character$108_content$Item = string | '"' | "'" | '\\' | 'a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v';
 const literal_character$108_content = (value: literal_character$108_content$Item) => {
 	if (typeof value === 'string') {
-		return value;
-	}
-	if (typeof value === 'number') {
-		return unnumbered('literal.character.content', Number.isSafeInteger(value) ? 'integer' : 'float');
-	}
-	if (isNode(value)) {
-		return unseated('literal.character.content', value);
-	}
-	throw new Error('literal.character.content takes no structure');
-};
-type literal_character$109_content$Item = string | '"' | "'" | '\\' | 'a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v';
-const literal_character$109_content = (value: literal_character$109_content$Item) => {
-	if (typeof value === 'string') {
 		switch (value) {
 			case 'a':
 			case 'b':
@@ -449,7 +450,7 @@ const literal_character$109_content = (value: literal_character$109_content$Item
 	}
 	throw new Error('literal.character.content takes no structure');
 };
-type literal_string$228_elements$Item =
+type literal_string$227_elements$Item =
 	| Text<GoMap, 'literal.string.text'>
 	| BuildInput<GoMap, 'literal.string.escape'>
 	| TailInput<GoMap, 'literal.string.escape', 'escape'>
@@ -457,7 +458,7 @@ type literal_string$228_elements$Item =
 	| BuildInput<GoMap, 'literal.string.text'>
 	| TailInput<GoMap, 'literal.string.text', 'text'>
 	| GoMap['nodes']['literal.string.text'];
-const literal_string$228_elements = (value: literal_string$228_elements$Item) => {
+const literal_string$227_elements = (value: literal_string$227_elements$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[^"\n\\]+))$/u.test(value)) return b.interpretedStringLiteralContent(value);
 		return b.interpretedStringLiteralContent(value);
@@ -466,7 +467,7 @@ const literal_string$228_elements = (value: literal_string$228_elements$Item) =>
 		return unnumbered('literal.string.elements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [75, 76, 77, 78, 79, 80, 229])) return value;
+		if (seated(value, [75, 76, 77, 78, 79, 80, 228])) return value;
 		return unseated('literal.string.elements', value);
 	}
 	switch (value.$path) {
@@ -497,11 +498,11 @@ const literal_string$228_elements = (value: literal_string$228_elements$Item) =>
 			return unbuilt('literal.string.elements', value);
 	}
 };
-type statement_break$189_label$Item =
+type statement_break$188_label$Item =
 	| string
 	| PathInput<GoMap, 'identifier.label'>
 	| GoMap['nodes']['identifier.label'];
-const statement_break$189_label = (value: statement_break$189_label$Item) => {
+const statement_break$188_label = (value: statement_break$188_label$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -510,16 +511,16 @@ const statement_break$189_label = (value: statement_break$189_label$Item) => {
 		return unnumbered('statement.break.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [296])) return value;
+		if (seated(value, [295])) return value;
 		return unseated('statement.break.label', value);
 	}
 	return unbuilt('statement.break.label', value);
 };
-type statement_continue$190_label$Item =
+type statement_continue$189_label$Item =
 	| string
 	| PathInput<GoMap, 'identifier.label'>
 	| GoMap['nodes']['identifier.label'];
-const statement_continue$190_label = (value: statement_continue$190_label$Item) => {
+const statement_continue$189_label = (value: statement_continue$189_label$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -528,12 +529,12 @@ const statement_continue$190_label = (value: statement_continue$190_label$Item) 
 		return unnumbered('statement.continue.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [296])) return value;
+		if (seated(value, [295])) return value;
 		return unseated('statement.continue.label', value);
 	}
 	return unbuilt('statement.continue.label', value);
 };
-type type_array$163_element$Item =
+type type_array$162_element$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'type.primitive.boolean'>
 	| Text<GoMap, 'type.primitive.character'>
@@ -582,7 +583,7 @@ type type_array$163_element$Item =
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
-const type_array$163_element = (value: type_array$163_element$Item) => {
+const type_array$162_element = (value: type_array$162_element$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
@@ -766,12 +767,12 @@ const type_array$163_element = (value: type_array$163_element$Item) => {
 		return unnumbered('type.array.element', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
-		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [266])) return b.channelTypeBidirectional(value);
-		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [165]))
+		if (seated(value, [155, 156, 157, 159, 160, 162, 163, 170, 171, 172, 225, 298])) return value;
+		if (seated(value, [260])) return b.interfaceType(value);
+		if (seated(value, [265])) return b.channelTypeBidirectional(value);
+		if (seated(value, [266])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [164]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		return unseated('type.array.element', value);
 	}
@@ -783,28 +784,28 @@ const type_array$163_element = (value: type_array$163_element$Item) => {
 			return unbuilt('type.array.element', value);
 		case 'array':
 		case 'type.array':
-			if (value.element !== undefined && value.length === undefined) return type_array$163(value);
+			if (value.element !== undefined && value.length === undefined) return type_array$162(value);
 			return unbuilt('type.array.element', value);
 		case 'function':
 		case 'type.function':
 			return unbuilt('type.array.element', value);
 		case 'generic':
 		case 'type.generic':
-			return type_generic$158(value);
+			return type_generic$157(value);
 		case 'object':
 		case 'type.object':
 			return unbuilt('type.array.element', value);
 		case 'parenthesized':
 		case 'type.parenthesized':
-			return type_parenthesized$156(value);
+			return type_parenthesized$155(value);
 		case 'pointer':
 		case 'type.pointer':
-			return type_pointer$160(value);
+			return type_pointer$159(value);
 		default:
 			return unbuilt('type.array.element', value);
 	}
 };
-type type_generic$158_type$Item =
+type type_generic$157_type$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'type.primitive.boolean'>
 	| Text<GoMap, 'type.primitive.character'>
@@ -853,7 +854,7 @@ type type_generic$158_type$Item =
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
-const type_generic$158_type = (value: type_generic$158_type$Item) => {
+const type_generic$157_type = (value: type_generic$157_type$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.negatedType(b.identifier(value));
@@ -905,12 +906,12 @@ const type_generic$158_type = (value: type_generic$158_type$Item) => {
 		return unnumbered('type.generic.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [226, 299])) return value;
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173])) return b.negatedType(value);
-		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [266])) return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [267])) return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [268]))
+		if (seated(value, [225, 298])) return value;
+		if (seated(value, [155, 156, 157, 159, 160, 162, 163, 164, 170, 171, 172])) return b.negatedType(value);
+		if (seated(value, [260])) return b.negatedType(b.interfaceType(value));
+		if (seated(value, [265])) return b.negatedType(b.channelTypeBidirectional(value));
+		if (seated(value, [266])) return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
+		if (seated(value, [267]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		return unseated('type.generic.type', value);
 	}
@@ -922,28 +923,28 @@ const type_generic$158_type = (value: type_generic$158_type$Item) => {
 			return unbuilt('type.generic.type', value);
 		case 'array':
 		case 'type.array':
-			if (value.element !== undefined && value.length === undefined) return b.negatedType(type_array$163(value));
+			if (value.element !== undefined && value.length === undefined) return b.negatedType(type_array$162(value));
 			return unbuilt('type.generic.type', value);
 		case 'function':
 		case 'type.function':
 			return unbuilt('type.generic.type', value);
 		case 'generic':
 		case 'type.generic':
-			return b.negatedType(type_generic$158(value));
+			return b.negatedType(type_generic$157(value));
 		case 'object':
 		case 'type.object':
 			return unbuilt('type.generic.type', value);
 		case 'parenthesized':
 		case 'type.parenthesized':
-			return b.negatedType(type_parenthesized$156(value));
+			return b.negatedType(type_parenthesized$155(value));
 		case 'pointer':
 		case 'type.pointer':
-			return b.negatedType(type_pointer$160(value));
+			return b.negatedType(type_pointer$159(value));
 		default:
 			return unbuilt('type.generic.type', value);
 	}
 };
-type type_generic$158_typeArguments$item$Item =
+type type_generic$157_typeArguments$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'type.primitive.boolean'>
 	| Text<GoMap, 'type.primitive.character'>
@@ -992,7 +993,7 @@ type type_generic$158_typeArguments$item$Item =
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
-const type_generic$158_typeArguments$item = (value: type_generic$158_typeArguments$item$Item) => {
+const type_generic$157_typeArguments$item = (value: type_generic$157_typeArguments$item$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.typeElem(b.identifier(value));
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
@@ -1189,13 +1190,13 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 		return unnumbered('type.generic.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return b.typeElem(value);
-		if (seated(value, [261])) return b.typeElem(b.interfaceType(value));
-		if (seated(value, [266])) return b.typeElem(b.channelTypeBidirectional(value));
-		if (seated(value, [267])) return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [268]))
+		if (seated(value, [155, 156, 157, 159, 160, 162, 163, 170, 171, 172, 225, 298])) return b.typeElem(value);
+		if (seated(value, [260])) return b.typeElem(b.interfaceType(value));
+		if (seated(value, [265])) return b.typeElem(b.channelTypeBidirectional(value));
+		if (seated(value, [266])) return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
+		if (seated(value, [267]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [165]))
+		if (seated(value, [164]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))))
 			);
@@ -1209,28 +1210,28 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 			return unbuilt('type.generic.typeArguments', value);
 		case 'array':
 		case 'type.array':
-			if (value.element !== undefined && value.length === undefined) return b.typeElem(type_array$163(value));
+			if (value.element !== undefined && value.length === undefined) return b.typeElem(type_array$162(value));
 			return unbuilt('type.generic.typeArguments', value);
 		case 'function':
 		case 'type.function':
 			return unbuilt('type.generic.typeArguments', value);
 		case 'generic':
 		case 'type.generic':
-			return b.typeElem(type_generic$158(value));
+			return b.typeElem(type_generic$157(value));
 		case 'object':
 		case 'type.object':
 			return unbuilt('type.generic.typeArguments', value);
 		case 'parenthesized':
 		case 'type.parenthesized':
-			return b.typeElem(type_parenthesized$156(value));
+			return b.typeElem(type_parenthesized$155(value));
 		case 'pointer':
 		case 'type.pointer':
-			return b.typeElem(type_pointer$160(value));
+			return b.typeElem(type_pointer$159(value));
 		default:
 			return unbuilt('type.generic.typeArguments', value);
 	}
 };
-type type_parenthesized$156_type$Item =
+type type_parenthesized$155_type$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'type.primitive.boolean'>
 	| Text<GoMap, 'type.primitive.character'>
@@ -1279,7 +1280,7 @@ type type_parenthesized$156_type$Item =
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
-const type_parenthesized$156_type = (value: type_parenthesized$156_type$Item) => {
+const type_parenthesized$155_type = (value: type_parenthesized$155_type$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
@@ -1463,12 +1464,12 @@ const type_parenthesized$156_type = (value: type_parenthesized$156_type$Item) =>
 		return unnumbered('type.parenthesized.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
-		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [266])) return b.channelTypeBidirectional(value);
-		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [165]))
+		if (seated(value, [155, 156, 157, 159, 160, 162, 163, 170, 171, 172, 225, 298])) return value;
+		if (seated(value, [260])) return b.interfaceType(value);
+		if (seated(value, [265])) return b.channelTypeBidirectional(value);
+		if (seated(value, [266])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [164]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		return unseated('type.parenthesized.type', value);
 	}
@@ -1480,28 +1481,28 @@ const type_parenthesized$156_type = (value: type_parenthesized$156_type$Item) =>
 			return unbuilt('type.parenthesized.type', value);
 		case 'array':
 		case 'type.array':
-			if (value.element !== undefined && value.length === undefined) return type_array$163(value);
+			if (value.element !== undefined && value.length === undefined) return type_array$162(value);
 			return unbuilt('type.parenthesized.type', value);
 		case 'function':
 		case 'type.function':
 			return unbuilt('type.parenthesized.type', value);
 		case 'generic':
 		case 'type.generic':
-			return type_generic$158(value);
+			return type_generic$157(value);
 		case 'object':
 		case 'type.object':
 			return unbuilt('type.parenthesized.type', value);
 		case 'parenthesized':
 		case 'type.parenthesized':
-			return type_parenthesized$156(value);
+			return type_parenthesized$155(value);
 		case 'pointer':
 		case 'type.pointer':
-			return type_pointer$160(value);
+			return type_pointer$159(value);
 		default:
 			return unbuilt('type.parenthesized.type', value);
 	}
 };
-type type_pointer$160_type$Item =
+type type_pointer$159_type$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'type.primitive.boolean'>
 	| Text<GoMap, 'type.primitive.character'>
@@ -1550,7 +1551,7 @@ type type_pointer$160_type$Item =
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
-const type_pointer$160_type = (value: type_pointer$160_type$Item) => {
+const type_pointer$159_type = (value: type_pointer$159_type$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
@@ -1734,12 +1735,12 @@ const type_pointer$160_type = (value: type_pointer$160_type$Item) => {
 		return unnumbered('type.pointer.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
-		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [266])) return b.channelTypeBidirectional(value);
-		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [165]))
+		if (seated(value, [155, 156, 157, 159, 160, 162, 163, 170, 171, 172, 225, 298])) return value;
+		if (seated(value, [260])) return b.interfaceType(value);
+		if (seated(value, [265])) return b.channelTypeBidirectional(value);
+		if (seated(value, [266])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [164]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		return unseated('type.pointer.type', value);
 	}
@@ -1751,50 +1752,50 @@ const type_pointer$160_type = (value: type_pointer$160_type$Item) => {
 			return unbuilt('type.pointer.type', value);
 		case 'array':
 		case 'type.array':
-			if (value.element !== undefined && value.length === undefined) return type_array$163(value);
+			if (value.element !== undefined && value.length === undefined) return type_array$162(value);
 			return unbuilt('type.pointer.type', value);
 		case 'function':
 		case 'type.function':
 			return unbuilt('type.pointer.type', value);
 		case 'generic':
 		case 'type.generic':
-			return type_generic$158(value);
+			return type_generic$157(value);
 		case 'object':
 		case 'type.object':
 			return unbuilt('type.pointer.type', value);
 		case 'parenthesized':
 		case 'type.parenthesized':
-			return type_parenthesized$156(value);
+			return type_parenthesized$155(value);
 		case 'pointer':
 		case 'type.pointer':
-			return type_pointer$160(value);
+			return type_pointer$159(value);
 		default:
 			return unbuilt('type.pointer.type', value);
 	}
 };
-const comment_block$111 = (input: PathInput<GoMap, 'comment.block'>): ReturnType<typeof b.commentArm2> => {
+const comment_block$110 = (input: PathInput<GoMap, 'comment.block'>): ReturnType<typeof b.commentArm2> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('comment.block', unroutedSlot);
 	const text = input.$value;
 	return b.commentArm2(text);
 };
-const comment_line$110 = (input: PathInput<GoMap, 'comment.line'>): ReturnType<typeof b.commentArm1> => {
+const comment_line$109 = (input: PathInput<GoMap, 'comment.line'>): ReturnType<typeof b.commentArm1> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('comment.line', unroutedSlot);
 	const text = input.$value;
 	return b.commentArm1(text);
 };
-const declaration_parameter_variadic$151 = (
+const declaration_parameter_variadic$150 = (
 	input: PathInput<GoMap, 'declaration.parameter.variadic', 'variadic'>
 ): ReturnType<typeof b.variadicParameterDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['name', 'type']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.parameter.variadic', unroutedSlot);
 	return b.variadicParameterDeclaration({
-		name: input.name === undefined ? undefined : declaration_parameter_variadic$151_name(input.name),
+		name: input.name === undefined ? undefined : declaration_parameter_variadic$150_name(input.name),
 		type:
 			input.type === undefined
 				? missing('declaration.parameter.variadic.type')
-				: declaration_parameter_variadic$151_type(input.type)
+				: declaration_parameter_variadic$150_type(input.type)
 	});
 };
 const identifier$1 = (input: PathInput<GoMap, 'identifier'>): ReturnType<typeof b.identifier> => {
@@ -1812,58 +1813,58 @@ const literal_boolean_true$71 = (input: PathInput<GoMap, 'literal.boolean.true',
 	if (unroutedSlot !== undefined) return unrouted('literal.boolean.true', unroutedSlot);
 	return 71;
 };
-const literal_character$104 = (
+const literal_character$103 = (
 	input: PathInput<GoMap, 'literal.character', 'character'>
 ): ReturnType<typeof b.runeLiteralArm1> => {
 	const unroutedSlot = unroutedIn(input, ['content']);
 	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.runeLiteralArm1(
-		input.content === undefined ? missing('literal.character.content') : literal_character$104_content(input.content)
+		input.content === undefined ? missing('literal.character.content') : literal_character$103_content(input.content)
 	);
 };
-const literal_character$105 = (
+const literal_character$104 = (
 	input: PathInput<GoMap, 'literal.character', 'character'>
 ): ReturnType<typeof b.runeLiteralArm2Arm1> => {
 	const unroutedSlot = unroutedIn(input, ['content']);
 	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.runeLiteralArm2Arm1(
-		input.content === undefined ? missing('literal.character.content') : literal_character$105_content(input.content)
+		input.content === undefined ? missing('literal.character.content') : literal_character$104_content(input.content)
 	);
 };
-const literal_character$106 = (
+const literal_character$105 = (
 	input: PathInput<GoMap, 'literal.character', 'character'>
 ): ReturnType<typeof b.runeLiteralArm2Arm2> => {
 	const unroutedSlot = unroutedIn(input, ['content']);
 	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.runeLiteralArm2Arm2(
-		input.content === undefined ? missing('literal.character.content') : literal_character$106_content(input.content)
+		input.content === undefined ? missing('literal.character.content') : literal_character$105_content(input.content)
 	);
 };
-const literal_character$107 = (
+const literal_character$106 = (
 	input: PathInput<GoMap, 'literal.character', 'character'>
 ): ReturnType<typeof b.runeLiteralArm2Arm3> => {
 	const unroutedSlot = unroutedIn(input, ['content']);
 	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.runeLiteralArm2Arm3(
-		input.content === undefined ? missing('literal.character.content') : literal_character$107_content(input.content)
+		input.content === undefined ? missing('literal.character.content') : literal_character$106_content(input.content)
 	);
 };
-const literal_character$108 = (
+const literal_character$107 = (
 	input: PathInput<GoMap, 'literal.character', 'character'>
 ): ReturnType<typeof b.runeLiteralArm2Arm4> => {
 	const unroutedSlot = unroutedIn(input, ['content']);
 	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.runeLiteralArm2Arm4(
-		input.content === undefined ? missing('literal.character.content') : literal_character$108_content(input.content)
+		input.content === undefined ? missing('literal.character.content') : literal_character$107_content(input.content)
 	);
 };
-const literal_character$109 = (
+const literal_character$108 = (
 	input: PathInput<GoMap, 'literal.character', 'character'>
 ): ReturnType<typeof b.runeLiteralArm2Arm5> => {
 	const unroutedSlot = unroutedIn(input, ['content']);
 	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.runeLiteralArm2Arm5(
-		input.content === undefined ? missing('literal.character.content') : literal_character$109_content(input.content)
+		input.content === undefined ? missing('literal.character.content') : literal_character$108_content(input.content)
 	);
 };
 const literal_null$70 = (input: PathInput<GoMap, 'literal.null', 'null'>) => {
@@ -1908,13 +1909,13 @@ const literal_number_integer_imaginary$92 = (
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.imaginaryLiteralArm1(value) : b.imaginaryLiteralArm1(value);
 };
-const literal_number_integer_imaginary$98 = (
+const literal_number_integer_imaginary$97 = (
 	input: PathInput<GoMap, 'literal.number.integer.imaginary', 'imaginary'>
-): ReturnType<typeof b.imaginaryLiteralArm7> => {
+): ReturnType<typeof b.imaginaryLiteralArm6> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.imaginary', unroutedSlot);
 	if (typeof input.$value === 'bigint') return unnumbered('literal.number.integer.imaginary', 'bigint');
-	return b.imaginaryLiteralArm7(input.$value);
+	return b.imaginaryLiteralArm6(input.$value);
 };
 const literal_number_integer_octal$84 = (
 	input: PathInput<GoMap, 'literal.number.integer.octal', 'octal'>
@@ -1924,12 +1925,12 @@ const literal_number_integer_octal$84 = (
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.intLiteral.arm4(value) : b.intLiteral.arm4(value);
 };
-const literal_string$228 = (
+const literal_string$227 = (
 	input: PathInput<GoMap, 'literal.string', 'string'>
 ): ReturnType<typeof b.interpretedStringLiteral> => {
 	const unroutedSlot = unroutedIn(input, ['elements']);
 	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
-	return b.interpretedStringLiteral(...(input.elements ?? []).map(literal_string$228_elements));
+	return b.interpretedStringLiteral(...(input.elements ?? []).map(literal_string$227_elements));
 };
 const literal_string_escape$76 = (
 	input: PathInput<GoMap, 'literal.string.escape', 'escape'>
@@ -1971,7 +1972,7 @@ const literal_string_escape$80 = (
 	const text = input.$value;
 	return b.escapeSequenceArm5(text);
 };
-const literal_string_raw$227 = (
+const literal_string_raw$226 = (
 	input: PathInput<GoMap, 'literal.string.raw', 'raw'>
 ): ReturnType<typeof b.rawStringLiteral> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -1986,57 +1987,57 @@ const literal_string_text$75 = (
 	if (unroutedSlot !== undefined) return unrouted('literal.string.text', unroutedSlot);
 	return b.interpretedStringLiteralContent(typeof input === 'string' ? input : input.$value);
 };
-const statement_break$189 = (input: PathInput<GoMap, 'statement.break'>): ReturnType<typeof b.breakStatement> => {
+const statement_break$188 = (input: PathInput<GoMap, 'statement.break'>): ReturnType<typeof b.breakStatement> => {
 	const unroutedSlot = unroutedIn(input, ['label']);
 	if (unroutedSlot !== undefined) return unrouted('statement.break', unroutedSlot);
-	return b.breakStatement(input.label === undefined ? undefined : statement_break$189_label(input.label));
+	return b.breakStatement(input.label === undefined ? undefined : statement_break$188_label(input.label));
 };
-const statement_continue$190 = (
+const statement_continue$189 = (
 	input: PathInput<GoMap, 'statement.continue'>
 ): ReturnType<typeof b.continueStatement> => {
 	const unroutedSlot = unroutedIn(input, ['label']);
 	if (unroutedSlot !== undefined) return unrouted('statement.continue', unroutedSlot);
-	return b.continueStatement(input.label === undefined ? undefined : statement_continue$190_label(input.label));
+	return b.continueStatement(input.label === undefined ? undefined : statement_continue$189_label(input.label));
 };
-const type_array$163 = (input: PathInput<GoMap, 'type.array', 'array'>): ReturnType<typeof b.sliceType> => {
+const type_array$162 = (input: PathInput<GoMap, 'type.array', 'array'>): ReturnType<typeof b.sliceType> => {
 	const unroutedSlot = unroutedIn(input, ['element']);
 	if (unroutedSlot !== undefined) return unrouted('type.array', unroutedSlot);
 	return b.sliceType(
-		input.element === undefined ? missing('type.array.element') : type_array$163_element(input.element)
+		input.element === undefined ? missing('type.array.element') : type_array$162_element(input.element)
 	);
 };
-const type_generic$158 = (input: PathInput<GoMap, 'type.generic', 'generic'>): ReturnType<typeof b.genericType> => {
+const type_generic$157 = (input: PathInput<GoMap, 'type.generic', 'generic'>): ReturnType<typeof b.genericType> => {
 	const unroutedSlot = unroutedIn(input, ['type', 'typeArguments']);
 	if (unroutedSlot !== undefined) return unrouted('type.generic', unroutedSlot);
 	return b.genericType({
-		type: input.type === undefined ? missing('type.generic.type') : type_generic$158_type(input.type),
+		type: input.type === undefined ? missing('type.generic.type') : type_generic$157_type(input.type),
 		typeArguments: b.typeArguments(
 			b.typeElems(
-				...nonEmpty('type.generic.typeArguments', (input.typeArguments ?? []).map(type_generic$158_typeArguments$item))
+				...nonEmpty('type.generic.typeArguments', (input.typeArguments ?? []).map(type_generic$157_typeArguments$item))
 			)
 		)
 	});
 };
-const type_parenthesized$156 = (
+const type_parenthesized$155 = (
 	input: PathInput<GoMap, 'type.parenthesized', 'parenthesized'>
 ): ReturnType<typeof b.parenthesizedType> => {
 	const unroutedSlot = unroutedIn(input, ['type']);
 	if (unroutedSlot !== undefined) return unrouted('type.parenthesized', unroutedSlot);
-	return b.parenthesizedType(type_parenthesized$156_type(input.type));
+	return b.parenthesizedType(type_parenthesized$155_type(input.type));
 };
-const type_pointer$160 = (input: PathInput<GoMap, 'type.pointer', 'pointer'>): ReturnType<typeof b.pointerType> => {
+const type_pointer$159 = (input: PathInput<GoMap, 'type.pointer', 'pointer'>): ReturnType<typeof b.pointerType> => {
 	const unroutedSlot = unroutedIn(input, ['type']);
 	if (unroutedSlot !== undefined) return unrouted('type.pointer', unroutedSlot);
-	return b.pointerType(type_pointer$160_type(input.type));
+	return b.pointerType(type_pointer$159_type(input.type));
 };
 const comment_block = (input: PathInput<GoMap, 'comment.block'>) => {
-	return comment_block$111(input);
+	return comment_block$110(input);
 };
 const comment_line = (input: PathInput<GoMap, 'comment.line'>) => {
-	return comment_line$110(input);
+	return comment_line$109(input);
 };
 const declaration_parameter_variadic = (input: PathInput<GoMap, 'declaration.parameter.variadic'>) => {
-	return declaration_parameter_variadic$151(input);
+	return declaration_parameter_variadic$150(input);
 };
 const literal_boolean_false = (input: PathInput<GoMap, 'literal.boolean.false'>) => {
 	return literal_boolean_false$72(input);
@@ -2046,23 +2047,23 @@ const literal_boolean_true = (input: PathInput<GoMap, 'literal.boolean.true'>) =
 };
 const literal_character = (input: PathInput<GoMap, 'literal.character'>) => {
 	if ((typeof input.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(input.content)) && input.content !== undefined)
-		return literal_character$104(input);
+		return literal_character$103(input);
 	if (
 		(typeof input.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(input.content)) &&
 		input.content !== undefined
 	)
-		return literal_character$105(input);
+		return literal_character$104(input);
 	if (
 		(typeof input.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(input.content)) &&
 		input.content !== undefined
 	)
-		return literal_character$106(input);
+		return literal_character$105(input);
 	if (
 		(typeof input.content !== 'string' ||
 			/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(input.content)) &&
 		input.content !== undefined
 	)
-		return literal_character$107(input);
+		return literal_character$106(input);
 	if (
 		(typeof input.content !== 'string' ||
 			/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -2070,14 +2071,14 @@ const literal_character = (input: PathInput<GoMap, 'literal.character'>) => {
 			)) &&
 		input.content !== undefined
 	)
-		return literal_character$108(input);
-	return literal_character$109(input);
+		return literal_character$107(input);
+	return literal_character$108(input);
 };
 const literal_null = (input: PathInput<GoMap, 'literal.null'>) => {
 	return literal_null$70(input);
 };
 const literal_number_integer = (input: PathInput<GoMap, 'literal.number.integer'>) => {
-	if (input.$value === '0') return literal_number_integer$82(input);
+	if (literalValueIs(input.$value, 0)) return literal_number_integer$82(input);
 	return literal_number_integer$83(input);
 };
 const literal_number_integer_binary = (input: PathInput<GoMap, 'literal.number.integer.binary'>) => {
@@ -2090,7 +2091,7 @@ const literal_number_integer_imaginary = (input: PathInput<GoMap, 'literal.numbe
 	if (typeof input.$value === 'bigint') return literal_number_integer_imaginary$92(input);
 	if (typeof input.$value === 'number') {
 		if (Number.isSafeInteger(input.$value)) return literal_number_integer_imaginary$92(input);
-		return literal_number_integer_imaginary$98(input);
+		return literal_number_integer_imaginary$97(input);
 	}
 	return unbuilt('literal.number.integer.imaginary', input);
 };
@@ -2098,7 +2099,7 @@ const literal_number_integer_octal = (input: PathInput<GoMap, 'literal.number.in
 	return literal_number_integer_octal$84(input);
 };
 const literal_string = (input: PathInput<GoMap, 'literal.string'>) => {
-	return literal_string$228(input);
+	return literal_string$227(input);
 };
 const literal_string_escape = (input: PathInput<GoMap, 'literal.string.escape'>) => {
 	if ((typeof input.$value !== 'string' || /^(?:(?:[^xuU]))$/u.test(input.$value)) && input.$value !== undefined)
@@ -2118,19 +2119,19 @@ const literal_string_escape = (input: PathInput<GoMap, 'literal.string.escape'>)
 	return literal_string_escape$80(input);
 };
 const literal_string_raw = (input: PathInput<GoMap, 'literal.string.raw'>) => {
-	return literal_string_raw$227(input);
+	return literal_string_raw$226(input);
 };
 const statement_break = (input: PathInput<GoMap, 'statement.break'>) => {
-	return statement_break$189(input);
+	return statement_break$188(input);
 };
 const statement_continue = (input: PathInput<GoMap, 'statement.continue'>) => {
-	return statement_continue$190(input);
+	return statement_continue$189(input);
 };
 const type_generic = (input: PathInput<GoMap, 'type.generic'>) => {
-	return type_generic$158(input);
+	return type_generic$157(input);
 };
 const type_parenthesized = (input: PathInput<GoMap, 'type.parenthesized'>) => {
-	return type_parenthesized$156(input);
+	return type_parenthesized$155(input);
 };
 export const portableBuild = {
 	comment: { block: comment_block, line: comment_line },

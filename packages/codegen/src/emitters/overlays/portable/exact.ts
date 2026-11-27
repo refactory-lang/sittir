@@ -61,6 +61,9 @@ export type ViewClass = 'text' | 'claimed' | 'refined' | 'never' | 'token' | 'va
 
 export type ValueRead = 'text' | 'true' | 'false' | 'float' | 'integer' | 'bigint';
 
+export const literalValueRead = (value: boolean | number): Exclude<ValueRead, 'text' | 'bigint'> =>
+	typeof value === 'boolean' ? (value ? 'true' : 'false') : Number.isInteger(value) ? 'integer' : 'float';
+
 export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest, table, covered }: PortableTypedInput): ExactReads {
 	const typed = (kind: string): boolean => findKindEntry(kindEntries, kind) !== undefined;
 	const { model } = input;
@@ -105,7 +108,7 @@ export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest, ta
 		const id = findKindEntry(kindEntries, kind)?.id;
 		const arms = (table.paths[path]?.arms ?? []).filter((arm) => arm.kind === id);
 		const literal = arms.find((arm) => arm.literal !== undefined)?.literal;
-		if (literal !== undefined) return literal.value === undefined ? undefined : literal.value ? 'true' : 'false';
+		if (literal !== undefined) return literal.value === undefined ? undefined : literalValueRead(literal.value);
 		const scalar = arms.find((arm) => arm.scalar !== undefined)?.scalar;
 		if (scalar !== undefined) return scalar;
 		return varies(kind) ? 'text' : undefined;

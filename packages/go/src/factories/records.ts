@@ -94,15 +94,15 @@ import {
 	_slotRe_buildFloatLiteralArm4Arm3_content,
 	_slotRe_buildImaginaryLiteralArm1_content,
 	_slotRe_buildImaginaryLiteralArm2_content,
+	_slotRe_buildImaginaryLiteralArm3_content,
 	_slotRe_buildImaginaryLiteralArm4_content,
 	_slotRe_buildImaginaryLiteralArm5_content,
 	_slotRe_buildImaginaryLiteralArm6_content,
 	_slotRe_buildImaginaryLiteralArm7_content,
 	_slotRe_buildImaginaryLiteralArm8_content,
-	_slotRe_buildImaginaryLiteralArm9_content,
-	_slotRe_buildImaginaryLiteralArm10Arm1_content,
-	_slotRe_buildImaginaryLiteralArm10Arm2_content,
-	_slotRe_buildImaginaryLiteralArm10Arm3_content,
+	_slotRe_buildImaginaryLiteralArm9Arm1_content,
+	_slotRe_buildImaginaryLiteralArm9Arm2_content,
+	_slotRe_buildImaginaryLiteralArm9Arm3_content,
 	_slotRe_buildRuneLiteralArm1_content,
 	_slotRe_buildRuneLiteralArm2Arm1_content,
 	_slotRe_buildRuneLiteralArm2Arm2_content,
@@ -10237,7 +10237,75 @@ function withImaginaryLiteralArm2(node: object, setter: string, args: readonly u
 	throw new Error(`imaginary_literal_arm2 has no $with.${setter}`);
 }
 
-export const buildImaginaryLiteralArm3: TSKindId.ImaginaryLiteralArm3 = TSKindId.ImaginaryLiteralArm3;
+export function buildImaginaryLiteralArm3<const N extends string | number | bigint>(
+	content: N & NumericLiteral<N, true>,
+	affix?: true
+): T.ImaginaryLiteralArm3.Bound;
+export function buildImaginaryLiteralArm3(text: `${string}i`, affix: false): T.ImaginaryLiteralArm3.Bound;
+export function buildImaginaryLiteralArm3(
+	input: string | number | bigint,
+	affix: boolean = true
+): T.ImaginaryLiteralArm3.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`imaginary_literal_arm3.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'i', 'imaginary_literal_arm3');
+	}
+	const _content = numberText(10, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`imaginary_literal_arm3.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildImaginaryLiteralArm3_content.test(_content))
+		throw new Error(`imaginary_literal_arm3.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm3', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm3 as const, { _content });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ImaginaryLiteralArm3 as const);
+		storeCell(arena, record, 2, 2, _content);
+		const node = arena.view(record);
+		return node as unknown as T.ImaginaryLiteralArm3.Bound;
+	});
+}
+
+function buildImaginaryLiteralArm3$patch(
+	source: object,
+	input: string | number | bigint,
+	affix: boolean = true
+): T.ImaginaryLiteralArm3.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`imaginary_literal_arm3.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'i', 'imaginary_literal_arm3');
+	}
+	const _content = numberText(10, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`imaginary_literal_arm3.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildImaginaryLiteralArm3_content.test(_content))
+		throw new Error(`imaginary_literal_arm3.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm3', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm3 as const, { _content });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ImaginaryLiteralArm3 as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		const node = arena.view(record);
+		return node as unknown as T.ImaginaryLiteralArm3.Bound;
+	});
+}
+function withImaginaryLiteralArm3(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildImaginaryLiteralArm3$patch(node, value))
+			);
+	}
+	throw new Error(`imaginary_literal_arm3 has no $with.${setter}`);
+}
 
 export function buildImaginaryLiteralArm4<const N extends string | number | bigint>(
 	content: N & NumericLiteral<N, true>,
@@ -10254,7 +10322,7 @@ export function buildImaginaryLiteralArm4(
 			throw new Error(`imaginary_literal_arm4.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm4');
 	}
-	const _content = numberText(10, '', value);
+	const _content = numberText(8, '0o', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm4.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm4_content.test(_content))
@@ -10282,7 +10350,7 @@ function buildImaginaryLiteralArm4$patch(
 			throw new Error(`imaginary_literal_arm4.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm4');
 	}
-	const _content = numberText(10, '', value);
+	const _content = numberText(8, '0o', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm4.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm4_content.test(_content))
@@ -10324,7 +10392,7 @@ export function buildImaginaryLiteralArm5(
 			throw new Error(`imaginary_literal_arm5.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm5');
 	}
-	const _content = numberText(8, '0o', value);
+	const _content = numberText(16, '0x', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm5.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm5_content.test(_content))
@@ -10352,7 +10420,7 @@ function buildImaginaryLiteralArm5$patch(
 			throw new Error(`imaginary_literal_arm5.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm5');
 	}
-	const _content = numberText(8, '0o', value);
+	const _content = numberText(16, '0x', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm5.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm5_content.test(_content))
@@ -10379,22 +10447,19 @@ function withImaginaryLiteralArm5(node: object, setter: string, args: readonly u
 	throw new Error(`imaginary_literal_arm5 has no $with.${setter}`);
 }
 
-export function buildImaginaryLiteralArm6<const N extends string | number | bigint>(
-	content: N & NumericLiteral<N, true>,
+export function buildImaginaryLiteralArm6<const N extends string | number>(
+	content: N & NumericLiteral<N, false>,
 	affix?: true
 ): T.ImaginaryLiteralArm6.Bound;
 export function buildImaginaryLiteralArm6(text: `${string}i`, affix: false): T.ImaginaryLiteralArm6.Bound;
-export function buildImaginaryLiteralArm6(
-	input: string | number | bigint,
-	affix: boolean = true
-): T.ImaginaryLiteralArm6.Bound {
+export function buildImaginaryLiteralArm6(input: string | number, affix: boolean = true): T.ImaginaryLiteralArm6.Bound {
 	let value = input;
 	if (!affix) {
 		if (typeof input !== 'string')
 			throw new Error(`imaginary_literal_arm6.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm6');
 	}
-	const _content = numberText(16, '0x', value);
+	const _content = numberText('float', '.0', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm6.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm6_content.test(_content))
@@ -10413,7 +10478,7 @@ export function buildImaginaryLiteralArm6(
 
 function buildImaginaryLiteralArm6$patch(
 	source: object,
-	input: string | number | bigint,
+	input: string | number,
 	affix: boolean = true
 ): T.ImaginaryLiteralArm6.Bound {
 	let value = input;
@@ -10422,7 +10487,7 @@ function buildImaginaryLiteralArm6$patch(
 			throw new Error(`imaginary_literal_arm6.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm6');
 	}
-	const _content = numberText(16, '0x', value);
+	const _content = numberText('float', '.0', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm6.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm6_content.test(_content))
@@ -10442,7 +10507,7 @@ function withImaginaryLiteralArm6(node: object, setter: string, args: readonly u
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (value: Admit<string | number | bigint>) =>
+			return applySetter(args, (value: Admit<string | number>) =>
 				rebuilt(node, handle, () => buildImaginaryLiteralArm6$patch(node, value))
 			);
 	}
@@ -10461,7 +10526,7 @@ export function buildImaginaryLiteralArm7(input: string | number, affix: boolean
 			throw new Error(`imaginary_literal_arm7.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm7');
 	}
-	const _content = numberText('float', '.0', value);
+	const _content = numberText('float', 'e0', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm7.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm7_content.test(_content))
@@ -10489,7 +10554,7 @@ function buildImaginaryLiteralArm7$patch(
 			throw new Error(`imaginary_literal_arm7.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm7');
 	}
-	const _content = numberText('float', '.0', value);
+	const _content = numberText('float', 'e0', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm7.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm7_content.test(_content))
@@ -10528,7 +10593,7 @@ export function buildImaginaryLiteralArm8(input: string | number, affix: boolean
 			throw new Error(`imaginary_literal_arm8.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm8');
 	}
-	const _content = numberText('float', 'e0', value);
+	const _content = numberText('float', '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm8.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm8_content.test(_content))
@@ -10556,7 +10621,7 @@ function buildImaginaryLiteralArm8$patch(
 			throw new Error(`imaginary_literal_arm8.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm8');
 	}
-	const _content = numberText('float', 'e0', value);
+	const _content = numberText('float', '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm8.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm8_content.test(_content))
@@ -10583,272 +10648,196 @@ function withImaginaryLiteralArm8(node: object, setter: string, args: readonly u
 	throw new Error(`imaginary_literal_arm8 has no $with.${setter}`);
 }
 
-export function buildImaginaryLiteralArm9<const N extends string | number>(
-	content: N & NumericLiteral<N, false>,
-	affix?: true
-): T.ImaginaryLiteralArm9.Bound;
-export function buildImaginaryLiteralArm9(text: `${string}i`, affix: false): T.ImaginaryLiteralArm9.Bound;
-export function buildImaginaryLiteralArm9(input: string | number, affix: boolean = true): T.ImaginaryLiteralArm9.Bound {
+export function buildImaginaryLiteralArm9Arm1(content: string, affix?: true): T.ImaginaryLiteralArm9Arm1.Bound;
+export function buildImaginaryLiteralArm9Arm1(text: `${string}i`, affix: false): T.ImaginaryLiteralArm9Arm1.Bound;
+export function buildImaginaryLiteralArm9Arm1(input: string, affix: boolean = true): T.ImaginaryLiteralArm9Arm1.Bound {
 	let value = input;
 	if (!affix) {
 		if (typeof input !== 'string')
-			throw new Error(`imaginary_literal_arm9.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '', 'i', 'imaginary_literal_arm9');
-	}
-	const _content = numberText('float', '', value);
-	if (typeof _content !== 'string')
-		throw new Error(`imaginary_literal_arm9.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildImaginaryLiteralArm9_content.test(_content))
-		throw new Error(`imaginary_literal_arm9.content: text does not match pattern: ${describeValue(_content)}`);
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm9', { content: _content });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm9 as const, { _content });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.ImaginaryLiteralArm9 as const);
-		storeCell(arena, record, 2, 2, _content);
-		const node = arena.view(record);
-		return node as unknown as T.ImaginaryLiteralArm9.Bound;
-	});
-}
-
-function buildImaginaryLiteralArm9$patch(
-	source: object,
-	input: string | number,
-	affix: boolean = true
-): T.ImaginaryLiteralArm9.Bound {
-	let value = input;
-	if (!affix) {
-		if (typeof input !== 'string')
-			throw new Error(`imaginary_literal_arm9.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '', 'i', 'imaginary_literal_arm9');
-	}
-	const _content = numberText('float', '', value);
-	if (typeof _content !== 'string')
-		throw new Error(`imaginary_literal_arm9.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildImaginaryLiteralArm9_content.test(_content))
-		throw new Error(`imaginary_literal_arm9.content: text does not match pattern: ${describeValue(_content)}`);
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm9', { content: _content });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm9 as const, { _content });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.ImaginaryLiteralArm9 as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
-		const node = arena.view(record);
-		return node as unknown as T.ImaginaryLiteralArm9.Bound;
-	});
-}
-function withImaginaryLiteralArm9(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<string | number>) =>
-				rebuilt(node, handle, () => buildImaginaryLiteralArm9$patch(node, value))
-			);
-	}
-	throw new Error(`imaginary_literal_arm9 has no $with.${setter}`);
-}
-
-export function buildImaginaryLiteralArm10Arm1(content: string, affix?: true): T.ImaginaryLiteralArm10Arm1.Bound;
-export function buildImaginaryLiteralArm10Arm1(text: `${string}i`, affix: false): T.ImaginaryLiteralArm10Arm1.Bound;
-export function buildImaginaryLiteralArm10Arm1(
-	input: string,
-	affix: boolean = true
-): T.ImaginaryLiteralArm10Arm1.Bound {
-	let value = input;
-	if (!affix) {
-		if (typeof input !== 'string')
-			throw new Error(`imaginary_literal_arm10_arm1.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '', 'i', 'imaginary_literal_arm10_arm1');
+			throw new Error(`imaginary_literal_arm9_arm1.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'i', 'imaginary_literal_arm9_arm1');
 	}
 	const _content = value;
 	if (typeof _content !== 'string')
-		throw new Error(`imaginary_literal_arm10_arm1.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildImaginaryLiteralArm10Arm1_content.test(_content))
-		throw new Error(`imaginary_literal_arm10_arm1.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`imaginary_literal_arm9_arm1.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildImaginaryLiteralArm9Arm1_content.test(_content))
+		throw new Error(`imaginary_literal_arm9_arm1.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm10_arm1', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm9_arm1', { content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm10Arm1 as const, { _content });
+	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm9Arm1 as const, { _content });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.ImaginaryLiteralArm10Arm1 as const);
+		const record = arena.record(TSKindId.ImaginaryLiteralArm9Arm1 as const);
 		storeCell(arena, record, 2, 2, _content);
 		const node = arena.view(record);
-		return node as unknown as T.ImaginaryLiteralArm10Arm1.Bound;
+		return node as unknown as T.ImaginaryLiteralArm9Arm1.Bound;
 	});
 }
 
-function buildImaginaryLiteralArm10Arm1$patch(
+function buildImaginaryLiteralArm9Arm1$patch(
 	source: object,
 	input: string,
 	affix: boolean = true
-): T.ImaginaryLiteralArm10Arm1.Bound {
+): T.ImaginaryLiteralArm9Arm1.Bound {
 	let value = input;
 	if (!affix) {
 		if (typeof input !== 'string')
-			throw new Error(`imaginary_literal_arm10_arm1.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '', 'i', 'imaginary_literal_arm10_arm1');
+			throw new Error(`imaginary_literal_arm9_arm1.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'i', 'imaginary_literal_arm9_arm1');
 	}
 	const _content = value;
 	if (typeof _content !== 'string')
-		throw new Error(`imaginary_literal_arm10_arm1.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildImaginaryLiteralArm10Arm1_content.test(_content))
-		throw new Error(`imaginary_literal_arm10_arm1.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`imaginary_literal_arm9_arm1.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildImaginaryLiteralArm9Arm1_content.test(_content))
+		throw new Error(`imaginary_literal_arm9_arm1.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm10_arm1', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm9_arm1', { content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm10Arm1 as const, { _content });
+	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm9Arm1 as const, { _content });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.ImaginaryLiteralArm10Arm1 as const);
+		const record = arena.copy(source, TSKindId.ImaginaryLiteralArm9Arm1 as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
-		return node as unknown as T.ImaginaryLiteralArm10Arm1.Bound;
+		return node as unknown as T.ImaginaryLiteralArm9Arm1.Bound;
 	});
 }
-function withImaginaryLiteralArm10Arm1(node: object, setter: string, args: readonly unknown[]): unknown {
+function withImaginaryLiteralArm9Arm1(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<string>) =>
-				rebuilt(node, handle, () => buildImaginaryLiteralArm10Arm1$patch(node, value))
+				rebuilt(node, handle, () => buildImaginaryLiteralArm9Arm1$patch(node, value))
 			);
 	}
-	throw new Error(`imaginary_literal_arm10_arm1 has no $with.${setter}`);
+	throw new Error(`imaginary_literal_arm9_arm1 has no $with.${setter}`);
 }
 
-export function buildImaginaryLiteralArm10Arm2(content: string, affix?: true): T.ImaginaryLiteralArm10Arm2.Bound;
-export function buildImaginaryLiteralArm10Arm2(text: `${string}i`, affix: false): T.ImaginaryLiteralArm10Arm2.Bound;
-export function buildImaginaryLiteralArm10Arm2(
-	input: string,
-	affix: boolean = true
-): T.ImaginaryLiteralArm10Arm2.Bound {
+export function buildImaginaryLiteralArm9Arm2(content: string, affix?: true): T.ImaginaryLiteralArm9Arm2.Bound;
+export function buildImaginaryLiteralArm9Arm2(text: `${string}i`, affix: false): T.ImaginaryLiteralArm9Arm2.Bound;
+export function buildImaginaryLiteralArm9Arm2(input: string, affix: boolean = true): T.ImaginaryLiteralArm9Arm2.Bound {
 	let value = input;
 	if (!affix) {
 		if (typeof input !== 'string')
-			throw new Error(`imaginary_literal_arm10_arm2.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '', 'i', 'imaginary_literal_arm10_arm2');
+			throw new Error(`imaginary_literal_arm9_arm2.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'i', 'imaginary_literal_arm9_arm2');
 	}
 	const _content = value;
 	if (typeof _content !== 'string')
-		throw new Error(`imaginary_literal_arm10_arm2.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildImaginaryLiteralArm10Arm2_content.test(_content))
-		throw new Error(`imaginary_literal_arm10_arm2.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`imaginary_literal_arm9_arm2.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildImaginaryLiteralArm9Arm2_content.test(_content))
+		throw new Error(`imaginary_literal_arm9_arm2.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm10_arm2', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm9_arm2', { content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm10Arm2 as const, { _content });
+	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm9Arm2 as const, { _content });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.ImaginaryLiteralArm10Arm2 as const);
+		const record = arena.record(TSKindId.ImaginaryLiteralArm9Arm2 as const);
 		storeCell(arena, record, 2, 2, _content);
 		const node = arena.view(record);
-		return node as unknown as T.ImaginaryLiteralArm10Arm2.Bound;
+		return node as unknown as T.ImaginaryLiteralArm9Arm2.Bound;
 	});
 }
 
-function buildImaginaryLiteralArm10Arm2$patch(
+function buildImaginaryLiteralArm9Arm2$patch(
 	source: object,
 	input: string,
 	affix: boolean = true
-): T.ImaginaryLiteralArm10Arm2.Bound {
+): T.ImaginaryLiteralArm9Arm2.Bound {
 	let value = input;
 	if (!affix) {
 		if (typeof input !== 'string')
-			throw new Error(`imaginary_literal_arm10_arm2.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '', 'i', 'imaginary_literal_arm10_arm2');
+			throw new Error(`imaginary_literal_arm9_arm2.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'i', 'imaginary_literal_arm9_arm2');
 	}
 	const _content = value;
 	if (typeof _content !== 'string')
-		throw new Error(`imaginary_literal_arm10_arm2.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildImaginaryLiteralArm10Arm2_content.test(_content))
-		throw new Error(`imaginary_literal_arm10_arm2.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`imaginary_literal_arm9_arm2.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildImaginaryLiteralArm9Arm2_content.test(_content))
+		throw new Error(`imaginary_literal_arm9_arm2.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm10_arm2', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm9_arm2', { content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm10Arm2 as const, { _content });
+	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm9Arm2 as const, { _content });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.ImaginaryLiteralArm10Arm2 as const);
+		const record = arena.copy(source, TSKindId.ImaginaryLiteralArm9Arm2 as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
-		return node as unknown as T.ImaginaryLiteralArm10Arm2.Bound;
+		return node as unknown as T.ImaginaryLiteralArm9Arm2.Bound;
 	});
 }
-function withImaginaryLiteralArm10Arm2(node: object, setter: string, args: readonly unknown[]): unknown {
+function withImaginaryLiteralArm9Arm2(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<string>) =>
-				rebuilt(node, handle, () => buildImaginaryLiteralArm10Arm2$patch(node, value))
+				rebuilt(node, handle, () => buildImaginaryLiteralArm9Arm2$patch(node, value))
 			);
 	}
-	throw new Error(`imaginary_literal_arm10_arm2 has no $with.${setter}`);
+	throw new Error(`imaginary_literal_arm9_arm2 has no $with.${setter}`);
 }
 
-export function buildImaginaryLiteralArm10Arm3(content: string, affix?: true): T.ImaginaryLiteralArm10Arm3.Bound;
-export function buildImaginaryLiteralArm10Arm3(text: `${string}i`, affix: false): T.ImaginaryLiteralArm10Arm3.Bound;
-export function buildImaginaryLiteralArm10Arm3(
-	input: string,
-	affix: boolean = true
-): T.ImaginaryLiteralArm10Arm3.Bound {
+export function buildImaginaryLiteralArm9Arm3(content: string, affix?: true): T.ImaginaryLiteralArm9Arm3.Bound;
+export function buildImaginaryLiteralArm9Arm3(text: `${string}i`, affix: false): T.ImaginaryLiteralArm9Arm3.Bound;
+export function buildImaginaryLiteralArm9Arm3(input: string, affix: boolean = true): T.ImaginaryLiteralArm9Arm3.Bound {
 	let value = input;
 	if (!affix) {
 		if (typeof input !== 'string')
-			throw new Error(`imaginary_literal_arm10_arm3.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '', 'i', 'imaginary_literal_arm10_arm3');
+			throw new Error(`imaginary_literal_arm9_arm3.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'i', 'imaginary_literal_arm9_arm3');
 	}
 	const _content = value;
 	if (typeof _content !== 'string')
-		throw new Error(`imaginary_literal_arm10_arm3.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildImaginaryLiteralArm10Arm3_content.test(_content))
-		throw new Error(`imaginary_literal_arm10_arm3.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`imaginary_literal_arm9_arm3.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildImaginaryLiteralArm9Arm3_content.test(_content))
+		throw new Error(`imaginary_literal_arm9_arm3.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm10_arm3', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm9_arm3', { content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm10Arm3 as const, { _content });
+	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm9Arm3 as const, { _content });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.ImaginaryLiteralArm10Arm3 as const);
+		const record = arena.record(TSKindId.ImaginaryLiteralArm9Arm3 as const);
 		storeCell(arena, record, 2, 2, _content);
 		const node = arena.view(record);
-		return node as unknown as T.ImaginaryLiteralArm10Arm3.Bound;
+		return node as unknown as T.ImaginaryLiteralArm9Arm3.Bound;
 	});
 }
 
-function buildImaginaryLiteralArm10Arm3$patch(
+function buildImaginaryLiteralArm9Arm3$patch(
 	source: object,
 	input: string,
 	affix: boolean = true
-): T.ImaginaryLiteralArm10Arm3.Bound {
+): T.ImaginaryLiteralArm9Arm3.Bound {
 	let value = input;
 	if (!affix) {
 		if (typeof input !== 'string')
-			throw new Error(`imaginary_literal_arm10_arm3.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '', 'i', 'imaginary_literal_arm10_arm3');
+			throw new Error(`imaginary_literal_arm9_arm3.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'i', 'imaginary_literal_arm9_arm3');
 	}
 	const _content = value;
 	if (typeof _content !== 'string')
-		throw new Error(`imaginary_literal_arm10_arm3.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildImaginaryLiteralArm10Arm3_content.test(_content))
-		throw new Error(`imaginary_literal_arm10_arm3.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`imaginary_literal_arm9_arm3.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildImaginaryLiteralArm9Arm3_content.test(_content))
+		throw new Error(`imaginary_literal_arm9_arm3.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm10_arm3', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm9_arm3', { content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm10Arm3 as const, { _content });
+	handle?.verifyStored?.(TSKindId.ImaginaryLiteralArm9Arm3 as const, { _content });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.ImaginaryLiteralArm10Arm3 as const);
+		const record = arena.copy(source, TSKindId.ImaginaryLiteralArm9Arm3 as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
-		return node as unknown as T.ImaginaryLiteralArm10Arm3.Bound;
+		return node as unknown as T.ImaginaryLiteralArm9Arm3.Bound;
 	});
 }
-function withImaginaryLiteralArm10Arm3(node: object, setter: string, args: readonly unknown[]): unknown {
+function withImaginaryLiteralArm9Arm3(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<string>) =>
-				rebuilt(node, handle, () => buildImaginaryLiteralArm10Arm3$patch(node, value))
+				rebuilt(node, handle, () => buildImaginaryLiteralArm9Arm3$patch(node, value))
 			);
 	}
-	throw new Error(`imaginary_literal_arm10_arm3 has no $with.${setter}`);
+	throw new Error(`imaginary_literal_arm9_arm3 has no $with.${setter}`);
 }
 
 export function buildRuneLiteralArm1(content: string, affix?: true): T.RuneLiteralArm1.Bound;
@@ -15677,16 +15666,15 @@ export type FluentKindMap = {
 	float_literal_arm4_arm3: T.FloatLiteralArm4Arm3.Bound;
 	imaginary_literal_arm1: T.ImaginaryLiteralArm1.Bound;
 	imaginary_literal_arm2: T.ImaginaryLiteralArm2.Bound;
-	imaginary_literal_arm3: T.ImaginaryLiteralArm3;
+	imaginary_literal_arm3: T.ImaginaryLiteralArm3.Bound;
 	imaginary_literal_arm4: T.ImaginaryLiteralArm4.Bound;
 	imaginary_literal_arm5: T.ImaginaryLiteralArm5.Bound;
 	imaginary_literal_arm6: T.ImaginaryLiteralArm6.Bound;
 	imaginary_literal_arm7: T.ImaginaryLiteralArm7.Bound;
 	imaginary_literal_arm8: T.ImaginaryLiteralArm8.Bound;
-	imaginary_literal_arm9: T.ImaginaryLiteralArm9.Bound;
-	imaginary_literal_arm10_arm1: T.ImaginaryLiteralArm10Arm1.Bound;
-	imaginary_literal_arm10_arm2: T.ImaginaryLiteralArm10Arm2.Bound;
-	imaginary_literal_arm10_arm3: T.ImaginaryLiteralArm10Arm3.Bound;
+	imaginary_literal_arm9_arm1: T.ImaginaryLiteralArm9Arm1.Bound;
+	imaginary_literal_arm9_arm2: T.ImaginaryLiteralArm9Arm2.Bound;
+	imaginary_literal_arm9_arm3: T.ImaginaryLiteralArm9Arm3.Bound;
 	rune_literal_arm1: T.RuneLiteralArm1.Bound;
 	rune_literal_arm2_arm1: T.RuneLiteralArm2Arm1.Bound;
 	rune_literal_arm2_arm2: T.RuneLiteralArm2Arm2.Bound;
@@ -15866,10 +15854,9 @@ export const _factoryMap = {
 	imaginary_literal_arm6: buildImaginaryLiteralArm6,
 	imaginary_literal_arm7: buildImaginaryLiteralArm7,
 	imaginary_literal_arm8: buildImaginaryLiteralArm8,
-	imaginary_literal_arm9: buildImaginaryLiteralArm9,
-	imaginary_literal_arm10_arm1: buildImaginaryLiteralArm10Arm1,
-	imaginary_literal_arm10_arm2: buildImaginaryLiteralArm10Arm2,
-	imaginary_literal_arm10_arm3: buildImaginaryLiteralArm10Arm3,
+	imaginary_literal_arm9_arm1: buildImaginaryLiteralArm9Arm1,
+	imaginary_literal_arm9_arm2: buildImaginaryLiteralArm9Arm2,
+	imaginary_literal_arm9_arm3: buildImaginaryLiteralArm9Arm3,
 	rune_literal_arm1: buildRuneLiteralArm1,
 	rune_literal_arm2_arm1: buildRuneLiteralArm2Arm1,
 	rune_literal_arm2_arm2: buildRuneLiteralArm2Arm2,
@@ -15941,146 +15928,146 @@ export const builtViews: BuiltViews = Object.freeze({
 		91: withFloatLiteralArm4Arm3,
 		92: withImaginaryLiteralArm1,
 		93: withImaginaryLiteralArm2,
+		94: withImaginaryLiteralArm3,
 		95: withImaginaryLiteralArm4,
 		96: withImaginaryLiteralArm5,
 		97: withImaginaryLiteralArm6,
 		98: withImaginaryLiteralArm7,
 		99: withImaginaryLiteralArm8,
-		100: withImaginaryLiteralArm9,
-		101: withImaginaryLiteralArm10Arm1,
-		102: withImaginaryLiteralArm10Arm2,
-		103: withImaginaryLiteralArm10Arm3,
-		104: withRuneLiteralArm1,
-		105: withRuneLiteralArm2Arm1,
-		106: withRuneLiteralArm2Arm2,
-		107: withRuneLiteralArm2Arm3,
-		108: withRuneLiteralArm2Arm4,
-		109: withRuneLiteralArm2Arm5,
-		110: withCommentArm1,
-		111: withCommentArm2,
-		133: withSourceFile,
-		134: withPackageClause,
-		135: withImportDeclaration,
-		136: withImportSpec,
-		138: withImportSpecList,
-		140: withConstDeclaration,
-		141: withConstSpec,
-		142: withVarDeclaration,
-		143: withVarSpec,
-		144: withVarSpecList,
-		145: withFunctionDeclaration,
-		146: withMethodDeclaration,
-		147: withTypeParameterList,
-		148: withTypeParameterDeclaration,
-		149: withParameterList,
-		150: withParameterDeclaration,
-		151: withVariadicParameterDeclaration,
-		152: withTypeAlias,
-		153: withTypeDeclaration,
-		154: withTypeSpec,
-		155: withExpressionList,
-		156: withParenthesizedType,
-		158: withGenericType,
-		159: withTypeArguments,
-		160: withPointerType,
-		161: withArrayType,
-		162: withImplicitLengthArrayType,
-		163: withSliceType,
-		164: withStructType,
-		165: withNegatedType,
-		166: withFieldDeclarationList,
-		167: withFieldDeclaration,
-		168: withInterfaceType,
-		169: withMethodElem,
-		170: withTypeElem,
-		171: withMapType,
-		173: withFunctionType,
-		174: withBlock,
-		175: withStatementList,
-		179: withExpressionStatement,
-		180: withSendStatement,
-		181: withReceiveStatement,
-		182: withIncStatement,
-		183: withDecStatement,
-		184: withAssignmentStatement,
-		185: withShortVarDeclaration,
-		186: withLabeledStatement,
-		187: withEmptyLabeledStatement,
-		189: withBreakStatement,
-		190: withContinueStatement,
-		191: withGotoStatement,
-		192: withReturnStatement,
-		193: withGoStatement,
-		194: withDeferStatement,
-		195: withIfStatement,
-		196: withForStatement,
-		197: withForClause,
-		198: withRangeClause,
-		199: withExpressionSwitchStatement,
-		200: withExpressionCase,
-		201: withDefaultCase,
-		202: withTypeSwitchStatement,
-		204: withTypeCase,
-		205: withSelectStatement,
-		206: withCommunicationCase,
-		208: withParenthesizedExpression,
-		209: withCallExpression,
-		210: withVariadicArgument,
-		211: withSpecialArgumentList,
-		212: withArgumentList,
-		213: withSelectorExpression,
-		214: withIndexExpression,
-		215: withSliceExpression,
-		216: withTypeAssertionExpression,
-		217: withTypeConversionExpression,
-		218: withTypeInstantiationExpression,
-		219: withCompositeLiteral,
-		220: withLiteralValue,
-		221: withLiteralElement,
-		222: withKeyedElement,
-		223: withFuncLiteral,
-		224: withUnaryExpression,
-		225: withBinaryExpression,
-		226: withQualifiedType,
-		227: withRawStringLiteral,
-		228: withInterpretedStringLiteral,
-		237: withSourceFileArm1,
-		238: withSourceFileArm2,
-		239: withImportSpecs,
-		240: withTypeParameterDeclarations,
-		241: withParameterListElements,
-		242: withTypeDeclarationElements,
-		243: withTypeElems,
-		244: withFieldDeclarations,
-		245: withInterfaceElems,
-		246: withStatements,
-		247: withCallExpressionArm1,
-		248: withCallExpressionArm2,
-		249: withArgumentListElements,
-		250: withTypes,
-		251: withLiteralValueElements,
-		253: withImportSpecListGroup,
-		254: withConstDeclarationArm,
-		255: withConstSpecGroup,
-		256: withVarSpecArm,
-		257: withTypeDeclarationGroup,
-		258: withTypeDeclarationArm,
-		259: withFieldDeclarationListGroup,
-		260: withFieldDeclarationArm,
-		261: withInterfaceTypeGroup,
-		262: withStatementListGroup,
-		263: withStatementListArm,
-		264: withReceiveStatementGroup,
-		265: withSpecialArgumentListGroup,
-		266: withChannelTypeBidirectional,
-		267: withChannelTypeSendOnly,
-		268: withChannelTypeReceiveOnly,
-		269: withPointerTypeFieldDeclarationArm,
-		295: withFieldIdentifier,
-		296: withLabelName,
-		297: withPackageIdentifier,
-		298: withTypeConstraint,
-		299: withTypeIdentifier
+		100: withImaginaryLiteralArm9Arm1,
+		101: withImaginaryLiteralArm9Arm2,
+		102: withImaginaryLiteralArm9Arm3,
+		103: withRuneLiteralArm1,
+		104: withRuneLiteralArm2Arm1,
+		105: withRuneLiteralArm2Arm2,
+		106: withRuneLiteralArm2Arm3,
+		107: withRuneLiteralArm2Arm4,
+		108: withRuneLiteralArm2Arm5,
+		109: withCommentArm1,
+		110: withCommentArm2,
+		132: withSourceFile,
+		133: withPackageClause,
+		134: withImportDeclaration,
+		135: withImportSpec,
+		137: withImportSpecList,
+		139: withConstDeclaration,
+		140: withConstSpec,
+		141: withVarDeclaration,
+		142: withVarSpec,
+		143: withVarSpecList,
+		144: withFunctionDeclaration,
+		145: withMethodDeclaration,
+		146: withTypeParameterList,
+		147: withTypeParameterDeclaration,
+		148: withParameterList,
+		149: withParameterDeclaration,
+		150: withVariadicParameterDeclaration,
+		151: withTypeAlias,
+		152: withTypeDeclaration,
+		153: withTypeSpec,
+		154: withExpressionList,
+		155: withParenthesizedType,
+		157: withGenericType,
+		158: withTypeArguments,
+		159: withPointerType,
+		160: withArrayType,
+		161: withImplicitLengthArrayType,
+		162: withSliceType,
+		163: withStructType,
+		164: withNegatedType,
+		165: withFieldDeclarationList,
+		166: withFieldDeclaration,
+		167: withInterfaceType,
+		168: withMethodElem,
+		169: withTypeElem,
+		170: withMapType,
+		172: withFunctionType,
+		173: withBlock,
+		174: withStatementList,
+		178: withExpressionStatement,
+		179: withSendStatement,
+		180: withReceiveStatement,
+		181: withIncStatement,
+		182: withDecStatement,
+		183: withAssignmentStatement,
+		184: withShortVarDeclaration,
+		185: withLabeledStatement,
+		186: withEmptyLabeledStatement,
+		188: withBreakStatement,
+		189: withContinueStatement,
+		190: withGotoStatement,
+		191: withReturnStatement,
+		192: withGoStatement,
+		193: withDeferStatement,
+		194: withIfStatement,
+		195: withForStatement,
+		196: withForClause,
+		197: withRangeClause,
+		198: withExpressionSwitchStatement,
+		199: withExpressionCase,
+		200: withDefaultCase,
+		201: withTypeSwitchStatement,
+		203: withTypeCase,
+		204: withSelectStatement,
+		205: withCommunicationCase,
+		207: withParenthesizedExpression,
+		208: withCallExpression,
+		209: withVariadicArgument,
+		210: withSpecialArgumentList,
+		211: withArgumentList,
+		212: withSelectorExpression,
+		213: withIndexExpression,
+		214: withSliceExpression,
+		215: withTypeAssertionExpression,
+		216: withTypeConversionExpression,
+		217: withTypeInstantiationExpression,
+		218: withCompositeLiteral,
+		219: withLiteralValue,
+		220: withLiteralElement,
+		221: withKeyedElement,
+		222: withFuncLiteral,
+		223: withUnaryExpression,
+		224: withBinaryExpression,
+		225: withQualifiedType,
+		226: withRawStringLiteral,
+		227: withInterpretedStringLiteral,
+		236: withSourceFileArm1,
+		237: withSourceFileArm2,
+		238: withImportSpecs,
+		239: withTypeParameterDeclarations,
+		240: withParameterListElements,
+		241: withTypeDeclarationElements,
+		242: withTypeElems,
+		243: withFieldDeclarations,
+		244: withInterfaceElems,
+		245: withStatements,
+		246: withCallExpressionArm1,
+		247: withCallExpressionArm2,
+		248: withArgumentListElements,
+		249: withTypes,
+		250: withLiteralValueElements,
+		252: withImportSpecListGroup,
+		253: withConstDeclarationArm,
+		254: withConstSpecGroup,
+		255: withVarSpecArm,
+		256: withTypeDeclarationGroup,
+		257: withTypeDeclarationArm,
+		258: withFieldDeclarationListGroup,
+		259: withFieldDeclarationArm,
+		260: withInterfaceTypeGroup,
+		261: withStatementListGroup,
+		262: withStatementListArm,
+		263: withReceiveStatementGroup,
+		264: withSpecialArgumentListGroup,
+		265: withChannelTypeBidirectional,
+		266: withChannelTypeSendOnly,
+		267: withChannelTypeReceiveOnly,
+		268: withPointerTypeFieldDeclarationArm,
+		294: withFieldIdentifier,
+		295: withLabelName,
+		296: withPackageIdentifier,
+		297: withTypeConstraint,
+		298: withTypeIdentifier
 	}),
 	words: Object.freeze({
 		76: 4,
@@ -16095,6 +16082,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		91: 5,
 		92: 4,
 		93: 4,
+		94: 4,
 		95: 4,
 		96: 4,
 		97: 4,
@@ -16111,95 +16099,95 @@ export const builtViews: BuiltViews = Object.freeze({
 		108: 4,
 		109: 4,
 		110: 4,
-		111: 4,
-		133: 4,
+		132: 4,
+		133: 3,
 		134: 3,
-		135: 3,
-		136: 4,
-		138: 3,
-		140: 3,
-		141: 4,
-		142: 3,
-		143: 4,
-		144: 3,
+		135: 4,
+		137: 3,
+		139: 3,
+		140: 4,
+		141: 3,
+		142: 4,
+		143: 3,
+		144: 7,
 		145: 7,
-		146: 7,
-		147: 3,
-		148: 4,
-		149: 3,
+		146: 3,
+		147: 4,
+		148: 3,
+		149: 4,
 		150: 4,
-		151: 4,
-		152: 5,
-		153: 3,
-		154: 5,
+		151: 5,
+		152: 3,
+		153: 5,
+		154: 3,
 		155: 3,
-		156: 3,
-		158: 4,
+		157: 4,
+		158: 3,
 		159: 3,
-		160: 3,
-		161: 4,
+		160: 4,
+		161: 3,
 		162: 3,
 		163: 3,
 		164: 3,
 		165: 3,
-		166: 3,
-		167: 6,
-		168: 3,
-		169: 5,
-		170: 3,
-		171: 4,
-		173: 4,
+		166: 6,
+		167: 3,
+		168: 5,
+		169: 3,
+		170: 4,
+		172: 4,
+		173: 3,
 		174: 3,
-		175: 3,
-		179: 3,
+		178: 3,
+		179: 4,
 		180: 4,
-		181: 4,
+		181: 3,
 		182: 3,
-		183: 3,
-		184: 5,
+		183: 5,
+		184: 4,
 		185: 4,
-		186: 4,
-		187: 3,
+		186: 3,
+		188: 3,
 		189: 3,
 		190: 3,
 		191: 3,
 		192: 3,
 		193: 3,
-		194: 3,
-		195: 6,
-		196: 4,
-		197: 5,
-		198: 4,
-		199: 5,
-		200: 4,
-		201: 3,
-		202: 6,
-		204: 4,
-		205: 3,
-		206: 4,
+		194: 6,
+		195: 4,
+		196: 5,
+		197: 4,
+		198: 5,
+		199: 4,
+		200: 3,
+		201: 6,
+		203: 4,
+		204: 3,
+		205: 4,
+		207: 3,
 		208: 3,
 		209: 3,
 		210: 3,
 		211: 3,
-		212: 3,
+		212: 4,
 		213: 4,
-		214: 4,
-		215: 6,
-		216: 4,
-		217: 5,
+		214: 6,
+		215: 4,
+		216: 5,
+		217: 4,
 		218: 4,
-		219: 4,
+		219: 3,
 		220: 3,
-		221: 3,
-		222: 4,
-		223: 5,
-		224: 4,
-		225: 5,
-		226: 4,
+		221: 4,
+		222: 5,
+		223: 4,
+		224: 5,
+		225: 4,
+		226: 3,
 		227: 3,
-		228: 3,
+		236: 4,
 		237: 4,
-		238: 4,
+		238: 3,
 		239: 3,
 		240: 3,
 		241: 3,
@@ -16207,34 +16195,33 @@ export const builtViews: BuiltViews = Object.freeze({
 		243: 3,
 		244: 3,
 		245: 3,
-		246: 3,
-		247: 4,
-		248: 5,
+		246: 4,
+		247: 5,
+		248: 3,
 		249: 3,
 		250: 3,
-		251: 3,
-		253: 4,
-		254: 3,
+		252: 4,
+		253: 3,
+		254: 4,
 		255: 4,
 		256: 4,
-		257: 4,
-		258: 3,
-		259: 4,
-		260: 3,
+		257: 3,
+		258: 4,
+		259: 3,
+		260: 4,
 		261: 4,
 		262: 4,
 		263: 4,
-		264: 4,
-		265: 5,
+		264: 5,
+		265: 3,
 		266: 3,
 		267: 3,
 		268: 3,
-		269: 3,
+		294: 3,
 		295: 3,
 		296: 3,
 		297: 3,
-		298: 3,
-		299: 3
+		298: 3
 	}),
 	cells: Object.freeze({
 		76: 2,
@@ -16249,6 +16236,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		91: 2,
 		92: 2,
 		93: 2,
+		94: 2,
 		95: 2,
 		96: 2,
 		97: 2,
@@ -16265,12 +16253,12 @@ export const builtViews: BuiltViews = Object.freeze({
 		108: 2,
 		109: 2,
 		110: 2,
-		111: 2,
+		132: 2,
 		133: 2,
 		134: 2,
 		135: 2,
-		136: 2,
-		138: 2,
+		137: 2,
+		139: 2,
 		140: 2,
 		141: 2,
 		142: 2,
@@ -16287,7 +16275,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		153: 2,
 		154: 2,
 		155: 2,
-		156: 2,
+		157: 2,
 		158: 2,
 		159: 2,
 		160: 2,
@@ -16301,10 +16289,10 @@ export const builtViews: BuiltViews = Object.freeze({
 		168: 2,
 		169: 2,
 		170: 2,
-		171: 2,
+		172: 2,
 		173: 2,
 		174: 2,
-		175: 2,
+		178: 2,
 		179: 2,
 		180: 2,
 		181: 2,
@@ -16313,7 +16301,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		184: 2,
 		185: 2,
 		186: 2,
-		187: 2,
+		188: 2,
 		189: 2,
 		190: 2,
 		191: 2,
@@ -16327,10 +16315,10 @@ export const builtViews: BuiltViews = Object.freeze({
 		199: 2,
 		200: 2,
 		201: 2,
-		202: 2,
+		203: 2,
 		204: 2,
 		205: 2,
-		206: 2,
+		207: 2,
 		208: 2,
 		209: 2,
 		210: 2,
@@ -16351,7 +16339,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		225: 2,
 		226: 2,
 		227: 2,
-		228: 2,
+		236: 2,
 		237: 2,
 		238: 2,
 		239: 2,
@@ -16366,7 +16354,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		248: 2,
 		249: 2,
 		250: 2,
-		251: 2,
+		252: 2,
 		253: 2,
 		254: 2,
 		255: 2,
@@ -16383,12 +16371,11 @@ export const builtViews: BuiltViews = Object.freeze({
 		266: 2,
 		267: 2,
 		268: 2,
-		269: 2,
+		294: 2,
 		295: 2,
 		296: 2,
 		297: 2,
-		298: 2,
-		299: 2
+		298: 2
 	}),
 	places: Object.freeze({
 		76: [[2, 2, 2, 4, 0]],
@@ -16415,6 +16402,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		],
 		92: [[2, 2, 2, 4, 0]],
 		93: [[2, 2, 2, 4, 0]],
+		94: [[2, 2, 2, 4, 0]],
 		95: [[2, 2, 2, 4, 0]],
 		96: [[2, 2, 2, 4, 0]],
 		97: [[2, 2, 2, 4, 0]],
@@ -16431,31 +16419,37 @@ export const builtViews: BuiltViews = Object.freeze({
 		108: [[2, 2, 2, 4, 0]],
 		109: [[2, 2, 2, 4, 0]],
 		110: [[2, 2, 2, 4, 0]],
-		111: [[2, 2, 2, 4, 0]],
-		133: [
+		132: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0]
 		],
+		133: [[2, 2, 3, 1, 0]],
 		134: [[2, 2, 3, 1, 0]],
-		135: [[2, 2, 3, 1, 0]],
-		136: [
+		135: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		138: [[2, 2, 3, 1, 0]],
-		140: [[2, 2, 3, 1, 0]],
-		141: [
+		137: [[2, 2, 3, 1, 0]],
+		139: [[2, 2, 3, 1, 0]],
+		140: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0]
 		],
-		142: [[2, 2, 3, 1, 0]],
+		141: [[2, 2, 3, 1, 0]],
+		142: [
+			[2, 2, 1, 1, 3],
+			[3, 3, 3, 1, 0]
+		],
 		143: [
 			[2, 2, 1, 1, 3],
-			[3, 3, 3, 1, 0]
+			['side', false, true]
 		],
 		144: [
-			[2, 2, 1, 1, 3],
-			['side', false, true]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0],
+			[8, 4, 3, 1, 0],
+			[11, 5, 3, 1, 0],
+			[14, 6, 3, 1, 0]
 		],
 		145: [
 			[2, 2, 3, 1, 0],
@@ -16464,226 +16458,223 @@ export const builtViews: BuiltViews = Object.freeze({
 			[11, 5, 3, 1, 0],
 			[14, 6, 3, 1, 0]
 		],
-		146: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0],
-			[8, 4, 3, 1, 0],
-			[11, 5, 3, 1, 0],
-			[14, 6, 3, 1, 0]
-		],
-		147: [[2, 2, 3, 1, 0]],
-		148: [
+		146: [[2, 2, 3, 1, 0]],
+		147: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0]
 		],
-		149: [[2, 2, 3, 1, 0]],
+		148: [[2, 2, 3, 1, 0]],
+		149: [
+			[2, 2, 1, 1, 3],
+			[3, 3, 3, 1, 0]
+		],
 		150: [
-			[2, 2, 1, 1, 3],
-			[3, 3, 3, 1, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		151: [
 			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0]
+			[5, 3, 3, 1, 0],
+			[8, 4, 3, 1, 0]
 		],
-		152: [
+		152: [[2, 2, 3, 1, 0]],
+		153: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0]
 		],
-		153: [[2, 2, 3, 1, 0]],
-		154: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0],
-			[8, 4, 3, 1, 0]
-		],
-		155: [[2, 2, 1, 3, 4]],
-		156: [[2, 2, 3, 1, 0]],
-		158: [
+		154: [[2, 2, 1, 3, 4]],
+		155: [[2, 2, 3, 1, 0]],
+		157: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
+		158: [[2, 2, 3, 1, 0]],
 		159: [[2, 2, 3, 1, 0]],
-		160: [[2, 2, 3, 1, 0]],
-		161: [
+		160: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
+		161: [[2, 2, 3, 1, 0]],
 		162: [[2, 2, 3, 1, 0]],
 		163: [[2, 2, 3, 1, 0]],
 		164: [[2, 2, 3, 1, 0]],
 		165: [[2, 2, 3, 1, 0]],
-		166: [[2, 2, 3, 1, 0]],
-		167: [
+		166: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0],
 			[6, 4, 3, 1, 0],
 			[9, 5, 3, 1, 0]
 		],
-		168: [[2, 2, 3, 1, 0]],
-		169: [
+		167: [[2, 2, 3, 1, 0]],
+		168: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0]
 		],
-		170: [[2, 2, 1, 1, 3]],
-		171: [
+		169: [[2, 2, 1, 1, 3]],
+		170: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		173: [
+		172: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
+		173: [[2, 2, 3, 1, 0]],
 		174: [[2, 2, 3, 1, 0]],
-		175: [[2, 2, 3, 1, 0]],
-		179: [[2, 2, 4, 3, 0]],
-		180: [
+		178: [[2, 2, 4, 3, 0]],
+		179: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0]
 		],
-		181: [
+		180: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0]
 		],
+		181: [[2, 2, 4, 3, 0]],
 		182: [[2, 2, 4, 3, 0]],
-		183: [[2, 2, 4, 3, 0]],
-		184: [
+		183: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 2, 0],
 			[6, 4, 3, 1, 0]
 		],
-		185: [
+		184: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		186: [
+		185: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0]
 		],
-		187: [[2, 2, 3, 1, 0]],
+		186: [[2, 2, 3, 1, 0]],
+		188: [[2, 2, 3, 1, 0]],
 		189: [[2, 2, 3, 1, 0]],
 		190: [[2, 2, 3, 1, 0]],
 		191: [[2, 2, 3, 1, 0]],
-		192: [[2, 2, 3, 1, 0]],
+		192: [[2, 2, 4, 3, 0]],
 		193: [[2, 2, 4, 3, 0]],
-		194: [[2, 2, 4, 3, 0]],
-		195: [
+		194: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 3, 1, 0],
 			[12, 5, 3, 1, 0]
 		],
-		196: [
+		195: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		197: [
+		196: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 3, 1, 0]
 		],
-		198: [
+		197: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0]
 		],
-		199: [
+		198: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 1, 3]
 		],
-		200: [
+		199: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		201: [[2, 2, 3, 1, 0]],
-		202: [
+		200: [[2, 2, 3, 1, 0]],
+		201: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 4, 3, 0],
 			[12, 5, 1, 1, 3]
 		],
-		204: [
+		203: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0]
 		],
-		205: [[2, 2, 1, 1, 3]],
-		206: [
+		204: [[2, 2, 1, 1, 3]],
+		205: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		208: [[2, 2, 4, 3, 0]],
-		209: [[2, 2, 3, 1, 0]],
-		210: [[2, 2, 4, 3, 0]],
+		207: [[2, 2, 4, 3, 0]],
+		208: [[2, 2, 3, 1, 0]],
+		209: [[2, 2, 4, 3, 0]],
+		210: [[2, 2, 3, 1, 0]],
 		211: [[2, 2, 3, 1, 0]],
-		212: [[2, 2, 3, 1, 0]],
-		213: [
+		212: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		214: [
+		213: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0]
 		],
-		215: [
+		214: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0],
 			[10, 4, 4, 3, 0],
 			[14, 5, 4, 3, 0]
 		],
-		216: [
+		215: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		217: [
+		216: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 18, 0]
+		],
+		217: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		218: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		219: [
+		219: [[2, 2, 3, 1, 0]],
+		220: [[2, 2, 4, 3, 0]],
+		221: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		220: [[2, 2, 3, 1, 0]],
-		221: [[2, 2, 4, 3, 0]],
 		222: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0]
-		],
-		223: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0]
 		],
-		224: [
+		223: [
 			[2, 2, 1, 2, 0],
 			[3, 3, 4, 3, 0]
 		],
-		225: [
+		224: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 1, 2, 0],
 			[7, 4, 4, 3, 0]
 		],
-		226: [
+		225: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		227: [[2, 2, 3, 1, 0]],
-		228: [[2, 2, 1, 1, 3]],
-		237: [
+		226: [[2, 2, 3, 1, 0]],
+		227: [[2, 2, 1, 1, 3]],
+		236: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0]
 		],
-		238: [
+		237: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0]
 		],
-		239: [
+		238: [
 			[2, 2, 1, 1, 3],
 			['side', false, true]
+		],
+		239: [
+			[2, 2, 1, 1, 3],
+			['side', true, false]
 		],
 		240: [
 			[2, 2, 1, 1, 3],
@@ -16691,56 +16682,56 @@ export const builtViews: BuiltViews = Object.freeze({
 		],
 		241: [
 			[2, 2, 1, 1, 3],
-			['side', true, false]
+			['side', false, true]
 		],
 		242: [
 			[2, 2, 1, 1, 3],
-			['side', false, true]
+			['side', true, false]
 		],
 		243: [
 			[2, 2, 1, 1, 3],
-			['side', true, false]
+			['side', false, true]
 		],
 		244: [
 			[2, 2, 1, 1, 3],
 			['side', false, true]
 		],
 		245: [
-			[2, 2, 1, 1, 3],
-			['side', false, true]
-		],
-		246: [
 			[2, 2, 1, 3, 4],
 			['side', false, true]
 		],
-		247: [
+		246: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		248: [
+		247: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0],
 			[9, 4, 3, 1, 0]
 		],
-		249: [
+		248: [
 			[2, 2, 1, 3, 4],
+			['side', true, false]
+		],
+		249: [
+			[2, 2, 1, 1, 3],
 			['side', true, false]
 		],
 		250: [
 			[2, 2, 1, 1, 3],
 			['side', true, false]
 		],
-		251: [
-			[2, 2, 1, 1, 3],
-			['side', true, false]
-		],
-		253: [
+		252: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		254: [
+		253: [
 			[2, 2, 1, 1, 3],
 			['side', false, true]
+		],
+		254: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		255: [
 			[2, 2, 3, 1, 0],
@@ -16750,46 +16741,42 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		257: [
+		257: [[2, 2, 3, 1, 0]],
+		258: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		258: [[2, 2, 3, 1, 0]],
-		259: [
+		259: [[2, 2, 3, 1, 0]],
+		260: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		260: [[2, 2, 3, 1, 0]],
 		261: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0]
-		],
-		262: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		263: [
+		262: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		264: [
+		263: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 2, 0]
 		],
-		265: [
+		264: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 3, 4],
 			[6, 4, 1, 18, 0]
 		],
+		265: [[2, 2, 3, 1, 0]],
 		266: [[2, 2, 3, 1, 0]],
 		267: [[2, 2, 3, 1, 0]],
 		268: [[2, 2, 3, 1, 0]],
-		269: [[2, 2, 3, 1, 0]],
+		294: [[2, 2, 3, 1, 0]],
 		295: [[2, 2, 3, 1, 0]],
 		296: [[2, 2, 3, 1, 0]],
-		297: [[2, 2, 3, 1, 0]],
-		298: [[2, 2, 1, 1, 3]],
-		299: [[2, 2, 3, 1, 0]]
+		297: [[2, 2, 1, 1, 3]],
+		298: [[2, 2, 3, 1, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,
@@ -16801,6 +16788,6 @@ export const builtViews: BuiltViews = Object.freeze({
 		84: leafIntLiteralArm4,
 		85: leafIntLiteralArm5,
 		87: leafFloatLiteralArm2,
-		252: leafImportSpecListArm
+		251: leafImportSpecListArm
 	})
 });

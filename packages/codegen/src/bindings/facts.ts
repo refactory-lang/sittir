@@ -68,7 +68,7 @@ export interface ClaimFact {
 	readonly flag?: string;
 	readonly template?: TemplateFact;
 	readonly match?: LeadMatch;
-	readonly value?: boolean;
+	readonly value?: boolean | number;
 	readonly token?: string;
 }
 

@@ -365,7 +365,7 @@ Per path, the slots whose structure without `$path` is read as one decided path,
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::ScalarInput`
 
-The TypeScript type a path's bare scalar takes in the map's inputs: `number` for an integer or a float, `bigint` for a bigint, and `true` or `false` for the value a literal arm reads.
+The TypeScript type a path's bare scalar takes in the map's inputs: `number` for an integer or a float, `bigint` for a bigint, and, for the value a literal arm reads, `true` or `false` for a boolean and `number` for a number.
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapDecidedOf`
 
@@ -373,7 +373,7 @@ Derives `MapDecided` once, from the exact sets: for each path and slot, the slot
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::scalarInputsOf`
 
-Per path the build table builds from a scalar, the sorted TypeScript types of those scalars (`ScalarInput`): the types of the numbers its `builds` arms take, and, for a path whose every arm is a literal arm that reads a value, `true` or `false` for each. The map's inputs admit them at the path, so a slot whose type holds a number path admits a bare number and one that holds a boolean path admits that bare boolean, and the generated slot function's parameter takes the same types.
+Per path the build table builds from a scalar, the sorted TypeScript types of those scalars (`ScalarInput`): the types of the numbers its `builds` arms take, and, for a path whose every arm is a literal arm that reads a value, the type of each arm's value (`scalarInputOf`). The map's inputs admit them at the path, so a slot whose type holds a number path admits a bare number and one that holds a boolean path admits that bare boolean, and the generated slot function's parameter takes the same types.
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapFactsOf`
 
@@ -398,6 +398,10 @@ Derives `MapTails` once, from the exact sets (`tailsOf` over each slot's paths),
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::MapTails`
 
 Per path and slot, each admitted path that has a tail, with its tail. The map writes them as `tails`, which the input types read as another `$path` spelling of that path in that slot, and the build module writes each as another `case` label in the slot function. Nothing maps a tail at run time.
+
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::scalarInputOf`
+
+The `ScalarInput` a literal arm's value read (`literalValueRead`) takes: `true` or `false` as they are, and the TypeScript type `SCALAR_TYPES` gives an integer or a float.
 
 ### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitCode`
 
@@ -474,3 +478,7 @@ Each kind whose readable entries hold a test-less one whose path builds none of 
 ### `packages/codegen/src/emitters/overlays/portable/spelled-facts.ts::portableSpellingOf`
 
 One spelling of a fact a container spells, from the read entry whose tests on the container name it: the item those tests reach (its own text, or the slots they test, each a text or a nested item), and a hole for each slot a capture fills. Every spelling also carries its text, rendered in the same codegen run from the render bodies of the item's kinds (`EmittedTemplates.bodies`): each body's text parts and placed slots in order, its seams written as nothing, and split where a hole's slot sits (`['', '.setter']` for `@x.setter`; one part for a spelling with no holes). That text is the spelling the reader records at the fact, so a build can tell `@override` from `@typing.override`, and the grammar map types `$at` from it. Word characters are checked for meeting only between parts no hole separates. A slot the item states that its kind's body never places, a body part that spells no one text (a gate, a space, a token seam), or two parts whose word characters would meet once its seams are written as nothing refuses the spelling, naming the kind.
+
+### `packages/codegen/src/emitters/overlays/portable/exact.ts::literalValueRead`
+
+The value read a literal arm's declared value stands for: `true` or `false` for a boolean, `integer` for a whole number, `float` for any other number. The exact reads give a literal arm's value this read, and the map's scalar inputs type it (`scalarInputOf`).

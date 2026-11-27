@@ -1202,7 +1202,7 @@ The presets the step unsets, when it unsets any.
 
 ### `packages/types/src/portable-build.ts::PortablePickTest`
 
-A test that picks a build arm: absent, required, flag, set, member, kinds, text, boolean, variant, value or default.
+A test that picks a build arm: absent, required, flag, set, member, kinds, text, literal, variant, value or default.
 
 ### `packages/types/src/portable-build.ts::PortablePickTest::absent`
 
@@ -1232,9 +1232,9 @@ The arm applies to the given kinds.
 
 The arm applies to the given text.
 
-### `packages/types/src/portable-build.ts::PortablePickTest::boolean`
+### `packages/types/src/portable-build.ts::PortablePickTest::literal`
 
-The arm applies to a boolean value.
+The arm applies when the structure's value is the arm's literal value, the one a binding declares for its kind: that boolean or number, or a bigint equal to the number.
 
 ### `packages/types/src/portable-build.ts::PortablePickTest::variant`
 

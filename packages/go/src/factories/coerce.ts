@@ -83,22 +83,15 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	float_literal_arm4_arm3: { factory: (content: string) => _resolveByKind('float_literal_arm4_arm3', content) },
 	imaginary_literal_arm1: { factory: (content: string) => _resolveByKind('imaginary_literal_arm1', content) },
 	imaginary_literal_arm2: { factory: (content: string) => _resolveByKind('imaginary_literal_arm2', content) },
-	imaginary_literal_arm3: { values: ['0i'], factory: () => F.buildImaginaryLiteralArm3 },
+	imaginary_literal_arm3: { factory: (content: string) => _resolveByKind('imaginary_literal_arm3', content) },
 	imaginary_literal_arm4: { factory: (content: string) => _resolveByKind('imaginary_literal_arm4', content) },
 	imaginary_literal_arm5: { factory: (content: string) => _resolveByKind('imaginary_literal_arm5', content) },
 	imaginary_literal_arm6: { factory: (content: string) => _resolveByKind('imaginary_literal_arm6', content) },
 	imaginary_literal_arm7: { factory: (content: string) => _resolveByKind('imaginary_literal_arm7', content) },
 	imaginary_literal_arm8: { factory: (content: string) => _resolveByKind('imaginary_literal_arm8', content) },
-	imaginary_literal_arm9: { factory: (content: string) => _resolveByKind('imaginary_literal_arm9', content) },
-	imaginary_literal_arm10_arm1: {
-		factory: (content: string) => _resolveByKind('imaginary_literal_arm10_arm1', content)
-	},
-	imaginary_literal_arm10_arm2: {
-		factory: (content: string) => _resolveByKind('imaginary_literal_arm10_arm2', content)
-	},
-	imaginary_literal_arm10_arm3: {
-		factory: (content: string) => _resolveByKind('imaginary_literal_arm10_arm3', content)
-	},
+	imaginary_literal_arm9_arm1: { factory: (content: string) => _resolveByKind('imaginary_literal_arm9_arm1', content) },
+	imaginary_literal_arm9_arm2: { factory: (content: string) => _resolveByKind('imaginary_literal_arm9_arm2', content) },
+	imaginary_literal_arm9_arm3: { factory: (content: string) => _resolveByKind('imaginary_literal_arm9_arm3', content) },
 	rune_literal_arm1: { factory: (content: string) => _resolveByKind('rune_literal_arm1', content) },
 	rune_literal_arm2_arm1: { factory: (content: string) => _resolveByKind('rune_literal_arm2_arm1', content) },
 	rune_literal_arm2_arm2: { factory: (content: string) => _resolveByKind('rune_literal_arm2_arm2', content) },
@@ -151,15 +144,15 @@ const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'float_literal_arm4_arm3',
 	'imaginary_literal_arm1',
 	'imaginary_literal_arm2',
+	'imaginary_literal_arm3',
 	'imaginary_literal_arm4',
 	'imaginary_literal_arm5',
 	'imaginary_literal_arm6',
 	'imaginary_literal_arm7',
 	'imaginary_literal_arm8',
-	'imaginary_literal_arm9',
-	'imaginary_literal_arm10_arm1',
-	'imaginary_literal_arm10_arm2',
-	'imaginary_literal_arm10_arm3',
+	'imaginary_literal_arm9_arm1',
+	'imaginary_literal_arm9_arm2',
+	'imaginary_literal_arm9_arm3',
 	'rune_literal_arm1',
 	'rune_literal_arm2_arm1',
 	'rune_literal_arm2_arm2',
@@ -187,7 +180,6 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'int_literal_arm4',
 	'int_literal_arm5',
 	'float_literal_arm2',
-	'imaginary_literal_arm3',
 	'import_spec_list_arm',
 	'_tight',
 	'_space',
@@ -240,7 +232,6 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'int_literal_arm5',
 	'float_literal_arm1',
 	'float_literal_arm2',
-	'imaginary_literal_arm3',
 	'rune_literal_arm2_arm5'
 ];
 
@@ -387,123 +378,122 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
 	34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64,
-	65, 66, 67, 68, 70, 71, 72, 73, 82, 94, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126,
-	127, 128, 129, 130, 131, 132, 137, 177, 188
+	65, 66, 67, 68, 70, 71, 72, 73, 82, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126,
+	127, 128, 129, 130, 131, 136, 176, 187
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
-	package_clause: new Set([1, 297]),
-	import_declaration: new Set([136, 138, 253]),
-	import_spec_list: new Set([253]),
-	const_declaration: new Set([141, 254]),
-	var_declaration: new Set([143, 144]),
-	var_spec_list: new Set([143]),
-	type_parameter_list: new Set([148, 240]),
-	parameter_list: new Set([150, 151, 241]),
-	type_declaration: new Set([152, 154, 257, 258]),
+	package_clause: new Set([1, 296]),
+	import_declaration: new Set([135, 137, 252]),
+	import_spec_list: new Set([252]),
+	const_declaration: new Set([140, 253]),
+	var_declaration: new Set([142, 143]),
+	var_spec_list: new Set([142]),
+	type_parameter_list: new Set([147, 239]),
+	parameter_list: new Set([149, 150, 240]),
+	type_declaration: new Set([151, 153, 256, 257]),
 	parenthesized_type: new Set([
-		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299
+		1, 155, 157, 159, 160, 162, 163, 164, 165, 167, 170, 172, 225, 258, 260, 265, 266, 267, 298
 	]),
-	type_arguments: new Set([170, 243]),
-	pointer_type: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299]),
+	type_arguments: new Set([169, 242]),
+	pointer_type: new Set([1, 155, 157, 159, 160, 162, 163, 164, 165, 167, 170, 172, 225, 258, 260, 265, 266, 267, 298]),
 	implicit_length_array_type: new Set([
-		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299
+		1, 155, 157, 159, 160, 162, 163, 164, 165, 167, 170, 172, 225, 258, 260, 265, 266, 267, 298
 	]),
-	slice_type: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299]),
-	struct_type: new Set([166, 259]),
-	negated_type: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299]),
-	field_declaration_list: new Set([259]),
-	interface_type: new Set([261]),
-	block: new Set([1, 175, 187, 263, 296]),
-	statement_list: new Set([1, 187, 263, 296]),
+	slice_type: new Set([1, 155, 157, 159, 160, 162, 163, 164, 165, 167, 170, 172, 225, 258, 260, 265, 266, 267, 298]),
+	struct_type: new Set([165, 258]),
+	negated_type: new Set([1, 155, 157, 159, 160, 162, 163, 164, 165, 167, 170, 172, 225, 258, 260, 265, 266, 267, 298]),
+	field_declaration_list: new Set([258]),
+	interface_type: new Set([260]),
+	block: new Set([1, 174, 186, 262, 295]),
+	statement_list: new Set([1, 186, 262, 295]),
 	expression_statement: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		103, 104, 105, 106, 107, 108, 207, 208, 212, 213, 214, 215, 216, 217, 218, 222, 223, 224, 226, 227, 246, 247
 	]),
 	inc_statement: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		103, 104, 105, 106, 107, 108, 207, 208, 212, 213, 214, 215, 216, 217, 218, 222, 223, 224, 226, 227, 246, 247
 	]),
 	dec_statement: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		103, 104, 105, 106, 107, 108, 207, 208, 212, 213, 214, 215, 216, 217, 218, 222, 223, 224, 226, 227, 246, 247
 	]),
-	empty_labeled_statement: new Set([1, 296]),
-	break_statement: new Set([1, 296]),
-	continue_statement: new Set([1, 296]),
-	goto_statement: new Set([1, 296]),
-	return_statement: new Set([155]),
+	empty_labeled_statement: new Set([1, 295]),
+	break_statement: new Set([1, 295]),
+	continue_statement: new Set([1, 295]),
+	goto_statement: new Set([1, 295]),
+	return_statement: new Set([154]),
 	go_statement: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		103, 104, 105, 106, 107, 108, 207, 208, 212, 213, 214, 215, 216, 217, 218, 222, 223, 224, 226, 227, 246, 247
 	]),
 	defer_statement: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		103, 104, 105, 106, 107, 108, 207, 208, 212, 213, 214, 215, 216, 217, 218, 222, 223, 224, 226, 227, 246, 247
 	]),
-	default_case: new Set([1, 175, 187, 263, 296]),
+	default_case: new Set([1, 174, 186, 262, 295]),
 	parenthesized_expression: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		103, 104, 105, 106, 107, 108, 207, 208, 212, 213, 214, 215, 216, 217, 218, 222, 223, 224, 226, 227, 246, 247
 	]),
-	call_expression: new Set([247, 248]),
+	call_expression: new Set([246, 247]),
 	variadic_argument: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		103, 104, 105, 106, 107, 108, 207, 208, 212, 213, 214, 215, 216, 217, 218, 222, 223, 224, 226, 227, 246, 247
 	]),
-	special_argument_list: new Set([265]),
+	special_argument_list: new Set([264]),
 	argument_list: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 208, 209, 210, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247,
-		248, 249
+		103, 104, 105, 106, 107, 108, 207, 208, 209, 212, 213, 214, 215, 216, 217, 218, 222, 223, 224, 226, 227, 246, 247,
+		248
 	]),
 	literal_value: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
-		228, 247, 248, 251
+		103, 104, 105, 106, 107, 108, 207, 208, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 226, 227,
+		246, 247, 250
 	]),
 	literal_element: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
-		228, 247, 248, 251
+		103, 104, 105, 106, 107, 108, 207, 208, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 226, 227,
+		246, 247, 250
 	]),
 	raw_string_literal: new Set([74]),
-	import_specs: new Set([74, 136, 227, 228]),
-	type_parameter_declarations: new Set([148]),
-	parameter_list_elements: new Set([150, 151]),
-	type_declaration_elements: new Set([152, 154]),
-	type_elems: new Set([170]),
-	field_declarations: new Set([167]),
-	interface_elems: new Set([169, 170]),
+	import_specs: new Set([74, 135, 226, 227]),
+	type_parameter_declarations: new Set([147]),
+	parameter_list_elements: new Set([149, 150]),
+	type_declaration_elements: new Set([151, 153]),
+	type_elems: new Set([169]),
+	field_declarations: new Set([166]),
+	interface_elems: new Set([168, 169]),
 	statements: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 140, 141, 142, 143, 144, 152, 153, 154, 155, 174, 175, 177, 179, 180, 182, 183,
-		184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 199, 202, 205, 208, 209, 213, 214, 215, 216, 217,
-		218, 219, 223, 224, 225, 227, 228, 247, 248, 254, 257, 258, 263, 296
+		103, 104, 105, 106, 107, 108, 139, 140, 141, 142, 143, 151, 152, 153, 154, 173, 174, 176, 178, 179, 181, 182, 183,
+		184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 198, 201, 204, 207, 208, 212, 213, 214, 215, 216, 217,
+		218, 222, 223, 224, 226, 227, 246, 247, 253, 256, 257, 262, 295
 	]),
 	argument_list_elements: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 208, 209, 210, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247,
-		248
+		103, 104, 105, 106, 107, 108, 207, 208, 209, 212, 213, 214, 215, 216, 217, 218, 222, 223, 224, 226, 227, 246, 247
 	]),
-	types: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299]),
+	types: new Set([1, 155, 157, 159, 160, 162, 163, 164, 165, 167, 170, 172, 225, 258, 260, 265, 266, 267, 298]),
 	literal_value_elements: new Set([
 		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
-		228, 247, 248, 251
+		103, 104, 105, 106, 107, 108, 207, 208, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 226, 227,
+		246, 247, 250
 	]),
-	const_declaration_arm: new Set([141]),
-	type_declaration_arm: new Set([257]),
-	field_declaration_arm: new Set([1, 158, 226, 269, 299]),
+	const_declaration_arm: new Set([140]),
+	type_declaration_arm: new Set([256]),
+	field_declaration_arm: new Set([1, 157, 225, 268, 298]),
 	channel_type_bidirectional: new Set([
-		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299
+		1, 155, 157, 159, 160, 162, 163, 164, 165, 167, 170, 172, 225, 258, 260, 265, 266, 267, 298
 	]),
 	channel_type_send_only: new Set([
-		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299
+		1, 155, 157, 159, 160, 162, 163, 164, 165, 167, 170, 172, 225, 258, 260, 265, 266, 267, 298
 	]),
 	channel_type_receive_only: new Set([
-		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299
+		1, 155, 157, 159, 160, 162, 163, 164, 165, 167, 170, 172, 225, 258, 260, 265, 266, 267, 298
 	]),
-	_pointer_type_field_declaration_arm: new Set([1, 158, 226, 299]),
+	_pointer_type_field_declaration_arm: new Set([1, 157, 225, 298]),
 	package_identifier: new Set([1]),
 	field_identifier: new Set([1]),
 	type_identifier: new Set([1]),
@@ -1146,7 +1136,6 @@ const _K13: readonly string[] = [
 	'int_literal_arm4',
 	'int_literal_arm5',
 	'float_literal_arm2',
-	'imaginary_literal_arm3',
 	'nil',
 	'true',
 	'false',
@@ -1173,15 +1162,15 @@ const _K14: readonly string[] = [
 	'float_literal_arm4_arm3',
 	'imaginary_literal_arm1',
 	'imaginary_literal_arm2',
+	'imaginary_literal_arm3',
 	'imaginary_literal_arm4',
 	'imaginary_literal_arm5',
 	'imaginary_literal_arm6',
 	'imaginary_literal_arm7',
 	'imaginary_literal_arm8',
-	'imaginary_literal_arm9',
-	'imaginary_literal_arm10_arm1',
-	'imaginary_literal_arm10_arm2',
-	'imaginary_literal_arm10_arm3',
+	'imaginary_literal_arm9_arm1',
+	'imaginary_literal_arm9_arm2',
+	'imaginary_literal_arm9_arm3',
 	'rune_literal_arm1',
 	'rune_literal_arm2_arm1',
 	'rune_literal_arm2_arm2',
@@ -1239,15 +1228,15 @@ const _K20: readonly string[] = [
 	'float_literal_arm4_arm3',
 	'imaginary_literal_arm1',
 	'imaginary_literal_arm2',
+	'imaginary_literal_arm3',
 	'imaginary_literal_arm4',
 	'imaginary_literal_arm5',
 	'imaginary_literal_arm6',
 	'imaginary_literal_arm7',
 	'imaginary_literal_arm8',
-	'imaginary_literal_arm9',
-	'imaginary_literal_arm10_arm1',
-	'imaginary_literal_arm10_arm2',
-	'imaginary_literal_arm10_arm3',
+	'imaginary_literal_arm9_arm1',
+	'imaginary_literal_arm9_arm2',
+	'imaginary_literal_arm9_arm3',
 	'rune_literal_arm1',
 	'rune_literal_arm2_arm1',
 	'rune_literal_arm2_arm2',
@@ -1294,15 +1283,15 @@ const _K27: readonly string[] = [
 	'float_literal_arm4_arm3',
 	'imaginary_literal_arm1',
 	'imaginary_literal_arm2',
+	'imaginary_literal_arm3',
 	'imaginary_literal_arm4',
 	'imaginary_literal_arm5',
 	'imaginary_literal_arm6',
 	'imaginary_literal_arm7',
 	'imaginary_literal_arm8',
-	'imaginary_literal_arm9',
-	'imaginary_literal_arm10_arm1',
-	'imaginary_literal_arm10_arm2',
-	'imaginary_literal_arm10_arm3',
+	'imaginary_literal_arm9_arm1',
+	'imaginary_literal_arm9_arm2',
+	'imaginary_literal_arm9_arm3',
 	'rune_literal_arm1',
 	'rune_literal_arm2_arm1',
 	'rune_literal_arm2_arm2',
@@ -1337,15 +1326,15 @@ const _K32: readonly string[] = [
 	'float_literal_arm4_arm3',
 	'imaginary_literal_arm1',
 	'imaginary_literal_arm2',
+	'imaginary_literal_arm3',
 	'imaginary_literal_arm4',
 	'imaginary_literal_arm5',
 	'imaginary_literal_arm6',
 	'imaginary_literal_arm7',
 	'imaginary_literal_arm8',
-	'imaginary_literal_arm9',
-	'imaginary_literal_arm10_arm1',
-	'imaginary_literal_arm10_arm2',
-	'imaginary_literal_arm10_arm3',
+	'imaginary_literal_arm9_arm1',
+	'imaginary_literal_arm9_arm2',
+	'imaginary_literal_arm9_arm3',
 	'rune_literal_arm1',
 	'rune_literal_arm2_arm1',
 	'rune_literal_arm2_arm2',
@@ -4439,17 +4428,38 @@ export function coerceToImaginaryLiteralArm2(
 	);
 }
 
+export function resolveImaginaryLiteralArm3_content(
+	value: T.ImaginaryLiteralArm3.LooseConfig['content']
+): Admit<T.ImaginaryLiteralArm3['_content']> {
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
+}
+
+export function coerceToImaginaryLiteralArm3<const I extends T.ImaginaryLiteralArm3.Loose>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.ImaginaryLiteralArm3.Loose>
+): ReturnType<typeof F.buildImaginaryLiteralArm3>;
 export function coerceToImaginaryLiteralArm3(
-	_input?: T.ImaginaryLiteralArm3.Loose
-): typeof F.buildImaginaryLiteralArm3 {
-	return F.buildImaginaryLiteralArm3;
+	input: T.ImaginaryLiteralArm3.Loose
+): ReturnType<typeof F.buildImaginaryLiteralArm3> {
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm3>;
+	const _value = configFieldOr(
+		input,
+		'content',
+		() =>
+			typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm3_content) : input,
+		TSKindId.ImaginaryLiteralArm3
+	);
+	return F.buildImaginaryLiteralArm3(
+		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
+	);
 }
 
 export function resolveImaginaryLiteralArm4_content(
 	value: T.ImaginaryLiteralArm4.LooseConfig['content']
 ): Admit<T.ImaginaryLiteralArm4['_content']> {
 	return typeof value === 'number' || typeof value === 'bigint'
-		? numberText(10, '', value)
+		? numberText(8, '0o', value)
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -4476,7 +4486,7 @@ export function resolveImaginaryLiteralArm5_content(
 	value: T.ImaginaryLiteralArm5.LooseConfig['content']
 ): Admit<T.ImaginaryLiteralArm5['_content']> {
 	return typeof value === 'number' || typeof value === 'bigint'
-		? numberText(8, '0o', value)
+		? numberText(16, '0x', value)
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -4502,13 +4512,11 @@ export function coerceToImaginaryLiteralArm5(
 export function resolveImaginaryLiteralArm6_content(
 	value: T.ImaginaryLiteralArm6.LooseConfig['content']
 ): Admit<T.ImaginaryLiteralArm6['_content']> {
-	return typeof value === 'number' || typeof value === 'bigint'
-		? numberText(16, '0x', value)
-		: _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' ? numberText('float', '.0', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToImaginaryLiteralArm6<const I extends T.ImaginaryLiteralArm6.Loose>(
-	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.ImaginaryLiteralArm6.Loose>
+	input: I & NumericInput<I, false, { content: false }> & RefuseUndeclared<I, T.ImaginaryLiteralArm6.Loose>
 ): ReturnType<typeof F.buildImaginaryLiteralArm6>;
 export function coerceToImaginaryLiteralArm6(
 	input: T.ImaginaryLiteralArm6.Loose
@@ -4521,15 +4529,13 @@ export function coerceToImaginaryLiteralArm6(
 			typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm6_content) : input,
 		TSKindId.ImaginaryLiteralArm6
 	);
-	return F.buildImaginaryLiteralArm6(
-		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
-	);
+	return F.buildImaginaryLiteralArm6(typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0));
 }
 
 export function resolveImaginaryLiteralArm7_content(
 	value: T.ImaginaryLiteralArm7.LooseConfig['content']
 ): Admit<T.ImaginaryLiteralArm7['_content']> {
-	return typeof value === 'number' ? numberText('float', '.0', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' ? numberText('float', 'e0', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToImaginaryLiteralArm7<const I extends T.ImaginaryLiteralArm7.Loose>(
@@ -4552,7 +4558,7 @@ export function coerceToImaginaryLiteralArm7(
 export function resolveImaginaryLiteralArm8_content(
 	value: T.ImaginaryLiteralArm8.LooseConfig['content']
 ): Admit<T.ImaginaryLiteralArm8['_content']> {
-	return typeof value === 'number' ? numberText('float', 'e0', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' ? numberText('float', '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToImaginaryLiteralArm8<const I extends T.ImaginaryLiteralArm8.Loose>(
@@ -4572,52 +4578,29 @@ export function coerceToImaginaryLiteralArm8(
 	return F.buildImaginaryLiteralArm8(typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0));
 }
 
-export function resolveImaginaryLiteralArm9_content(
-	value: T.ImaginaryLiteralArm9.LooseConfig['content']
-): Admit<T.ImaginaryLiteralArm9['_content']> {
-	return typeof value === 'number' ? numberText('float', '', value) : _resolveOne<string>(value, _K0, _K0);
-}
-
-export function coerceToImaginaryLiteralArm9<const I extends T.ImaginaryLiteralArm9.Loose>(
-	input: I & NumericInput<I, false, { content: false }> & RefuseUndeclared<I, T.ImaginaryLiteralArm9.Loose>
-): ReturnType<typeof F.buildImaginaryLiteralArm9>;
-export function coerceToImaginaryLiteralArm9(
-	input: T.ImaginaryLiteralArm9.Loose
-): ReturnType<typeof F.buildImaginaryLiteralArm9> {
-	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm9>;
-	const _value = configFieldOr(
-		input,
-		'content',
-		() =>
-			typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm9_content) : input,
-		TSKindId.ImaginaryLiteralArm9
-	);
-	return F.buildImaginaryLiteralArm9(typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0));
-}
-
-export function resolveImaginaryLiteralArm10Arm1_content(
-	value: T.ImaginaryLiteralArm10Arm1.LooseConfig['content']
-): Admit<T.ImaginaryLiteralArm10Arm1['_content']> {
+export function resolveImaginaryLiteralArm9Arm1_content(
+	value: T.ImaginaryLiteralArm9Arm1.LooseConfig['content']
+): Admit<T.ImaginaryLiteralArm9Arm1['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToImaginaryLiteralArm10Arm1<const I extends T.ImaginaryLiteralArm10Arm1.Loose>(
-	input: RefusingInput<I, T.ImaginaryLiteralArm10Arm1.Loose>
-): ReturnType<typeof F.buildImaginaryLiteralArm10Arm1>;
-export function coerceToImaginaryLiteralArm10Arm1(
-	input: T.ImaginaryLiteralArm10Arm1.Loose
-): ReturnType<typeof F.buildImaginaryLiteralArm10Arm1> {
-	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm10Arm1>;
-	return F.buildImaginaryLiteralArm10Arm1(
+export function coerceToImaginaryLiteralArm9Arm1<const I extends T.ImaginaryLiteralArm9Arm1.Loose>(
+	input: RefusingInput<I, T.ImaginaryLiteralArm9Arm1.Loose>
+): ReturnType<typeof F.buildImaginaryLiteralArm9Arm1>;
+export function coerceToImaginaryLiteralArm9Arm1(
+	input: T.ImaginaryLiteralArm9Arm1.Loose
+): ReturnType<typeof F.buildImaginaryLiteralArm9Arm1> {
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm9Arm1>;
+	return F.buildImaginaryLiteralArm9Arm1(
 		_resolveOne<string>(
 			configFieldOr(
 				input,
 				'content',
 				() =>
 					typeof input === 'string'
-						? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm10Arm1_content)
+						? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm9Arm1_content)
 						: input,
-				TSKindId.ImaginaryLiteralArm10Arm1
+				TSKindId.ImaginaryLiteralArm9Arm1
 			),
 			_K0,
 			_K0
@@ -4625,29 +4608,29 @@ export function coerceToImaginaryLiteralArm10Arm1(
 	);
 }
 
-export function resolveImaginaryLiteralArm10Arm2_content(
-	value: T.ImaginaryLiteralArm10Arm2.LooseConfig['content']
-): Admit<T.ImaginaryLiteralArm10Arm2['_content']> {
+export function resolveImaginaryLiteralArm9Arm2_content(
+	value: T.ImaginaryLiteralArm9Arm2.LooseConfig['content']
+): Admit<T.ImaginaryLiteralArm9Arm2['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToImaginaryLiteralArm10Arm2<const I extends T.ImaginaryLiteralArm10Arm2.Loose>(
-	input: RefusingInput<I, T.ImaginaryLiteralArm10Arm2.Loose>
-): ReturnType<typeof F.buildImaginaryLiteralArm10Arm2>;
-export function coerceToImaginaryLiteralArm10Arm2(
-	input: T.ImaginaryLiteralArm10Arm2.Loose
-): ReturnType<typeof F.buildImaginaryLiteralArm10Arm2> {
-	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm10Arm2>;
-	return F.buildImaginaryLiteralArm10Arm2(
+export function coerceToImaginaryLiteralArm9Arm2<const I extends T.ImaginaryLiteralArm9Arm2.Loose>(
+	input: RefusingInput<I, T.ImaginaryLiteralArm9Arm2.Loose>
+): ReturnType<typeof F.buildImaginaryLiteralArm9Arm2>;
+export function coerceToImaginaryLiteralArm9Arm2(
+	input: T.ImaginaryLiteralArm9Arm2.Loose
+): ReturnType<typeof F.buildImaginaryLiteralArm9Arm2> {
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm9Arm2>;
+	return F.buildImaginaryLiteralArm9Arm2(
 		_resolveOne<string>(
 			configFieldOr(
 				input,
 				'content',
 				() =>
 					typeof input === 'string'
-						? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm10Arm2_content)
+						? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm9Arm2_content)
 						: input,
-				TSKindId.ImaginaryLiteralArm10Arm2
+				TSKindId.ImaginaryLiteralArm9Arm2
 			),
 			_K0,
 			_K0
@@ -4655,29 +4638,29 @@ export function coerceToImaginaryLiteralArm10Arm2(
 	);
 }
 
-export function resolveImaginaryLiteralArm10Arm3_content(
-	value: T.ImaginaryLiteralArm10Arm3.LooseConfig['content']
-): Admit<T.ImaginaryLiteralArm10Arm3['_content']> {
+export function resolveImaginaryLiteralArm9Arm3_content(
+	value: T.ImaginaryLiteralArm9Arm3.LooseConfig['content']
+): Admit<T.ImaginaryLiteralArm9Arm3['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToImaginaryLiteralArm10Arm3<const I extends T.ImaginaryLiteralArm10Arm3.Loose>(
-	input: RefusingInput<I, T.ImaginaryLiteralArm10Arm3.Loose>
-): ReturnType<typeof F.buildImaginaryLiteralArm10Arm3>;
-export function coerceToImaginaryLiteralArm10Arm3(
-	input: T.ImaginaryLiteralArm10Arm3.Loose
-): ReturnType<typeof F.buildImaginaryLiteralArm10Arm3> {
-	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm10Arm3>;
-	return F.buildImaginaryLiteralArm10Arm3(
+export function coerceToImaginaryLiteralArm9Arm3<const I extends T.ImaginaryLiteralArm9Arm3.Loose>(
+	input: RefusingInput<I, T.ImaginaryLiteralArm9Arm3.Loose>
+): ReturnType<typeof F.buildImaginaryLiteralArm9Arm3>;
+export function coerceToImaginaryLiteralArm9Arm3(
+	input: T.ImaginaryLiteralArm9Arm3.Loose
+): ReturnType<typeof F.buildImaginaryLiteralArm9Arm3> {
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm9Arm3>;
+	return F.buildImaginaryLiteralArm9Arm3(
 		_resolveOne<string>(
 			configFieldOr(
 				input,
 				'content',
 				() =>
 					typeof input === 'string'
-						? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm10Arm3_content)
+						? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm9Arm3_content)
 						: input,
-				TSKindId.ImaginaryLiteralArm10Arm3
+				TSKindId.ImaginaryLiteralArm9Arm3
 			),
 			_K0,
 			_K0
@@ -5341,7 +5324,6 @@ export function coerceToArgumentListElements(
 				'int_literal_arm4',
 				'int_literal_arm5',
 				'float_literal_arm2',
-				'imaginary_literal_arm3',
 				'nil',
 				'true',
 				'false',
@@ -5366,15 +5348,15 @@ export function coerceToArgumentListElements(
 				'float_literal_arm4_arm3',
 				'imaginary_literal_arm1',
 				'imaginary_literal_arm2',
+				'imaginary_literal_arm3',
 				'imaginary_literal_arm4',
 				'imaginary_literal_arm5',
 				'imaginary_literal_arm6',
 				'imaginary_literal_arm7',
 				'imaginary_literal_arm8',
-				'imaginary_literal_arm9',
-				'imaginary_literal_arm10_arm1',
-				'imaginary_literal_arm10_arm2',
-				'imaginary_literal_arm10_arm3',
+				'imaginary_literal_arm9_arm1',
+				'imaginary_literal_arm9_arm2',
+				'imaginary_literal_arm9_arm3',
 				'rune_literal_arm1',
 				'rune_literal_arm2_arm1',
 				'rune_literal_arm2_arm2',
@@ -6191,10 +6173,9 @@ export interface _FromMap {
 	readonly imaginary_literal_arm6: typeof coerceToImaginaryLiteralArm6;
 	readonly imaginary_literal_arm7: typeof coerceToImaginaryLiteralArm7;
 	readonly imaginary_literal_arm8: typeof coerceToImaginaryLiteralArm8;
-	readonly imaginary_literal_arm9: typeof coerceToImaginaryLiteralArm9;
-	readonly imaginary_literal_arm10_arm1: typeof coerceToImaginaryLiteralArm10Arm1;
-	readonly imaginary_literal_arm10_arm2: typeof coerceToImaginaryLiteralArm10Arm2;
-	readonly imaginary_literal_arm10_arm3: typeof coerceToImaginaryLiteralArm10Arm3;
+	readonly imaginary_literal_arm9_arm1: typeof coerceToImaginaryLiteralArm9Arm1;
+	readonly imaginary_literal_arm9_arm2: typeof coerceToImaginaryLiteralArm9Arm2;
+	readonly imaginary_literal_arm9_arm3: typeof coerceToImaginaryLiteralArm9Arm3;
 	readonly rune_literal_arm1: typeof coerceToRuneLiteralArm1;
 	readonly rune_literal_arm2_arm1: typeof coerceToRuneLiteralArm2Arm1;
 	readonly rune_literal_arm2_arm2: typeof coerceToRuneLiteralArm2Arm2;
@@ -6373,10 +6354,9 @@ export const _fromMap: _FromMap = {
 	imaginary_literal_arm6: coerceToImaginaryLiteralArm6,
 	imaginary_literal_arm7: coerceToImaginaryLiteralArm7,
 	imaginary_literal_arm8: coerceToImaginaryLiteralArm8,
-	imaginary_literal_arm9: coerceToImaginaryLiteralArm9,
-	imaginary_literal_arm10_arm1: coerceToImaginaryLiteralArm10Arm1,
-	imaginary_literal_arm10_arm2: coerceToImaginaryLiteralArm10Arm2,
-	imaginary_literal_arm10_arm3: coerceToImaginaryLiteralArm10Arm3,
+	imaginary_literal_arm9_arm1: coerceToImaginaryLiteralArm9Arm1,
+	imaginary_literal_arm9_arm2: coerceToImaginaryLiteralArm9Arm2,
+	imaginary_literal_arm9_arm3: coerceToImaginaryLiteralArm9Arm3,
 	rune_literal_arm1: coerceToRuneLiteralArm1,
 	rune_literal_arm2_arm1: coerceToRuneLiteralArm2Arm1,
 	rune_literal_arm2_arm2: coerceToRuneLiteralArm2Arm2,

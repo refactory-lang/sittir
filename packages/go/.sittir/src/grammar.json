@@ -4582,17 +4582,6 @@
             "variant": "arm9",
             "variantOf": "imaginary_literal"
           }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "imaginary_literal_arm10",
-          "metadata": {
-            "symbolSource": "group-lift"
-          },
-          "annotations": {
-            "variant": "arm10",
-            "variantOf": "imaginary_literal"
-          }
         }
       ]
     },
@@ -6191,26 +6180,6 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "STRING",
-            "value": "0"
-          },
-          {
-            "type": "STRING",
-            "value": "i"
-          }
-        ]
-      },
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      }
-    },
-    "imaginary_literal_arm4": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
             "type": "SEQ",
             "members": [
               {
@@ -6288,7 +6257,7 @@
         "hoisted": true
       }
     },
-    "imaginary_literal_arm5": {
+    "imaginary_literal_arm4": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -6379,7 +6348,7 @@
         "hoisted": true
       }
     },
-    "imaginary_literal_arm6": {
+    "imaginary_literal_arm5": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -6462,7 +6431,7 @@
         "hoisted": true
       }
     },
-    "imaginary_literal_arm7": {
+    "imaginary_literal_arm6": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -6641,7 +6610,7 @@
         "hoisted": true
       }
     },
-    "imaginary_literal_arm8": {
+    "imaginary_literal_arm7": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -6767,7 +6736,7 @@
         "hoisted": true
       }
     },
-    "imaginary_literal_arm9": {
+    "imaginary_literal_arm8": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -6905,41 +6874,41 @@
         "hoisted": true
       }
     },
-    "imaginary_literal_arm10": {
+    "imaginary_literal_arm9": {
       "type": "CHOICE",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "imaginary_literal_arm10_arm1",
+          "name": "imaginary_literal_arm9_arm1",
           "metadata": {
             "symbolSource": "group-lift"
           },
           "annotations": {
             "variant": "arm1",
-            "variantOf": "imaginary_literal_arm10"
+            "variantOf": "imaginary_literal_arm9"
           }
         },
         {
           "type": "SYMBOL",
-          "name": "imaginary_literal_arm10_arm2",
+          "name": "imaginary_literal_arm9_arm2",
           "metadata": {
             "symbolSource": "group-lift"
           },
           "annotations": {
             "variant": "arm2",
-            "variantOf": "imaginary_literal_arm10",
+            "variantOf": "imaginary_literal_arm9",
             "default": true
           }
         },
         {
           "type": "SYMBOL",
-          "name": "imaginary_literal_arm10_arm3",
+          "name": "imaginary_literal_arm9_arm3",
           "metadata": {
             "symbolSource": "group-lift"
           },
           "annotations": {
             "variant": "arm3",
-            "variantOf": "imaginary_literal_arm10"
+            "variantOf": "imaginary_literal_arm9"
           }
         }
       ],
@@ -6947,7 +6916,7 @@
         "tokenForm": true
       }
     },
-    "imaginary_literal_arm10_arm1": {
+    "imaginary_literal_arm9_arm1": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -7152,7 +7121,7 @@
         "hoisted": true
       }
     },
-    "imaginary_literal_arm10_arm2": {
+    "imaginary_literal_arm9_arm2": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -7312,7 +7281,7 @@
         "hoisted": true
       }
     },
-    "imaginary_literal_arm10_arm3": {
+    "imaginary_literal_arm9_arm3": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -9879,7 +9848,7 @@
     "float_literal",
     "float_literal_arm4",
     "imaginary_literal",
-    "imaginary_literal_arm10",
+    "imaginary_literal_arm9",
     "rune_literal",
     "rune_literal_arm2",
     "comment",

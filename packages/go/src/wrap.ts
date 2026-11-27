@@ -7901,6 +7901,57 @@ function wrapImaginaryLiteralArm2$with$content(this: Received<Held>, ...args: un
 	return wrapImaginaryLiteralArm2$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
+export function wrapImaginaryLiteralArm3(
+	data: T.ImaginaryLiteralArm3,
+	tree: TreeHandle
+): T.ImaginaryLiteralArm3.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ImaginaryLiteralArm3 as const,
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { content: wrapImaginaryLiteralArm3$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ImaginaryLiteralArm3.Parsed;
+}
+function wrapImaginaryLiteralArm3$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.ImaginaryLiteralArm3;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.ImaginaryLiteralArm3['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapImaginaryLiteralArm3(
+						{ ...$edited(data), _content: admitSlot(handle, 'imaginary_literal_arm3', 'content', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`imaginary_literal_arm3 has no $with.${setter}`);
+}
+function wrapImaginaryLiteralArm3$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapImaginaryLiteralArm3$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
 export function wrapImaginaryLiteralArm4(
 	data: T.ImaginaryLiteralArm4,
 	tree: TreeHandle
@@ -8156,14 +8207,14 @@ function wrapImaginaryLiteralArm8$with$content(this: Received<Held>, ...args: un
 	return wrapImaginaryLiteralArm8$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function wrapImaginaryLiteralArm9(
-	data: T.ImaginaryLiteralArm9,
+export function wrapImaginaryLiteralArm9Arm1(
+	data: T.ImaginaryLiteralArm9Arm1,
 	tree: TreeHandle
-): T.ImaginaryLiteralArm9.Parsed {
+): T.ImaginaryLiteralArm9Arm1.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.ImaginaryLiteralArm9 as const,
+		$type: TSKindId.ImaginaryLiteralArm9Arm1 as const,
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
@@ -8182,39 +8233,39 @@ export function wrapImaginaryLiteralArm9(
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: wrapImaginaryLiteralArm9$with$content, [RECEIVER]: node };
+	node.$with = { content: wrapImaginaryLiteralArm9Arm1$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ImaginaryLiteralArm9.Parsed;
+	return node as unknown as T.ImaginaryLiteralArm9Arm1.Parsed;
 }
-function wrapImaginaryLiteralArm9$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapImaginaryLiteralArm9Arm1$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ImaginaryLiteralArm9;
+	const data = node[INPUT] as T.ImaginaryLiteralArm9Arm1;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.ImaginaryLiteralArm9['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.ImaginaryLiteralArm9Arm1['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapImaginaryLiteralArm9(
-						{ ...$edited(data), _content: admitSlot(handle, 'imaginary_literal_arm9', 'content', v) },
+					wrapImaginaryLiteralArm9Arm1(
+						{ ...$edited(data), _content: admitSlot(handle, 'imaginary_literal_arm9_arm1', 'content', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`imaginary_literal_arm9 has no $with.${setter}`);
+	throw new Error(`imaginary_literal_arm9_arm1 has no $with.${setter}`);
 }
-function wrapImaginaryLiteralArm9$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapImaginaryLiteralArm9$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapImaginaryLiteralArm9Arm1$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapImaginaryLiteralArm9Arm1$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function wrapImaginaryLiteralArm10Arm1(
-	data: T.ImaginaryLiteralArm10Arm1,
+export function wrapImaginaryLiteralArm9Arm2(
+	data: T.ImaginaryLiteralArm9Arm2,
 	tree: TreeHandle
-): T.ImaginaryLiteralArm10Arm1.Parsed {
+): T.ImaginaryLiteralArm9Arm2.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.ImaginaryLiteralArm10Arm1 as const,
+		$type: TSKindId.ImaginaryLiteralArm9Arm2 as const,
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
@@ -8233,39 +8284,39 @@ export function wrapImaginaryLiteralArm10Arm1(
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: wrapImaginaryLiteralArm10Arm1$with$content, [RECEIVER]: node };
+	node.$with = { content: wrapImaginaryLiteralArm9Arm2$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ImaginaryLiteralArm10Arm1.Parsed;
+	return node as unknown as T.ImaginaryLiteralArm9Arm2.Parsed;
 }
-function wrapImaginaryLiteralArm10Arm1$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapImaginaryLiteralArm9Arm2$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ImaginaryLiteralArm10Arm1;
+	const data = node[INPUT] as T.ImaginaryLiteralArm9Arm2;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.ImaginaryLiteralArm10Arm1['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.ImaginaryLiteralArm9Arm2['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapImaginaryLiteralArm10Arm1(
-						{ ...$edited(data), _content: admitSlot(handle, 'imaginary_literal_arm10_arm1', 'content', v) },
+					wrapImaginaryLiteralArm9Arm2(
+						{ ...$edited(data), _content: admitSlot(handle, 'imaginary_literal_arm9_arm2', 'content', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`imaginary_literal_arm10_arm1 has no $with.${setter}`);
+	throw new Error(`imaginary_literal_arm9_arm2 has no $with.${setter}`);
 }
-function wrapImaginaryLiteralArm10Arm1$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapImaginaryLiteralArm10Arm1$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapImaginaryLiteralArm9Arm2$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapImaginaryLiteralArm9Arm2$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function wrapImaginaryLiteralArm10Arm2(
-	data: T.ImaginaryLiteralArm10Arm2,
+export function wrapImaginaryLiteralArm9Arm3(
+	data: T.ImaginaryLiteralArm9Arm3,
 	tree: TreeHandle
-): T.ImaginaryLiteralArm10Arm2.Parsed {
+): T.ImaginaryLiteralArm9Arm3.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.ImaginaryLiteralArm10Arm2 as const,
+		$type: TSKindId.ImaginaryLiteralArm9Arm3 as const,
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
@@ -8284,80 +8335,29 @@ export function wrapImaginaryLiteralArm10Arm2(
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: wrapImaginaryLiteralArm10Arm2$with$content, [RECEIVER]: node };
+	node.$with = { content: wrapImaginaryLiteralArm9Arm3$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ImaginaryLiteralArm10Arm2.Parsed;
+	return node as unknown as T.ImaginaryLiteralArm9Arm3.Parsed;
 }
-function wrapImaginaryLiteralArm10Arm2$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapImaginaryLiteralArm9Arm3$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ImaginaryLiteralArm10Arm2;
+	const data = node[INPUT] as T.ImaginaryLiteralArm9Arm3;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.ImaginaryLiteralArm10Arm2['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.ImaginaryLiteralArm9Arm3['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapImaginaryLiteralArm10Arm2(
-						{ ...$edited(data), _content: admitSlot(handle, 'imaginary_literal_arm10_arm2', 'content', v) },
+					wrapImaginaryLiteralArm9Arm3(
+						{ ...$edited(data), _content: admitSlot(handle, 'imaginary_literal_arm9_arm3', 'content', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`imaginary_literal_arm10_arm2 has no $with.${setter}`);
+	throw new Error(`imaginary_literal_arm9_arm3 has no $with.${setter}`);
 }
-function wrapImaginaryLiteralArm10Arm2$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapImaginaryLiteralArm10Arm2$with(receiverOf(this, '$with.content'), 'content', args);
-}
-
-export function wrapImaginaryLiteralArm10Arm3(
-	data: T.ImaginaryLiteralArm10Arm3,
-	tree: TreeHandle
-): T.ImaginaryLiteralArm10Arm3.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.ImaginaryLiteralArm10Arm3 as const,
-		content() {
-			return hydrateSlot<string>(this, '_content', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = { content: wrapImaginaryLiteralArm10Arm3$with$content, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ImaginaryLiteralArm10Arm3.Parsed;
-}
-function wrapImaginaryLiteralArm10Arm3$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ImaginaryLiteralArm10Arm3;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.ImaginaryLiteralArm10Arm3['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapImaginaryLiteralArm10Arm3(
-						{ ...$edited(data), _content: admitSlot(handle, 'imaginary_literal_arm10_arm3', 'content', v) },
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`imaginary_literal_arm10_arm3 has no $with.${setter}`);
-}
-function wrapImaginaryLiteralArm10Arm3$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapImaginaryLiteralArm10Arm3$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapImaginaryLiteralArm9Arm3$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapImaginaryLiteralArm9Arm3$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function wrapRuneLiteralArm1(data: T.RuneLiteralArm1, tree: TreeHandle): T.RuneLiteralArm1.Parsed {
@@ -15580,6 +15580,35 @@ function viewImaginaryLiteralArm2(data: RecordPosition, tree: TreeHandle): T.Ima
 	return node as unknown as T.ImaginaryLiteralArm2.Parsed;
 }
 
+function viewImaginaryLiteralArm3$content(this: RecordHandle) {
+	return viewSlot<string>(this, 2, 2, 4, 2);
+}
+function viewImaginaryLiteralArm3(data: RecordPosition, tree: TreeHandle): T.ImaginaryLiteralArm3.Parsed {
+	const node = {
+		$type: TSKindId.ImaginaryLiteralArm3 as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		content: viewImaginaryLiteralArm3$content,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
+	return node as unknown as T.ImaginaryLiteralArm3.Parsed;
+}
+
 function viewImaginaryLiteralArm4$content(this: RecordHandle) {
 	return viewSlot<string>(this, 2, 2, 4, 2);
 }
@@ -15725,19 +15754,19 @@ function viewImaginaryLiteralArm8(data: RecordPosition, tree: TreeHandle): T.Ima
 	return node as unknown as T.ImaginaryLiteralArm8.Parsed;
 }
 
-function viewImaginaryLiteralArm9$content(this: RecordHandle) {
+function viewImaginaryLiteralArm9Arm1$content(this: RecordHandle) {
 	return viewSlot<string>(this, 2, 2, 4, 2);
 }
-function viewImaginaryLiteralArm9(data: RecordPosition, tree: TreeHandle): T.ImaginaryLiteralArm9.Parsed {
+function viewImaginaryLiteralArm9Arm1(data: RecordPosition, tree: TreeHandle): T.ImaginaryLiteralArm9Arm1.Parsed {
 	const node = {
-		$type: TSKindId.ImaginaryLiteralArm9 as const,
+		$type: TSKindId.ImaginaryLiteralArm9Arm1 as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$verbatim: undefined as string | undefined,
-		content: viewImaginaryLiteralArm9$content,
+		content: viewImaginaryLiteralArm9Arm1$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -15751,22 +15780,22 @@ function viewImaginaryLiteralArm9(data: RecordPosition, tree: TreeHandle): T.Ima
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
-	return node as unknown as T.ImaginaryLiteralArm9.Parsed;
+	return node as unknown as T.ImaginaryLiteralArm9Arm1.Parsed;
 }
 
-function viewImaginaryLiteralArm10Arm1$content(this: RecordHandle) {
+function viewImaginaryLiteralArm9Arm2$content(this: RecordHandle) {
 	return viewSlot<string>(this, 2, 2, 4, 2);
 }
-function viewImaginaryLiteralArm10Arm1(data: RecordPosition, tree: TreeHandle): T.ImaginaryLiteralArm10Arm1.Parsed {
+function viewImaginaryLiteralArm9Arm2(data: RecordPosition, tree: TreeHandle): T.ImaginaryLiteralArm9Arm2.Parsed {
 	const node = {
-		$type: TSKindId.ImaginaryLiteralArm10Arm1 as const,
+		$type: TSKindId.ImaginaryLiteralArm9Arm2 as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$verbatim: undefined as string | undefined,
-		content: viewImaginaryLiteralArm10Arm1$content,
+		content: viewImaginaryLiteralArm9Arm2$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -15780,22 +15809,22 @@ function viewImaginaryLiteralArm10Arm1(data: RecordPosition, tree: TreeHandle): 
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
-	return node as unknown as T.ImaginaryLiteralArm10Arm1.Parsed;
+	return node as unknown as T.ImaginaryLiteralArm9Arm2.Parsed;
 }
 
-function viewImaginaryLiteralArm10Arm2$content(this: RecordHandle) {
+function viewImaginaryLiteralArm9Arm3$content(this: RecordHandle) {
 	return viewSlot<string>(this, 2, 2, 4, 2);
 }
-function viewImaginaryLiteralArm10Arm2(data: RecordPosition, tree: TreeHandle): T.ImaginaryLiteralArm10Arm2.Parsed {
+function viewImaginaryLiteralArm9Arm3(data: RecordPosition, tree: TreeHandle): T.ImaginaryLiteralArm9Arm3.Parsed {
 	const node = {
-		$type: TSKindId.ImaginaryLiteralArm10Arm2 as const,
+		$type: TSKindId.ImaginaryLiteralArm9Arm3 as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$verbatim: undefined as string | undefined,
-		content: viewImaginaryLiteralArm10Arm2$content,
+		content: viewImaginaryLiteralArm9Arm3$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -15809,36 +15838,7 @@ function viewImaginaryLiteralArm10Arm2(data: RecordPosition, tree: TreeHandle): 
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
-	return node as unknown as T.ImaginaryLiteralArm10Arm2.Parsed;
-}
-
-function viewImaginaryLiteralArm10Arm3$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 2);
-}
-function viewImaginaryLiteralArm10Arm3(data: RecordPosition, tree: TreeHandle): T.ImaginaryLiteralArm10Arm3.Parsed {
-	const node = {
-		$type: TSKindId.ImaginaryLiteralArm10Arm3 as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		$verbatim: undefined as string | undefined,
-		content: viewImaginaryLiteralArm10Arm3$content,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = { content: $with$content, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 3);
-	return node as unknown as T.ImaginaryLiteralArm10Arm3.Parsed;
+	return node as unknown as T.ImaginaryLiteralArm9Arm3.Parsed;
 }
 
 function viewRuneLiteralArm1$content(this: RecordHandle) {
@@ -18090,18 +18090,18 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.FloatLiteralArm4Arm3]: (d, t) => wrapFloatLiteralArm4Arm3(d as unknown as T.FloatLiteralArm4Arm3, t),
 	[TSKindId.ImaginaryLiteralArm1]: (d, t) => wrapImaginaryLiteralArm1(d as unknown as T.ImaginaryLiteralArm1, t),
 	[TSKindId.ImaginaryLiteralArm2]: (d, t) => wrapImaginaryLiteralArm2(d as unknown as T.ImaginaryLiteralArm2, t),
+	[TSKindId.ImaginaryLiteralArm3]: (d, t) => wrapImaginaryLiteralArm3(d as unknown as T.ImaginaryLiteralArm3, t),
 	[TSKindId.ImaginaryLiteralArm4]: (d, t) => wrapImaginaryLiteralArm4(d as unknown as T.ImaginaryLiteralArm4, t),
 	[TSKindId.ImaginaryLiteralArm5]: (d, t) => wrapImaginaryLiteralArm5(d as unknown as T.ImaginaryLiteralArm5, t),
 	[TSKindId.ImaginaryLiteralArm6]: (d, t) => wrapImaginaryLiteralArm6(d as unknown as T.ImaginaryLiteralArm6, t),
 	[TSKindId.ImaginaryLiteralArm7]: (d, t) => wrapImaginaryLiteralArm7(d as unknown as T.ImaginaryLiteralArm7, t),
 	[TSKindId.ImaginaryLiteralArm8]: (d, t) => wrapImaginaryLiteralArm8(d as unknown as T.ImaginaryLiteralArm8, t),
-	[TSKindId.ImaginaryLiteralArm9]: (d, t) => wrapImaginaryLiteralArm9(d as unknown as T.ImaginaryLiteralArm9, t),
-	[TSKindId.ImaginaryLiteralArm10Arm1]: (d, t) =>
-		wrapImaginaryLiteralArm10Arm1(d as unknown as T.ImaginaryLiteralArm10Arm1, t),
-	[TSKindId.ImaginaryLiteralArm10Arm2]: (d, t) =>
-		wrapImaginaryLiteralArm10Arm2(d as unknown as T.ImaginaryLiteralArm10Arm2, t),
-	[TSKindId.ImaginaryLiteralArm10Arm3]: (d, t) =>
-		wrapImaginaryLiteralArm10Arm3(d as unknown as T.ImaginaryLiteralArm10Arm3, t),
+	[TSKindId.ImaginaryLiteralArm9Arm1]: (d, t) =>
+		wrapImaginaryLiteralArm9Arm1(d as unknown as T.ImaginaryLiteralArm9Arm1, t),
+	[TSKindId.ImaginaryLiteralArm9Arm2]: (d, t) =>
+		wrapImaginaryLiteralArm9Arm2(d as unknown as T.ImaginaryLiteralArm9Arm2, t),
+	[TSKindId.ImaginaryLiteralArm9Arm3]: (d, t) =>
+		wrapImaginaryLiteralArm9Arm3(d as unknown as T.ImaginaryLiteralArm9Arm3, t),
 	[TSKindId.RuneLiteralArm1]: (d, t) => wrapRuneLiteralArm1(d as unknown as T.RuneLiteralArm1, t),
 	[TSKindId.RuneLiteralArm2Arm1]: (d, t) => wrapRuneLiteralArm2Arm1(d as unknown as T.RuneLiteralArm2Arm1, t),
 	[TSKindId.RuneLiteralArm2Arm2]: (d, t) => wrapRuneLiteralArm2Arm2(d as unknown as T.RuneLiteralArm2Arm2, t),
@@ -18265,15 +18265,15 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.FloatLiteralArm4Arm3]: viewFloatLiteralArm4Arm3,
 	[TSKindId.ImaginaryLiteralArm1]: viewImaginaryLiteralArm1,
 	[TSKindId.ImaginaryLiteralArm2]: viewImaginaryLiteralArm2,
+	[TSKindId.ImaginaryLiteralArm3]: viewImaginaryLiteralArm3,
 	[TSKindId.ImaginaryLiteralArm4]: viewImaginaryLiteralArm4,
 	[TSKindId.ImaginaryLiteralArm5]: viewImaginaryLiteralArm5,
 	[TSKindId.ImaginaryLiteralArm6]: viewImaginaryLiteralArm6,
 	[TSKindId.ImaginaryLiteralArm7]: viewImaginaryLiteralArm7,
 	[TSKindId.ImaginaryLiteralArm8]: viewImaginaryLiteralArm8,
-	[TSKindId.ImaginaryLiteralArm9]: viewImaginaryLiteralArm9,
-	[TSKindId.ImaginaryLiteralArm10Arm1]: viewImaginaryLiteralArm10Arm1,
-	[TSKindId.ImaginaryLiteralArm10Arm2]: viewImaginaryLiteralArm10Arm2,
-	[TSKindId.ImaginaryLiteralArm10Arm3]: viewImaginaryLiteralArm10Arm3,
+	[TSKindId.ImaginaryLiteralArm9Arm1]: viewImaginaryLiteralArm9Arm1,
+	[TSKindId.ImaginaryLiteralArm9Arm2]: viewImaginaryLiteralArm9Arm2,
+	[TSKindId.ImaginaryLiteralArm9Arm3]: viewImaginaryLiteralArm9Arm3,
 	[TSKindId.RuneLiteralArm1]: viewRuneLiteralArm1,
 	[TSKindId.RuneLiteralArm2Arm1]: viewRuneLiteralArm2Arm1,
 	[TSKindId.RuneLiteralArm2Arm2]: viewRuneLiteralArm2Arm2,

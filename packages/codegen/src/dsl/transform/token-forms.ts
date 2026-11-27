@@ -1,4 +1,5 @@
-import { isChoiceType, isRepeatType, isSeqType, isTokenWrapperType, type RuntimeRule } from '../../types/runtime-shapes.ts';
+import { compileAnchoredPattern, isChoiceType, isPrecWrapperType, isRepeatType, isSeqType, isTokenWrapperType, type RuntimeRule } from '../../types/runtime-shapes.ts';
+import { ruleToRegexSource } from '../../util/word-matcher.ts';
 import { isBlank, matchesEmpty, optionalContentOf, peelPrecs } from '../rule-patterns.ts';
 
 export type TokenChoiceClass = 'presence' | 'spelling' | 'forms';
@@ -128,6 +129,44 @@ export const canonicalRuleText = (rule: RuntimeRule): string =>
 
 const underWrapper = (fielded: SitePaths): SitePaths => fielded.flatMap((site) => (site[0] === 0 ? [site.slice(1)] : []));
 
+interface Lexeme {
+	readonly prec: number;
+	readonly string: boolean;
+	readonly text: string | undefined;
+	readonly matcher: RegExp | undefined;
+}
+
+const holdsPrec = (rule: RuntimeRule): boolean =>
+	isPrecWrapperType(typeOf(rule)) || membersOf(rule).some(holdsPrec) || ((rule as Typed).content !== undefined && holdsPrec(contentOf(rule)));
+
+function fixedTextOf(rule: RuntimeRule): string | undefined {
+	if (isString(rule)) return (rule as Typed).value as string;
+	if (!isSeqType(typeOf(rule))) return undefined;
+	const parts = membersOf(rule).map(fixedTextOf);
+	return parts.every((part) => part !== undefined) ? parts.join('') : undefined;
+}
+
+function lexemeOf(arm: RuntimeRule): Lexeme | undefined {
+	const { precs, core } = peelPrecs(arm);
+	const prec = precs.length === 0 ? 0 : (precs[0] as Typed).value;
+	if (precs.length > 1 || typeof prec !== 'number' || holdsPrec(core)) return undefined;
+	const source = ruleToRegexSource(core);
+	const compiled = source === null ? undefined : compileAnchoredPattern(source);
+	return { prec, string: isString(core), text: fixedTextOf(core), matcher: compiled !== undefined && 'regex' in compiled ? compiled.regex : undefined };
+}
+
+const lexerPrefers = (a: Lexeme, aIndex: number, b: Lexeme, bIndex: number): boolean =>
+	a.prec !== b.prec ? a.prec > b.prec : a.string !== b.string ? a.string : aIndex < bIndex;
+
+function producedArms(arms: readonly RuntimeRule[]): RuntimeRule[] {
+	const lexemes = arms.map(lexemeOf);
+	return arms.filter((_, i) => {
+		const own = lexemes[i];
+		const text = own?.text;
+		return text === undefined || !lexemes.some((other, j) => other?.matcher?.test(text) === true && j !== i && lexerPrefers(other, j, own!, i));
+	});
+}
+
 export function distributeTokenForms(rule: RuntimeRule, kind: string, sites: AuthoredSitePaths = NO_SITES): RuntimeRule {
 	const { precs: precStack, core } = peelPrecs(rule);
 	if (!isTokenWrapper(core)) return rule;
@@ -147,5 +186,7 @@ export function distributeTokenForms(rule: RuntimeRule, kind: string, sites: Aut
 		if (prior !== undefined) throw new Error(`token forms: arms ${prior} and ${i} of '${kind}' are identical`);
 		seen.set(key, i);
 	});
-	return tokenOverArms(precStack, core, arms);
+	const produced = producedArms(arms);
+	if (produced.length < 2) return rule;
+	return tokenOverArms(precStack, core, produced);
 }

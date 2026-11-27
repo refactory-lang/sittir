@@ -70,10 +70,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -704,10 +704,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -776,10 +776,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -850,10 +850,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -924,10 +924,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -995,10 +995,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1069,10 +1069,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1140,10 +1140,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1214,10 +1214,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1285,10 +1285,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1359,10 +1359,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1430,10 +1430,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1504,10 +1504,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1575,10 +1575,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1649,10 +1649,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1720,10 +1720,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1794,10 +1794,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1865,10 +1865,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -1939,10 +1939,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2010,10 +2010,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2084,10 +2084,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2155,10 +2155,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2229,10 +2229,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2300,10 +2300,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2374,10 +2374,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2445,10 +2445,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2519,10 +2519,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2610,10 +2610,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2684,10 +2684,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2755,10 +2755,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2829,10 +2829,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2900,10 +2900,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -2974,10 +2974,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3045,10 +3045,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3119,10 +3119,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3190,10 +3190,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3264,10 +3264,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3335,10 +3335,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3409,10 +3409,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3480,10 +3480,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3554,10 +3554,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3625,10 +3625,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3699,10 +3699,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3770,10 +3770,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3844,10 +3844,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3915,10 +3915,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -3989,10 +3989,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4060,10 +4060,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4134,10 +4134,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4205,10 +4205,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4279,10 +4279,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4350,10 +4350,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4424,10 +4424,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4495,10 +4495,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4569,10 +4569,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4640,10 +4640,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4714,10 +4714,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4785,10 +4785,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4859,10 +4859,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -4930,10 +4930,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -5134,10 +5134,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -5211,10 +5211,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -5285,10 +5285,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -5351,7 +5351,7 @@ export interface GoMap extends V.GrammarMap {
 			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer': {
-			readonly $forms: V.Form<'$value'>;
+			readonly $forms: V.Form<never, never, { readonly $value: 0 }> | V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.binary': {
 			readonly $forms: V.Form<'$value'>;
@@ -5452,10 +5452,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -5542,10 +5542,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -5639,10 +5639,10 @@ export interface GoMap extends V.GrammarMap {
 				| T.FloatLiteralArm1.Parsed
 				| T.FloatLiteralArm2.Parsed
 				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
+				| T.ImaginaryLiteralArm4.Parsed
+				| T.ImaginaryLiteralArm6.Parsed
 				| T.ImaginaryLiteralArm7.Parsed
 				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntLiteralArm4.Parsed
 				| T.InterpretedStringLiteral.Parsed
@@ -5945,9 +5945,6 @@ export interface GoMap extends V.GrammarMap {
 			readonly 'literal.number.integer.hex': TSKindId.IntLiteralArm5;
 			readonly 'literal.number.integer.imaginary':
 				| TSKindId.ImaginaryLiteralArm1
-				| TSKindId.ImaginaryLiteralArm10Arm1
-				| TSKindId.ImaginaryLiteralArm10Arm2
-				| TSKindId.ImaginaryLiteralArm10Arm3
 				| TSKindId.ImaginaryLiteralArm2
 				| TSKindId.ImaginaryLiteralArm3
 				| TSKindId.ImaginaryLiteralArm4
@@ -5955,7 +5952,9 @@ export interface GoMap extends V.GrammarMap {
 				| TSKindId.ImaginaryLiteralArm6
 				| TSKindId.ImaginaryLiteralArm7
 				| TSKindId.ImaginaryLiteralArm8
-				| TSKindId.ImaginaryLiteralArm9;
+				| TSKindId.ImaginaryLiteralArm9Arm1
+				| TSKindId.ImaginaryLiteralArm9Arm2
+				| TSKindId.ImaginaryLiteralArm9Arm3;
 			readonly 'literal.number.integer.octal': TSKindId.IntLiteralArm4;
 			readonly 'literal.string': TSKindId.InterpretedStringLiteral;
 			readonly 'literal.string.escape':

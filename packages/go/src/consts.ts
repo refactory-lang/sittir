@@ -69,48 +69,48 @@ export const TOKEN_INTERIORS = {
 		regex: '^(?<content>(?:[0-9])(?:(?:_)?(?:[0-9]))*)i$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
-	imaginary_literal_arm10_arm1: {
-		regex:
-			'^(?<content>0(?:x|X)(?:_)?(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*\\.(?:(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*)?(?:p|P)(?:(?:\\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)i$',
-		slots: [{ name: 'content', propertyName: 'content' }]
-	},
-	imaginary_literal_arm10_arm2: {
-		regex:
-			'^(?<content>0(?:x|X)(?:_)?(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*(?:p|P)(?:(?:\\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)i$',
-		slots: [{ name: 'content', propertyName: 'content' }]
-	},
-	imaginary_literal_arm10_arm3: {
-		regex:
-			'^(?<content>0(?:x|X)\\.(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*(?:p|P)(?:(?:\\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)i$',
-		slots: [{ name: 'content', propertyName: 'content' }]
-	},
 	imaginary_literal_arm2: {
 		regex: '^(?<content>0(?:b|B)(?:_)?(?:[01])(?:(?:_)?(?:[01]))*)i$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
-	imaginary_literal_arm4: {
+	imaginary_literal_arm3: {
 		regex: '^(?<content>(?:[1-9])(?:(?:_)?(?:[0-9])(?:(?:_)?(?:[0-9]))*)?)i$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
-	imaginary_literal_arm5: {
+	imaginary_literal_arm4: {
 		regex: '^(?<content>0(?:(?:o|O))?(?:_)?(?:[0-7])(?:(?:_)?(?:[0-7]))*)i$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
-	imaginary_literal_arm6: {
+	imaginary_literal_arm5: {
 		regex: '^(?<content>0(?:x|X)(?:_)?(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*)i$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
-	imaginary_literal_arm7: {
+	imaginary_literal_arm6: {
 		regex:
 			'^(?<content>(?:[0-9])(?:(?:_)?(?:[0-9]))*\\.(?:(?:[0-9])(?:(?:_)?(?:[0-9]))*)?(?:(?:e|E)(?:(?:\\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)?)i$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
-	imaginary_literal_arm8: {
+	imaginary_literal_arm7: {
 		regex: '^(?<content>(?:[0-9])(?:(?:_)?(?:[0-9]))*(?:e|E)(?:(?:\\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)i$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
-	imaginary_literal_arm9: {
+	imaginary_literal_arm8: {
 		regex: '^(?<content>\\.(?:[0-9])(?:(?:_)?(?:[0-9]))*(?:(?:e|E)(?:(?:\\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)?)i$',
+		slots: [{ name: 'content', propertyName: 'content' }]
+	},
+	imaginary_literal_arm9_arm1: {
+		regex:
+			'^(?<content>0(?:x|X)(?:_)?(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*\\.(?:(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*)?(?:p|P)(?:(?:\\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)i$',
+		slots: [{ name: 'content', propertyName: 'content' }]
+	},
+	imaginary_literal_arm9_arm2: {
+		regex:
+			'^(?<content>0(?:x|X)(?:_)?(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*(?:p|P)(?:(?:\\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)i$',
+		slots: [{ name: 'content', propertyName: 'content' }]
+	},
+	imaginary_literal_arm9_arm3: {
+		regex:
+			'^(?<content>0(?:x|X)\\.(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*(?:p|P)(?:(?:\\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)i$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	rune_literal_arm1: { regex: "^'(?<content>(?:[^'\\\\]))'$", slots: [{ name: 'content', propertyName: 'content' }] },

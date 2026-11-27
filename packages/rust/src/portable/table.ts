@@ -50349,7 +50349,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							boolean: true
+							literal: true
 						}
 					]
 				},
@@ -50363,7 +50363,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							boolean: false
+							literal: false
 						}
 					]
 				}

@@ -123,16 +123,15 @@ export const buildFloatLiteralArm4Arm2 = dispatched(() => backend().buildFloatLi
 export const buildFloatLiteralArm4Arm3 = dispatched(() => backend().buildFloatLiteralArm4Arm3);
 export const buildImaginaryLiteralArm1 = dispatched(() => backend().buildImaginaryLiteralArm1);
 export const buildImaginaryLiteralArm2 = dispatched(() => backend().buildImaginaryLiteralArm2);
-export const buildImaginaryLiteralArm3 = O.buildImaginaryLiteralArm3;
+export const buildImaginaryLiteralArm3 = dispatched(() => backend().buildImaginaryLiteralArm3);
 export const buildImaginaryLiteralArm4 = dispatched(() => backend().buildImaginaryLiteralArm4);
 export const buildImaginaryLiteralArm5 = dispatched(() => backend().buildImaginaryLiteralArm5);
 export const buildImaginaryLiteralArm6 = dispatched(() => backend().buildImaginaryLiteralArm6);
 export const buildImaginaryLiteralArm7 = dispatched(() => backend().buildImaginaryLiteralArm7);
 export const buildImaginaryLiteralArm8 = dispatched(() => backend().buildImaginaryLiteralArm8);
-export const buildImaginaryLiteralArm9 = dispatched(() => backend().buildImaginaryLiteralArm9);
-export const buildImaginaryLiteralArm10Arm1 = dispatched(() => backend().buildImaginaryLiteralArm10Arm1);
-export const buildImaginaryLiteralArm10Arm2 = dispatched(() => backend().buildImaginaryLiteralArm10Arm2);
-export const buildImaginaryLiteralArm10Arm3 = dispatched(() => backend().buildImaginaryLiteralArm10Arm3);
+export const buildImaginaryLiteralArm9Arm1 = dispatched(() => backend().buildImaginaryLiteralArm9Arm1);
+export const buildImaginaryLiteralArm9Arm2 = dispatched(() => backend().buildImaginaryLiteralArm9Arm2);
+export const buildImaginaryLiteralArm9Arm3 = dispatched(() => backend().buildImaginaryLiteralArm9Arm3);
 export const buildRuneLiteralArm1 = dispatched(() => backend().buildRuneLiteralArm1);
 export const buildRuneLiteralArm2Arm1 = dispatched(() => backend().buildRuneLiteralArm2Arm1);
 export const buildRuneLiteralArm2Arm2 = dispatched(() => backend().buildRuneLiteralArm2Arm2);
@@ -311,10 +310,9 @@ export const _factoryMap = {
 	imaginary_literal_arm6: buildImaginaryLiteralArm6,
 	imaginary_literal_arm7: buildImaginaryLiteralArm7,
 	imaginary_literal_arm8: buildImaginaryLiteralArm8,
-	imaginary_literal_arm9: buildImaginaryLiteralArm9,
-	imaginary_literal_arm10_arm1: buildImaginaryLiteralArm10Arm1,
-	imaginary_literal_arm10_arm2: buildImaginaryLiteralArm10Arm2,
-	imaginary_literal_arm10_arm3: buildImaginaryLiteralArm10Arm3,
+	imaginary_literal_arm9_arm1: buildImaginaryLiteralArm9Arm1,
+	imaginary_literal_arm9_arm2: buildImaginaryLiteralArm9Arm2,
+	imaginary_literal_arm9_arm3: buildImaginaryLiteralArm9Arm3,
 	rune_literal_arm1: buildRuneLiteralArm1,
 	rune_literal_arm2_arm1: buildRuneLiteralArm2Arm1,
 	rune_literal_arm2_arm2: buildRuneLiteralArm2Arm2,

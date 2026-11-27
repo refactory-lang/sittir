@@ -68,7 +68,6 @@ export type LeafStringMap = {
 	[TSKindId.False]: 'false';
 	[TSKindId.Iota]: 'iota';
 	[TSKindId.IntLiteralArm2]: '0';
-	[TSKindId.ImaginaryLiteralArm3]: '0i';
 	[TSKindId.Tight]: '';
 	[TSKindId.Space]: ' ';
 	[TSKindId.Tab]: '\t';
@@ -255,206 +254,205 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[97, 'imaginary_literal_arm6'],
 	[98, 'imaginary_literal_arm7'],
 	[99, 'imaginary_literal_arm8'],
-	[100, 'imaginary_literal_arm9'],
-	[101, 'imaginary_literal_arm10_arm1'],
-	[102, 'imaginary_literal_arm10_arm2'],
-	[103, 'imaginary_literal_arm10_arm3'],
-	[104, 'rune_literal_arm1'],
-	[105, 'rune_literal_arm2_arm1'],
-	[106, 'rune_literal_arm2_arm2'],
-	[107, 'rune_literal_arm2_arm3'],
-	[108, 'rune_literal_arm2_arm4'],
-	[109, 'rune_literal_arm2_arm5'],
-	[110, 'comment_arm1'],
-	[111, 'comment_arm2'],
-	[112, 'else_keyword'],
-	[113, 'star_eq'],
-	[114, 'slash_eq'],
-	[115, 'percent_eq'],
-	[116, 'lt_lt_eq'],
-	[117, 'gt_gt_eq'],
-	[118, 'amp_eq'],
-	[119, 'amp_caret_eq'],
-	[120, 'plus_eq'],
-	[121, 'dash_eq'],
-	[122, 'pipe_eq'],
-	[123, 'caret_eq'],
-	[124, 'chan_keyword'],
-	[125, '_tight'],
-	[126, '_space'],
-	[127, '_tab'],
-	[128, '_newline'],
-	[129, '_blankline'],
-	[130, '_double_blankline'],
-	[131, '_indent'],
-	[132, '_dedent'],
-	[133, 'source_file'],
-	[134, 'package_clause'],
-	[135, 'import_declaration'],
-	[136, 'import_spec'],
-	[137, 'dot'],
-	[138, 'import_spec_list'],
-	[139, '_declaration'],
-	[140, 'const_declaration'],
-	[141, 'const_spec'],
-	[142, 'var_declaration'],
-	[143, 'var_spec'],
-	[144, 'var_spec_list'],
-	[145, 'function_declaration'],
-	[146, 'method_declaration'],
-	[147, 'type_parameter_list'],
-	[148, 'type_parameter_declaration'],
-	[149, 'parameter_list'],
-	[150, 'parameter_declaration'],
-	[151, 'variadic_parameter_declaration'],
-	[152, 'type_alias'],
-	[153, 'type_declaration'],
-	[154, 'type_spec'],
-	[155, 'expression_list'],
-	[156, 'parenthesized_type'],
-	[157, '_simple_type'],
-	[158, 'generic_type'],
-	[159, 'type_arguments'],
-	[160, 'pointer_type'],
-	[161, 'array_type'],
-	[162, 'implicit_length_array_type'],
-	[163, 'slice_type'],
-	[164, 'struct_type'],
-	[165, 'negated_type'],
-	[166, 'field_declaration_list'],
-	[167, 'field_declaration'],
-	[168, 'interface_type'],
-	[169, 'method_elem'],
-	[170, 'type_elem'],
-	[171, 'map_type'],
-	[172, 'channel_type'],
-	[173, 'function_type'],
-	[174, 'block'],
-	[175, 'statement_list'],
-	[176, '_statement'],
-	[177, 'empty_statement'],
-	[178, '_simple_statement'],
-	[179, 'expression_statement'],
-	[180, 'send_statement'],
-	[181, 'receive_statement'],
-	[182, 'inc_statement'],
-	[183, 'dec_statement'],
-	[184, 'assignment_statement'],
-	[185, 'short_var_declaration'],
-	[186, 'labeled_statement'],
-	[187, 'empty_labeled_statement'],
-	[188, 'fallthrough_statement'],
-	[189, 'break_statement'],
-	[190, 'continue_statement'],
-	[191, 'goto_statement'],
-	[192, 'return_statement'],
-	[193, 'go_statement'],
-	[194, 'defer_statement'],
-	[195, 'if_statement'],
-	[196, 'for_statement'],
-	[197, 'for_clause'],
-	[198, 'range_clause'],
-	[199, 'expression_switch_statement'],
-	[200, 'expression_case'],
-	[201, 'default_case'],
-	[202, 'type_switch_statement'],
-	[203, '_type_switch_header'],
-	[204, 'type_case'],
-	[205, 'select_statement'],
-	[206, 'communication_case'],
-	[207, '_expression'],
-	[208, 'parenthesized_expression'],
-	[209, 'call_expression'],
-	[210, 'variadic_argument'],
-	[211, 'special_argument_list'],
-	[212, 'argument_list'],
-	[213, 'selector_expression'],
-	[214, 'index_expression'],
-	[215, 'slice_expression'],
-	[216, 'type_assertion_expression'],
-	[217, 'type_conversion_expression'],
-	[218, 'type_instantiation_expression'],
-	[219, 'composite_literal'],
-	[220, 'literal_value'],
-	[221, 'literal_element'],
-	[222, 'keyed_element'],
-	[223, 'func_literal'],
-	[224, 'unary_expression'],
-	[225, 'binary_expression'],
-	[226, 'qualified_type'],
-	[227, 'raw_string_literal'],
-	[228, 'interpreted_string_literal'],
-	[229, 'escape_sequence'],
-	[230, 'int_literal'],
-	[231, 'float_literal'],
-	[232, 'imaginary_literal'],
-	[233, 'rune_literal'],
-	[234, 'float_literal_arm4'],
-	[235, 'imaginary_literal_arm10'],
-	[236, 'rune_literal_arm2'],
-	[237, 'source_file_arm1'],
-	[238, 'source_file_arm2'],
-	[239, 'import_specs'],
-	[240, 'type_parameter_declarations'],
-	[241, 'parameter_list_elements'],
-	[242, 'type_declaration_elements'],
-	[243, 'type_elems'],
-	[244, 'field_declarations'],
-	[245, 'interface_elems'],
-	[246, 'statements'],
-	[247, 'call_expression_arm1'],
-	[248, 'call_expression_arm2'],
-	[249, 'argument_list_elements'],
-	[250, 'types'],
-	[251, 'literal_value_elements'],
-	[252, 'import_spec_list_arm'],
-	[253, 'import_spec_list_group'],
-	[254, 'const_declaration_arm'],
-	[255, 'const_spec_group'],
-	[256, 'var_spec_arm'],
-	[257, 'type_declaration_group'],
-	[258, 'type_declaration_arm'],
-	[259, 'field_declaration_list_group'],
-	[260, 'field_declaration_arm'],
-	[261, 'interface_type_group'],
-	[262, 'statement_list_group'],
-	[263, 'statement_list_arm'],
-	[264, 'receive_statement_group'],
-	[265, 'special_argument_list_group'],
-	[266, 'channel_type_bidirectional'],
-	[267, 'channel_type_send_only'],
-	[268, 'channel_type_receive_only'],
-	[269, '_pointer_type_field_declaration_arm'],
-	[270, 'source_file_repeat1'],
-	[271, 'const_spec_repeat1'],
-	[272, 'var_spec_repeat1'],
-	[273, 'var_spec_list_repeat1'],
-	[274, 'expression_list_repeat1'],
-	[275, 'field_declaration_repeat1'],
-	[276, 'type_elem_repeat1'],
-	[277, 'expression_switch_statement_repeat1'],
-	[278, 'type_switch_statement_repeat1'],
-	[279, 'type_case_repeat1'],
-	[280, 'select_statement_repeat1'],
-	[281, 'interpreted_string_literal_repeat1'],
-	[282, 'import_specs_repeat1'],
-	[283, 'type_parameter_declarations_repeat1'],
-	[284, 'parameter_list_elements_repeat1'],
-	[285, 'type_declaration_elements_repeat1'],
-	[286, 'type_elems_repeat1'],
-	[287, 'field_declarations_repeat1'],
-	[288, 'interface_elems_repeat1'],
-	[289, 'statements_repeat1'],
-	[290, 'argument_list_elements_repeat1'],
-	[291, 'types_repeat1'],
-	[292, 'literal_value_elements_repeat1'],
-	[293, 'const_declaration_arm_repeat1'],
-	[294, 'special_argument_list_group_repeat1'],
-	[295, 'field_identifier'],
-	[296, 'label_name'],
-	[297, 'package_identifier'],
-	[298, 'type_constraint'],
-	[299, 'type_identifier'],
+	[100, 'imaginary_literal_arm9_arm1'],
+	[101, 'imaginary_literal_arm9_arm2'],
+	[102, 'imaginary_literal_arm9_arm3'],
+	[103, 'rune_literal_arm1'],
+	[104, 'rune_literal_arm2_arm1'],
+	[105, 'rune_literal_arm2_arm2'],
+	[106, 'rune_literal_arm2_arm3'],
+	[107, 'rune_literal_arm2_arm4'],
+	[108, 'rune_literal_arm2_arm5'],
+	[109, 'comment_arm1'],
+	[110, 'comment_arm2'],
+	[111, 'else_keyword'],
+	[112, 'star_eq'],
+	[113, 'slash_eq'],
+	[114, 'percent_eq'],
+	[115, 'lt_lt_eq'],
+	[116, 'gt_gt_eq'],
+	[117, 'amp_eq'],
+	[118, 'amp_caret_eq'],
+	[119, 'plus_eq'],
+	[120, 'dash_eq'],
+	[121, 'pipe_eq'],
+	[122, 'caret_eq'],
+	[123, 'chan_keyword'],
+	[124, '_tight'],
+	[125, '_space'],
+	[126, '_tab'],
+	[127, '_newline'],
+	[128, '_blankline'],
+	[129, '_double_blankline'],
+	[130, '_indent'],
+	[131, '_dedent'],
+	[132, 'source_file'],
+	[133, 'package_clause'],
+	[134, 'import_declaration'],
+	[135, 'import_spec'],
+	[136, 'dot'],
+	[137, 'import_spec_list'],
+	[138, '_declaration'],
+	[139, 'const_declaration'],
+	[140, 'const_spec'],
+	[141, 'var_declaration'],
+	[142, 'var_spec'],
+	[143, 'var_spec_list'],
+	[144, 'function_declaration'],
+	[145, 'method_declaration'],
+	[146, 'type_parameter_list'],
+	[147, 'type_parameter_declaration'],
+	[148, 'parameter_list'],
+	[149, 'parameter_declaration'],
+	[150, 'variadic_parameter_declaration'],
+	[151, 'type_alias'],
+	[152, 'type_declaration'],
+	[153, 'type_spec'],
+	[154, 'expression_list'],
+	[155, 'parenthesized_type'],
+	[156, '_simple_type'],
+	[157, 'generic_type'],
+	[158, 'type_arguments'],
+	[159, 'pointer_type'],
+	[160, 'array_type'],
+	[161, 'implicit_length_array_type'],
+	[162, 'slice_type'],
+	[163, 'struct_type'],
+	[164, 'negated_type'],
+	[165, 'field_declaration_list'],
+	[166, 'field_declaration'],
+	[167, 'interface_type'],
+	[168, 'method_elem'],
+	[169, 'type_elem'],
+	[170, 'map_type'],
+	[171, 'channel_type'],
+	[172, 'function_type'],
+	[173, 'block'],
+	[174, 'statement_list'],
+	[175, '_statement'],
+	[176, 'empty_statement'],
+	[177, '_simple_statement'],
+	[178, 'expression_statement'],
+	[179, 'send_statement'],
+	[180, 'receive_statement'],
+	[181, 'inc_statement'],
+	[182, 'dec_statement'],
+	[183, 'assignment_statement'],
+	[184, 'short_var_declaration'],
+	[185, 'labeled_statement'],
+	[186, 'empty_labeled_statement'],
+	[187, 'fallthrough_statement'],
+	[188, 'break_statement'],
+	[189, 'continue_statement'],
+	[190, 'goto_statement'],
+	[191, 'return_statement'],
+	[192, 'go_statement'],
+	[193, 'defer_statement'],
+	[194, 'if_statement'],
+	[195, 'for_statement'],
+	[196, 'for_clause'],
+	[197, 'range_clause'],
+	[198, 'expression_switch_statement'],
+	[199, 'expression_case'],
+	[200, 'default_case'],
+	[201, 'type_switch_statement'],
+	[202, '_type_switch_header'],
+	[203, 'type_case'],
+	[204, 'select_statement'],
+	[205, 'communication_case'],
+	[206, '_expression'],
+	[207, 'parenthesized_expression'],
+	[208, 'call_expression'],
+	[209, 'variadic_argument'],
+	[210, 'special_argument_list'],
+	[211, 'argument_list'],
+	[212, 'selector_expression'],
+	[213, 'index_expression'],
+	[214, 'slice_expression'],
+	[215, 'type_assertion_expression'],
+	[216, 'type_conversion_expression'],
+	[217, 'type_instantiation_expression'],
+	[218, 'composite_literal'],
+	[219, 'literal_value'],
+	[220, 'literal_element'],
+	[221, 'keyed_element'],
+	[222, 'func_literal'],
+	[223, 'unary_expression'],
+	[224, 'binary_expression'],
+	[225, 'qualified_type'],
+	[226, 'raw_string_literal'],
+	[227, 'interpreted_string_literal'],
+	[228, 'escape_sequence'],
+	[229, 'int_literal'],
+	[230, 'float_literal'],
+	[231, 'imaginary_literal'],
+	[232, 'rune_literal'],
+	[233, 'float_literal_arm4'],
+	[234, 'imaginary_literal_arm9'],
+	[235, 'rune_literal_arm2'],
+	[236, 'source_file_arm1'],
+	[237, 'source_file_arm2'],
+	[238, 'import_specs'],
+	[239, 'type_parameter_declarations'],
+	[240, 'parameter_list_elements'],
+	[241, 'type_declaration_elements'],
+	[242, 'type_elems'],
+	[243, 'field_declarations'],
+	[244, 'interface_elems'],
+	[245, 'statements'],
+	[246, 'call_expression_arm1'],
+	[247, 'call_expression_arm2'],
+	[248, 'argument_list_elements'],
+	[249, 'types'],
+	[250, 'literal_value_elements'],
+	[251, 'import_spec_list_arm'],
+	[252, 'import_spec_list_group'],
+	[253, 'const_declaration_arm'],
+	[254, 'const_spec_group'],
+	[255, 'var_spec_arm'],
+	[256, 'type_declaration_group'],
+	[257, 'type_declaration_arm'],
+	[258, 'field_declaration_list_group'],
+	[259, 'field_declaration_arm'],
+	[260, 'interface_type_group'],
+	[261, 'statement_list_group'],
+	[262, 'statement_list_arm'],
+	[263, 'receive_statement_group'],
+	[264, 'special_argument_list_group'],
+	[265, 'channel_type_bidirectional'],
+	[266, 'channel_type_send_only'],
+	[267, 'channel_type_receive_only'],
+	[268, '_pointer_type_field_declaration_arm'],
+	[269, 'source_file_repeat1'],
+	[270, 'const_spec_repeat1'],
+	[271, 'var_spec_repeat1'],
+	[272, 'var_spec_list_repeat1'],
+	[273, 'expression_list_repeat1'],
+	[274, 'field_declaration_repeat1'],
+	[275, 'type_elem_repeat1'],
+	[276, 'expression_switch_statement_repeat1'],
+	[277, 'type_switch_statement_repeat1'],
+	[278, 'type_case_repeat1'],
+	[279, 'select_statement_repeat1'],
+	[280, 'interpreted_string_literal_repeat1'],
+	[281, 'import_specs_repeat1'],
+	[282, 'type_parameter_declarations_repeat1'],
+	[283, 'parameter_list_elements_repeat1'],
+	[284, 'type_declaration_elements_repeat1'],
+	[285, 'type_elems_repeat1'],
+	[286, 'field_declarations_repeat1'],
+	[287, 'interface_elems_repeat1'],
+	[288, 'statements_repeat1'],
+	[289, 'argument_list_elements_repeat1'],
+	[290, 'types_repeat1'],
+	[291, 'literal_value_elements_repeat1'],
+	[292, 'const_declaration_arm_repeat1'],
+	[293, 'special_argument_list_group_repeat1'],
+	[294, 'field_identifier'],
+	[295, 'label_name'],
+	[296, 'package_identifier'],
+	[297, 'type_constraint'],
+	[298, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -559,206 +557,205 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[97, 'imaginary_literal_arm6'],
 	[98, 'imaginary_literal_arm7'],
 	[99, 'imaginary_literal_arm8'],
-	[100, 'imaginary_literal_arm9'],
-	[101, 'imaginary_literal_arm10_arm1'],
-	[102, 'imaginary_literal_arm10_arm2'],
-	[103, 'imaginary_literal_arm10_arm3'],
-	[104, 'rune_literal_arm1'],
-	[105, 'rune_literal_arm2_arm1'],
-	[106, 'rune_literal_arm2_arm2'],
-	[107, 'rune_literal_arm2_arm3'],
-	[108, 'rune_literal_arm2_arm4'],
-	[109, 'rune_literal_arm2_arm5'],
-	[110, 'comment_arm1'],
-	[111, 'comment_arm2'],
-	[112, 'else'],
-	[113, '*='],
-	[114, '/='],
-	[115, '%='],
-	[116, '<<='],
-	[117, '>>='],
-	[118, '&='],
-	[119, '&^='],
-	[120, '+='],
-	[121, '-='],
-	[122, '|='],
-	[123, '^='],
-	[124, 'chan'],
-	[125, '_tight'],
-	[126, '_space'],
-	[127, '_tab'],
-	[128, '_newline'],
-	[129, '_blankline'],
-	[130, '_double_blankline'],
-	[131, '_indent'],
-	[132, '_dedent'],
-	[133, 'source_file'],
-	[134, 'package_clause'],
-	[135, 'import_declaration'],
-	[136, 'import_spec'],
-	[137, 'dot'],
-	[138, 'import_spec_list'],
-	[139, '_declaration'],
-	[140, 'const_declaration'],
-	[141, 'const_spec'],
-	[142, 'var_declaration'],
-	[143, 'var_spec'],
-	[144, 'var_spec_list'],
-	[145, 'function_declaration'],
-	[146, 'method_declaration'],
-	[147, 'type_parameter_list'],
-	[148, 'type_parameter_declaration'],
-	[149, 'parameter_list'],
-	[150, 'parameter_declaration'],
-	[151, 'variadic_parameter_declaration'],
-	[152, 'type_alias'],
-	[153, 'type_declaration'],
-	[154, 'type_spec'],
-	[155, 'expression_list'],
-	[156, 'parenthesized_type'],
-	[157, '_simple_type'],
-	[158, 'generic_type'],
-	[159, 'type_arguments'],
-	[160, 'pointer_type'],
-	[161, 'array_type'],
-	[162, 'implicit_length_array_type'],
-	[163, 'slice_type'],
-	[164, 'struct_type'],
-	[165, 'negated_type'],
-	[166, 'field_declaration_list'],
-	[167, 'field_declaration'],
-	[168, 'interface_type'],
-	[169, 'method_elem'],
-	[170, 'type_elem'],
-	[171, 'map_type'],
-	[172, 'channel_type'],
-	[173, 'function_type'],
-	[174, 'block'],
-	[175, 'statement_list'],
-	[176, '_statement'],
-	[177, 'empty_statement'],
-	[178, '_simple_statement'],
-	[179, 'expression_statement'],
-	[180, 'send_statement'],
-	[181, 'receive_statement'],
-	[182, 'inc_statement'],
-	[183, 'dec_statement'],
-	[184, 'assignment_statement'],
-	[185, 'short_var_declaration'],
-	[186, 'labeled_statement'],
-	[187, 'empty_labeled_statement'],
-	[188, 'fallthrough_statement'],
-	[189, 'break_statement'],
-	[190, 'continue_statement'],
-	[191, 'goto_statement'],
-	[192, 'return_statement'],
-	[193, 'go_statement'],
-	[194, 'defer_statement'],
-	[195, 'if_statement'],
-	[196, 'for_statement'],
-	[197, 'for_clause'],
-	[198, 'range_clause'],
-	[199, 'expression_switch_statement'],
-	[200, 'expression_case'],
-	[201, 'default_case'],
-	[202, 'type_switch_statement'],
-	[203, '_type_switch_header'],
-	[204, 'type_case'],
-	[205, 'select_statement'],
-	[206, 'communication_case'],
-	[207, '_expression'],
-	[208, 'parenthesized_expression'],
-	[209, 'call_expression'],
-	[210, 'variadic_argument'],
-	[211, 'special_argument_list'],
-	[212, 'argument_list'],
-	[213, 'selector_expression'],
-	[214, 'index_expression'],
-	[215, 'slice_expression'],
-	[216, 'type_assertion_expression'],
-	[217, 'type_conversion_expression'],
-	[218, 'type_instantiation_expression'],
-	[219, 'composite_literal'],
-	[220, 'literal_value'],
-	[221, 'literal_element'],
-	[222, 'keyed_element'],
-	[223, 'func_literal'],
-	[224, 'unary_expression'],
-	[225, 'binary_expression'],
-	[226, 'qualified_type'],
-	[227, 'raw_string_literal'],
-	[228, 'interpreted_string_literal'],
-	[229, 'escape_sequence'],
-	[230, 'int_literal'],
-	[231, 'float_literal'],
-	[232, 'imaginary_literal'],
-	[233, 'rune_literal'],
-	[234, 'float_literal_arm4'],
-	[235, 'imaginary_literal_arm10'],
-	[236, 'rune_literal_arm2'],
-	[237, 'source_file_arm1'],
-	[238, 'source_file_arm2'],
-	[239, 'import_specs'],
-	[240, 'type_parameter_declarations'],
-	[241, 'parameter_list_elements'],
-	[242, 'type_declaration_elements'],
-	[243, 'type_elems'],
-	[244, 'field_declarations'],
-	[245, 'interface_elems'],
-	[246, 'statements'],
-	[247, 'call_expression_arm1'],
-	[248, 'call_expression_arm2'],
-	[249, 'argument_list_elements'],
-	[250, 'types'],
-	[251, 'literal_value_elements'],
-	[252, 'import_spec_list_arm'],
-	[253, 'import_spec_list_group'],
-	[254, 'const_declaration_arm'],
-	[255, 'const_spec_group'],
-	[256, 'var_spec_arm'],
-	[257, 'type_declaration_group'],
-	[258, 'type_declaration_arm'],
-	[259, 'field_declaration_list_group'],
-	[260, 'field_declaration_arm'],
-	[261, 'interface_type_group'],
-	[262, 'statement_list_group'],
-	[263, 'statement_list_arm'],
-	[264, 'receive_statement_group'],
-	[265, 'special_argument_list_group'],
-	[266, 'channel_type_bidirectional'],
-	[267, 'channel_type_send_only'],
-	[268, 'channel_type_receive_only'],
-	[269, 'pointer_type'],
-	[270, 'source_file_repeat1'],
-	[271, 'const_spec_repeat1'],
-	[272, 'var_spec_repeat1'],
-	[273, 'var_spec_list_repeat1'],
-	[274, 'expression_list_repeat1'],
-	[275, 'field_declaration_repeat1'],
-	[276, 'type_elem_repeat1'],
-	[277, 'expression_switch_statement_repeat1'],
-	[278, 'type_switch_statement_repeat1'],
-	[279, 'type_case_repeat1'],
-	[280, 'select_statement_repeat1'],
-	[281, 'interpreted_string_literal_repeat1'],
-	[282, 'import_specs_repeat1'],
-	[283, 'type_parameter_declarations_repeat1'],
-	[284, 'parameter_list_elements_repeat1'],
-	[285, 'type_declaration_elements_repeat1'],
-	[286, 'type_elems_repeat1'],
-	[287, 'field_declarations_repeat1'],
-	[288, 'interface_elems_repeat1'],
-	[289, 'statements_repeat1'],
-	[290, 'argument_list_elements_repeat1'],
-	[291, 'types_repeat1'],
-	[292, 'literal_value_elements_repeat1'],
-	[293, 'const_declaration_arm_repeat1'],
-	[294, 'special_argument_list_group_repeat1'],
-	[295, 'field_identifier'],
-	[296, 'label_name'],
-	[297, 'package_identifier'],
-	[298, 'type_constraint'],
-	[299, 'type_identifier'],
+	[100, 'imaginary_literal_arm9_arm1'],
+	[101, 'imaginary_literal_arm9_arm2'],
+	[102, 'imaginary_literal_arm9_arm3'],
+	[103, 'rune_literal_arm1'],
+	[104, 'rune_literal_arm2_arm1'],
+	[105, 'rune_literal_arm2_arm2'],
+	[106, 'rune_literal_arm2_arm3'],
+	[107, 'rune_literal_arm2_arm4'],
+	[108, 'rune_literal_arm2_arm5'],
+	[109, 'comment_arm1'],
+	[110, 'comment_arm2'],
+	[111, 'else'],
+	[112, '*='],
+	[113, '/='],
+	[114, '%='],
+	[115, '<<='],
+	[116, '>>='],
+	[117, '&='],
+	[118, '&^='],
+	[119, '+='],
+	[120, '-='],
+	[121, '|='],
+	[122, '^='],
+	[123, 'chan'],
+	[124, '_tight'],
+	[125, '_space'],
+	[126, '_tab'],
+	[127, '_newline'],
+	[128, '_blankline'],
+	[129, '_double_blankline'],
+	[130, '_indent'],
+	[131, '_dedent'],
+	[132, 'source_file'],
+	[133, 'package_clause'],
+	[134, 'import_declaration'],
+	[135, 'import_spec'],
+	[136, 'dot'],
+	[137, 'import_spec_list'],
+	[138, '_declaration'],
+	[139, 'const_declaration'],
+	[140, 'const_spec'],
+	[141, 'var_declaration'],
+	[142, 'var_spec'],
+	[143, 'var_spec_list'],
+	[144, 'function_declaration'],
+	[145, 'method_declaration'],
+	[146, 'type_parameter_list'],
+	[147, 'type_parameter_declaration'],
+	[148, 'parameter_list'],
+	[149, 'parameter_declaration'],
+	[150, 'variadic_parameter_declaration'],
+	[151, 'type_alias'],
+	[152, 'type_declaration'],
+	[153, 'type_spec'],
+	[154, 'expression_list'],
+	[155, 'parenthesized_type'],
+	[156, '_simple_type'],
+	[157, 'generic_type'],
+	[158, 'type_arguments'],
+	[159, 'pointer_type'],
+	[160, 'array_type'],
+	[161, 'implicit_length_array_type'],
+	[162, 'slice_type'],
+	[163, 'struct_type'],
+	[164, 'negated_type'],
+	[165, 'field_declaration_list'],
+	[166, 'field_declaration'],
+	[167, 'interface_type'],
+	[168, 'method_elem'],
+	[169, 'type_elem'],
+	[170, 'map_type'],
+	[171, 'channel_type'],
+	[172, 'function_type'],
+	[173, 'block'],
+	[174, 'statement_list'],
+	[175, '_statement'],
+	[176, 'empty_statement'],
+	[177, '_simple_statement'],
+	[178, 'expression_statement'],
+	[179, 'send_statement'],
+	[180, 'receive_statement'],
+	[181, 'inc_statement'],
+	[182, 'dec_statement'],
+	[183, 'assignment_statement'],
+	[184, 'short_var_declaration'],
+	[185, 'labeled_statement'],
+	[186, 'empty_labeled_statement'],
+	[187, 'fallthrough_statement'],
+	[188, 'break_statement'],
+	[189, 'continue_statement'],
+	[190, 'goto_statement'],
+	[191, 'return_statement'],
+	[192, 'go_statement'],
+	[193, 'defer_statement'],
+	[194, 'if_statement'],
+	[195, 'for_statement'],
+	[196, 'for_clause'],
+	[197, 'range_clause'],
+	[198, 'expression_switch_statement'],
+	[199, 'expression_case'],
+	[200, 'default_case'],
+	[201, 'type_switch_statement'],
+	[202, '_type_switch_header'],
+	[203, 'type_case'],
+	[204, 'select_statement'],
+	[205, 'communication_case'],
+	[206, '_expression'],
+	[207, 'parenthesized_expression'],
+	[208, 'call_expression'],
+	[209, 'variadic_argument'],
+	[210, 'special_argument_list'],
+	[211, 'argument_list'],
+	[212, 'selector_expression'],
+	[213, 'index_expression'],
+	[214, 'slice_expression'],
+	[215, 'type_assertion_expression'],
+	[216, 'type_conversion_expression'],
+	[217, 'type_instantiation_expression'],
+	[218, 'composite_literal'],
+	[219, 'literal_value'],
+	[220, 'literal_element'],
+	[221, 'keyed_element'],
+	[222, 'func_literal'],
+	[223, 'unary_expression'],
+	[224, 'binary_expression'],
+	[225, 'qualified_type'],
+	[226, 'raw_string_literal'],
+	[227, 'interpreted_string_literal'],
+	[228, 'escape_sequence'],
+	[229, 'int_literal'],
+	[230, 'float_literal'],
+	[231, 'imaginary_literal'],
+	[232, 'rune_literal'],
+	[233, 'float_literal_arm4'],
+	[234, 'imaginary_literal_arm9'],
+	[235, 'rune_literal_arm2'],
+	[236, 'source_file_arm1'],
+	[237, 'source_file_arm2'],
+	[238, 'import_specs'],
+	[239, 'type_parameter_declarations'],
+	[240, 'parameter_list_elements'],
+	[241, 'type_declaration_elements'],
+	[242, 'type_elems'],
+	[243, 'field_declarations'],
+	[244, 'interface_elems'],
+	[245, 'statements'],
+	[246, 'call_expression_arm1'],
+	[247, 'call_expression_arm2'],
+	[248, 'argument_list_elements'],
+	[249, 'types'],
+	[250, 'literal_value_elements'],
+	[251, 'import_spec_list_arm'],
+	[252, 'import_spec_list_group'],
+	[253, 'const_declaration_arm'],
+	[254, 'const_spec_group'],
+	[255, 'var_spec_arm'],
+	[256, 'type_declaration_group'],
+	[257, 'type_declaration_arm'],
+	[258, 'field_declaration_list_group'],
+	[259, 'field_declaration_arm'],
+	[260, 'interface_type_group'],
+	[261, 'statement_list_group'],
+	[262, 'statement_list_arm'],
+	[263, 'receive_statement_group'],
+	[264, 'special_argument_list_group'],
+	[265, 'channel_type_bidirectional'],
+	[266, 'channel_type_send_only'],
+	[267, 'channel_type_receive_only'],
+	[268, 'pointer_type'],
+	[269, 'source_file_repeat1'],
+	[270, 'const_spec_repeat1'],
+	[271, 'var_spec_repeat1'],
+	[272, 'var_spec_list_repeat1'],
+	[273, 'expression_list_repeat1'],
+	[274, 'field_declaration_repeat1'],
+	[275, 'type_elem_repeat1'],
+	[276, 'expression_switch_statement_repeat1'],
+	[277, 'type_switch_statement_repeat1'],
+	[278, 'type_case_repeat1'],
+	[279, 'select_statement_repeat1'],
+	[280, 'interpreted_string_literal_repeat1'],
+	[281, 'import_specs_repeat1'],
+	[282, 'type_parameter_declarations_repeat1'],
+	[283, 'parameter_list_elements_repeat1'],
+	[284, 'type_declaration_elements_repeat1'],
+	[285, 'type_elems_repeat1'],
+	[286, 'field_declarations_repeat1'],
+	[287, 'interface_elems_repeat1'],
+	[288, 'statements_repeat1'],
+	[289, 'argument_list_elements_repeat1'],
+	[290, 'types_repeat1'],
+	[291, 'literal_value_elements_repeat1'],
+	[292, 'const_declaration_arm_repeat1'],
+	[293, 'special_argument_list_group_repeat1'],
+	[294, 'field_identifier'],
+	[295, 'label_name'],
+	[296, 'package_identifier'],
+	[297, 'type_constraint'],
+	[298, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -969,14 +966,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ImaginaryLiteralArm7;
 		case 'imaginary_literal_arm8':
 			return TSKindId.ImaginaryLiteralArm8;
-		case 'imaginary_literal_arm9':
-			return TSKindId.ImaginaryLiteralArm9;
-		case 'imaginary_literal_arm10_arm1':
-			return TSKindId.ImaginaryLiteralArm10Arm1;
-		case 'imaginary_literal_arm10_arm2':
-			return TSKindId.ImaginaryLiteralArm10Arm2;
-		case 'imaginary_literal_arm10_arm3':
-			return TSKindId.ImaginaryLiteralArm10Arm3;
+		case 'imaginary_literal_arm9_arm1':
+			return TSKindId.ImaginaryLiteralArm9Arm1;
+		case 'imaginary_literal_arm9_arm2':
+			return TSKindId.ImaginaryLiteralArm9Arm2;
+		case 'imaginary_literal_arm9_arm3':
+			return TSKindId.ImaginaryLiteralArm9Arm3;
 		case 'rune_literal_arm1':
 			return TSKindId.RuneLiteralArm1;
 		case 'rune_literal_arm2_arm1':
@@ -1239,8 +1234,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.RuneLiteral;
 		case 'float_literal_arm4':
 			return TSKindId.FloatLiteralArm4;
-		case 'imaginary_literal_arm10':
-			return TSKindId.ImaginaryLiteralArm10;
+		case 'imaginary_literal_arm9':
+			return TSKindId.ImaginaryLiteralArm9;
 		case 'rune_literal_arm2':
 			return TSKindId.RuneLiteralArm2;
 		case 'source_file_arm1':
@@ -1667,8 +1662,7 @@ export enum ImaginaryLiteralKind {
 	ImaginaryLiteralArm6 = 'imaginary_literal_arm6',
 	ImaginaryLiteralArm7 = 'imaginary_literal_arm7',
 	ImaginaryLiteralArm8 = 'imaginary_literal_arm8',
-	ImaginaryLiteralArm9 = 'imaginary_literal_arm9',
-	ImaginaryLiteralArm10 = 'imaginary_literal_arm10'
+	ImaginaryLiteralArm9 = 'imaginary_literal_arm9'
 }
 
 export enum RuneLiteralKind {
@@ -1687,10 +1681,10 @@ export enum FloatLiteralArm4Kind {
 	FloatLiteralArm4Arm3 = 'float_literal_arm4_arm3'
 }
 
-export enum ImaginaryLiteralArm10Kind {
-	ImaginaryLiteralArm10Arm1 = 'imaginary_literal_arm10_arm1',
-	ImaginaryLiteralArm10Arm2 = 'imaginary_literal_arm10_arm2',
-	ImaginaryLiteralArm10Arm3 = 'imaginary_literal_arm10_arm3'
+export enum ImaginaryLiteralArm9Kind {
+	ImaginaryLiteralArm9Arm1 = 'imaginary_literal_arm9_arm1',
+	ImaginaryLiteralArm9Arm2 = 'imaginary_literal_arm9_arm2',
+	ImaginaryLiteralArm9Arm3 = 'imaginary_literal_arm9_arm3'
 }
 
 export enum RuneLiteralArm2Kind {
@@ -3976,6 +3970,18 @@ export interface ImaginaryLiteralArm2 {
 	readonly content: () => string;
 }
 
+export interface ImaginaryLiteralArm3 {
+	readonly $type: TSKindId.ImaginaryLiteralArm3;
+	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+	};
+	readonly content: () => string;
+}
+
 export interface ImaginaryLiteralArm4 {
 	readonly $type: TSKindId.ImaginaryLiteralArm4;
 	readonly _content: string;
@@ -4007,7 +4013,7 @@ export interface ImaginaryLiteralArm6 {
 		readonly _content: 'content';
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<string | number | bigint>;
+		readonly content: SlotHint<string | number>;
 	};
 	readonly content: () => string;
 }
@@ -4036,20 +4042,8 @@ export interface ImaginaryLiteralArm8 {
 	readonly content: () => string;
 }
 
-export interface ImaginaryLiteralArm9 {
-	readonly $type: TSKindId.ImaginaryLiteralArm9;
-	readonly _content: string;
-	readonly __slotNames__?: {
-		readonly _content: 'content';
-	};
-	readonly __slotHints__?: {
-		readonly content: SlotHint<string | number>;
-	};
-	readonly content: () => string;
-}
-
-export interface ImaginaryLiteralArm10Arm1 {
-	readonly $type: TSKindId.ImaginaryLiteralArm10Arm1;
+export interface ImaginaryLiteralArm9Arm1 {
+	readonly $type: TSKindId.ImaginaryLiteralArm9Arm1;
 	readonly _content: string;
 	readonly __slotNames__?: {
 		readonly _content: 'content';
@@ -4060,8 +4054,8 @@ export interface ImaginaryLiteralArm10Arm1 {
 	readonly content: () => string;
 }
 
-export interface ImaginaryLiteralArm10Arm2 {
-	readonly $type: TSKindId.ImaginaryLiteralArm10Arm2;
+export interface ImaginaryLiteralArm9Arm2 {
+	readonly $type: TSKindId.ImaginaryLiteralArm9Arm2;
 	readonly _content: string;
 	readonly __slotNames__?: {
 		readonly _content: 'content';
@@ -4072,8 +4066,8 @@ export interface ImaginaryLiteralArm10Arm2 {
 	readonly content: () => string;
 }
 
-export interface ImaginaryLiteralArm10Arm3 {
-	readonly $type: TSKindId.ImaginaryLiteralArm10Arm3;
+export interface ImaginaryLiteralArm9Arm3 {
+	readonly $type: TSKindId.ImaginaryLiteralArm9Arm3;
 	readonly _content: string;
 	readonly __slotNames__?: {
 		readonly _content: 'content';
@@ -4956,7 +4950,6 @@ export type IntLiteralArm3 = Terminal<TSKindId.IntLiteralArm3, string>;
 export type IntLiteralArm4 = Terminal<TSKindId.IntLiteralArm4, string>;
 export type IntLiteralArm5 = Terminal<TSKindId.IntLiteralArm5, string>;
 export type FloatLiteralArm2 = Terminal<TSKindId.FloatLiteralArm2, string>;
-export type ImaginaryLiteralArm3 = TSKindId.ImaginaryLiteralArm3;
 export type ImportSpecListArm = Terminal<TSKindId.ImportSpecListArm, string>;
 export type Tight = TSKindId.Tight;
 export type Space = TSKindId.Space;
@@ -5060,8 +5053,7 @@ export type ImaginaryLiteral =
 	| ImaginaryLiteralArm6
 	| ImaginaryLiteralArm7
 	| ImaginaryLiteralArm8
-	| ImaginaryLiteralArm9
-	| ImaginaryLiteralArm10;
+	| ImaginaryLiteralArm9;
 
 export type RuneLiteral = RuneLiteralArm1 | RuneLiteralArm2;
 
@@ -5069,7 +5061,7 @@ export type Comment = CommentArm1 | CommentArm2;
 
 export type FloatLiteralArm4 = FloatLiteralArm4Arm1 | FloatLiteralArm4Arm2 | FloatLiteralArm4Arm3;
 
-export type ImaginaryLiteralArm10 = ImaginaryLiteralArm10Arm1 | ImaginaryLiteralArm10Arm2 | ImaginaryLiteralArm10Arm3;
+export type ImaginaryLiteralArm9 = ImaginaryLiteralArm9Arm1 | ImaginaryLiteralArm9Arm2 | ImaginaryLiteralArm9Arm3;
 
 export type RuneLiteralArm2 =
 	| RuneLiteralArm2Arm1
@@ -5158,10 +5150,10 @@ export namespace FloatLiteralArm4 {
 	export type Parsed = SupertypeSurface<FloatLiteralArm4, ParsedByKindId>;
 }
 
-export namespace ImaginaryLiteralArm10 {
-	export type Kind = 'imaginary_literal_arm10';
-	export type Bound = SupertypeSurface<ImaginaryLiteralArm10, BoundByKindId>;
-	export type Parsed = SupertypeSurface<ImaginaryLiteralArm10, ParsedByKindId>;
+export namespace ImaginaryLiteralArm9 {
+	export type Kind = 'imaginary_literal_arm9';
+	export type Bound = SupertypeSurface<ImaginaryLiteralArm9, BoundByKindId>;
+	export type Parsed = SupertypeSurface<ImaginaryLiteralArm9, ParsedByKindId>;
 }
 
 export namespace RuneLiteralArm2 {
@@ -5550,7 +5542,6 @@ export namespace ExpressionList {
 				readonly end?: LayoutKindId;
 				readonly false?: { readonly after?: LayoutKindId };
 				readonly funcLiteral?: { readonly after?: LayoutKindId };
-				readonly imaginaryLiteralArm3?: { readonly after?: LayoutKindId };
 				readonly indexExpression?: { readonly after?: LayoutKindId };
 				readonly intLiteralArm2?: { readonly after?: LayoutKindId };
 				readonly interpretedStringLiteral?: { readonly after?: LayoutKindId };
@@ -6505,7 +6496,6 @@ export namespace ArgumentListElements {
 				readonly end?: LayoutKindId;
 				readonly false?: { readonly after?: LayoutKindId };
 				readonly funcLiteral?: { readonly after?: LayoutKindId };
-				readonly imaginaryLiteralArm3?: { readonly after?: LayoutKindId };
 				readonly indexExpression?: { readonly after?: LayoutKindId };
 				readonly intLiteralArm2?: { readonly after?: LayoutKindId };
 				readonly interpretedStringLiteral?: { readonly after?: LayoutKindId };
@@ -6575,7 +6565,6 @@ export namespace LiteralValueElements {
 				readonly end?: LayoutKindId;
 				readonly false?: { readonly after?: LayoutKindId };
 				readonly funcLiteral?: { readonly after?: LayoutKindId };
-				readonly imaginaryLiteralArm3?: { readonly after?: LayoutKindId };
 				readonly indexExpression?: { readonly after?: LayoutKindId };
 				readonly intLiteralArm2?: { readonly after?: LayoutKindId };
 				readonly interpretedStringLiteral?: { readonly after?: LayoutKindId };
@@ -6719,7 +6708,6 @@ export namespace SpecialArgumentListGroup {
 				readonly end?: LayoutKindId;
 				readonly false?: { readonly after?: LayoutKindId };
 				readonly funcLiteral?: { readonly after?: LayoutKindId };
-				readonly imaginaryLiteralArm3?: { readonly after?: LayoutKindId };
 				readonly indexExpression?: { readonly after?: LayoutKindId };
 				readonly intLiteralArm2?: { readonly after?: LayoutKindId };
 				readonly interpretedStringLiteral?: { readonly after?: LayoutKindId };
@@ -8158,6 +8146,20 @@ export interface ImaginaryLiteralArm2Ns extends NodeNs<
 	readonly BuildArgs: ImaginaryLiteralArm2.BuildArgs;
 	readonly LooseArgs: ImaginaryLiteralArm2.LooseArgs;
 }
+export interface ImaginaryLiteralArm3Ns extends NodeNs<
+	ImaginaryLiteralArm3,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ImaginaryLiteralArm3.Bound,
+	'content',
+	TSKindId.ImaginaryLiteralArm3,
+	ImaginaryLiteralArm3.Parsed,
+	never
+> {
+	readonly BuildArgs: ImaginaryLiteralArm3.BuildArgs;
+	readonly LooseArgs: ImaginaryLiteralArm3.LooseArgs;
+}
 export interface ImaginaryLiteralArm4Ns extends NodeNs<
 	ImaginaryLiteralArm4,
 	LeafScalarMap,
@@ -8228,61 +8230,47 @@ export interface ImaginaryLiteralArm8Ns extends NodeNs<
 	readonly BuildArgs: ImaginaryLiteralArm8.BuildArgs;
 	readonly LooseArgs: ImaginaryLiteralArm8.LooseArgs;
 }
-export interface ImaginaryLiteralArm9Ns extends NodeNs<
-	ImaginaryLiteralArm9,
+export interface ImaginaryLiteralArm9Arm1Ns extends NodeNs<
+	ImaginaryLiteralArm9Arm1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImaginaryLiteralArm9.Bound,
+	ImaginaryLiteralArm9Arm1.Bound,
 	'content',
-	TSKindId.ImaginaryLiteralArm9,
-	ImaginaryLiteralArm9.Parsed,
+	TSKindId.ImaginaryLiteralArm9Arm1,
+	ImaginaryLiteralArm9Arm1.Parsed,
 	never
 > {
-	readonly BuildArgs: ImaginaryLiteralArm9.BuildArgs;
-	readonly LooseArgs: ImaginaryLiteralArm9.LooseArgs;
+	readonly BuildArgs: ImaginaryLiteralArm9Arm1.BuildArgs;
+	readonly LooseArgs: ImaginaryLiteralArm9Arm1.LooseArgs;
 }
-export interface ImaginaryLiteralArm10Arm1Ns extends NodeNs<
-	ImaginaryLiteralArm10Arm1,
+export interface ImaginaryLiteralArm9Arm2Ns extends NodeNs<
+	ImaginaryLiteralArm9Arm2,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImaginaryLiteralArm10Arm1.Bound,
+	ImaginaryLiteralArm9Arm2.Bound,
 	'content',
-	TSKindId.ImaginaryLiteralArm10Arm1,
-	ImaginaryLiteralArm10Arm1.Parsed,
+	TSKindId.ImaginaryLiteralArm9Arm2,
+	ImaginaryLiteralArm9Arm2.Parsed,
 	never
 > {
-	readonly BuildArgs: ImaginaryLiteralArm10Arm1.BuildArgs;
-	readonly LooseArgs: ImaginaryLiteralArm10Arm1.LooseArgs;
+	readonly BuildArgs: ImaginaryLiteralArm9Arm2.BuildArgs;
+	readonly LooseArgs: ImaginaryLiteralArm9Arm2.LooseArgs;
 }
-export interface ImaginaryLiteralArm10Arm2Ns extends NodeNs<
-	ImaginaryLiteralArm10Arm2,
+export interface ImaginaryLiteralArm9Arm3Ns extends NodeNs<
+	ImaginaryLiteralArm9Arm3,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImaginaryLiteralArm10Arm2.Bound,
+	ImaginaryLiteralArm9Arm3.Bound,
 	'content',
-	TSKindId.ImaginaryLiteralArm10Arm2,
-	ImaginaryLiteralArm10Arm2.Parsed,
+	TSKindId.ImaginaryLiteralArm9Arm3,
+	ImaginaryLiteralArm9Arm3.Parsed,
 	never
 > {
-	readonly BuildArgs: ImaginaryLiteralArm10Arm2.BuildArgs;
-	readonly LooseArgs: ImaginaryLiteralArm10Arm2.LooseArgs;
-}
-export interface ImaginaryLiteralArm10Arm3Ns extends NodeNs<
-	ImaginaryLiteralArm10Arm3,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	ImaginaryLiteralArm10Arm3.Bound,
-	'content',
-	TSKindId.ImaginaryLiteralArm10Arm3,
-	ImaginaryLiteralArm10Arm3.Parsed,
-	never
-> {
-	readonly BuildArgs: ImaginaryLiteralArm10Arm3.BuildArgs;
-	readonly LooseArgs: ImaginaryLiteralArm10Arm3.LooseArgs;
+	readonly BuildArgs: ImaginaryLiteralArm9Arm3.BuildArgs;
+	readonly LooseArgs: ImaginaryLiteralArm9Arm3.LooseArgs;
 }
 export interface RuneLiteralArm1Ns extends NodeNs<
 	RuneLiteralArm1,
@@ -8927,11 +8915,6 @@ export interface TrueNs extends KeywordNs<TSKindId.True, 'true', TSKindId.True> 
 export interface FalseNs extends KeywordNs<TSKindId.False, 'false', TSKindId.False> {}
 export interface IotaNs extends KeywordNs<TSKindId.Iota, 'iota', TSKindId.Iota> {}
 export interface IntLiteralArm2Ns extends KeywordNs<TSKindId.IntLiteralArm2, '0', TSKindId.IntLiteralArm2> {}
-export interface ImaginaryLiteralArm3Ns extends KeywordNs<
-	TSKindId.ImaginaryLiteralArm3,
-	'0i',
-	TSKindId.ImaginaryLiteralArm3
-> {}
 export interface TightNs extends KeywordNs<TSKindId.Tight, '', TSKindId.Tight> {}
 export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', TSKindId.Space> {}
 export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', TSKindId.Tab> {}
@@ -9095,15 +9078,15 @@ export interface NamespaceMap {
 	[TSKindId.FloatLiteralArm4Arm3]: FloatLiteralArm4Arm3Ns;
 	[TSKindId.ImaginaryLiteralArm1]: ImaginaryLiteralArm1Ns;
 	[TSKindId.ImaginaryLiteralArm2]: ImaginaryLiteralArm2Ns;
+	[TSKindId.ImaginaryLiteralArm3]: ImaginaryLiteralArm3Ns;
 	[TSKindId.ImaginaryLiteralArm4]: ImaginaryLiteralArm4Ns;
 	[TSKindId.ImaginaryLiteralArm5]: ImaginaryLiteralArm5Ns;
 	[TSKindId.ImaginaryLiteralArm6]: ImaginaryLiteralArm6Ns;
 	[TSKindId.ImaginaryLiteralArm7]: ImaginaryLiteralArm7Ns;
 	[TSKindId.ImaginaryLiteralArm8]: ImaginaryLiteralArm8Ns;
-	[TSKindId.ImaginaryLiteralArm9]: ImaginaryLiteralArm9Ns;
-	[TSKindId.ImaginaryLiteralArm10Arm1]: ImaginaryLiteralArm10Arm1Ns;
-	[TSKindId.ImaginaryLiteralArm10Arm2]: ImaginaryLiteralArm10Arm2Ns;
-	[TSKindId.ImaginaryLiteralArm10Arm3]: ImaginaryLiteralArm10Arm3Ns;
+	[TSKindId.ImaginaryLiteralArm9Arm1]: ImaginaryLiteralArm9Arm1Ns;
+	[TSKindId.ImaginaryLiteralArm9Arm2]: ImaginaryLiteralArm9Arm2Ns;
+	[TSKindId.ImaginaryLiteralArm9Arm3]: ImaginaryLiteralArm9Arm3Ns;
 	[TSKindId.RuneLiteralArm1]: RuneLiteralArm1Ns;
 	[TSKindId.RuneLiteralArm2Arm1]: RuneLiteralArm2Arm1Ns;
 	[TSKindId.RuneLiteralArm2Arm2]: RuneLiteralArm2Arm2Ns;
@@ -9158,7 +9141,6 @@ export interface NamespaceMap {
 	[TSKindId.False]: FalseNs;
 	[TSKindId.Iota]: IotaNs;
 	[TSKindId.IntLiteralArm2]: IntLiteralArm2Ns;
-	[TSKindId.ImaginaryLiteralArm3]: ImaginaryLiteralArm3Ns;
 	[TSKindId.Tight]: TightNs;
 	[TSKindId.Space]: SpaceNs;
 	[TSKindId.Tab]: TabNs;
@@ -9278,15 +9260,15 @@ export interface BoundByKindId {
 	[TSKindId.FloatLiteralArm4Arm3]: FloatLiteralArm4Arm3.Bound;
 	[TSKindId.ImaginaryLiteralArm1]: ImaginaryLiteralArm1.Bound;
 	[TSKindId.ImaginaryLiteralArm2]: ImaginaryLiteralArm2.Bound;
+	[TSKindId.ImaginaryLiteralArm3]: ImaginaryLiteralArm3.Bound;
 	[TSKindId.ImaginaryLiteralArm4]: ImaginaryLiteralArm4.Bound;
 	[TSKindId.ImaginaryLiteralArm5]: ImaginaryLiteralArm5.Bound;
 	[TSKindId.ImaginaryLiteralArm6]: ImaginaryLiteralArm6.Bound;
 	[TSKindId.ImaginaryLiteralArm7]: ImaginaryLiteralArm7.Bound;
 	[TSKindId.ImaginaryLiteralArm8]: ImaginaryLiteralArm8.Bound;
-	[TSKindId.ImaginaryLiteralArm9]: ImaginaryLiteralArm9.Bound;
-	[TSKindId.ImaginaryLiteralArm10Arm1]: ImaginaryLiteralArm10Arm1.Bound;
-	[TSKindId.ImaginaryLiteralArm10Arm2]: ImaginaryLiteralArm10Arm2.Bound;
-	[TSKindId.ImaginaryLiteralArm10Arm3]: ImaginaryLiteralArm10Arm3.Bound;
+	[TSKindId.ImaginaryLiteralArm9Arm1]: ImaginaryLiteralArm9Arm1.Bound;
+	[TSKindId.ImaginaryLiteralArm9Arm2]: ImaginaryLiteralArm9Arm2.Bound;
+	[TSKindId.ImaginaryLiteralArm9Arm3]: ImaginaryLiteralArm9Arm3.Bound;
 	[TSKindId.RuneLiteralArm1]: RuneLiteralArm1.Bound;
 	[TSKindId.RuneLiteralArm2Arm1]: RuneLiteralArm2Arm1.Bound;
 	[TSKindId.RuneLiteralArm2Arm2]: RuneLiteralArm2Arm2.Bound;
@@ -9443,15 +9425,15 @@ export interface ParsedByKindId {
 	[TSKindId.FloatLiteralArm4Arm3]: FloatLiteralArm4Arm3.Parsed;
 	[TSKindId.ImaginaryLiteralArm1]: ImaginaryLiteralArm1.Parsed;
 	[TSKindId.ImaginaryLiteralArm2]: ImaginaryLiteralArm2.Parsed;
+	[TSKindId.ImaginaryLiteralArm3]: ImaginaryLiteralArm3.Parsed;
 	[TSKindId.ImaginaryLiteralArm4]: ImaginaryLiteralArm4.Parsed;
 	[TSKindId.ImaginaryLiteralArm5]: ImaginaryLiteralArm5.Parsed;
 	[TSKindId.ImaginaryLiteralArm6]: ImaginaryLiteralArm6.Parsed;
 	[TSKindId.ImaginaryLiteralArm7]: ImaginaryLiteralArm7.Parsed;
 	[TSKindId.ImaginaryLiteralArm8]: ImaginaryLiteralArm8.Parsed;
-	[TSKindId.ImaginaryLiteralArm9]: ImaginaryLiteralArm9.Parsed;
-	[TSKindId.ImaginaryLiteralArm10Arm1]: ImaginaryLiteralArm10Arm1.Parsed;
-	[TSKindId.ImaginaryLiteralArm10Arm2]: ImaginaryLiteralArm10Arm2.Parsed;
-	[TSKindId.ImaginaryLiteralArm10Arm3]: ImaginaryLiteralArm10Arm3.Parsed;
+	[TSKindId.ImaginaryLiteralArm9Arm1]: ImaginaryLiteralArm9Arm1.Parsed;
+	[TSKindId.ImaginaryLiteralArm9Arm2]: ImaginaryLiteralArm9Arm2.Parsed;
+	[TSKindId.ImaginaryLiteralArm9Arm3]: ImaginaryLiteralArm9Arm3.Parsed;
 	[TSKindId.RuneLiteralArm1]: RuneLiteralArm1.Parsed;
 	[TSKindId.RuneLiteralArm2Arm1]: RuneLiteralArm2Arm1.Parsed;
 	[TSKindId.RuneLiteralArm2Arm2]: RuneLiteralArm2Arm2.Parsed;
@@ -9521,7 +9503,6 @@ export type FixedTextKindId =
 	| TSKindId.False
 	| TSKindId.Iota
 	| TSKindId.IntLiteralArm2
-	| TSKindId.ImaginaryLiteralArm3
 	| TSKindId.Space
 	| TSKindId.Tab
 	| TSKindId.Newline
@@ -9703,15 +9684,15 @@ export interface TypeKeyOf {
 	[TSKindId.FloatLiteralArm4Arm3]: 'floatLiteralArm4Arm3';
 	[TSKindId.ImaginaryLiteralArm1]: 'imaginaryLiteralArm1';
 	[TSKindId.ImaginaryLiteralArm2]: 'imaginaryLiteralArm2';
+	[TSKindId.ImaginaryLiteralArm3]: 'imaginaryLiteralArm3';
 	[TSKindId.ImaginaryLiteralArm4]: 'imaginaryLiteralArm4';
 	[TSKindId.ImaginaryLiteralArm5]: 'imaginaryLiteralArm5';
 	[TSKindId.ImaginaryLiteralArm6]: 'imaginaryLiteralArm6';
 	[TSKindId.ImaginaryLiteralArm7]: 'imaginaryLiteralArm7';
 	[TSKindId.ImaginaryLiteralArm8]: 'imaginaryLiteralArm8';
-	[TSKindId.ImaginaryLiteralArm9]: 'imaginaryLiteralArm9';
-	[TSKindId.ImaginaryLiteralArm10Arm1]: 'imaginaryLiteralArm10Arm1';
-	[TSKindId.ImaginaryLiteralArm10Arm2]: 'imaginaryLiteralArm10Arm2';
-	[TSKindId.ImaginaryLiteralArm10Arm3]: 'imaginaryLiteralArm10Arm3';
+	[TSKindId.ImaginaryLiteralArm9Arm1]: 'imaginaryLiteralArm9Arm1';
+	[TSKindId.ImaginaryLiteralArm9Arm2]: 'imaginaryLiteralArm9Arm2';
+	[TSKindId.ImaginaryLiteralArm9Arm3]: 'imaginaryLiteralArm9Arm3';
 	[TSKindId.RuneLiteralArm1]: 'runeLiteralArm1';
 	[TSKindId.RuneLiteralArm2Arm1]: 'runeLiteralArm2Arm1';
 	[TSKindId.RuneLiteralArm2Arm2]: 'runeLiteralArm2Arm2';
@@ -9766,7 +9747,6 @@ export interface TypeKeyOf {
 	[TSKindId.False]: 'false';
 	[TSKindId.Iota]: 'iota';
 	[TSKindId.IntLiteralArm2]: 'intLiteralArm2';
-	[TSKindId.ImaginaryLiteralArm3]: 'imaginaryLiteralArm3';
 	[TSKindId.Tight]: 'tight';
 	[TSKindId.Space]: 'space';
 	[TSKindId.Tab]: 'tab';
@@ -12332,6 +12312,35 @@ export namespace ImaginaryLiteralArm2 {
 	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `${string}i`, affix: false];
 	export type Kind = TSKindId.ImaginaryLiteralArm2;
 }
+export namespace ImaginaryLiteralArm3 {
+	export type Config = WidenSlots<ConfigFor<TSKindId.ImaginaryLiteralArm3>, { content: number | bigint }>;
+	export interface Bound extends BoundOf<T.ImaginaryLiteralArm3, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ImaginaryLiteralArm3['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ImaginaryLiteralArm3, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ImaginaryLiteralArm3['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ImaginaryLiteralArm3['$type']>;
+	}
+	export type Loose =
+		| LooseFor<TSKindId.ImaginaryLiteralArm3>
+		| WidenSlots<LooseConfigFor<TSKindId.ImaginaryLiteralArm3>, { content: number | bigint }>
+		| number
+		| bigint;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.ImaginaryLiteralArm3>, { content: number | bigint }>;
+	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `${string}i`, affix: false];
+	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `${string}i`, affix: false];
+	export type Kind = TSKindId.ImaginaryLiteralArm3;
+}
 export namespace ImaginaryLiteralArm4 {
 	export type Config = WidenSlots<ConfigFor<TSKindId.ImaginaryLiteralArm4>, { content: number | bigint }>;
 	export interface Bound extends BoundOf<T.ImaginaryLiteralArm4, BoundByKindId>, NodeMethodsOf, HoldsSource {
@@ -12391,7 +12400,7 @@ export namespace ImaginaryLiteralArm5 {
 	export type Kind = TSKindId.ImaginaryLiteralArm5;
 }
 export namespace ImaginaryLiteralArm6 {
-	export type Config = WidenSlots<ConfigFor<TSKindId.ImaginaryLiteralArm6>, { content: number | bigint }>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.ImaginaryLiteralArm6>, { content: number }>;
 	export interface Bound extends BoundOf<T.ImaginaryLiteralArm6, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ImaginaryLiteralArm6['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -12411,12 +12420,11 @@ export namespace ImaginaryLiteralArm6 {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.ImaginaryLiteralArm6>
-		| WidenSlots<LooseConfigFor<TSKindId.ImaginaryLiteralArm6>, { content: number | bigint }>
-		| number
-		| bigint;
-	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.ImaginaryLiteralArm6>, { content: number | bigint }>;
-	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `${string}i`, affix: false];
-	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `${string}i`, affix: false];
+		| WidenSlots<LooseConfigFor<TSKindId.ImaginaryLiteralArm6>, { content: number }>
+		| number;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.ImaginaryLiteralArm6>, { content: number }>;
+	export type BuildArgs = [content: string | number, affix?: true] | [text: `${string}i`, affix: false];
+	export type LooseArgs = [content: string | number, affix?: true] | [text: `${string}i`, affix: false];
 	export type Kind = TSKindId.ImaginaryLiteralArm6;
 }
 export namespace ImaginaryLiteralArm7 {
@@ -12475,15 +12483,15 @@ export namespace ImaginaryLiteralArm8 {
 	export type LooseArgs = [content: string | number, affix?: true] | [text: `${string}i`, affix: false];
 	export type Kind = TSKindId.ImaginaryLiteralArm8;
 }
-export namespace ImaginaryLiteralArm9 {
-	export type Config = WidenSlots<ConfigFor<TSKindId.ImaginaryLiteralArm9>, { content: number }>;
-	export interface Bound extends BoundOf<T.ImaginaryLiteralArm9, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.ImaginaryLiteralArm9['$type'];
+export namespace ImaginaryLiteralArm9Arm1 {
+	export type Config = ConfigFor<TSKindId.ImaginaryLiteralArm9Arm1>;
+	export interface Bound extends BoundOf<T.ImaginaryLiteralArm9Arm1, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ImaginaryLiteralArm9Arm1['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.ImaginaryLiteralArm9, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.ImaginaryLiteralArm9['$type'];
+		extends ParsedOf<T.ImaginaryLiteralArm9Arm1, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ImaginaryLiteralArm9Arm1['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -12492,51 +12500,23 @@ export namespace ImaginaryLiteralArm9 {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.ImaginaryLiteralArm9['$type']>;
+		readonly $snapshot: () => Snapshot<T.ImaginaryLiteralArm9Arm1['$type']>;
 	}
-	export type Loose =
-		| LooseFor<TSKindId.ImaginaryLiteralArm9>
-		| WidenSlots<LooseConfigFor<TSKindId.ImaginaryLiteralArm9>, { content: number }>
-		| number;
-	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.ImaginaryLiteralArm9>, { content: number }>;
-	export type BuildArgs = [content: string | number, affix?: true] | [text: `${string}i`, affix: false];
-	export type LooseArgs = [content: string | number, affix?: true] | [text: `${string}i`, affix: false];
-	export type Kind = TSKindId.ImaginaryLiteralArm9;
-}
-export namespace ImaginaryLiteralArm10Arm1 {
-	export type Config = ConfigFor<TSKindId.ImaginaryLiteralArm10Arm1>;
-	export interface Bound extends BoundOf<T.ImaginaryLiteralArm10Arm1, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.ImaginaryLiteralArm10Arm1['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.ImaginaryLiteralArm10Arm1, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.ImaginaryLiteralArm10Arm1['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.ImaginaryLiteralArm10Arm1['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.ImaginaryLiteralArm10Arm1>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ImaginaryLiteralArm10Arm1>;
+	export type Loose = LooseFor<TSKindId.ImaginaryLiteralArm9Arm1>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImaginaryLiteralArm9Arm1>;
 	export type BuildArgs = [content: string, affix?: true] | [text: `${string}i`, affix: false];
 	export type LooseArgs = [content: string, affix?: true] | [text: `${string}i`, affix: false];
-	export type Kind = TSKindId.ImaginaryLiteralArm10Arm1;
+	export type Kind = TSKindId.ImaginaryLiteralArm9Arm1;
 }
-export namespace ImaginaryLiteralArm10Arm2 {
-	export type Config = ConfigFor<TSKindId.ImaginaryLiteralArm10Arm2>;
-	export interface Bound extends BoundOf<T.ImaginaryLiteralArm10Arm2, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.ImaginaryLiteralArm10Arm2['$type'];
+export namespace ImaginaryLiteralArm9Arm2 {
+	export type Config = ConfigFor<TSKindId.ImaginaryLiteralArm9Arm2>;
+	export interface Bound extends BoundOf<T.ImaginaryLiteralArm9Arm2, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ImaginaryLiteralArm9Arm2['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.ImaginaryLiteralArm10Arm2, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.ImaginaryLiteralArm10Arm2['$type'];
+		extends ParsedOf<T.ImaginaryLiteralArm9Arm2, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ImaginaryLiteralArm9Arm2['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -12545,23 +12525,23 @@ export namespace ImaginaryLiteralArm10Arm2 {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.ImaginaryLiteralArm10Arm2['$type']>;
+		readonly $snapshot: () => Snapshot<T.ImaginaryLiteralArm9Arm2['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ImaginaryLiteralArm10Arm2>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ImaginaryLiteralArm10Arm2>;
+	export type Loose = LooseFor<TSKindId.ImaginaryLiteralArm9Arm2>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImaginaryLiteralArm9Arm2>;
 	export type BuildArgs = [content: string, affix?: true] | [text: `${string}i`, affix: false];
 	export type LooseArgs = [content: string, affix?: true] | [text: `${string}i`, affix: false];
-	export type Kind = TSKindId.ImaginaryLiteralArm10Arm2;
+	export type Kind = TSKindId.ImaginaryLiteralArm9Arm2;
 }
-export namespace ImaginaryLiteralArm10Arm3 {
-	export type Config = ConfigFor<TSKindId.ImaginaryLiteralArm10Arm3>;
-	export interface Bound extends BoundOf<T.ImaginaryLiteralArm10Arm3, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.ImaginaryLiteralArm10Arm3['$type'];
+export namespace ImaginaryLiteralArm9Arm3 {
+	export type Config = ConfigFor<TSKindId.ImaginaryLiteralArm9Arm3>;
+	export interface Bound extends BoundOf<T.ImaginaryLiteralArm9Arm3, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ImaginaryLiteralArm9Arm3['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.ImaginaryLiteralArm10Arm3, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.ImaginaryLiteralArm10Arm3['$type'];
+		extends ParsedOf<T.ImaginaryLiteralArm9Arm3, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ImaginaryLiteralArm9Arm3['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -12570,13 +12550,13 @@ export namespace ImaginaryLiteralArm10Arm3 {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.ImaginaryLiteralArm10Arm3['$type']>;
+		readonly $snapshot: () => Snapshot<T.ImaginaryLiteralArm9Arm3['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ImaginaryLiteralArm10Arm3>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ImaginaryLiteralArm10Arm3>;
+	export type Loose = LooseFor<TSKindId.ImaginaryLiteralArm9Arm3>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ImaginaryLiteralArm9Arm3>;
 	export type BuildArgs = [content: string, affix?: true] | [text: `${string}i`, affix: false];
 	export type LooseArgs = [content: string, affix?: true] | [text: `${string}i`, affix: false];
-	export type Kind = TSKindId.ImaginaryLiteralArm10Arm3;
+	export type Kind = TSKindId.ImaginaryLiteralArm9Arm3;
 }
 export namespace RuneLiteralArm1 {
 	export type Config = ConfigFor<TSKindId.RuneLiteralArm1>;
@@ -14150,16 +14130,6 @@ export namespace IntLiteralArm2 {
 	export type BuildArgs = IntLiteralArm2Ns['BuildArgs'];
 	export type LooseArgs = IntLiteralArm2Ns['LooseArgs'];
 	export type Kind = TSKindId.IntLiteralArm2;
-}
-export namespace ImaginaryLiteralArm3 {
-	export type Config = ImaginaryLiteralArm3Ns['Config'];
-	export type Bound = ImaginaryLiteralArm3Ns['Bound'];
-	export type Parsed = ImaginaryLiteralArm3Ns['Bound'];
-	export type Loose = ImaginaryLiteralArm3Ns['Loose'];
-	export type LooseConfig = ImaginaryLiteralArm3Ns['LooseConfig'];
-	export type BuildArgs = ImaginaryLiteralArm3Ns['BuildArgs'];
-	export type LooseArgs = ImaginaryLiteralArm3Ns['LooseArgs'];
-	export type Kind = TSKindId.ImaginaryLiteralArm3;
 }
 export namespace Tight {
 	export type Config = TightNs['Config'];

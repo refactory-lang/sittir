@@ -617,10 +617,10 @@ export interface Routes<Table extends AnyTable> {
 		readonly arm2: Table['buildFloatLiteralArm4Arm2'];
 		readonly arm3: Table['buildFloatLiteralArm4Arm3'];
 	};
-	readonly imaginaryLiteralArm10: typeof F.buildImaginaryLiteralArm10Arm2 & {
-		readonly arm1: typeof F.buildImaginaryLiteralArm10Arm1;
-		readonly arm2: typeof F.buildImaginaryLiteralArm10Arm2;
-		readonly arm3: typeof F.buildImaginaryLiteralArm10Arm3;
+	readonly imaginaryLiteralArm9: typeof F.buildImaginaryLiteralArm9Arm2 & {
+		readonly arm1: typeof F.buildImaginaryLiteralArm9Arm1;
+		readonly arm2: typeof F.buildImaginaryLiteralArm9Arm2;
+		readonly arm3: typeof F.buildImaginaryLiteralArm9Arm3;
 	};
 	readonly runeLiteralArm2: typeof F.buildRuneLiteralArm2Arm1 & {
 		readonly arm1: typeof F.buildRuneLiteralArm2Arm1;
@@ -658,8 +658,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly arm6: typeof F.buildImaginaryLiteralArm6;
 		readonly arm7: typeof F.buildImaginaryLiteralArm7;
 		readonly arm8: typeof F.buildImaginaryLiteralArm8;
-		readonly arm9: typeof F.buildImaginaryLiteralArm9;
-		readonly arm10: Routes<Table>['imaginaryLiteralArm10'];
+		readonly arm9: Routes<Table>['imaginaryLiteralArm9'];
 	};
 	readonly runeLiteral: typeof F.buildRuneLiteralArm1 & {
 		readonly arm1: typeof F.buildRuneLiteralArm1;
@@ -786,7 +785,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly intLiteral: Routes<Table>['intLiteral'];
 	readonly comment: Routes<Table>['comment'];
 	readonly floatLiteralArm4: Routes<Table>['floatLiteralArm4'];
-	readonly imaginaryLiteralArm10: Routes<Table>['imaginaryLiteralArm10'];
+	readonly imaginaryLiteralArm9: Routes<Table>['imaginaryLiteralArm9'];
 	readonly runeLiteralArm2: Routes<Table>['runeLiteralArm2'];
 	readonly simpleType: Routes<Table>['simpleType'];
 	readonly floatLiteral: Routes<Table>['floatLiteral'];
@@ -809,15 +808,15 @@ export interface Ir<Table extends AnyTable> {
 	readonly floatLiteralArm3: typeof F.buildFloatLiteralArm3;
 	readonly imaginaryLiteralArm1: typeof F.buildImaginaryLiteralArm1;
 	readonly imaginaryLiteralArm2: typeof F.buildImaginaryLiteralArm2;
+	readonly imaginaryLiteralArm3: typeof F.buildImaginaryLiteralArm3;
 	readonly imaginaryLiteralArm4: typeof F.buildImaginaryLiteralArm4;
 	readonly imaginaryLiteralArm5: typeof F.buildImaginaryLiteralArm5;
 	readonly imaginaryLiteralArm6: typeof F.buildImaginaryLiteralArm6;
 	readonly imaginaryLiteralArm7: typeof F.buildImaginaryLiteralArm7;
 	readonly imaginaryLiteralArm8: typeof F.buildImaginaryLiteralArm8;
-	readonly imaginaryLiteralArm9: typeof F.buildImaginaryLiteralArm9;
-	readonly imaginaryLiteralArm10Arm1: typeof F.buildImaginaryLiteralArm10Arm1;
-	readonly imaginaryLiteralArm10Arm2: typeof F.buildImaginaryLiteralArm10Arm2;
-	readonly imaginaryLiteralArm10Arm3: typeof F.buildImaginaryLiteralArm10Arm3;
+	readonly imaginaryLiteralArm9Arm1: typeof F.buildImaginaryLiteralArm9Arm1;
+	readonly imaginaryLiteralArm9Arm2: typeof F.buildImaginaryLiteralArm9Arm2;
+	readonly imaginaryLiteralArm9Arm3: typeof F.buildImaginaryLiteralArm9Arm3;
 	readonly runeLiteralArm1: typeof F.buildRuneLiteralArm1;
 	readonly runeLiteralArm2Arm1: typeof F.buildRuneLiteralArm2Arm1;
 	readonly runeLiteralArm2Arm2: typeof F.buildRuneLiteralArm2Arm2;
@@ -1248,11 +1247,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			arm3: $at('buildFloatLiteralArm4Arm3')
 		} as const)
 	);
-	const imaginaryLiteralArm10: Routes<Table>['imaginaryLiteralArm10'] = Object.freeze(
-		Object.assign(delegate(F.buildImaginaryLiteralArm10Arm2), {
-			arm1: F.buildImaginaryLiteralArm10Arm1,
-			arm2: F.buildImaginaryLiteralArm10Arm2,
-			arm3: F.buildImaginaryLiteralArm10Arm3
+	const imaginaryLiteralArm9: Routes<Table>['imaginaryLiteralArm9'] = Object.freeze(
+		Object.assign(delegate(F.buildImaginaryLiteralArm9Arm2), {
+			arm1: F.buildImaginaryLiteralArm9Arm1,
+			arm2: F.buildImaginaryLiteralArm9Arm2,
+			arm3: F.buildImaginaryLiteralArm9Arm3
 		} as const)
 	);
 	const runeLiteralArm2: Routes<Table>['runeLiteralArm2'] = Object.freeze(
@@ -1296,8 +1295,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			arm6: F.buildImaginaryLiteralArm6,
 			arm7: F.buildImaginaryLiteralArm7,
 			arm8: F.buildImaginaryLiteralArm8,
-			arm9: F.buildImaginaryLiteralArm9,
-			arm10: imaginaryLiteralArm10
+			arm9: imaginaryLiteralArm9
 		} as const)
 	);
 	const runeLiteral: Routes<Table>['runeLiteral'] = Object.freeze(
@@ -1422,7 +1420,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		intLiteral: intLiteral,
 		comment: comment,
 		floatLiteralArm4: floatLiteralArm4,
-		imaginaryLiteralArm10: imaginaryLiteralArm10,
+		imaginaryLiteralArm9: imaginaryLiteralArm9,
 		runeLiteralArm2: runeLiteralArm2,
 		simpleType: simpleType,
 		floatLiteral: floatLiteral,
@@ -1445,15 +1443,15 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		floatLiteralArm3: F.buildFloatLiteralArm3,
 		imaginaryLiteralArm1: F.buildImaginaryLiteralArm1,
 		imaginaryLiteralArm2: F.buildImaginaryLiteralArm2,
+		imaginaryLiteralArm3: F.buildImaginaryLiteralArm3,
 		imaginaryLiteralArm4: F.buildImaginaryLiteralArm4,
 		imaginaryLiteralArm5: F.buildImaginaryLiteralArm5,
 		imaginaryLiteralArm6: F.buildImaginaryLiteralArm6,
 		imaginaryLiteralArm7: F.buildImaginaryLiteralArm7,
 		imaginaryLiteralArm8: F.buildImaginaryLiteralArm8,
-		imaginaryLiteralArm9: F.buildImaginaryLiteralArm9,
-		imaginaryLiteralArm10Arm1: F.buildImaginaryLiteralArm10Arm1,
-		imaginaryLiteralArm10Arm2: F.buildImaginaryLiteralArm10Arm2,
-		imaginaryLiteralArm10Arm3: F.buildImaginaryLiteralArm10Arm3,
+		imaginaryLiteralArm9Arm1: F.buildImaginaryLiteralArm9Arm1,
+		imaginaryLiteralArm9Arm2: F.buildImaginaryLiteralArm9Arm2,
+		imaginaryLiteralArm9Arm3: F.buildImaginaryLiteralArm9Arm3,
 		runeLiteralArm1: F.buildRuneLiteralArm1,
 		runeLiteralArm2Arm1: F.buildRuneLiteralArm2Arm1,
 		runeLiteralArm2Arm2: F.buildRuneLiteralArm2Arm2,

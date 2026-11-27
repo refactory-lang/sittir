@@ -19,7 +19,7 @@ import type {
 } from '@sittir/types';
 import { decimalSpelling } from '../number.ts';
 import { hasKind } from './classify.ts';
-import { builtSlots, buildsOnlyItem, isNumberSlots, leafSeatOf, readsEmptyWhenAbsent, seatSets, spells, takesTextValue, tokenKind } from './facts.ts';
+import { builtSlots, buildsOnlyItem, isNumberSlots, leafSeatOf, literalValueIs, readsEmptyWhenAbsent, seatSets, spells, takesTextValue, tokenKind } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
@@ -338,7 +338,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if ('empty' in test) return test.empty.every((name) => structure[name] === undefined || (Array.isArray(structure[name]) && structure[name].length === 0));
 			if ('flag' in test) return (structure.$flags ?? []).includes(test.flag) === test.set;
 			if ('text' in test) return structure.$value === test.text;
-			if ('boolean' in test) return structure.$value === test.boolean;
+			if ('literal' in test) return literalValueIs(structure.$value, test.literal);
 			if ('variant' in test) return spelledBy(arm, structure);
 			const value = structure[test.slot];
 			if (value === undefined) return true;

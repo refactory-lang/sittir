@@ -435,6 +435,12 @@ export const records = {
 		content: { word: 2, width: 2, forms: 4, built: 2 },
 		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
 	},
+	ImaginaryLiteralArm3Node: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
 	ImaginaryLiteralArm4Node: {
 		words: 6,
 		builtWords: 4,
@@ -465,25 +471,19 @@ export const records = {
 		content: { word: 2, width: 2, forms: 4, built: 2 },
 		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
 	},
-	ImaginaryLiteralArm9Node: {
+	ImaginaryLiteralArm9Arm1Node: {
 		words: 6,
 		builtWords: 4,
 		content: { word: 2, width: 2, forms: 4, built: 2 },
 		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
 	},
-	ImaginaryLiteralArm10Arm1Node: {
+	ImaginaryLiteralArm9Arm2Node: {
 		words: 6,
 		builtWords: 4,
 		content: { word: 2, width: 2, forms: 4, built: 2 },
 		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
 	},
-	ImaginaryLiteralArm10Arm2Node: {
-		words: 6,
-		builtWords: 4,
-		content: { word: 2, width: 2, forms: 4, built: 2 },
-		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
-	},
-	ImaginaryLiteralArm10Arm3Node: {
+	ImaginaryLiteralArm9Arm3Node: {
 		words: 6,
 		builtWords: 4,
 		content: { word: 2, width: 2, forms: 4, built: 2 },

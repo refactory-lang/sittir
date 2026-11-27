@@ -633,10 +633,13 @@ function directivesOf(predicates: readonly Predicate.Parsed[]): ReadonlyMap<stri
 	return out;
 }
 
-function valueOf(declared: string | true | undefined, origin: PatternOrigin): boolean | undefined {
+const NUMBER_VALUE = /^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/;
+
+function valueOf(declared: string | true | undefined, origin: PatternOrigin): boolean | number | undefined {
 	if (declared === undefined) return undefined;
 	if (declared === 'true' || declared === 'false') return declared === 'true';
-	return refuse(origin, `#set! value takes true or false, not ${declared === true ? 'nothing' : declared}`);
+	if (declared !== true && NUMBER_VALUE.test(declared)) return Number(declared);
+	return refuse(origin, `#set! value takes true, false or a number, not ${declared === true ? 'nothing' : declared}`);
 }
 
 function reasonOf(predicates: readonly Predicate.Parsed[]): string | null {

@@ -95,10 +95,9 @@ export interface KindMembers {
 		| TSKindId.ImaginaryLiteralArm6
 		| TSKindId.ImaginaryLiteralArm7
 		| TSKindId.ImaginaryLiteralArm8
-		| TSKindId.ImaginaryLiteralArm9
-		| TSKindId.ImaginaryLiteralArm10Arm1
-		| TSKindId.ImaginaryLiteralArm10Arm2
-		| TSKindId.ImaginaryLiteralArm10Arm3
+		| TSKindId.ImaginaryLiteralArm9Arm1
+		| TSKindId.ImaginaryLiteralArm9Arm2
+		| TSKindId.ImaginaryLiteralArm9Arm3
 		| TSKindId.RuneLiteralArm1
 		| TSKindId.RuneLiteralArm2Arm1
 		| TSKindId.RuneLiteralArm2Arm2
@@ -138,10 +137,9 @@ export interface KindMembers {
 		| TSKindId.ImaginaryLiteralArm6
 		| TSKindId.ImaginaryLiteralArm7
 		| TSKindId.ImaginaryLiteralArm8
-		| TSKindId.ImaginaryLiteralArm9
-		| TSKindId.ImaginaryLiteralArm10Arm1
-		| TSKindId.ImaginaryLiteralArm10Arm2
-		| TSKindId.ImaginaryLiteralArm10Arm3;
+		| TSKindId.ImaginaryLiteralArm9Arm1
+		| TSKindId.ImaginaryLiteralArm9Arm2
+		| TSKindId.ImaginaryLiteralArm9Arm3;
 	[TSKindId.RuneLiteral]:
 		| TSKindId.RuneLiteralArm1
 		| TSKindId.RuneLiteralArm2Arm1
@@ -153,10 +151,10 @@ export interface KindMembers {
 		| TSKindId.FloatLiteralArm4Arm1
 		| TSKindId.FloatLiteralArm4Arm2
 		| TSKindId.FloatLiteralArm4Arm3;
-	[TSKindId.ImaginaryLiteralArm10]:
-		| TSKindId.ImaginaryLiteralArm10Arm1
-		| TSKindId.ImaginaryLiteralArm10Arm2
-		| TSKindId.ImaginaryLiteralArm10Arm3;
+	[TSKindId.ImaginaryLiteralArm9]:
+		| TSKindId.ImaginaryLiteralArm9Arm1
+		| TSKindId.ImaginaryLiteralArm9Arm2
+		| TSKindId.ImaginaryLiteralArm9Arm3;
 	[TSKindId.RuneLiteralArm2]:
 		| TSKindId.RuneLiteralArm2Arm1
 		| TSKindId.RuneLiteralArm2Arm2
@@ -529,6 +527,9 @@ export interface IsGuards {
 	imaginaryLiteralArm2<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm2 };
+	imaginaryLiteralArm3<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm3 };
 	imaginaryLiteralArm4<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm4 };
@@ -544,18 +545,15 @@ export interface IsGuards {
 	imaginaryLiteralArm8<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm8 };
-	imaginaryLiteralArm9<T extends { readonly $type: number } | number>(
+	imaginaryLiteralArm9Arm1<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm9 };
-	imaginaryLiteralArm10Arm1<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm9Arm1 };
+	imaginaryLiteralArm9Arm2<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm10Arm1 };
-	imaginaryLiteralArm10Arm2<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm9Arm2 };
+	imaginaryLiteralArm9Arm3<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm10Arm2 };
-	imaginaryLiteralArm10Arm3<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm10Arm3 };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm9Arm3 };
 	runeLiteralArm1<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RuneLiteralArm1 };
@@ -842,7 +840,9 @@ export interface IsGuards {
 		arm2<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm2 };
-		arm3<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.ImaginaryLiteralArm3>;
+		arm3<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm3 };
 		arm4<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm4 };
@@ -858,10 +858,7 @@ export interface IsGuards {
 		arm8<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm8 };
-		arm9<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm9 };
-		arm10: IsGuards['imaginaryLiteralArm10'];
+		arm9: IsGuards['imaginaryLiteralArm9'];
 	};
 	readonly runeLiteral: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.RuneLiteral]>;
@@ -893,19 +890,17 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatLiteralArm4Arm3 };
 	};
-	readonly imaginaryLiteralArm10: {
-		<T extends { readonly $type: number } | number>(
-			v: T
-		): v is NarrowTo<T, KindMembers[TSKindId.ImaginaryLiteralArm10]>;
+	readonly imaginaryLiteralArm9: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.ImaginaryLiteralArm9]>;
 		arm1<T extends { readonly $type: number } | number>(
 			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm10Arm1 };
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm9Arm1 };
 		arm2<T extends { readonly $type: number } | number>(
 			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm10Arm2 };
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm9Arm2 };
 		arm3<T extends { readonly $type: number } | number>(
 			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm10Arm3 };
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImaginaryLiteralArm9Arm3 };
 	};
 	readonly runeLiteralArm2: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.RuneLiteralArm2]>;
@@ -966,30 +961,30 @@ export interface IsGuards {
 }
 
 const _supertype_type_ids = new Set<number>([
-	299, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156
+	298, 157, 225, 159, 163, 167, 160, 162, 170, 265, 266, 267, 172, 164, 155
 ]);
 const _supertype_simpleType_ids = new Set<number>([
-	299, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165
+	298, 157, 225, 159, 163, 167, 160, 162, 170, 265, 266, 267, 172, 164
 ]);
-const _supertype_channelType_ids = new Set<number>([266, 267, 268]);
+const _supertype_channelType_ids = new Set<number>([265, 266, 267]);
 const _supertype_statement_ids = new Set<number>([
-	140, 153, 142, 179, 180, 182, 183, 184, 185, 192, 193, 194, 195, 196, 199, 202, 205, 186, 188, 189, 190, 191, 174, 177
+	139, 152, 141, 178, 179, 181, 182, 183, 184, 191, 192, 193, 194, 195, 198, 201, 204, 185, 187, 188, 189, 190, 173, 176
 ]);
-const _supertype_simpleStatement_ids = new Set<number>([179, 180, 182, 183, 184, 185]);
+const _supertype_simpleStatement_ids = new Set<number>([178, 179, 181, 182, 183, 184]);
 const _supertype_expression_ids = new Set<number>([
-	224, 225, 213, 214, 215, 209, 216, 217, 218, 1, 219, 223, 227, 228, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92,
-	93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 70, 71, 72, 73, 208
+	223, 224, 212, 213, 214, 208, 215, 216, 217, 1, 218, 222, 226, 227, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92,
+	93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 70, 71, 72, 73, 207
 ]);
 const _supertype_escapeSequence_ids = new Set<number>([76, 77, 78, 79, 80]);
 const _supertype_intLiteral_ids = new Set<number>([81, 82, 83, 84, 85]);
 const _supertype_floatLiteral_ids = new Set<number>([86, 87, 88, 89, 90, 91]);
-const _supertype_imaginaryLiteral_ids = new Set<number>([92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103]);
-const _supertype_runeLiteral_ids = new Set<number>([104, 105, 106, 107, 108, 109]);
-const _supertype_comment_ids = new Set<number>([110, 111]);
+const _supertype_imaginaryLiteral_ids = new Set<number>([92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102]);
+const _supertype_runeLiteral_ids = new Set<number>([103, 104, 105, 106, 107, 108]);
+const _supertype_comment_ids = new Set<number>([109, 110]);
 const _supertype_floatLiteralArm4_ids = new Set<number>([89, 90, 91]);
-const _supertype_imaginaryLiteralArm10_ids = new Set<number>([101, 102, 103]);
-const _supertype_runeLiteralArm2_ids = new Set<number>([105, 106, 107, 108, 109]);
-const _supertype_layout_ids = new Set<number>([125, 126, 127, 128, 129, 130, 131, 132]);
+const _supertype_imaginaryLiteralArm9_ids = new Set<number>([100, 101, 102]);
+const _supertype_runeLiteralArm2_ids = new Set<number>([104, 105, 106, 107, 108]);
+const _supertype_layout_ids = new Set<number>([124, 125, 126, 127, 128, 129, 130, 131]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.SimpleType, _supertype_simpleType_ids],
@@ -1003,7 +998,7 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.ImaginaryLiteral, _supertype_imaginaryLiteral_ids],
 	[TSKindId.RuneLiteral, _supertype_runeLiteral_ids],
 	[TSKindId.FloatLiteralArm4, _supertype_floatLiteralArm4_ids],
-	[TSKindId.ImaginaryLiteralArm10, _supertype_imaginaryLiteralArm10_ids],
+	[TSKindId.ImaginaryLiteralArm9, _supertype_imaginaryLiteralArm9_ids],
 	[TSKindId.RuneLiteralArm2, _supertype_runeLiteralArm2_ids]
 ]);
 const _single = new Map<number, ReadonlySet<number>>();
@@ -1096,22 +1091,21 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_FloatLiteralArm3_guard = _g(TSKindId.FloatLiteralArm3);
 	const _kind_ImaginaryLiteralArm1_guard = _g(TSKindId.ImaginaryLiteralArm1);
 	const _kind_ImaginaryLiteralArm2_guard = _g(TSKindId.ImaginaryLiteralArm2);
-	const _kind_ImaginaryLiteralArm3_guard = _mg(TSKindId.ImaginaryLiteralArm3);
+	const _kind_ImaginaryLiteralArm3_guard = _g(TSKindId.ImaginaryLiteralArm3);
 	const _kind_ImaginaryLiteralArm4_guard = _g(TSKindId.ImaginaryLiteralArm4);
 	const _kind_ImaginaryLiteralArm5_guard = _g(TSKindId.ImaginaryLiteralArm5);
 	const _kind_ImaginaryLiteralArm6_guard = _g(TSKindId.ImaginaryLiteralArm6);
 	const _kind_ImaginaryLiteralArm7_guard = _g(TSKindId.ImaginaryLiteralArm7);
 	const _kind_ImaginaryLiteralArm8_guard = _g(TSKindId.ImaginaryLiteralArm8);
-	const _kind_ImaginaryLiteralArm9_guard = _g(TSKindId.ImaginaryLiteralArm9);
 	const _kind_RuneLiteralArm1_guard = _g(TSKindId.RuneLiteralArm1);
 	const _kind_CommentArm1_guard = _g(TSKindId.CommentArm1);
 	const _kind_CommentArm2_guard = _g(TSKindId.CommentArm2);
 	const _kind_FloatLiteralArm4Arm1_guard = _g(TSKindId.FloatLiteralArm4Arm1);
 	const _kind_FloatLiteralArm4Arm2_guard = _g(TSKindId.FloatLiteralArm4Arm2);
 	const _kind_FloatLiteralArm4Arm3_guard = _g(TSKindId.FloatLiteralArm4Arm3);
-	const _kind_ImaginaryLiteralArm10Arm1_guard = _g(TSKindId.ImaginaryLiteralArm10Arm1);
-	const _kind_ImaginaryLiteralArm10Arm2_guard = _g(TSKindId.ImaginaryLiteralArm10Arm2);
-	const _kind_ImaginaryLiteralArm10Arm3_guard = _g(TSKindId.ImaginaryLiteralArm10Arm3);
+	const _kind_ImaginaryLiteralArm9Arm1_guard = _g(TSKindId.ImaginaryLiteralArm9Arm1);
+	const _kind_ImaginaryLiteralArm9Arm2_guard = _g(TSKindId.ImaginaryLiteralArm9Arm2);
+	const _kind_ImaginaryLiteralArm9Arm3_guard = _g(TSKindId.ImaginaryLiteralArm9Arm3);
 	const _kind_RuneLiteralArm2Arm1_guard = _g(TSKindId.RuneLiteralArm2Arm1);
 	const _kind_RuneLiteralArm2Arm2_guard = _g(TSKindId.RuneLiteralArm2Arm2);
 	const _kind_RuneLiteralArm2Arm3_guard = _g(TSKindId.RuneLiteralArm2Arm3);
@@ -1300,12 +1294,12 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _form_LiteralElement_guard = _vg(_g(TSKindId.LiteralElement), {
 		literalValue: _at(_kind_LiteralElement_guard, 'content', _kind_LiteralValue_guard, true)
 	});
-	const _supertype_channelType_guard = _vg(_mg(172), {
+	const _supertype_channelType_guard = _vg(_mg(171), {
 		bidirectional: _kind_ChannelTypeBidirectional_guard,
 		sendOnly: _kind_ChannelTypeSendOnly_guard,
 		receiveOnly: _kind_ChannelTypeReceiveOnly_guard
 	});
-	const _supertype_simpleStatement_guard = _vg(_mg(178), {
+	const _supertype_simpleStatement_guard = _vg(_mg(177), {
 		expression: _kind_ExpressionStatement_guard,
 		send: _kind_SendStatement_guard,
 		inc: _kind_IncStatement_guard,
@@ -1313,14 +1307,14 @@ export function guardsWith(test: KindTest): IsGuards {
 		assignment: _kind_AssignmentStatement_guard,
 		shortVar: _kind_ShortVarDeclaration_guard
 	});
-	const _supertype_escapeSequence_guard = _vg(_mg(229), {
+	const _supertype_escapeSequence_guard = _vg(_mg(228), {
 		arm1: _kind_EscapeSequenceArm1_guard,
 		arm2: _kind_EscapeSequenceArm2_guard,
 		arm3: _kind_EscapeSequenceArm3_guard,
 		arm4: _kind_EscapeSequenceArm4_guard,
 		arm5: _kind_EscapeSequenceArm5_guard
 	});
-	const _supertype_intLiteral_guard = _vg(_mg(230), {
+	const _supertype_intLiteral_guard = _vg(_mg(229), {
 		arm1: _kind_IntLiteralArm1_guard,
 		arm2: _kind_IntLiteralArm2_guard,
 		arm3: _kind_IntLiteralArm3_guard,
@@ -1331,24 +1325,24 @@ export function guardsWith(test: KindTest): IsGuards {
 		arm1: _kind_CommentArm1_guard,
 		arm2: _kind_CommentArm2_guard
 	});
-	const _supertype_floatLiteralArm4_guard = _vg(_mg(234), {
+	const _supertype_floatLiteralArm4_guard = _vg(_mg(233), {
 		arm1: _kind_FloatLiteralArm4Arm1_guard,
 		arm2: _kind_FloatLiteralArm4Arm2_guard,
 		arm3: _kind_FloatLiteralArm4Arm3_guard
 	});
-	const _supertype_imaginaryLiteralArm10_guard = _vg(_mg(235), {
-		arm1: _kind_ImaginaryLiteralArm10Arm1_guard,
-		arm2: _kind_ImaginaryLiteralArm10Arm2_guard,
-		arm3: _kind_ImaginaryLiteralArm10Arm3_guard
+	const _supertype_imaginaryLiteralArm9_guard = _vg(_mg(234), {
+		arm1: _kind_ImaginaryLiteralArm9Arm1_guard,
+		arm2: _kind_ImaginaryLiteralArm9Arm2_guard,
+		arm3: _kind_ImaginaryLiteralArm9Arm3_guard
 	});
-	const _supertype_runeLiteralArm2_guard = _vg(_mg(236), {
+	const _supertype_runeLiteralArm2_guard = _vg(_mg(235), {
 		arm1: _kind_RuneLiteralArm2Arm1_guard,
 		arm2: _kind_RuneLiteralArm2Arm2_guard,
 		arm3: _kind_RuneLiteralArm2Arm3_guard,
 		arm4: _kind_RuneLiteralArm2Arm4_guard,
 		arm5: _kind_RuneLiteralArm2Arm5_guard
 	});
-	const _supertype_simpleType_guard = _vg(_mg(157), {
+	const _supertype_simpleType_guard = _vg(_mg(156), {
 		identifier: _kind_TypeIdentifier_guard,
 		generic: _kind_GenericType_guard,
 		qualified: _kind_QualifiedType_guard,
@@ -1362,13 +1356,13 @@ export function guardsWith(test: KindTest): IsGuards {
 		function: _kind_FunctionType_guard,
 		negated: _kind_NegatedType_guard
 	});
-	const _supertype_floatLiteral_guard = _vg(_mg(231), {
+	const _supertype_floatLiteral_guard = _vg(_mg(230), {
 		arm1: _kind_FloatLiteralArm1_guard,
 		arm2: _kind_FloatLiteralArm2_guard,
 		arm3: _kind_FloatLiteralArm3_guard,
 		arm4: _supertype_floatLiteralArm4_guard
 	});
-	const _supertype_imaginaryLiteral_guard = _vg(_mg(232), {
+	const _supertype_imaginaryLiteral_guard = _vg(_mg(231), {
 		arm1: _kind_ImaginaryLiteralArm1_guard,
 		arm2: _kind_ImaginaryLiteralArm2_guard,
 		arm3: _kind_ImaginaryLiteralArm3_guard,
@@ -1377,10 +1371,9 @@ export function guardsWith(test: KindTest): IsGuards {
 		arm6: _kind_ImaginaryLiteralArm6_guard,
 		arm7: _kind_ImaginaryLiteralArm7_guard,
 		arm8: _kind_ImaginaryLiteralArm8_guard,
-		arm9: _kind_ImaginaryLiteralArm9_guard,
-		arm10: _supertype_imaginaryLiteralArm10_guard
+		arm9: _supertype_imaginaryLiteralArm9_guard
 	});
-	const _supertype_runeLiteral_guard = _vg(_mg(233), {
+	const _supertype_runeLiteral_guard = _vg(_mg(232), {
 		arm1: _kind_RuneLiteralArm1_guard,
 		arm2: _supertype_runeLiteralArm2_guard
 	});
@@ -1487,15 +1480,15 @@ export function guardsWith(test: KindTest): IsGuards {
 		floatLiteralArm4Arm3: _kind_FloatLiteralArm4Arm3_guard,
 		imaginaryLiteralArm1: _kind_ImaginaryLiteralArm1_guard,
 		imaginaryLiteralArm2: _kind_ImaginaryLiteralArm2_guard,
+		imaginaryLiteralArm3: _kind_ImaginaryLiteralArm3_guard,
 		imaginaryLiteralArm4: _kind_ImaginaryLiteralArm4_guard,
 		imaginaryLiteralArm5: _kind_ImaginaryLiteralArm5_guard,
 		imaginaryLiteralArm6: _kind_ImaginaryLiteralArm6_guard,
 		imaginaryLiteralArm7: _kind_ImaginaryLiteralArm7_guard,
 		imaginaryLiteralArm8: _kind_ImaginaryLiteralArm8_guard,
-		imaginaryLiteralArm9: _kind_ImaginaryLiteralArm9_guard,
-		imaginaryLiteralArm10Arm1: _kind_ImaginaryLiteralArm10Arm1_guard,
-		imaginaryLiteralArm10Arm2: _kind_ImaginaryLiteralArm10Arm2_guard,
-		imaginaryLiteralArm10Arm3: _kind_ImaginaryLiteralArm10Arm3_guard,
+		imaginaryLiteralArm9Arm1: _kind_ImaginaryLiteralArm9Arm1_guard,
+		imaginaryLiteralArm9Arm2: _kind_ImaginaryLiteralArm9Arm2_guard,
+		imaginaryLiteralArm9Arm3: _kind_ImaginaryLiteralArm9Arm3_guard,
 		runeLiteralArm1: _kind_RuneLiteralArm1_guard,
 		runeLiteralArm2Arm1: _kind_RuneLiteralArm2Arm1_guard,
 		runeLiteralArm2Arm2: _kind_RuneLiteralArm2Arm2_guard,
@@ -1544,9 +1537,9 @@ export function guardsWith(test: KindTest): IsGuards {
 		type: _supertype_type_guard,
 		simpleType: _supertype_simpleType_guard,
 		channelType: _supertype_channelType_guard,
-		statement: _mg(176),
+		statement: _mg(175),
 		simpleStatement: _supertype_simpleStatement_guard,
-		expression: _mg(207),
+		expression: _mg(206),
 		escapeSequence: _supertype_escapeSequence_guard,
 		intLiteral: _supertype_intLiteral_guard,
 		floatLiteral: _supertype_floatLiteral_guard,
@@ -1554,7 +1547,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		runeLiteral: _supertype_runeLiteral_guard,
 		comment: _supertype_comment_guard,
 		floatLiteralArm4: _supertype_floatLiteralArm4_guard,
-		imaginaryLiteralArm10: _supertype_imaginaryLiteralArm10_guard,
+		imaginaryLiteralArm9: _supertype_imaginaryLiteralArm9_guard,
 		runeLiteralArm2: _supertype_runeLiteralArm2_guard,
 		layout: _sg(_supertype_layout_ids),
 		sourceFileText: _kind_SourceFileText_guard,

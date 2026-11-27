@@ -1456,6 +1456,10 @@ Whether a read lands at or under a path's row: at or under the path itself (`por
 
 The flags a read can state on an arm's structure: those the arm builds (`builtFlags`), minus any whose step `carriesNode`. A node where one of those holds is kept whole, because its source text is part of its value. The read and the exact read types both take the set from here, so a kept node is always admitted at its seat.
 
+### `packages/common/src/portable/facts.ts::literalValueIs`
+
+Whether a structure's `$value` is the value a literal arm declares (`PortableBuildArm.literal.value`): the same boolean or number, or a bigint equal to an integer literal, since an integer read can give a bigint. Both readers pick a literal arm with it: the interpreter's pick test and the generated build's.
+
 ### `packages/common/src/portable/read.ts::PortableCarry`
 
 What a read carries past the structure: unclaimed, a scalar or text, or a set of flags.

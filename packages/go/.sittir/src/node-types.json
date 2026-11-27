@@ -356,10 +356,6 @@
         "named": true
       },
       {
-        "type": "imaginary_literal_arm10",
-        "named": true
-      },
-      {
         "type": "imaginary_literal_arm2",
         "named": true
       },
@@ -394,19 +390,19 @@
     ]
   },
   {
-    "type": "imaginary_literal_arm10",
+    "type": "imaginary_literal_arm9",
     "named": true,
     "subtypes": [
       {
-        "type": "imaginary_literal_arm10_arm1",
+        "type": "imaginary_literal_arm9_arm1",
         "named": true
       },
       {
-        "type": "imaginary_literal_arm10_arm2",
+        "type": "imaginary_literal_arm9_arm2",
         "named": true
       },
       {
-        "type": "imaginary_literal_arm10_arm3",
+        "type": "imaginary_literal_arm9_arm3",
         "named": true
       }
     ]
@@ -3958,18 +3954,6 @@
     "named": true
   },
   {
-    "type": "imaginary_literal_arm10_arm1",
-    "named": true
-  },
-  {
-    "type": "imaginary_literal_arm10_arm2",
-    "named": true
-  },
-  {
-    "type": "imaginary_literal_arm10_arm3",
-    "named": true
-  },
-  {
     "type": "imaginary_literal_arm2",
     "named": true
   },
@@ -3998,7 +3982,15 @@
     "named": true
   },
   {
-    "type": "imaginary_literal_arm9",
+    "type": "imaginary_literal_arm9_arm1",
+    "named": true
+  },
+  {
+    "type": "imaginary_literal_arm9_arm2",
+    "named": true
+  },
+  {
+    "type": "imaginary_literal_arm9_arm3",
     "named": true
   },
   {

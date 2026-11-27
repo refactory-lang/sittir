@@ -165,6 +165,7 @@
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (int_literal) @literal.number.integer
+((int_literal_arm2) @literal.number.integer (#set! value 0))
 (int_literal_arm1) @literal.number.integer.binary
 (int_literal_arm4) @literal.number.integer.octal
 (int_literal_arm5) @literal.number.integer.hex

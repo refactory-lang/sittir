@@ -6,7 +6,7 @@ import type { PortableBuildArm, PortableBuildTable, PortablePickTest } from '@si
 import type { NodeMap } from '../../../compiler/types.ts';
 import { kindDiscriminantExpr } from '../../kind-discriminant.ts';
 import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
-import { exactReadsOf, type ExactReads, type ExactSet, type ExactSlots } from './exact.ts';
+import { exactReadsOf, literalValueRead, type ExactReads, type ExactSet, type ExactSlots } from './exact.ts';
 import type { PortableTypedInput } from './typed.ts';
 
 export const VOCABULARY_MODULE = '@sittir/types/vocabulary';
@@ -142,7 +142,7 @@ export function mapFormsOf(
 	const termOf = (path: string, test: PortablePickTest): FormTerm | undefined => {
 		if ('absent' in test) return { required: test.required, absent: test.absent };
 		if ('kinds' in test) return narrowed(path, test.slot, test.kinds);
-		if ('boolean' in test) return { slot: ['$value', String(test.boolean)] };
+		if ('literal' in test) return { slot: ['$value', String(test.literal)] };
 		return undefined;
 	};
 	const keys = (names: ReadonlySet<string>): string => (names.size === 0 ? 'never' : [...names].sort().map(q).join(' | '));
@@ -221,8 +221,10 @@ const SCALAR_TYPES = { integer: 'number', float: 'number', bigint: 'bigint' } as
 
 export type ScalarInput = (typeof SCALAR_TYPES)[keyof typeof SCALAR_TYPES] | 'true' | 'false';
 
+const scalarInputOf = (read: ReturnType<typeof literalValueRead>): ScalarInput => (read === 'true' || read === 'false' ? read : SCALAR_TYPES[read]);
+
 const literalValuesOf = (built: PortableBuildTable['paths'][string]): readonly ScalarInput[] =>
-	built.arms.length > 0 && built.arms.every((arm) => arm.literal?.value !== undefined) ? built.arms.map((arm) => (arm.literal!.value ? 'true' : 'false')) : [];
+	built.arms.length > 0 && built.arms.every((arm) => arm.literal?.value !== undefined) ? built.arms.map((arm) => scalarInputOf(literalValueRead(arm.literal!.value!))) : [];
 
 export const scalarInputsOf = (table: PortableBuildTable): ReadonlyMap<string, readonly ScalarInput[]> =>
 	new Map(

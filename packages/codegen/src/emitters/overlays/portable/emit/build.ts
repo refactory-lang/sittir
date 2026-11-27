@@ -436,7 +436,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 		if ('empty' in test) return and(stated(test.empty).map((name) => binary(dot(listOf(dot(value, name)), 'length'), '===', num(0))));
 		if ('flag' in test) return test.set ? flagged(value, test.flag) : t.unaryExpression({ operator: '!', argument: flagged(value, test.flag) });
 		if ('text' in test) return binary(dot(value, '$value'), '===', str(test.text));
-		if ('boolean' in test) return binary(dot(value, '$value'), '===', test.boolean ? 'true' : 'false');
+		if ('literal' in test) return call(id(uses('literalValueIs')), dot(value, '$value'), typeof test.literal === 'number' ? num(test.literal) : test.literal ? t.true : t.false);
 		if ('variant' in test) return spelledBy(path, arm, value);
 		if (!statesName(path, test.slot)) return undefined;
 		const given = dot(value, test.slot);
@@ -450,7 +450,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 		return eitherArity(route) ? paren(ternary(call(id(uses('listed')), given), all(given), single)) : single;
 	};
 	const pickOf = (path: string, arm: PortableBuildArm, value: Primary): Operand | undefined => and(arm.when.map((test) => testOf(test, path, arm, value)).filter((part): part is Operand => part !== undefined));
-	const lastPickOf = (path: string, arm: PortableBuildArm, value: Primary): Operand | undefined => (arm.when.some((test) => 'boolean' in test) ? pickOf(path, arm, value) : undefined);
+	const lastPickOf = (path: string, arm: PortableBuildArm, value: Primary): Operand | undefined => (arm.when.some((test) => 'literal' in test) ? pickOf(path, arm, value) : undefined);
 
 	const tableSeats = Object.values(table.paths).flatMap((row) => row.arms.flatMap((arm) => builtSlotsOf(arm).flatMap((slot) => slot.seats)));
 	const owning = new Map<number, Map<string, PortableSlotRoute>>();
@@ -1423,7 +1423,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 						t.importStatement.clauseFrom({ importClause: t.importClause(t.namedImports(t.importSpecifier.as({ name: 'ir', alias: 'b' }))), source: str(input.imports.builders) }).$trivia.leading(header),
 						typeImport(['BuildInput', 'PathInput', 'TailInput', 'Text', 'Unmapped'].filter((name) => live.has(name)), input.imports.vocabulary),
 						typeImport([input.map], input.imports.map),
-						...(live.has('decimalSpelling') ? [valueImport(['decimalSpelling'], input.imports.utils)] : []),
+						...(['decimalSpelling', 'literalValueIs'].some((name) => live.has(name)) ? [valueImport(['decimalSpelling', 'literalValueIs'].filter((name) => live.has(name)), input.imports.utils)] : []),
 						...(live.has('isNode')
 							? [
 									typeImport([input.node], input.imports.types),

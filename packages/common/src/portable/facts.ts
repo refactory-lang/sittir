@@ -4,6 +4,9 @@ import { vocabularyNamespaces } from './vocabulary-paths.ts';
 
 const namespaces: ReadonlySet<string> = new Set(vocabularyNamespaces);
 
+export const literalValueIs = (value: unknown, literal: boolean | number): boolean =>
+	value === literal || (typeof value === 'bigint' && typeof literal === 'number' && Number.isInteger(literal) && value === BigInt(literal));
+
 const kindLength = (facts: readonly string[]): number => {
 	let end = 1;
 	while (end < facts.length && namespaces.has(facts.slice(0, end + 1).join('.'))) end++;

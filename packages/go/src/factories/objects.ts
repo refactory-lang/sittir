@@ -132,19 +132,19 @@ export const _slotRe_buildFloatLiteralArm4Arm3_content =
 	/^(?:\.(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*(?:p|P)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)$/u;
 export const _slotRe_buildImaginaryLiteralArm1_content = _slotRe_buildFloatLiteralArm1_content;
 export const _slotRe_buildImaginaryLiteralArm2_content = _leafRe_buildIntLiteralArm1;
-export const _slotRe_buildImaginaryLiteralArm4_content = _leafRe_buildIntLiteralArm3;
-export const _slotRe_buildImaginaryLiteralArm5_content = _leafRe_buildIntLiteralArm4;
-export const _slotRe_buildImaginaryLiteralArm6_content = _leafRe_buildIntLiteralArm5;
-export const _slotRe_buildImaginaryLiteralArm7_content =
+export const _slotRe_buildImaginaryLiteralArm3_content = _leafRe_buildIntLiteralArm3;
+export const _slotRe_buildImaginaryLiteralArm4_content = _leafRe_buildIntLiteralArm4;
+export const _slotRe_buildImaginaryLiteralArm5_content = _leafRe_buildIntLiteralArm5;
+export const _slotRe_buildImaginaryLiteralArm6_content =
 	/^(?:(?:[0-9])(?:(?:_)?(?:[0-9]))*\.(?:(?:[0-9])(?:(?:_)?(?:[0-9]))*)?(?:(?:e|E)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)?)$/u;
-export const _slotRe_buildImaginaryLiteralArm8_content = _leafRe_buildFloatLiteralArm2;
-export const _slotRe_buildImaginaryLiteralArm9_content =
+export const _slotRe_buildImaginaryLiteralArm7_content = _leafRe_buildFloatLiteralArm2;
+export const _slotRe_buildImaginaryLiteralArm8_content =
 	/^(?:\.(?:[0-9])(?:(?:_)?(?:[0-9]))*(?:(?:e|E)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)?)$/u;
-export const _slotRe_buildImaginaryLiteralArm10Arm1_content =
+export const _slotRe_buildImaginaryLiteralArm9Arm1_content =
 	/^(?:0(?:x|X)(?:_)?(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*\.(?:(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*)?(?:p|P)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)$/u;
-export const _slotRe_buildImaginaryLiteralArm10Arm2_content =
+export const _slotRe_buildImaginaryLiteralArm9Arm2_content =
 	/^(?:0(?:x|X)(?:_)?(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*(?:p|P)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)$/u;
-export const _slotRe_buildImaginaryLiteralArm10Arm3_content =
+export const _slotRe_buildImaginaryLiteralArm9Arm3_content =
 	/^(?:0(?:x|X)\.(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*(?:p|P)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)$/u;
 export const _slotRe_buildRuneLiteralArm1_content = /^(?:(?:[^'\\]))$/u;
 export const _slotRe_buildRuneLiteralArm2Arm1_content = /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u;
@@ -7840,7 +7840,61 @@ function buildImaginaryLiteralArm2$with$content(this: Received<Held>, ...args: u
 	return buildImaginaryLiteralArm2$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export const buildImaginaryLiteralArm3: TSKindId.ImaginaryLiteralArm3 = TSKindId.ImaginaryLiteralArm3;
+export function buildImaginaryLiteralArm3<const N extends string | number | bigint>(
+	content: N & NumericLiteral<N, true>,
+	affix?: true
+): T.ImaginaryLiteralArm3.Bound;
+export function buildImaginaryLiteralArm3(text: `${string}i`, affix: false): T.ImaginaryLiteralArm3.Bound;
+export function buildImaginaryLiteralArm3(
+	input: string | number | bigint,
+	affix: boolean = true
+): T.ImaginaryLiteralArm3.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`imaginary_literal_arm3.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'i', 'imaginary_literal_arm3');
+	}
+	const _content = numberText(10, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`imaginary_literal_arm3.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildImaginaryLiteralArm3_content.test(_content))
+		throw new Error(`imaginary_literal_arm3.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm3', { content: _content });
+	const node = {
+		$type: TSKindId.ImaginaryLiteralArm3 as const,
+		_content,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		content: () => hydrateStoredSlot(node, '_content'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { content: buildImaginaryLiteralArm3$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ImaginaryLiteralArm3.Bound;
+}
+
+function buildImaginaryLiteralArm3$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildImaginaryLiteralArm3(value))
+			);
+	}
+	throw new Error(`imaginary_literal_arm3 has no $with.${setter}`);
+}
+function buildImaginaryLiteralArm3$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImaginaryLiteralArm3$with(receiverOf(this, '$with.content'), 'content', args);
+}
 
 export function buildImaginaryLiteralArm4<const N extends string | number | bigint>(
 	content: N & NumericLiteral<N, true>,
@@ -7857,7 +7911,7 @@ export function buildImaginaryLiteralArm4(
 			throw new Error(`imaginary_literal_arm4.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm4');
 	}
-	const _content = numberText(10, '', value);
+	const _content = numberText(8, '0o', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm4.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm4_content.test(_content))
@@ -7913,7 +7967,7 @@ export function buildImaginaryLiteralArm5(
 			throw new Error(`imaginary_literal_arm5.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm5');
 	}
-	const _content = numberText(8, '0o', value);
+	const _content = numberText(16, '0x', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm5.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm5_content.test(_content))
@@ -7954,22 +8008,19 @@ function buildImaginaryLiteralArm5$with$content(this: Received<Held>, ...args: u
 	return buildImaginaryLiteralArm5$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function buildImaginaryLiteralArm6<const N extends string | number | bigint>(
-	content: N & NumericLiteral<N, true>,
+export function buildImaginaryLiteralArm6<const N extends string | number>(
+	content: N & NumericLiteral<N, false>,
 	affix?: true
 ): T.ImaginaryLiteralArm6.Bound;
 export function buildImaginaryLiteralArm6(text: `${string}i`, affix: false): T.ImaginaryLiteralArm6.Bound;
-export function buildImaginaryLiteralArm6(
-	input: string | number | bigint,
-	affix: boolean = true
-): T.ImaginaryLiteralArm6.Bound {
+export function buildImaginaryLiteralArm6(input: string | number, affix: boolean = true): T.ImaginaryLiteralArm6.Bound {
 	let value = input;
 	if (!affix) {
 		if (typeof input !== 'string')
 			throw new Error(`imaginary_literal_arm6.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm6');
 	}
-	const _content = numberText(16, '0x', value);
+	const _content = numberText('float', '.0', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm6.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm6_content.test(_content))
@@ -8000,7 +8051,7 @@ function buildImaginaryLiteralArm6$with(node: Held, setter: string, args: readon
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (value: Admit<string | number | bigint>) =>
+			return applySetter(args, (value: Admit<string | number>) =>
 				rebuilt(node, handle, () => buildImaginaryLiteralArm6(value))
 			);
 	}
@@ -8022,7 +8073,7 @@ export function buildImaginaryLiteralArm7(input: string | number, affix: boolean
 			throw new Error(`imaginary_literal_arm7.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm7');
 	}
-	const _content = numberText('float', '.0', value);
+	const _content = numberText('float', 'e0', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm7.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm7_content.test(_content))
@@ -8075,7 +8126,7 @@ export function buildImaginaryLiteralArm8(input: string | number, affix: boolean
 			throw new Error(`imaginary_literal_arm8.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '', 'i', 'imaginary_literal_arm8');
 	}
-	const _content = numberText('float', 'e0', value);
+	const _content = numberText('float', '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`imaginary_literal_arm8.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildImaginaryLiteralArm8_content.test(_content))
@@ -8116,80 +8167,24 @@ function buildImaginaryLiteralArm8$with$content(this: Received<Held>, ...args: u
 	return buildImaginaryLiteralArm8$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function buildImaginaryLiteralArm9<const N extends string | number>(
-	content: N & NumericLiteral<N, false>,
-	affix?: true
-): T.ImaginaryLiteralArm9.Bound;
-export function buildImaginaryLiteralArm9(text: `${string}i`, affix: false): T.ImaginaryLiteralArm9.Bound;
-export function buildImaginaryLiteralArm9(input: string | number, affix: boolean = true): T.ImaginaryLiteralArm9.Bound {
+export function buildImaginaryLiteralArm9Arm1(content: string, affix?: true): T.ImaginaryLiteralArm9Arm1.Bound;
+export function buildImaginaryLiteralArm9Arm1(text: `${string}i`, affix: false): T.ImaginaryLiteralArm9Arm1.Bound;
+export function buildImaginaryLiteralArm9Arm1(input: string, affix: boolean = true): T.ImaginaryLiteralArm9Arm1.Bound {
 	let value = input;
 	if (!affix) {
 		if (typeof input !== 'string')
-			throw new Error(`imaginary_literal_arm9.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '', 'i', 'imaginary_literal_arm9');
-	}
-	const _content = numberText('float', '', value);
-	if (typeof _content !== 'string')
-		throw new Error(`imaginary_literal_arm9.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildImaginaryLiteralArm9_content.test(_content))
-		throw new Error(`imaginary_literal_arm9.content: text does not match pattern: ${describeValue(_content)}`);
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm9', { content: _content });
-	const node = {
-		$type: TSKindId.ImaginaryLiteralArm9 as const,
-		_content,
-		$_layout: undefined,
-		$with: undefined as unknown as object,
-		content: () => hydrateStoredSlot(node, '_content'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = { content: buildImaginaryLiteralArm9$with$content, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ImaginaryLiteralArm9.Bound;
-}
-
-function buildImaginaryLiteralArm9$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<string | number>) =>
-				rebuilt(node, handle, () => buildImaginaryLiteralArm9(value))
-			);
-	}
-	throw new Error(`imaginary_literal_arm9 has no $with.${setter}`);
-}
-function buildImaginaryLiteralArm9$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildImaginaryLiteralArm9$with(receiverOf(this, '$with.content'), 'content', args);
-}
-
-export function buildImaginaryLiteralArm10Arm1(content: string, affix?: true): T.ImaginaryLiteralArm10Arm1.Bound;
-export function buildImaginaryLiteralArm10Arm1(text: `${string}i`, affix: false): T.ImaginaryLiteralArm10Arm1.Bound;
-export function buildImaginaryLiteralArm10Arm1(
-	input: string,
-	affix: boolean = true
-): T.ImaginaryLiteralArm10Arm1.Bound {
-	let value = input;
-	if (!affix) {
-		if (typeof input !== 'string')
-			throw new Error(`imaginary_literal_arm10_arm1.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '', 'i', 'imaginary_literal_arm10_arm1');
+			throw new Error(`imaginary_literal_arm9_arm1.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'i', 'imaginary_literal_arm9_arm1');
 	}
 	const _content = value;
 	if (typeof _content !== 'string')
-		throw new Error(`imaginary_literal_arm10_arm1.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildImaginaryLiteralArm10Arm1_content.test(_content))
-		throw new Error(`imaginary_literal_arm10_arm1.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`imaginary_literal_arm9_arm1.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildImaginaryLiteralArm9Arm1_content.test(_content))
+		throw new Error(`imaginary_literal_arm9_arm1.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm10_arm1', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm9_arm1', { content: _content });
 	const node = {
-		$type: TSKindId.ImaginaryLiteralArm10Arm1 as const,
+		$type: TSKindId.ImaginaryLiteralArm9Arm1 as const,
 		_content,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
@@ -8203,46 +8198,43 @@ export function buildImaginaryLiteralArm10Arm1(
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: buildImaginaryLiteralArm10Arm1$with$content, [RECEIVER]: node };
+	node.$with = { content: buildImaginaryLiteralArm9Arm1$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ImaginaryLiteralArm10Arm1.Bound;
+	return node as unknown as T.ImaginaryLiteralArm9Arm1.Bound;
 }
 
-function buildImaginaryLiteralArm10Arm1$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildImaginaryLiteralArm9Arm1$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<string>) =>
-				rebuilt(node, handle, () => buildImaginaryLiteralArm10Arm1(value))
+				rebuilt(node, handle, () => buildImaginaryLiteralArm9Arm1(value))
 			);
 	}
-	throw new Error(`imaginary_literal_arm10_arm1 has no $with.${setter}`);
+	throw new Error(`imaginary_literal_arm9_arm1 has no $with.${setter}`);
 }
-function buildImaginaryLiteralArm10Arm1$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildImaginaryLiteralArm10Arm1$with(receiverOf(this, '$with.content'), 'content', args);
+function buildImaginaryLiteralArm9Arm1$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImaginaryLiteralArm9Arm1$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function buildImaginaryLiteralArm10Arm2(content: string, affix?: true): T.ImaginaryLiteralArm10Arm2.Bound;
-export function buildImaginaryLiteralArm10Arm2(text: `${string}i`, affix: false): T.ImaginaryLiteralArm10Arm2.Bound;
-export function buildImaginaryLiteralArm10Arm2(
-	input: string,
-	affix: boolean = true
-): T.ImaginaryLiteralArm10Arm2.Bound {
+export function buildImaginaryLiteralArm9Arm2(content: string, affix?: true): T.ImaginaryLiteralArm9Arm2.Bound;
+export function buildImaginaryLiteralArm9Arm2(text: `${string}i`, affix: false): T.ImaginaryLiteralArm9Arm2.Bound;
+export function buildImaginaryLiteralArm9Arm2(input: string, affix: boolean = true): T.ImaginaryLiteralArm9Arm2.Bound {
 	let value = input;
 	if (!affix) {
 		if (typeof input !== 'string')
-			throw new Error(`imaginary_literal_arm10_arm2.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '', 'i', 'imaginary_literal_arm10_arm2');
+			throw new Error(`imaginary_literal_arm9_arm2.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'i', 'imaginary_literal_arm9_arm2');
 	}
 	const _content = value;
 	if (typeof _content !== 'string')
-		throw new Error(`imaginary_literal_arm10_arm2.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildImaginaryLiteralArm10Arm2_content.test(_content))
-		throw new Error(`imaginary_literal_arm10_arm2.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`imaginary_literal_arm9_arm2.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildImaginaryLiteralArm9Arm2_content.test(_content))
+		throw new Error(`imaginary_literal_arm9_arm2.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm10_arm2', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm9_arm2', { content: _content });
 	const node = {
-		$type: TSKindId.ImaginaryLiteralArm10Arm2 as const,
+		$type: TSKindId.ImaginaryLiteralArm9Arm2 as const,
 		_content,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
@@ -8256,46 +8248,43 @@ export function buildImaginaryLiteralArm10Arm2(
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: buildImaginaryLiteralArm10Arm2$with$content, [RECEIVER]: node };
+	node.$with = { content: buildImaginaryLiteralArm9Arm2$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ImaginaryLiteralArm10Arm2.Bound;
+	return node as unknown as T.ImaginaryLiteralArm9Arm2.Bound;
 }
 
-function buildImaginaryLiteralArm10Arm2$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildImaginaryLiteralArm9Arm2$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<string>) =>
-				rebuilt(node, handle, () => buildImaginaryLiteralArm10Arm2(value))
+				rebuilt(node, handle, () => buildImaginaryLiteralArm9Arm2(value))
 			);
 	}
-	throw new Error(`imaginary_literal_arm10_arm2 has no $with.${setter}`);
+	throw new Error(`imaginary_literal_arm9_arm2 has no $with.${setter}`);
 }
-function buildImaginaryLiteralArm10Arm2$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildImaginaryLiteralArm10Arm2$with(receiverOf(this, '$with.content'), 'content', args);
+function buildImaginaryLiteralArm9Arm2$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImaginaryLiteralArm9Arm2$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function buildImaginaryLiteralArm10Arm3(content: string, affix?: true): T.ImaginaryLiteralArm10Arm3.Bound;
-export function buildImaginaryLiteralArm10Arm3(text: `${string}i`, affix: false): T.ImaginaryLiteralArm10Arm3.Bound;
-export function buildImaginaryLiteralArm10Arm3(
-	input: string,
-	affix: boolean = true
-): T.ImaginaryLiteralArm10Arm3.Bound {
+export function buildImaginaryLiteralArm9Arm3(content: string, affix?: true): T.ImaginaryLiteralArm9Arm3.Bound;
+export function buildImaginaryLiteralArm9Arm3(text: `${string}i`, affix: false): T.ImaginaryLiteralArm9Arm3.Bound;
+export function buildImaginaryLiteralArm9Arm3(input: string, affix: boolean = true): T.ImaginaryLiteralArm9Arm3.Bound {
 	let value = input;
 	if (!affix) {
 		if (typeof input !== 'string')
-			throw new Error(`imaginary_literal_arm10_arm3.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '', 'i', 'imaginary_literal_arm10_arm3');
+			throw new Error(`imaginary_literal_arm9_arm3.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'i', 'imaginary_literal_arm9_arm3');
 	}
 	const _content = value;
 	if (typeof _content !== 'string')
-		throw new Error(`imaginary_literal_arm10_arm3.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildImaginaryLiteralArm10Arm3_content.test(_content))
-		throw new Error(`imaginary_literal_arm10_arm3.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`imaginary_literal_arm9_arm3.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildImaginaryLiteralArm9Arm3_content.test(_content))
+		throw new Error(`imaginary_literal_arm9_arm3.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm10_arm3', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'imaginary_literal_arm9_arm3', { content: _content });
 	const node = {
-		$type: TSKindId.ImaginaryLiteralArm10Arm3 as const,
+		$type: TSKindId.ImaginaryLiteralArm9Arm3 as const,
 		_content,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
@@ -8309,23 +8298,23 @@ export function buildImaginaryLiteralArm10Arm3(
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: buildImaginaryLiteralArm10Arm3$with$content, [RECEIVER]: node };
+	node.$with = { content: buildImaginaryLiteralArm9Arm3$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ImaginaryLiteralArm10Arm3.Bound;
+	return node as unknown as T.ImaginaryLiteralArm9Arm3.Bound;
 }
 
-function buildImaginaryLiteralArm10Arm3$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildImaginaryLiteralArm9Arm3$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<string>) =>
-				rebuilt(node, handle, () => buildImaginaryLiteralArm10Arm3(value))
+				rebuilt(node, handle, () => buildImaginaryLiteralArm9Arm3(value))
 			);
 	}
-	throw new Error(`imaginary_literal_arm10_arm3 has no $with.${setter}`);
+	throw new Error(`imaginary_literal_arm9_arm3 has no $with.${setter}`);
 }
-function buildImaginaryLiteralArm10Arm3$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildImaginaryLiteralArm10Arm3$with(receiverOf(this, '$with.content'), 'content', args);
+function buildImaginaryLiteralArm9Arm3$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildImaginaryLiteralArm9Arm3$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildRuneLiteralArm1(content: string, affix?: true): T.RuneLiteralArm1.Bound;
@@ -12102,16 +12091,15 @@ export type FluentKindMap = {
 	float_literal_arm4_arm3: T.FloatLiteralArm4Arm3.Bound;
 	imaginary_literal_arm1: T.ImaginaryLiteralArm1.Bound;
 	imaginary_literal_arm2: T.ImaginaryLiteralArm2.Bound;
-	imaginary_literal_arm3: T.ImaginaryLiteralArm3;
+	imaginary_literal_arm3: T.ImaginaryLiteralArm3.Bound;
 	imaginary_literal_arm4: T.ImaginaryLiteralArm4.Bound;
 	imaginary_literal_arm5: T.ImaginaryLiteralArm5.Bound;
 	imaginary_literal_arm6: T.ImaginaryLiteralArm6.Bound;
 	imaginary_literal_arm7: T.ImaginaryLiteralArm7.Bound;
 	imaginary_literal_arm8: T.ImaginaryLiteralArm8.Bound;
-	imaginary_literal_arm9: T.ImaginaryLiteralArm9.Bound;
-	imaginary_literal_arm10_arm1: T.ImaginaryLiteralArm10Arm1.Bound;
-	imaginary_literal_arm10_arm2: T.ImaginaryLiteralArm10Arm2.Bound;
-	imaginary_literal_arm10_arm3: T.ImaginaryLiteralArm10Arm3.Bound;
+	imaginary_literal_arm9_arm1: T.ImaginaryLiteralArm9Arm1.Bound;
+	imaginary_literal_arm9_arm2: T.ImaginaryLiteralArm9Arm2.Bound;
+	imaginary_literal_arm9_arm3: T.ImaginaryLiteralArm9Arm3.Bound;
 	rune_literal_arm1: T.RuneLiteralArm1.Bound;
 	rune_literal_arm2_arm1: T.RuneLiteralArm2Arm1.Bound;
 	rune_literal_arm2_arm2: T.RuneLiteralArm2Arm2.Bound;
@@ -12291,10 +12279,9 @@ export const _factoryMap = {
 	imaginary_literal_arm6: buildImaginaryLiteralArm6,
 	imaginary_literal_arm7: buildImaginaryLiteralArm7,
 	imaginary_literal_arm8: buildImaginaryLiteralArm8,
-	imaginary_literal_arm9: buildImaginaryLiteralArm9,
-	imaginary_literal_arm10_arm1: buildImaginaryLiteralArm10Arm1,
-	imaginary_literal_arm10_arm2: buildImaginaryLiteralArm10Arm2,
-	imaginary_literal_arm10_arm3: buildImaginaryLiteralArm10Arm3,
+	imaginary_literal_arm9_arm1: buildImaginaryLiteralArm9Arm1,
+	imaginary_literal_arm9_arm2: buildImaginaryLiteralArm9Arm2,
+	imaginary_literal_arm9_arm3: buildImaginaryLiteralArm9Arm3,
 	rune_literal_arm1: buildRuneLiteralArm1,
 	rune_literal_arm2_arm1: buildRuneLiteralArm2Arm1,
 	rune_literal_arm2_arm2: buildRuneLiteralArm2Arm2,

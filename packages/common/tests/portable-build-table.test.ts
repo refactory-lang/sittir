@@ -331,7 +331,7 @@ describe('the portable build table', () => {
 	});
 
 	it("tests a boolean arm by the value its binding declares, and names the slots a number's value is written from: a config builder's parts, or the digits, never an option", () => {
-		expect(armsOf('rust', 'literal.boolean').map((arm) => arm.when)).toEqual([[{ boolean: true }], [{ boolean: false }]]);
+		expect(armsOf('rust', 'literal.boolean').map((arm) => arm.when)).toEqual([[{ literal: true }], [{ literal: false }]]);
 		expect(armsOf('rust', 'literal.number.integer')[0]!.numeric).toEqual(['content']);
 		expect(armsOf('python', 'literal.number.float')[0]!.numeric).toEqual({ integer: 'integer', fraction: 'fraction', exponent: 'exponent', exponentSign: 'exponentSign' });
 		expect(armsOf('python', 'literal.number.integer.hex')[0]!.numeric).toEqual(['content']);

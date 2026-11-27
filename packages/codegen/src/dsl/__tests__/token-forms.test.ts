@@ -113,6 +113,37 @@ describe('distributeTokenForms', () => {
 	});
 });
 
+describe('distributeTokenForms: an arm the lexer never produces', () => {
+	const digits = P('[0-9](_?[0-9])*');
+	const decimal = seq(P('[1-9]'), P('[0-9]*'));
+	const armsOf = (rule: RuntimeRule): unknown[] => (shape(rule) as { members: { content: unknown }[] }).members.map((arm) => arm.content);
+
+	it('mints no arm for a fixed text an earlier arm also matches, since the lexer takes the earlier one', () => {
+		const out = distributeTokenForms(token(seq(choice(digits, S('0'), decimal), S('i'))), 'imaginary');
+		expect(armsOf(out)).toEqual([shape(seq(digits, S('i'))), shape(seq(decimal, S('i')))]);
+	});
+	it('keeps a fixed text that comes before the arm that also matches it', () => {
+		const out = distributeTokenForms(token(choice(seq(S('0'), S('i')), seq(digits, S('i')))), 'imaginary');
+		expect(armsOf(out)).toHaveLength(2);
+	});
+	it('keeps a fixed text that is one string, which the lexer prefers to a pattern of the same length', () => {
+		const out = distributeTokenForms(token(choice(digits, S('0'))), 'int');
+		expect(armsOf(out)).toEqual([shape(digits), shape(S('0'))]);
+	});
+	it('keeps a fixed text with the higher lexical precedence', () => {
+		const out = distributeTokenForms(token(choice(seq(digits, S('i')), prec(1, seq(S('0'), S('i'))))), 'imaginary');
+		expect(armsOf(out)).toHaveLength(2);
+	});
+	it('keeps a fixed text the other arm reaches only through a precedence below its root', () => {
+		const out = distributeTokenForms(token(choice(seq(prec(1, digits), S('i')), seq(S('0'), S('i')))), 'imaginary');
+		expect(armsOf(out)).toHaveLength(2);
+	});
+	it('leaves the token whole when one arm is all the lexer produces', () => {
+		const rule = token(seq(choice(digits, S('0')), S('i')));
+		expect(distributeTokenForms(rule, 'imaginary')).toBe(rule);
+	});
+});
+
 describe('distributeTokenForms: authored variants on the arms of a token with no form alternation', () => {
 	const prefix = choice(S('0x'), S('0X'));
 	const digits = repeat1(P('_?[0-9a-f]+'));

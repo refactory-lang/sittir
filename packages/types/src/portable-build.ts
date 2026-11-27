@@ -193,14 +193,14 @@ export interface PortableFlagStep {
 	readonly carriesNode?: true;
 }
 
-/** A test a build arm passes for its input: a structure that states every `required` slot and none of the `absent` ones, the slots the path's other arms have and this one lacks (arms with fewer slots come first); a structure whose `empty` list slots are each left out or empty, for an arm whose kind holds only layout and reads with those lists empty; a flag stated or not; a slot's value of one of `kinds`; a fixed literal's text; the boolean a binding declares its kind's value; or the form chosen at a supertype's variant site: the render options' choice at `<variant>/variant`, the `default` form when they make none. */
+/** A test a build arm passes for its input: a structure that states every `required` slot and none of the `absent` ones, the slots the path's other arms have and this one lacks (arms with fewer slots come first); a structure whose `empty` list slots are each left out or empty, for an arm whose kind holds only layout and reads with those lists empty; a flag stated or not; a slot's value of one of `kinds`; a fixed literal's text; the value a binding declares for a literal kind; or the form chosen at a supertype's variant site: the render options' choice at `<variant>/variant`, the `default` form when they make none. */
 export type PortablePickTest =
 	| { readonly absent: readonly string[]; readonly required: readonly string[] }
 	| { readonly empty: readonly string[] }
 	| { readonly flag: string; readonly set: boolean }
 	| { readonly slot: string; readonly kinds: readonly number[] }
 	| { readonly text: string }
-	| { readonly boolean: boolean }
+	| { readonly literal: boolean | number }
 	| { readonly variant: string; readonly value: number; readonly default?: true };
 
 /** The slot a config builder takes each part of a number's decimal spelling through: its digits before and after the point, its exponent's digits, the exponent marker and the exponent's sign. */
@@ -245,7 +245,7 @@ export interface PortableBuildArm {
 	readonly carriesNode?: true;
 	readonly scientific?: true;
 	readonly digits?: { readonly base: 2 | 8 | 10 | 16; readonly affix: string };
-	readonly literal?: { readonly value?: boolean };
+	readonly literal?: { readonly value?: boolean | number };
 	readonly when: readonly PortablePickTest[];
 	readonly holders?: readonly (readonly [holder: number, key: string])[];
 	readonly slots: readonly PortableSlotRoute[];

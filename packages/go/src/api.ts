@@ -48,7 +48,7 @@ export const hooks: LanguageHooks<GoAPI> = Object.freeze<LanguageHooks<GoAPI>>({
 			{ open: '/*', close: '/', build: (text: string) => buildCommentArm2(text as `/*${string}/`, false) }
 		])
 	}),
-	rootKinds: Object.freeze([133]),
+	rootKinds: Object.freeze([132]),
 	querySlots,
 	nativeSlots,
 	structure,

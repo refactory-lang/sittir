@@ -1728,7 +1728,7 @@ Removes `annotations.default` from a member, looking through an `ALIAS` to the a
 
 ### `packages/codegen/src/dsl/transform/token-forms.ts::distributeTokenForms`
 
-The rule algebra behind the token-form hoist. For a rule whose prec-peeled core is a `TOKEN` or `IMMEDIATE_TOKEN`, finds the outermost form alternation on any path from the token root (`findOutermostForms`) and distributes the whole token body over the arms: each arm becomes its own token of the same wrapper kind with the surrounding structure kept, and the result is a `CHOICE` of those tokens under the original prec stack. An arm that is itself an alternation is not descended into here; it stays one lexeme until the enrich hoist recurses into the minted arm. Two hazards are diagnostics: an arm that matches the empty string (a pattern is tested as an anchored regex against the empty string), and two arms with identical bodies. A presence choice is recognised in both spellings the two pipelines produce: a `CHOICE` with a blank arm (tree-sitter's) and an `OPTIONAL` node (sittir's evaluate), so both mint the same arms. Any other rule shape is returned as is.
+The rule algebra behind the token-form hoist. For a rule whose prec-peeled core is a `TOKEN` or `IMMEDIATE_TOKEN`, finds the outermost form alternation on any path from the token root (`findOutermostForms`) and distributes the whole token body over the arms: each arm becomes its own token of the same wrapper kind with the surrounding structure kept, and the result is a `CHOICE` of those tokens under the original prec stack. An arm that is itself an alternation is not descended into here; it stays one lexeme until the enrich hoist recurses into the minted arm. Two hazards are diagnostics: an arm that matches the empty string (a pattern is tested as an anchored regex against the empty string), and two arms with identical bodies. No token is minted for an arm the lexer never produces: a fixed-text arm (one string, or a seq of strings) whose whole text another arm also matches, where tree-sitter's lexer prefers that other arm on an equal-length match. It prefers the higher lexical precedence, then a token that is a single string, then the rule that comes first, and the arms are minted in arm order. An arm with a precedence below its root, or with a pattern that does not compile as a JavaScript RegExp, is left out of the comparison, which can only keep an arm. When fewer than two arms are left, the rule is returned whole. A presence choice is recognised in both spellings the two pipelines produce: a `CHOICE` with a blank arm (tree-sitter's) and an `OPTIONAL` node (sittir's evaluate), so both mint the same arms. Any other rule shape is returned as is.
 
 `fielded` holds the field sites as index paths from the rule root; each prec or token wrapper peeled on the way down consumes one path segment (`underWrapper`), so the sites handed to `findOutermostForms` are relative to the token body.
 
@@ -1751,6 +1751,30 @@ The choice of the token wrapper around each arm, under the precedence wrappers i
 ### `packages/codegen/src/dsl/transform/token-forms.ts::factorSharedOptional`
 
 Rewrites `choice(optional(x), optional(y), …, optional(n))` to `optional(choice(x, y, …, n))` wherever every member of a choice (two or more) is optional, bottom-up, so a choice nested in a choice is factored first. The two spellings match the same text; the factored one keeps the blank case in one place, so the token-form hoist splits the inner choice into disjoint arms plus one blank arm, instead of one arm per optional member that each also accepts the blank. A mixed choice is left alone. The result of a rewrite no longer matches (its members are the inner choice and a blank), so the rewrite is idempotent; an unchanged rule is returned as the same object. Enrich runs it on every rule, so the rewrite reaches both the parser and the IR, and the DSL builders stay faithful to what the grammar wrote.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::Lexeme`
+
+What the lexer's choice between two arms of one token reads from an arm: its lexical precedence, whether the arm is a single string, its fixed text when it has one, and an anchored matcher for everything it matches (absent when its pattern does not compile as a JavaScript RegExp).
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::fixedTextOf`
+
+The one text a token arm matches when it is a string or a seq of strings, joined in order; any other shape has no fixed text.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::lexemeOf`
+
+Reads an arm's `Lexeme`. Its lexical precedence is the number of a single prec wrapper at its root, or 0 with none. An arm the comparison cannot settle has none: several wrappers at its root, one whose value is not a number, or any prec below its root.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::producedArms`
+
+The arms of one token the lexer can produce, in order. It drops a fixed-text arm when another arm matches that whole text and the lexer prefers the other arm (`lexerPrefers`); since that arm also matches every input the dropped arm matches, at the same length, the lexer never produces the dropped one. Only an arm with a fixed text can be dropped, and only an arm with a `Lexeme` takes part.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::lexerPrefers`
+
+Whether tree-sitter's lexer takes the first arm over the second when both match the same text: the higher lexical precedence wins; at equal precedence, a token that is a single string wins; then the arm minted first, since the minted arms take their rule order from the arm order.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::holdsPrec`
+
+Whether a prec wrapper sits anywhere in a rule, the rule itself included. `lexemeOf` asks it below an arm's root, where a precedence on part of the arm would make the arm's lexical precedence depend on the text matched.
 
 
 ### `packages/codegen/src/dsl/transform/transform.ts::applyPatchSet`

@@ -1938,7 +1938,7 @@ The names the node is shown under, when they differ from its kind.
 
 ### `packages/codegen/src/bindings/facts.ts::ClaimFact::value`
 
-The claim's boolean value, when the claim states one.
+The value the claim states with `#set! value`: a boolean or a number.
 
 ### `packages/codegen/src/bindings/facts.ts::ModelSlot::mounts`
 

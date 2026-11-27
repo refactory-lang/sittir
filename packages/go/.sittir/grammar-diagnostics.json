@@ -193,7 +193,7 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "go",
-    "message": "conflict between field_declarations on ';' resolved by AddConflict (default)",
+    "message": "conflict between field_declarations on source_file_text resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
@@ -215,7 +215,7 @@
           "'{'",
           "field_declaration"
         ],
-        "lookahead": "';'",
+        "lookahead": "source_file_text",
         "interpretations": [
           "field_declarations",
           "field_declarations"
@@ -228,7 +228,7 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "go",
-    "message": "conflict between import_specs on ';' resolved by AddConflict (default)",
+    "message": "conflict between import_specs on source_file_text resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
@@ -250,7 +250,7 @@
           "'('",
           "import_spec"
         ],
-        "lookahead": "';'",
+        "lookahead": "source_file_text",
         "interpretations": [
           "import_specs",
           "import_specs"
@@ -263,7 +263,7 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "go",
-    "message": "conflict between interface_elems on ';' resolved by AddConflict (default)",
+    "message": "conflict between interface_elems on source_file_text resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
@@ -285,7 +285,7 @@
           "'{'",
           "method_elem"
         ],
-        "lookahead": "';'",
+        "lookahead": "source_file_text",
         "interpretations": [
           "interface_elems",
           "interface_elems"
@@ -336,7 +336,7 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "go",
-    "message": "conflict between statements on ';' resolved by AddConflict (default)",
+    "message": "conflict between statements on source_file_text resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
@@ -358,7 +358,7 @@
           "'{'",
           "_statement"
         ],
-        "lookahead": "';'",
+        "lookahead": "source_file_text",
         "interpretations": [
           "statements",
           "statements"
@@ -371,7 +371,7 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "go",
-    "message": "conflict between type_declaration_elements on ';' resolved by AddConflict (default)",
+    "message": "conflict between type_declaration_elements on source_file_text resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
@@ -392,7 +392,7 @@
           "'('",
           "type_alias"
         ],
-        "lookahead": "';'",
+        "lookahead": "source_file_text",
         "interpretations": [
           "type_declaration_elements",
           "type_declaration_elements"
@@ -629,7 +629,7 @@
     "code": "accessor-class-clash",
     "severity": "warning",
     "canProceed": true,
-    "message": "accessor 'content' holds single (import_declaration, const_declaration, var_declaration, var_spec, type_declaration, statement_list, for_statement, call_expression, literal_element, escape_sequence_arm1, escape_sequence_arm2, escape_sequence_arm3, escape_sequence_arm4, escape_sequence_arm5, float_literal_arm1, float_literal_arm3, float_literal_arm4_arm1, float_literal_arm4_arm2, float_literal_arm4_arm3, imaginary_literal_arm1, imaginary_literal_arm2, imaginary_literal_arm4, imaginary_literal_arm5, imaginary_literal_arm6, imaginary_literal_arm7, imaginary_literal_arm8, imaginary_literal_arm9, imaginary_literal_arm10_arm1, imaginary_literal_arm10_arm2, imaginary_literal_arm10_arm3, rune_literal_arm1, rune_literal_arm2_arm1, rune_literal_arm2_arm2, rune_literal_arm2_arm3, rune_literal_arm2_arm4, comment_arm1, comment_arm2, package_identifier, field_identifier, type_identifier, label_name); choice (rune_literal_arm2_arm5); rename the choice side, or name the slot for what it holds",
+    "message": "accessor 'content' holds single (import_declaration, const_declaration, var_declaration, var_spec, type_declaration, statement_list, for_statement, call_expression, literal_element, escape_sequence_arm1, escape_sequence_arm2, escape_sequence_arm3, escape_sequence_arm4, escape_sequence_arm5, float_literal_arm1, float_literal_arm3, float_literal_arm4_arm1, float_literal_arm4_arm2, float_literal_arm4_arm3, imaginary_literal_arm1, imaginary_literal_arm2, imaginary_literal_arm3, imaginary_literal_arm4, imaginary_literal_arm5, imaginary_literal_arm6, imaginary_literal_arm7, imaginary_literal_arm8, imaginary_literal_arm9_arm1, imaginary_literal_arm9_arm2, imaginary_literal_arm9_arm3, rune_literal_arm1, rune_literal_arm2_arm1, rune_literal_arm2_arm2, rune_literal_arm2_arm3, rune_literal_arm2_arm4, comment_arm1, comment_arm2, package_identifier, field_identifier, type_identifier, label_name); choice (rune_literal_arm2_arm5); rename the choice side, or name the slot for what it holds",
     "details": {
       "name": "content",
       "classes": {
@@ -655,15 +655,15 @@
           "float_literal_arm4_arm3",
           "imaginary_literal_arm1",
           "imaginary_literal_arm2",
+          "imaginary_literal_arm3",
           "imaginary_literal_arm4",
           "imaginary_literal_arm5",
           "imaginary_literal_arm6",
           "imaginary_literal_arm7",
           "imaginary_literal_arm8",
-          "imaginary_literal_arm9",
-          "imaginary_literal_arm10_arm1",
-          "imaginary_literal_arm10_arm2",
-          "imaginary_literal_arm10_arm3",
+          "imaginary_literal_arm9_arm1",
+          "imaginary_literal_arm9_arm2",
+          "imaginary_literal_arm9_arm3",
           "rune_literal_arm1",
           "rune_literal_arm2_arm1",
           "rune_literal_arm2_arm2",
@@ -1357,42 +1357,34 @@
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-value-unshaped",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer.imaginary: its $value is a number, but imaginary_literal_arm10_arm1 has no number shape, so no read or build of it carries one"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-unshaped",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer.imaginary: its $value is a number, but imaginary_literal_arm10_arm2 has no number shape, so no read or build of it carries one"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-unshaped",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer.imaginary: its $value is a number, but imaginary_literal_arm10_arm3 has no number shape, so no read or build of it carries one"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-unshaped",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer.imaginary: its $value is a number, but imaginary_literal_arm3 has no number shape, so no read or build of it carries one"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
     "code": "portable-integer-partial",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.imaginary: imaginary_literal_arm5's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
+    "message": "literal.number.integer.imaginary: imaginary_literal_arm4's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-value-unshaped",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.imaginary: its $value is a number, but imaginary_literal_arm9_arm1 has no number shape, so no read or build of it carries one"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-value-unshaped",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.imaginary: its $value is a number, but imaginary_literal_arm9_arm2 has no number shape, so no read or build of it carries one"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-value-unshaped",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.imaginary: its $value is a number, but imaginary_literal_arm9_arm3 has no number shape, so no read or build of it carries one"
   },
   {
     "scope": "grammar",
@@ -2366,7 +2358,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.bounds: arm 298 builds through its holder"
+    "message": "clause.bounds: arm 297 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3046,7 +3038,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "identifier.label: arm 296 builds through its holder"
+    "message": "identifier.label: arm 295 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3094,7 +3086,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.empty: arm 177 builds through its holder"
+    "message": "statement.empty: arm 176 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3255,13 +3247,5 @@
     "severity": "warning",
     "canProceed": true,
     "message": "type.primitive.unchecked: a preset at  below a holder with no builder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-type",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "portable/build.ts:2080: TS2367 This comparison appears to be unintentional because the types 'number | bigint' and 'string' have no overlap."
   }
 ]

@@ -531,7 +531,11 @@ describe('the value directive', () => {
 			['literal.boolean.false', false]
 		]);
 	});
-	it('refuses a value that is not true or false', async () => {
-		await expect(readBindings('((true) @literal.boolean.true (#set! value yes))')).rejects.toThrow(/#set! value takes true or false, not yes/);
+	it('stamps a claim with the number it declares', async () => {
+		const facts = await readBindings('((true) @literal.number.integer (#set! value 0))');
+		expect(facts.claims.map((c) => [c.vocab, c.value])).toEqual([['literal.number.integer', 0]]);
+	});
+	it('refuses a value that is not true, false or a number', async () => {
+		await expect(readBindings('((true) @literal.boolean.true (#set! value yes))')).rejects.toThrow(/#set! value takes true, false or a number, not yes/);
 	});
 });

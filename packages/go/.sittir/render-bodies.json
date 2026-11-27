@@ -1655,46 +1655,20 @@
 			"text": "i"
 		}
 	],
-	"imaginary_literal_arm10_arm1": [
-		{
-			"kind": "slot",
-			"name": "content"
-		},
-		{
-			"kind": "adjacent"
-		},
-		{
-			"kind": "text",
-			"text": "i"
-		}
-	],
-	"imaginary_literal_arm10_arm2": [
-		{
-			"kind": "slot",
-			"name": "content"
-		},
-		{
-			"kind": "adjacent"
-		},
-		{
-			"kind": "text",
-			"text": "i"
-		}
-	],
-	"imaginary_literal_arm10_arm3": [
-		{
-			"kind": "slot",
-			"name": "content"
-		},
-		{
-			"kind": "adjacent"
-		},
-		{
-			"kind": "text",
-			"text": "i"
-		}
-	],
 	"imaginary_literal_arm2": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "i"
+		}
+	],
+	"imaginary_literal_arm3": [
 		{
 			"kind": "slot",
 			"name": "content"
@@ -1772,7 +1746,33 @@
 			"text": "i"
 		}
 	],
-	"imaginary_literal_arm9": [
+	"imaginary_literal_arm9_arm1": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "i"
+		}
+	],
+	"imaginary_literal_arm9_arm2": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "i"
+		}
+	],
+	"imaginary_literal_arm9_arm3": [
 		{
 			"kind": "slot",
 			"name": "content"

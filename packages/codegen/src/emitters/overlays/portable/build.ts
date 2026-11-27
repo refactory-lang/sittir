@@ -139,7 +139,7 @@ interface Arm {
 	readonly required: ReadonlySet<string>;
 	readonly tested: ReadonlySet<string>;
 	readonly text: string | undefined;
-	readonly value: boolean | undefined;
+	readonly value: boolean | number | undefined;
 	readonly scalar: ArmScalar | undefined;
 	readonly complete: boolean;
 	readonly builds: string;
@@ -304,7 +304,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		return entries.length === 0 ? undefined : Object.fromEntries(entries.sort(([a], [b]) => a - b));
 	};
 	const literals = valueTokensOf(routes, fixedText);
-	const declaredValues = new Map<string, boolean>();
+	const declaredValues = new Map<string, boolean | number>();
 	for (const [kind, entries] of routes.readEntries) for (const { claim } of entries) if (claim.value !== undefined) declaredValues.set(kind, claim.value);
 	const kindValueScalars = new Map<string, VocabularyScalar>();
 	for (const [kind, entries] of routes.readEntries) {
@@ -1435,7 +1435,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			return [...fixed.map(([arm, test]): Part => [test, [arm]]), ...(rest.length === 0 ? [] : [[undefined, rest] as Part])];
 		};
 	const splitters: readonly ((group: readonly Arm[]) => readonly Part[] | undefined)[] = [
-		literalSplit((arm) => (arm.value === undefined ? undefined : { boolean: arm.value })),
+		literalSplit((arm) => (arm.value === undefined ? undefined : { literal: arm.value })),
 		literalSplit((arm) => (arm.text === undefined ? undefined : { text: arm.text })),
 		(group) => {
 			const scalars = [...new Set(group.flatMap((arm) => arm.scalar ?? []))];
@@ -1743,7 +1743,7 @@ function withTakers(paths: Readonly<Record<string, PortableBuildPath>>, kindName
 		...Object.entries(built.builds ?? {}).flatMap(([scalar, kind]) => built.arms.filter((arm) => arm.kind === kind && arm.scalar === scalar).map((arm) => ({ path, scalar, arm }))),
 		...built.arms.flatMap((arm) => {
 			const value = arm.literal?.value;
-			return value === undefined || !built.arms.every((other) => other.literal?.value === value) ? [] : [{ path, scalar: String(value), arm }];
+			return typeof value !== 'boolean' || !built.arms.every((other) => other.literal?.value === value) ? [] : [{ path, scalar: String(value), arm }];
 		})
 	]);
 	const kindsOf = new WeakMap<PortableSeat, ReadonlySet<number>>();
