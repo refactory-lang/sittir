@@ -1091,7 +1091,7 @@ impl<'t> Placer<'t, '_, '_> {
         }
         let siblings = siblings.get_or_insert_with(|| self.siblings(shape));
         let kid = |at: usize| shape.segments[at].kid.map(|kid| shape.kids[kid]);
-        match owner(&siblings.before[..gap], entry.span(), entry.display, &siblings.after[gap..], self.text()) {
+        match owner(&siblings.before[..gap], entry.span(), entry.display, &siblings.after[gap..], self.text(), self.kinds.holds_inner(shape.node.grammar, shape.node.display)) {
             Owner::Trailing { at } => {
                 let segment = shape.segments[at];
                 let node = if at + 1 == gap {

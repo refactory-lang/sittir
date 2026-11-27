@@ -211,8 +211,9 @@ pub fn with_line_breaks<E>(side: TriviaSide, entries: impl IntoIterator<Item = (
 }
 
 /// Where the extra or `ERROR` of kind `extra` spanning `entry` goes,
-/// `before` and `after` its siblings in source order, the first answer that
-/// holds:
+/// `before` and `after` its siblings in source order and `inner` whether the
+/// node holding them holds an inner side (`SurfaceKinds::holds_inner`), the
+/// first answer that holds:
 /// 1. trailing the holder before it with only entries between, when it
 ///    starts on the row that holder ends on;
 /// 2. leading the holder after it with only entries between;
@@ -229,27 +230,28 @@ pub fn with_line_breaks<E>(side: TriviaSide, entries: impl IntoIterator<Item = (
 /// passes nothing backward: behind an extra or `ERROR` it stops the search
 /// as a token does.
 ///
-/// An `ERROR` is source content, and a rebuild writes it where its owner's
-/// side is, so it takes only a sibling with nothing but entries between
-/// them (answers 1 to 3): a flag passes it nowhere, a node its holder keeps
-/// as a fixed token or a flag holds none of its sides, and no holder past a
-/// token takes it. With none, it goes to the `inner` side of the node
-/// holding them (`SurfaceKinds::places_inner`), which a rebuild carries as
-/// its source.
+/// An `ERROR` is source content: it goes only to a side every render of
+/// the tree writes, a parsed node edited in place included, and a node its
+/// holder keeps as a fixed token or a flag holds none of its sides. After
+/// answers 1 to 3, it goes to the `inner` side of the node holding them
+/// where that node holds one, so a rebuild writes it where the source has
+/// it; then to the nearest holder as in 4, so a rebuild moves it past the
+/// tokens between but writes it; and with no holder, to the `inner` side
+/// (`SurfaceKinds::places_inner`), which a rebuild carries as its source.
 #[must_use]
-pub fn owner(before: &[Sibling], entry: Span, extra: KindId, after: &[Sibling], source: &str) -> Owner {
+pub fn owner(before: &[Sibling], entry: Span, extra: KindId, after: &[Sibling], source: &str, inner: bool) -> Owner {
     let error = extra == KindId::ERROR;
     let holds = |sibling: &Sibling| sibling.holder && !sibling.flag && !(error && sibling.fixed);
     let passed = |sibling: &Sibling| sibling.entry || (!sibling.holder && sibling.span.start == sibling.span.end);
     let beside_before = before.iter().rposition(|sibling| !passed(sibling)).filter(|&at| holds(&before[at]));
-    let beside_after = after.iter().position(|sibling| !passed(sibling) && (error || !sibling.flag)).filter(|&at| holds(&after[at]));
+    let beside_after = after.iter().position(|sibling| !passed(sibling) && !sibling.flag).filter(|&at| holds(&after[at]));
     if let Some(at) = beside_before.filter(|&at| same_row(source, before[at].span.end, entry.start)) {
         return Owner::Trailing { at };
     }
     match (beside_after, beside_before) {
         (Some(at), _) => Owner::Leading { at },
         (None, Some(at)) => Owner::Trailing { at },
-        (None, None) if error => Owner::Inner,
+        (None, None) if error && inner => Owner::Inner,
         (None, None) => match (after.iter().position(holds), before.iter().rposition(holds)) {
             (Some(at), _) => Owner::Leading { at },
             (None, Some(at)) => Owner::Trailing { at },
@@ -346,21 +348,22 @@ impl SurfaceKinds {
         !self.units.contains(&kind)
     }
 
-    /// Whether a node of `kind` has an inside: its template renders an inner
-    /// side, where an empty node of the kind holds its trivia.
+    /// Whether a node of `kind`, shown as `display`, has an inside: the
+    /// template of either kind renders an inner side, where an empty node of
+    /// the kind holds its trivia.
     #[must_use]
-    pub fn holds_inner(&self, kind: KindId) -> bool {
-        self.inner.contains(&kind)
+    pub fn holds_inner(&self, kind: KindId, display: KindId) -> bool {
+        self.inner.contains(&kind) || self.inner.contains(&display)
     }
 
     /// Whether an extra of kind `extra` that a node of `kind`, shown as
     /// `display`, holds beside none of its children is placed on that
     /// node's inner side: an `ERROR` always, since it is source content and
-    /// a read that drops it loses code; another extra only where either
-    /// kind holds an inner side (`holds_inner`).
+    /// a read that drops it loses code; another extra only where the node
+    /// holds an inner side (`holds_inner`).
     #[must_use]
     pub fn places_inner(&self, extra: KindId, kind: KindId, display: KindId) -> bool {
-        extra == KindId::ERROR || self.holds_inner(kind) || self.holds_inner(display)
+        extra == KindId::ERROR || self.holds_inner(kind, display)
     }
 
     /// Whether `kind` is one of the grammar's depth members.
@@ -609,32 +612,32 @@ mod tests {
     fn owner_passes_an_entry_forward_over_a_flag_and_never_gives_a_flag_a_side() {
         let flag = |start, end| Sibling { flag: true, ..sibling(start, end, true) };
         let source = "let mut /* c */ x";
-        assert_eq!(owner(&[sibling(0, 3, false), flag(4, 7)], Span { start: 8, end: 15 }, COMMENT, &[sibling(16, 17, true)], source), Owner::Leading { at: 0 });
+        assert_eq!(owner(&[sibling(0, 3, false), flag(4, 7)], Span { start: 8, end: 15 }, COMMENT, &[sibling(16, 17, true)], source, false), Owner::Leading { at: 0 });
         let source = "let mut // c\n    x";
-        assert_eq!(owner(&[sibling(0, 3, false), flag(4, 7)], Span { start: 8, end: 12 }, COMMENT, &[sibling(17, 18, true)], source), Owner::Leading { at: 0 });
+        assert_eq!(owner(&[sibling(0, 3, false), flag(4, 7)], Span { start: 8, end: 12 }, COMMENT, &[sibling(17, 18, true)], source, false), Owner::Leading { at: 0 });
         let source = "static /* c */ mut X";
-        assert_eq!(owner(&[sibling(0, 6, false)], Span { start: 7, end: 14 }, COMMENT, &[flag(15, 18), sibling(19, 20, true)], source), Owner::Leading { at: 1 });
+        assert_eq!(owner(&[sibling(0, 6, false)], Span { start: 7, end: 14 }, COMMENT, &[flag(15, 18), sibling(19, 20, true)], source, false), Owner::Leading { at: 1 });
         let source = "a?. /* c */ [0]";
-        assert_eq!(owner(&[sibling(0, 1, true), flag(1, 3)], Span { start: 4, end: 11 }, COMMENT, &[sibling(12, 15, true)], source), Owner::Leading { at: 0 });
-        assert_eq!(owner(&[flag(4, 7)], Span { start: 8, end: 15 }, COMMENT, &[], "let mut /* c */"), Owner::Inner);
+        assert_eq!(owner(&[sibling(0, 1, true), flag(1, 3)], Span { start: 4, end: 11 }, COMMENT, &[sibling(12, 15, true)], source, false), Owner::Leading { at: 0 });
+        assert_eq!(owner(&[flag(4, 7)], Span { start: 8, end: 15 }, COMMENT, &[], "let mut /* c */", false), Owner::Inner);
     }
 
     #[test]
     fn owner_passes_over_an_empty_sibling_that_holds_nothing() {
         let source = "a: string // c\n  b: number";
         let (a, b) = (sibling(0, 9, true), sibling(17, 26, true));
-        assert_eq!(owner(&[a, sibling(10, 10, false)], Span { start: 10, end: 14 }, COMMENT, &[b], source), Owner::Trailing { at: 0 });
+        assert_eq!(owner(&[a, sibling(10, 10, false)], Span { start: 10, end: 14 }, COMMENT, &[b], source, false), Owner::Trailing { at: 0 });
         let source = "a\n// c\nb";
-        assert_eq!(owner(&[sibling(0, 1, true)], Span { start: 2, end: 6 }, COMMENT, &[sibling(7, 7, false), sibling(7, 8, true)], source), Owner::Leading { at: 1 });
+        assert_eq!(owner(&[sibling(0, 1, true)], Span { start: 2, end: 6 }, COMMENT, &[sibling(7, 7, false), sibling(7, 8, true)], source, false), Owner::Leading { at: 1 });
     }
 
     #[test]
     fn owner_stops_at_a_separator_and_at_an_empty_sibling_that_holds_sides() {
         let source = "a, // c\n  b";
         let (a, b) = (sibling(0, 1, true), sibling(10, 11, true));
-        assert_eq!(owner(&[a, sibling(1, 2, false)], Span { start: 3, end: 7 }, COMMENT, &[b], source), Owner::Leading { at: 0 });
+        assert_eq!(owner(&[a, sibling(1, 2, false)], Span { start: 3, end: 7 }, COMMENT, &[b], source, false), Owner::Leading { at: 0 });
         let source = "a // c\n  b";
-        assert_eq!(owner(&[sibling(0, 1, true), sibling(2, 2, true)], Span { start: 2, end: 6 }, COMMENT, &[sibling(9, 10, true)], source), Owner::Trailing { at: 1 });
+        assert_eq!(owner(&[sibling(0, 1, true), sibling(2, 2, true)], Span { start: 2, end: 6 }, COMMENT, &[sibling(9, 10, true)], source, false), Owner::Trailing { at: 1 });
     }
 
     /// A side's entries as `with_line_breaks` holds them: `s` a space
@@ -723,20 +726,24 @@ mod tests {
     }
 
     #[test]
-    fn owner_gives_an_error_only_a_sibling_with_nothing_but_entries_between_and_else_the_inner_side() {
+    fn owner_gives_an_error_a_sibling_beside_it_then_an_inner_side_its_holder_holds_then_the_nearest_holder() {
         let flag = |start, end| Sibling { flag: true, fixed: true, ..sibling(start, end, true) };
         let fixed = |start, end| Sibling { fixed: true, ..sibling(start, end, true) };
         let at = |start, end| Span { start, end };
         let source = "& @ mut x";
-        assert_eq!(owner(&[sibling(0, 1, false)], at(2, 3), KindId::ERROR, &[flag(4, 7), sibling(8, 9, true)], source), Owner::Inner);
-        assert_eq!(owner(&[sibling(0, 1, false)], at(2, 3), COMMENT, &[flag(4, 7), sibling(8, 9, true)], source), Owner::Leading { at: 1 });
+        assert_eq!(owner(&[sibling(0, 1, false)], at(2, 3), KindId::ERROR, &[flag(4, 7), sibling(8, 9, true)], source, false), Owner::Leading { at: 1 });
+        assert_eq!(owner(&[sibling(0, 1, false)], at(2, 3), KindId::ERROR, &[fixed(4, 7), sibling(8, 9, true)], source, true), Owner::Inner);
+        assert_eq!(owner(&[sibling(0, 1, false)], at(2, 3), KindId::ERROR, &[fixed(4, 7), sibling(8, 9, true)], source, false), Owner::Leading { at: 1 });
+        assert_eq!(owner(&[sibling(0, 1, false)], at(2, 3), COMMENT, &[fixed(4, 7), sibling(8, 9, true)], source, true), Owner::Leading { at: 0 });
         let source = "&mut @ x";
-        assert_eq!(owner(&[sibling(0, 1, false), flag(1, 4)], at(5, 6), KindId::ERROR, &[sibling(7, 8, true)], source), Owner::Leading { at: 0 });
+        assert_eq!(owner(&[sibling(0, 1, false), flag(1, 4)], at(5, 6), KindId::ERROR, &[sibling(7, 8, true)], source, true), Owner::Leading { at: 0 });
         let source = "& @ self";
-        assert_eq!(owner(&[sibling(0, 1, false)], at(2, 3), KindId::ERROR, &[fixed(4, 8)], source), Owner::Inner);
-        assert_eq!(owner(&[sibling(0, 1, false)], at(2, 3), COMMENT, &[fixed(4, 8)], source), Owner::Leading { at: 0 });
+        assert_eq!(owner(&[sibling(0, 1, false)], at(2, 3), KindId::ERROR, &[fixed(4, 8)], source, false), Owner::Inner);
+        assert_eq!(owner(&[sibling(0, 1, false)], at(2, 3), COMMENT, &[fixed(4, 8)], source, false), Owner::Leading { at: 0 });
         let source = "(a, @ )";
-        assert_eq!(owner(&[sibling(0, 1, false), sibling(1, 2, true), sibling(2, 3, false)], at(4, 5), KindId::ERROR, &[sibling(6, 7, false)], source), Owner::Inner);
-        assert_eq!(owner(&[sibling(0, 1, false), sibling(1, 2, true), sibling(2, 3, false)], at(4, 5), COMMENT, &[sibling(6, 7, false)], source), Owner::Trailing { at: 1 });
+        let before = [sibling(0, 1, false), sibling(1, 2, true), sibling(2, 3, false)];
+        assert_eq!(owner(&before, at(4, 5), KindId::ERROR, &[sibling(6, 7, false)], source, true), Owner::Inner);
+        assert_eq!(owner(&before, at(4, 5), KindId::ERROR, &[sibling(6, 7, false)], source, false), Owner::Trailing { at: 1 });
+        assert_eq!(owner(&before, at(4, 5), COMMENT, &[sibling(6, 7, false)], source, true), Owner::Trailing { at: 1 });
     }
 }
