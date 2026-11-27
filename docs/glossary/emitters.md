@@ -12155,7 +12155,8 @@ each record view gets the same lines, written for the view.
 
 ### `packages/codegen/src/emitters/render-module.ts::rustKindIdSlice`
 
-The Rust slice literal a kind-gated arm tests against: the arm's kind names
+The Rust slice literal a kind-gated arm tests against, and that an edge part
+under the arm carries: the arm's kind names
 expanded through `concreteKindsOf` (a supertype to its members) and mapped to
 ids. A name with no id is an error, since a gate that can never fire would
 silently drop the literal.
@@ -13487,11 +13488,11 @@ Each slot a body writes, once, at its first appearance. This is a unit's place a
 
 ### `packages/codegen/src/emitters/render-body.ts::EdgePartSpec`
 
-One thing a body can write at an edge, before its ids are resolved: a `token` by its text, a `cell` by its slot name, or a token `guarded` by the slot whose presence writes it. A depth part's token is its marker text (`INDENT_TEXT`, `DEDENT_TEXT`).
+One thing a body can write at an edge, before its ids are resolved: a `token` by its text, a `cell` by its slot name, or a token `guarded` by the slot whose presence writes it. A cell or guarded token under an arm picked by its slot's kind carries that arm's `kinds`, and counts only when the cell holds one of them. A depth part's token is its marker text (`INDENT_TEXT`, `DEDENT_TEXT`).
 
 ### `packages/codegen/src/emitters/render-body.ts::bodyEdgeParts`
 
-What a body can write first (`before`) or last (`after`), nearest the edge first, so a reader finds the edge token of a record without a row for it. The walk passes seams, spacing and whitespace-only text, which is no fixed token, stops at an unconditional token or a required slot, and reads past a slot `optional` names and past an `if` unless every alternative ends the walk. A slot inside the arm that tests it counts as required there. Two shapes a `Guarded` part cannot state throw: a token under an arm gated by a slot's kind, and a fallback that writes at the edge beside an arm that writes nothing there.
+What a body can write first (`before`) or last (`after`), nearest the edge first, so a reader finds the edge token of a record without a row for it. The walk passes seams, spacing and whitespace-only text, which is no fixed token, stops at an unconditional token or a required slot, and reads past a slot `optional` names and past an `if` unless every alternative ends the walk. A slot inside the arm that tests it counts as required there. Under an arm the body picks by its slot's kind, each part carries the kinds the body stamps on that arm, so a reader takes the arm the cell's kind picks and goes on to the next part for a cell of another kind. That slot is the only one a part under the arm can name: any other slot written there throws, as does a fallback that writes at the edge beside an arm that writes nothing there.
 
 ### `packages/codegen/src/emitters/factories.ts::slotGuardKey`
 
@@ -14437,7 +14438,7 @@ The stamped grammar id of the fixed token a kind's body spells `text` at an edge
 
 ### `packages/codegen/src/emitters/render-module.ts::bodyFactsArg`
 
-The `order` and `edges` arguments of a struct's `#[node(…)]`, from its render body. A text leaf, a token with an interior and an envelope get none: the parser gives the first two no children, and an envelope's shape is its list's. A slot with a place that the body never writes follows the written ones in `order`, so the macro's check that every cell and flag is listed holds.
+The `order` and `edges` arguments of a struct's `#[node(…)]`, from its render body. A text leaf, a token with an interior and an envelope get none: the parser gives the first two no children, and an envelope's shape is its list's. An edge part with kinds prints them as the slice the arm's own test reads (`rustKindIdSlice`). A slot with a place that the body never writes follows the written ones in `order`, so the macro's check that every cell and flag is listed holds.
 
 ### `packages/codegen/src/emitters/render-module.ts::numberedSlotsOf`
 

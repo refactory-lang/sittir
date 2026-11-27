@@ -493,6 +493,8 @@ dependencies = [
  "serde",
  "serde_json",
  "sittir-core",
+ "sittir-csharp",
+ "sittir-java",
  "sittir-python",
  "sittir-regex",
  "sittir-rust",

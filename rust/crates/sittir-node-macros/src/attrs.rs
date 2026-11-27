@@ -3,7 +3,7 @@
 use syn::ext::IdentExt;
 use syn::parse::ParseStream;
 use syn::punctuated::Punctuated;
-use syn::{Attribute, Ident, LitInt, LitStr, Meta, Path, Token};
+use syn::{Attribute, Expr, Ident, LitInt, LitStr, Meta, Path, Token};
 
 /// `#[node(…)]` on a struct, an enum or a variant.
 #[derive(Default)]
@@ -91,26 +91,39 @@ pub struct KindAttrs {
 }
 
 /// One part of `edges = ([…], […])`: `token(KIND)`, `slot(name)`, or
-/// `guarded(name, KIND)`.
+/// `guarded(name, KIND)`. A slot or guarded part under an arm the render
+/// body picks by the slot's kind ends in the kinds that pick it:
+/// `slot(name, KINDS)`, `guarded(name, KIND, KINDS)`.
 pub enum EdgePartAttr {
     Token(Path),
-    Slot(Ident),
-    Guarded(Ident, Path),
+    Slot(Ident, Option<Expr>),
+    Guarded(Ident, Path, Option<Expr>),
 }
 
 fn edge_part(input: ParseStream) -> syn::Result<EdgePartAttr> {
     let name = input.call(Ident::parse_any)?;
     let content;
     syn::parenthesized!(content in input);
+    let kinds = |content: ParseStream| -> syn::Result<Option<Expr>> {
+        if content.is_empty() {
+            return Ok(None);
+        }
+        content.parse::<Token![,]>()?;
+        Ok(Some(content.parse()?))
+    };
     match name.to_string().as_str() {
         "token" => Ok(EdgePartAttr::Token(content.parse()?)),
-        "slot" => Ok(EdgePartAttr::Slot(content.call(Ident::parse_any)?)),
+        "slot" => {
+            let slot = content.call(Ident::parse_any)?;
+            Ok(EdgePartAttr::Slot(slot, kinds(&content)?))
+        }
         "guarded" => {
             let slot = content.call(Ident::parse_any)?;
             content.parse::<Token![,]>()?;
-            Ok(EdgePartAttr::Guarded(slot, content.parse()?))
+            let token = content.parse()?;
+            Ok(EdgePartAttr::Guarded(slot, token, kinds(&content)?))
         }
-        _ => Err(syn::Error::new_spanned(name, "an edge part is `token(KIND)`, `slot(name)` or `guarded(name, KIND)`")),
+        _ => Err(syn::Error::new_spanned(name, "an edge part is `token(KIND)`, `slot(name[, KINDS])` or `guarded(name, KIND[, KINDS])`")),
     }
 }
 

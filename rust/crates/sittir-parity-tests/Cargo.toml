@@ -23,6 +23,8 @@ sittir-typescript = { path = "../sittir-typescript", default-features = false }
 sittir-python = { path = "../sittir-python", default-features = false }
 sittir-regex = { path = "../sittir-regex", default-features = false }
 sittir-scm = { path = "../sittir-scm", default-features = false }
+sittir-csharp = { path = "../sittir-csharp", default-features = false }
+sittir-java = { path = "../sittir-java", default-features = false }
 
 [features]
 # The record writer's corpus tests (`tests/record_write.rs`).

@@ -105,6 +105,26 @@ describe('bodyEdgeParts', () => {
 	it('refuses a fallback token beside an arm that writes nothing at the edge', () => {
 		expect(() => bodyEdgeParts(branches([{ test: 'a', body: seam('s') }], text('x')), 'before')).toThrow(/an arm that writes nothing/);
 	});
+
+	it("reads a slot under an arm picked by the slot's kind as the edge only for those kinds", () => {
+		const body = branches(
+			[
+				{ test: 'body', kinds: ['block'], body: gate('body', slot('body')) },
+				{ test: 'body', body: concat(gate('body', slot('body')), text(';')) }
+			],
+			text(';')
+		);
+		expect(bodyEdgeParts(body, 'after')).toEqual([{ cell: 'body', kinds: ['block'] }, { guarded: 'body', token: ';' }, { token: ';' }]);
+	});
+
+	it("guards a token under an arm picked by a slot's kind by that slot and its kinds", () => {
+		const body = concat(branches([{ test: 'content', kinds: ['expression'], body: text('assert') }], undefined), slot('content'));
+		expect(bodyEdgeParts(body, 'before')).toEqual([{ guarded: 'content', token: 'assert', kinds: ['expression'] }, { cell: 'content' }]);
+	});
+
+	it("refuses another slot at the edge under an arm picked by a slot's kind", () => {
+		expect(() => bodyEdgeParts(branches([{ test: 'a', kinds: ['k'], body: slot('b') }], undefined), 'before')).toThrow(/'b'.*'a''s kind/);
+	});
 });
 
 describe('concat', () => {

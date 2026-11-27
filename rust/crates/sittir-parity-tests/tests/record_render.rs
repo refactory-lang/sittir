@@ -258,7 +258,7 @@ fn every_scm_source_renders_alike_from_its_records() {
 /// its tree and from its records, every node untouched and edited.
 fn listed_chains_render_alike<G: RecordGrammar + Copy, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells>(name: &str, renders: &Renders<G, N>) -> usize {
     let chains = edge_chains::<G, N>(name, renders.grammar, renders.options, &edge_sources(name));
-    let mut holding: Vec<&str> = chains.differing.iter().map(String::as_str).collect();
+    let mut holding: Vec<&str> = chains.differing().collect();
     holding.sort_unstable();
     holding.dedup();
     for source in &holding {

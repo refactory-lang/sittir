@@ -833,10 +833,12 @@ impl<'a> Walk<'a> {
             for part in shape.edges[side as usize] {
                 let (edge, guarded) = match *part {
                     EdgePart::Token(token) => return Ok(Some(token)),
-                    EdgePart::Slot(slot) => (self.slot_edge(at, shape, slot, side, bits)?, None),
-                    EdgePart::Guarded { slot, token } => (self.slot_edge(at, shape, slot, side, bits)?, Some(token)),
+                    EdgePart::Slot(slot) => (self.slot_edge(at, shape, slot, None, side, bits)?, None),
+                    EdgePart::Guarded { slot, token } => (self.slot_edge(at, shape, slot, None, side, bits)?, Some(token)),
+                    EdgePart::SlotOfKind { slot, kinds } => (self.slot_edge(at, shape, slot, Some(kinds), side, bits)?, None),
+                    EdgePart::GuardedByKind { slot, kinds, token } => (self.slot_edge(at, shape, slot, Some(kinds), side, bits)?, Some(token)),
                     EdgePart::List { cell, separator } => {
-                        let edge = self.slot_edge(at, shape, BodySlot::Cell(cell), side, bits)?;
+                        let edge = self.slot_edge(at, shape, BodySlot::Cell(cell), None, side, bits)?;
                         if !matches!(edge, SlotEdge::Absent) && self.side(at)?.delimiter.is_some_and(|set| set.has(flank)) {
                             let word = shape.cells.get(usize::from(cell)).ok_or(malformed("body slot cell", at))?.word;
                             let held = SideRecord::read_slots(self.arena, super::side_of(self.arena, at)?)?;
@@ -862,14 +864,17 @@ impl<'a> Walk<'a> {
     }
 
     /// What `slot` of the record at `at` holds at its edge on `side`: a
-    /// list slot's item there.
-    fn slot_edge(&mut self, at: Address, shape: RecordShape, slot: BodySlot, side: Side, bits: u32) -> Result<SlotEdge, ArenaError> {
+    /// list slot's item there. With `kinds`, a slot whose kind is none of
+    /// them is absent, so the walk goes on to the part of the arm its kind
+    /// picks.
+    fn slot_edge(&mut self, at: Address, shape: RecordShape, slot: BodySlot, kinds: Option<&[KindId]>, side: Side, bits: u32) -> Result<SlotEdge, ArenaError> {
+        let picked = |kind: KindId| kinds.is_none_or(|kinds| kinds.contains(&kind));
         let arena = self.arena;
         let words = arena.words(at, shape.words)?;
         let cell = match slot {
             BodySlot::Flag { word, bit, kind, .. } => {
                 let held = *words.get(word as usize).ok_or(malformed("flag word", at))?;
-                return Ok(if held >> bit & 1 == 1 { SlotEdge::Unit(kind) } else { SlotEdge::Absent });
+                return Ok(if held >> bit & 1 == 1 && picked(kind) { SlotEdge::Unit(kind) } else { SlotEdge::Absent });
             }
             BodySlot::Cell(cell) => *shape.cells.get(usize::from(cell)).ok_or(malformed("body slot cell", at))?,
         };
@@ -886,6 +891,7 @@ impl<'a> Walk<'a> {
         };
         Ok(match decoded {
             Cell::Absent => SlotEdge::Absent,
+            _ if !decoded.kind().is_some_and(picked) => SlotEdge::Absent,
             Cell::Unit { kind, .. } if kind == KindId::BLANK => SlotEdge::Absent,
             Cell::Unit { kind, .. } => SlotEdge::Unit(kind),
             Cell::Child { at: child, .. } if self.side(child)?.content => SlotEdge::Shared(child),

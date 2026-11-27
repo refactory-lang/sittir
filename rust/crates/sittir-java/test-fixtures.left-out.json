@@ -1,1 +1,11 @@
-{}
+{
+  "block": 1,
+  "break_statement": 4,
+  "class_body": 1,
+  "class_declaration": 1,
+  "method_declaration": 1,
+  "program": 1,
+  "switch_block": 1,
+  "switch_block_statement_group": 4,
+  "switch_expression": 1
+}

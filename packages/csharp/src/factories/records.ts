@@ -31,7 +31,7 @@ import {
 	applySetter,
 	describeValue,
 	restItems,
-	isNodeOfKind,
+	toElement,
 	admitHoles,
 	admitSplicedEnvelope,
 	kindIdStorage,
@@ -148,7 +148,7 @@ export function buildCompilationUnit(config: Partial<T.CompilationUnit.Config> =
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.CompilationUnit as const);
 		storeCell(arena, record, 2, 2, _shebang_directive);
-		storeList(arena, record, 3, 8, _top_level_items);
+		storeList(arena, record, 3, 5, _top_level_items);
 		const node = arena.view(record);
 		return node as unknown as T.CompilationUnit.Bound;
 	});
@@ -172,7 +172,7 @@ function buildCompilationUnit$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.CompilationUnit as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'shebangDirective', _shebang_directive));
-		patchList(arena, record, 3, 8, _top_level_items);
+		patchList(arena, record, 3, 5, _top_level_items);
 		const node = arena.view(record);
 		return node as unknown as T.CompilationUnit.Bound;
 	});
@@ -640,7 +640,12 @@ function withGlobalAttribute(node: object, setter: string, args: readonly unknow
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.Attributes as const, optional: false, make: buildAttributes },
+								{
+									kind: TSKindId.Attributes as const,
+									optional: false,
+									make: buildAttributes,
+									element: { make: buildAttribute, wrapper: { kind: TSKindId.Attribute, content: 'name' } }
+								},
 								(value: Admit<NonNullable<T.GlobalAttribute.Config>['attributes']>) =>
 									buildGlobalAttribute$set(node, 'attributes', { attributes: value })
 							)
@@ -826,7 +831,7 @@ export function buildAttributeArgument(config: T.AttributeArgument.Config): T.At
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.AttributeArgument as const);
 		storeCell(arena, record, 2, 2, _attribute_argument_arm);
-		storeCell(arena, record, 3, 11, _expression);
+		storeCell(arena, record, 3, 5, _expression);
 		const node = arena.view(record);
 		return node as unknown as T.AttributeArgument.Bound;
 	});
@@ -847,7 +852,7 @@ function buildAttributeArgument$patch(source: object, config: T.AttributeArgumen
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.AttributeArgument as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'attributeArgumentArm', _attribute_argument_arm));
-		patchCell(arena, record, 3, 11, carriedSlot(source, 'expression', _expression));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'expression', _expression));
 		const node = arena.view(record);
 		return node as unknown as T.AttributeArgument.Bound;
 	});
@@ -1037,7 +1042,12 @@ function withAttributeList(node: object, setter: string, args: readonly unknown[
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.Attributes as const, optional: false, make: buildAttributes },
+								{
+									kind: TSKindId.Attributes as const,
+									optional: false,
+									make: buildAttributes,
+									element: { make: buildAttribute, wrapper: { kind: TSKindId.Attribute, content: 'name' } }
+								},
 								(value: Admit<NonNullable<T.AttributeList.Config>['attributes']>) =>
 									buildAttributeList$set(node, 'attributes', { attributes: value })
 							)
@@ -1335,9 +1345,9 @@ export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.Clas
 		storeList(arena, record, 2, 2, _attribute_lists);
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _name);
-		storeList(arena, record, 5, 10, _elements);
-		storeList(arena, record, 6, 11, _type_parameter_constraints_clause);
-		storeCell(arena, record, 7, 12, _declaration_list_body);
+		storeList(arena, record, 5, 7, _elements);
+		storeList(arena, record, 6, 8, _type_parameter_constraints_clause);
+		storeCell(arena, record, 7, 9, _declaration_list_body);
 		const node = arena.view(record);
 		return node as unknown as T.ClassDeclaration.Bound;
 	});
@@ -1381,9 +1391,9 @@ function buildClassDeclaration$patch(source: object, config: T.ClassDeclaration.
 		patchList(arena, record, 2, 2, _attribute_lists);
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchList(arena, record, 5, 10, _elements);
-		patchList(arena, record, 6, 11, _type_parameter_constraints_clause);
-		patchCell(arena, record, 7, 12, carriedSlot(source, 'declarationListBody', _declaration_list_body));
+		patchList(arena, record, 5, 7, _elements);
+		patchList(arena, record, 6, 8, _type_parameter_constraints_clause);
+		patchCell(arena, record, 7, 9, carriedSlot(source, 'declarationListBody', _declaration_list_body));
 		const node = arena.view(record);
 		return node as unknown as T.ClassDeclaration.Bound;
 	});
@@ -1618,9 +1628,9 @@ export function buildStructDeclaration(config: T.StructDeclaration.Config): T.St
 		storeList(arena, record, 4, 4, _modifier);
 		if (_ref) storeFlag(record.data, record.base + 2, 1);
 		storeCell(arena, record, 5, 5, _name);
-		storeList(arena, record, 6, 11, _elements);
-		storeList(arena, record, 7, 12, _type_parameter_constraints_clause);
-		storeCell(arena, record, 8, 13, _declaration_list_body);
+		storeList(arena, record, 6, 8, _elements);
+		storeList(arena, record, 7, 9, _type_parameter_constraints_clause);
+		storeCell(arena, record, 8, 10, _declaration_list_body);
 		const node = arena.view(record);
 		return node as unknown as T.StructDeclaration.Bound;
 	});
@@ -1668,9 +1678,9 @@ function buildStructDeclaration$patch(source: object, config: T.StructDeclaratio
 		patchList(arena, record, 4, 4, _modifier);
 		patchFlag(record, 2, 1, _ref);
 		patchCell(arena, record, 5, 5, carriedSlot(source, 'name', _name));
-		patchList(arena, record, 6, 11, _elements);
-		patchList(arena, record, 7, 12, _type_parameter_constraints_clause);
-		patchCell(arena, record, 8, 13, carriedSlot(source, 'declarationListBody', _declaration_list_body));
+		patchList(arena, record, 6, 8, _elements);
+		patchList(arena, record, 7, 9, _type_parameter_constraints_clause);
+		patchCell(arena, record, 8, 10, carriedSlot(source, 'declarationListBody', _declaration_list_body));
 		const node = arena.view(record);
 		return node as unknown as T.StructDeclaration.Bound;
 	});
@@ -1998,7 +2008,7 @@ export function buildEnumMemberDeclaration(config: T.EnumMemberDeclaration.Confi
 		const record = arena.record(TSKindId.EnumMemberDeclaration as const);
 		storeList(arena, record, 2, 2, _attribute_lists);
 		storeCell(arena, record, 3, 3, _name);
-		storeCell(arena, record, 4, 9, _value);
+		storeCell(arena, record, 4, 6, _value);
 		const node = arena.view(record);
 		return node as unknown as T.EnumMemberDeclaration.Bound;
 	});
@@ -2023,7 +2033,7 @@ function buildEnumMemberDeclaration$patch(
 		const record = arena.copy(source, TSKindId.EnumMemberDeclaration as const);
 		patchList(arena, record, 2, 2, _attribute_lists);
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 4, 9, carriedSlot(source, 'value', _value));
+		patchCell(arena, record, 4, 6, carriedSlot(source, 'value', _value));
 		const node = arena.view(record);
 		return node as unknown as T.EnumMemberDeclaration.Bound;
 	});
@@ -2197,10 +2207,10 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		storeList(arena, record, 2, 2, _attribute_lists);
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 10, _type_parameters);
-		storeCell(arena, record, 6, 13, _base_list);
-		storeList(arena, record, 7, 17, _type_parameter_constraints_clause);
-		storeCell(arena, record, 8, 18, _declaration_list_body);
+		storeCell(arena, record, 5, 7, _type_parameters);
+		storeCell(arena, record, 6, 10, _base_list);
+		storeList(arena, record, 7, 13, _type_parameter_constraints_clause);
+		storeCell(arena, record, 8, 14, _declaration_list_body);
 		const node = arena.view(record);
 		return node as unknown as T.InterfaceDeclaration.Bound;
 	});
@@ -2260,10 +2270,10 @@ function buildInterfaceDeclaration$patch(
 		patchList(arena, record, 2, 2, _attribute_lists);
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 10, carriedSlot(source, 'typeParameters', _type_parameters));
-		patchCell(arena, record, 6, 13, carriedSlot(source, 'baseList', _base_list));
-		patchList(arena, record, 7, 17, _type_parameter_constraints_clause);
-		patchCell(arena, record, 8, 18, carriedSlot(source, 'declarationListBody', _declaration_list_body));
+		patchCell(arena, record, 5, 7, carriedSlot(source, 'typeParameters', _type_parameters));
+		patchCell(arena, record, 6, 10, carriedSlot(source, 'baseList', _base_list));
+		patchList(arena, record, 7, 13, _type_parameter_constraints_clause);
+		patchCell(arena, record, 8, 14, carriedSlot(source, 'declarationListBody', _declaration_list_body));
 		const node = arena.view(record);
 		return node as unknown as T.InterfaceDeclaration.Bound;
 	});
@@ -2562,9 +2572,9 @@ export function buildDelegateDeclaration(config: T.DelegateDeclaration.Config): 
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _type);
 		storeCell(arena, record, 5, 8, _name);
-		storeCell(arena, record, 6, 14, _type_parameters);
-		storeCell(arena, record, 7, 17, _parameters);
-		storeList(arena, record, 8, 20, _type_parameter_constraints_clause);
+		storeCell(arena, record, 6, 11, _type_parameters);
+		storeCell(arena, record, 7, 14, _parameters);
+		storeList(arena, record, 8, 17, _type_parameter_constraints_clause);
 		const node = arena.view(record);
 		return node as unknown as T.DelegateDeclaration.Bound;
 	});
@@ -2630,9 +2640,9 @@ function buildDelegateDeclaration$patch(
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 5, 8, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 6, 14, carriedSlot(source, 'typeParameters', _type_parameters));
-		patchCell(arena, record, 7, 17, carriedSlot(source, 'parameters', _parameters));
-		patchList(arena, record, 8, 20, _type_parameter_constraints_clause);
+		patchCell(arena, record, 6, 11, carriedSlot(source, 'typeParameters', _type_parameters));
+		patchCell(arena, record, 7, 14, carriedSlot(source, 'parameters', _parameters));
+		patchList(arena, record, 8, 17, _type_parameter_constraints_clause);
 		const node = arena.view(record);
 		return node as unknown as T.DelegateDeclaration.Bound;
 	});
@@ -2939,10 +2949,10 @@ export function buildRecordDeclaration(config: T.RecordDeclaration.Config): T.Re
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _operator);
 		storeCell(arena, record, 5, 5, _name);
-		storeList(arena, record, 6, 11, _elements);
-		storeCell(arena, record, 7, 12, _record_base);
-		storeList(arena, record, 8, 23, _type_parameter_constraints_clause);
-		storeCell(arena, record, 9, 24, _declaration_list_body);
+		storeList(arena, record, 6, 8, _elements);
+		storeCell(arena, record, 7, 9, _record_base);
+		storeList(arena, record, 8, 12, _type_parameter_constraints_clause);
+		storeCell(arena, record, 9, 13, _declaration_list_body);
 		const node = arena.view(record);
 		return node as unknown as T.RecordDeclaration.Bound;
 	});
@@ -2993,10 +3003,10 @@ function buildRecordDeclaration$patch(source: object, config: T.RecordDeclaratio
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'operator', _operator));
 		patchCell(arena, record, 5, 5, carriedSlot(source, 'name', _name));
-		patchList(arena, record, 6, 11, _elements);
-		patchCell(arena, record, 7, 12, carriedSlot(source, 'recordBase', _record_base));
-		patchList(arena, record, 8, 23, _type_parameter_constraints_clause);
-		patchCell(arena, record, 9, 24, carriedSlot(source, 'declarationListBody', _declaration_list_body));
+		patchList(arena, record, 6, 8, _elements);
+		patchCell(arena, record, 7, 9, carriedSlot(source, 'recordBase', _record_base));
+		patchList(arena, record, 8, 12, _type_parameter_constraints_clause);
+		patchCell(arena, record, 9, 13, carriedSlot(source, 'declarationListBody', _declaration_list_body));
 		const node = arena.view(record);
 		return node as unknown as T.RecordDeclaration.Bound;
 	});
@@ -3667,7 +3677,7 @@ export function buildTypeParameterConstraintsClause(
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.TypeParameterConstraintsClause as const);
 		storeCell(arena, record, 2, 2, _identifier);
-		storeList(arena, record, 3, 8, _type_parameter_constraint);
+		storeList(arena, record, 3, 5, _type_parameter_constraint);
 		const node = arena.view(record);
 		return node as unknown as T.TypeParameterConstraintsClause.Bound;
 	});
@@ -3693,7 +3703,7 @@ function buildTypeParameterConstraintsClause$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.TypeParameterConstraintsClause as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'identifier', _identifier));
-		patchList(arena, record, 3, 8, _type_parameter_constraint);
+		patchList(arena, record, 3, 5, _type_parameter_constraint);
 		const node = arena.view(record);
 		return node as unknown as T.TypeParameterConstraintsClause.Bound;
 	});
@@ -3867,9 +3877,9 @@ export function buildOperatorDeclaration(config: T.OperatorDeclaration.Config): 
 		storeCell(arena, record, 5, 5, _type);
 		storeCell(arena, record, 6, 9, _explicit_interface_specifier);
 		if (_checked) storeFlag(record.data, record.base + 2, 1);
-		storeCell(arena, record, 7, 14, _operator);
-		storeCell(arena, record, 8, 15, _parameters);
-		storeCell(arena, record, 9, 18, _body);
+		storeCell(arena, record, 7, 12, _operator);
+		storeCell(arena, record, 8, 13, _parameters);
+		storeCell(arena, record, 9, 16, _body);
 		const node = arena.view(record);
 		return node as unknown as T.OperatorDeclaration.Bound;
 	});
@@ -3934,9 +3944,9 @@ function buildOperatorDeclaration$patch(
 		patchCell(arena, record, 5, 5, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 6, 9, carriedSlot(source, 'explicitInterfaceSpecifier', _explicit_interface_specifier));
 		patchFlag(record, 2, 1, _checked);
-		patchCell(arena, record, 7, 14, carriedSlot(source, 'operator', _operator));
-		patchCell(arena, record, 8, 15, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 9, 18, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 7, 12, carriedSlot(source, 'operator', _operator));
+		patchCell(arena, record, 8, 13, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 9, 16, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.OperatorDeclaration.Bound;
 	});
@@ -4794,9 +4804,9 @@ export function buildConstructorDeclaration(config: T.ConstructorDeclaration.Con
 		storeList(arena, record, 2, 2, _attribute_lists);
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 10, _parameters);
-		storeCell(arena, record, 6, 13, _constructor_initializer);
-		storeCell(arena, record, 7, 19, _body);
+		storeCell(arena, record, 5, 7, _parameters);
+		storeCell(arena, record, 6, 10, _constructor_initializer);
+		storeCell(arena, record, 7, 13, _body);
 		const node = arena.view(record);
 		return node as unknown as T.ConstructorDeclaration.Bound;
 	});
@@ -4852,9 +4862,9 @@ function buildConstructorDeclaration$patch(
 		patchList(arena, record, 2, 2, _attribute_lists);
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 10, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 6, 13, carriedSlot(source, 'constructorInitializer', _constructor_initializer));
-		patchCell(arena, record, 7, 19, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 5, 7, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 6, 10, carriedSlot(source, 'constructorInitializer', _constructor_initializer));
+		patchCell(arena, record, 7, 13, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.ConstructorDeclaration.Bound;
 	});
@@ -5108,8 +5118,8 @@ export function buildDestructorDeclaration(config: T.DestructorDeclaration.Confi
 		storeList(arena, record, 3, 3, _attribute_lists);
 		if (_extern) storeFlag(record.data, record.base + 2, 1);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 10, _parameters);
-		storeCell(arena, record, 6, 13, _body);
+		storeCell(arena, record, 5, 7, _parameters);
+		storeCell(arena, record, 6, 10, _body);
 		const node = arena.view(record);
 		return node as unknown as T.DestructorDeclaration.Bound;
 	});
@@ -5159,8 +5169,8 @@ function buildDestructorDeclaration$patch(
 		patchList(arena, record, 3, 3, _attribute_lists);
 		patchFlag(record, 2, 1, _extern);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 10, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 6, 13, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 5, 7, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 6, 10, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.DestructorDeclaration.Bound;
 	});
@@ -5419,11 +5429,11 @@ export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.Me
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _returns);
 		storeCell(arena, record, 5, 8, _explicit_interface_specifier);
-		storeCell(arena, record, 6, 13, _name);
-		storeCell(arena, record, 7, 19, _type_parameters);
-		storeCell(arena, record, 8, 22, _parameters);
-		storeList(arena, record, 9, 25, _type_parameter_constraints_clause);
-		storeCell(arena, record, 10, 26, _body);
+		storeCell(arena, record, 6, 11, _name);
+		storeCell(arena, record, 7, 14, _type_parameters);
+		storeCell(arena, record, 8, 17, _parameters);
+		storeList(arena, record, 9, 20, _type_parameter_constraints_clause);
+		storeCell(arena, record, 10, 21, _body);
 		const node = arena.view(record);
 		return node as unknown as T.MethodDeclaration.Bound;
 	});
@@ -5496,11 +5506,11 @@ function buildMethodDeclaration$patch(source: object, config: T.MethodDeclaratio
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'returns', _returns));
 		patchCell(arena, record, 5, 8, carriedSlot(source, 'explicitInterfaceSpecifier', _explicit_interface_specifier));
-		patchCell(arena, record, 6, 13, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 7, 19, carriedSlot(source, 'typeParameters', _type_parameters));
-		patchCell(arena, record, 8, 22, carriedSlot(source, 'parameters', _parameters));
-		patchList(arena, record, 9, 25, _type_parameter_constraints_clause);
-		patchCell(arena, record, 10, 26, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 6, 11, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 7, 14, carriedSlot(source, 'typeParameters', _type_parameters));
+		patchCell(arena, record, 8, 17, carriedSlot(source, 'parameters', _parameters));
+		patchList(arena, record, 9, 20, _type_parameter_constraints_clause);
+		patchCell(arena, record, 10, 21, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.MethodDeclaration.Bound;
 	});
@@ -5858,8 +5868,8 @@ export function buildEventDeclaration(config: T.EventDeclaration.Config): T.Even
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _type);
 		storeCell(arena, record, 5, 8, _explicit_interface_specifier);
-		storeCell(arena, record, 6, 13, _name);
-		storeCell(arena, record, 7, 19, _accessors);
+		storeCell(arena, record, 6, 11, _name);
+		storeCell(arena, record, 7, 14, _accessors);
 		const node = arena.view(record);
 		return node as unknown as T.EventDeclaration.Bound;
 	});
@@ -5904,8 +5914,8 @@ function buildEventDeclaration$patch(source: object, config: T.EventDeclaration.
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 5, 8, carriedSlot(source, 'explicitInterfaceSpecifier', _explicit_interface_specifier));
-		patchCell(arena, record, 6, 13, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 7, 19, carriedSlot(source, 'accessors', _accessors));
+		patchCell(arena, record, 6, 11, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 7, 14, carriedSlot(source, 'accessors', _accessors));
 		const node = arena.view(record);
 		return node as unknown as T.EventDeclaration.Bound;
 	});
@@ -6341,7 +6351,7 @@ export function buildAccessorDeclaration(config: T.AccessorDeclaration.Config): 
 		storeList(arena, record, 2, 2, _attribute_lists);
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 11, _body);
+		storeCell(arena, record, 5, 8, _body);
 		const node = arena.view(record);
 		return node as unknown as T.AccessorDeclaration.Bound;
 	});
@@ -6373,7 +6383,7 @@ function buildAccessorDeclaration$patch(
 		patchList(arena, record, 2, 2, _attribute_lists);
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 11, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 5, 8, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.AccessorDeclaration.Bound;
 	});
@@ -6557,9 +6567,9 @@ export function buildIndexerDeclaration(config: T.IndexerDeclaration.Config): T.
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _type);
 		storeCell(arena, record, 5, 8, _explicit_interface_specifier);
-		storeCell(arena, record, 6, 13, _parameters);
-		storeCell(arena, record, 7, 16, _accessors);
-		storeCell(arena, record, 8, 19, _value);
+		storeCell(arena, record, 6, 11, _parameters);
+		storeCell(arena, record, 7, 14, _accessors);
+		storeCell(arena, record, 8, 17, _value);
 		const node = arena.view(record);
 		return node as unknown as T.IndexerDeclaration.Bound;
 	});
@@ -6620,9 +6630,9 @@ function buildIndexerDeclaration$patch(
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 5, 8, carriedSlot(source, 'explicitInterfaceSpecifier', _explicit_interface_specifier));
-		patchCell(arena, record, 6, 13, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 7, 16, carriedSlot(source, 'accessors', _accessors));
-		patchCell(arena, record, 8, 19, carriedSlot(source, 'value', _value));
+		patchCell(arena, record, 6, 11, carriedSlot(source, 'parameters', _parameters));
+		patchCell(arena, record, 7, 14, carriedSlot(source, 'accessors', _accessors));
+		patchCell(arena, record, 8, 17, carriedSlot(source, 'value', _value));
 		const node = arena.view(record);
 		return node as unknown as T.IndexerDeclaration.Bound;
 	});
@@ -6947,8 +6957,8 @@ export function buildPropertyDeclaration(config: T.PropertyDeclaration.Config): 
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _type);
 		storeCell(arena, record, 5, 8, _explicit_interface_specifier);
-		storeCell(arena, record, 6, 13, _name);
-		storeCell(arena, record, 7, 19, _content);
+		storeCell(arena, record, 6, 11, _name);
+		storeCell(arena, record, 7, 14, _content);
 		const node = arena.view(record);
 		return node as unknown as T.PropertyDeclaration.Bound;
 	});
@@ -6996,8 +7006,8 @@ function buildPropertyDeclaration$patch(
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 5, 8, carriedSlot(source, 'explicitInterfaceSpecifier', _explicit_interface_specifier));
-		patchCell(arena, record, 6, 13, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 7, 19, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 6, 11, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 7, 14, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
 		return node as unknown as T.PropertyDeclaration.Bound;
 	});
@@ -7325,7 +7335,7 @@ export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 		storeCell(arena, record, 4, 4, _mode);
 		storeCell(arena, record, 5, 5, _type);
 		storeCell(arena, record, 6, 9, _name);
-		storeCell(arena, record, 7, 15, _expression);
+		storeCell(arena, record, 7, 12, _expression);
 		const node = arena.view(record);
 		return node as unknown as T.Parameter.Bound;
 	});
@@ -7369,7 +7379,7 @@ function buildParameter$patch(source: object, config: T.Parameter.Config): T.Par
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'mode', _mode));
 		patchCell(arena, record, 5, 5, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 6, 9, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 7, 15, carriedSlot(source, 'expression', _expression));
+		patchCell(arena, record, 7, 12, carriedSlot(source, 'expression', _expression));
 		const node = arena.view(record);
 		return node as unknown as T.Parameter.Bound;
 	});
@@ -7934,8 +7944,8 @@ export function buildArgument(config: T.Argument.Config): T.Argument.Bound {
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.Argument as const);
 		storeCell(arena, record, 2, 2, _name);
-		storeCell(arena, record, 3, 8, _modifier);
-		storeCell(arena, record, 4, 9, _content);
+		storeCell(arena, record, 3, 5, _modifier);
+		storeCell(arena, record, 4, 6, _content);
 		const node = arena.view(record);
 		return node as unknown as T.Argument.Bound;
 	});
@@ -7953,8 +7963,8 @@ function buildArgument$patch(source: object, config: T.Argument.Config): T.Argum
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.Argument as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 3, 8, carriedSlot(source, 'modifier', _modifier));
-		patchCell(arena, record, 4, 9, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'modifier', _modifier));
+		patchCell(arena, record, 4, 6, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
 		return node as unknown as T.Argument.Bound;
 	});
@@ -8392,8 +8402,8 @@ export function buildVariableDeclarator(config: T.VariableDeclarator.Config): T.
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.VariableDeclarator as const);
 		storeCell(arena, record, 2, 2, _content);
-		storeCell(arena, record, 3, 8, _bracketed_argument_list);
-		storeCell(arena, record, 4, 13, _expression);
+		storeCell(arena, record, 3, 5, _bracketed_argument_list);
+		storeCell(arena, record, 4, 8, _expression);
 		const node = arena.view(record);
 		return node as unknown as T.VariableDeclarator.Bound;
 	});
@@ -8426,8 +8436,8 @@ function buildVariableDeclarator$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.VariableDeclarator as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
-		patchCell(arena, record, 3, 8, carriedSlot(source, 'bracketedArgumentList', _bracketed_argument_list));
-		patchCell(arena, record, 4, 13, carriedSlot(source, 'expression', _expression));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'bracketedArgumentList', _bracketed_argument_list));
+		patchCell(arena, record, 4, 8, carriedSlot(source, 'expression', _expression));
 		const node = arena.view(record);
 		return node as unknown as T.VariableDeclarator.Bound;
 	});
@@ -8518,7 +8528,12 @@ function withVariableDeclarator(node: object, setter: string, args: readonly unk
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.BracketedArgumentList as const, optional: true, make: buildBracketedArgumentList },
+								{
+									kind: TSKindId.BracketedArgumentList as const,
+									optional: true,
+									make: buildBracketedArgumentList,
+									element: { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } }
+								},
 								(value?: Admit<NonNullable<T.VariableDeclarator.Config>['bracketedArgumentList']>) =>
 									buildVariableDeclarator$set(node, 'bracketedArgumentList', { bracketedArgumentList: value })
 							)
@@ -8563,7 +8578,7 @@ export function buildUsingVariableDeclarator(
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.UsingVariableDeclarator as const);
 		storeCell(arena, record, 2, 2, _name);
-		storeCell(arena, record, 3, 8, _expression);
+		storeCell(arena, record, 3, 5, _expression);
 		const node = arena.view(record);
 		return node as unknown as T.UsingVariableDeclarator.Bound;
 	});
@@ -8584,7 +8599,7 @@ function buildUsingVariableDeclarator$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.UsingVariableDeclarator as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 3, 8, carriedSlot(source, 'expression', _expression));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'expression', _expression));
 		const node = arena.view(record);
 		return node as unknown as T.UsingVariableDeclarator.Bound;
 	});
@@ -8739,7 +8754,12 @@ function withBracketedArgumentList(node: object, setter: string, args: readonly 
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.Arguments as const, optional: false, make: buildArguments },
+								{
+									kind: TSKindId.Arguments as const,
+									optional: false,
+									make: buildArguments,
+									element: { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } }
+								},
 								(value: Admit<NonNullable<T.Arguments>>) => _buildBracketedArgumentList$patch(node, value)
 							)
 						)
@@ -8773,7 +8793,7 @@ export function buildAliasQualifiedName(config: T.AliasQualifiedName.Config): T.
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.AliasQualifiedName as const);
 		storeCell(arena, record, 2, 2, _alias);
-		storeCell(arena, record, 3, 8, _name);
+		storeCell(arena, record, 3, 5, _name);
 		const node = arena.view(record);
 		return node as unknown as T.AliasQualifiedName.Bound;
 	});
@@ -8793,7 +8813,7 @@ function buildAliasQualifiedName$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.AliasQualifiedName as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'alias', _alias));
-		patchCell(arena, record, 3, 8, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'name', _name));
 		const node = arena.view(record);
 		return node as unknown as T.AliasQualifiedName.Bound;
 	});
@@ -8976,7 +8996,7 @@ export function buildGenericName(config: T.GenericName.Config): T.GenericName.Bo
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.GenericName as const);
 		storeCell(arena, record, 2, 2, _identifier);
-		storeCell(arena, record, 3, 8, _type_argument_list);
+		storeCell(arena, record, 3, 5, _type_argument_list);
 		const node = arena.view(record);
 		return node as unknown as T.GenericName.Bound;
 	});
@@ -8994,7 +9014,7 @@ function buildGenericName$patch(source: object, config: T.GenericName.Config): T
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.GenericName as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'identifier', _identifier));
-		patchCell(arena, record, 3, 8, carriedSlot(source, 'typeArgumentList', _type_argument_list));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'typeArgumentList', _type_argument_list));
 		const node = arena.view(record);
 		return node as unknown as T.GenericName.Bound;
 	});
@@ -9604,8 +9624,8 @@ export function buildFunctionPointerType(config: T.FunctionPointerType.Config): 
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.FunctionPointerType as const);
 		storeCell(arena, record, 2, 2, _calling_convention);
-		storeList(arena, record, 3, 8, _function_pointer_parameter);
-		storeCell(arena, record, 4, 9, _returns);
+		storeList(arena, record, 3, 5, _function_pointer_parameter);
+		storeCell(arena, record, 4, 6, _returns);
 		const node = arena.view(record);
 		return node as unknown as T.FunctionPointerType.Bound;
 	});
@@ -9637,8 +9657,8 @@ function buildFunctionPointerType$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.FunctionPointerType as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'callingConvention', _calling_convention));
-		patchList(arena, record, 3, 8, _function_pointer_parameter);
-		patchCell(arena, record, 4, 9, carriedSlot(source, 'returns', _returns));
+		patchList(arena, record, 3, 5, _function_pointer_parameter);
+		patchCell(arena, record, 4, 6, carriedSlot(source, 'returns', _returns));
 		const node = arena.view(record);
 		return node as unknown as T.FunctionPointerType.Bound;
 	});
@@ -10493,7 +10513,7 @@ export function buildFixedStatement(config: T.FixedStatement.Config): T.FixedSta
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.FixedStatement as const);
 		storeCell(arena, record, 2, 2, _variable_declaration);
-		storeCell(arena, record, 3, 9, _statement);
+		storeCell(arena, record, 3, 5, _statement);
 		const node = arena.view(record);
 		return node as unknown as T.FixedStatement.Bound;
 	});
@@ -10511,7 +10531,7 @@ function buildFixedStatement$patch(source: object, config: T.FixedStatement.Conf
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.FixedStatement as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'variableDeclaration', _variable_declaration));
-		patchCell(arena, record, 3, 9, carriedSlot(source, 'statement', _statement));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'statement', _statement));
 		const node = arena.view(record);
 		return node as unknown as T.FixedStatement.Bound;
 	});
@@ -11022,7 +11042,7 @@ export function buildSwitchSection(config: T.SwitchSection.Config): T.SwitchSect
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.SwitchSection as const);
 		storeCell(arena, record, 2, 2, _switch_section_arm2);
-		storeList(arena, record, 3, 9, _statements);
+		storeList(arena, record, 3, 6, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SwitchSection.Bound;
 	});
@@ -11042,7 +11062,7 @@ function buildSwitchSection$patch(source: object, config: T.SwitchSection.Config
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.SwitchSection as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'switchSectionArm2', _switch_section_arm2));
-		patchList(arena, record, 3, 9, _statements);
+		patchList(arena, record, 3, 6, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SwitchSection.Bound;
 	});
@@ -12145,7 +12165,7 @@ export function buildLabeledStatement(config: T.LabeledStatement.Config): T.Labe
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.LabeledStatement as const);
 		storeCell(arena, record, 2, 2, _identifier);
-		storeCell(arena, record, 3, 8, _statement);
+		storeCell(arena, record, 3, 5, _statement);
 		const node = arena.view(record);
 		return node as unknown as T.LabeledStatement.Bound;
 	});
@@ -12163,7 +12183,7 @@ function buildLabeledStatement$patch(source: object, config: T.LabeledStatement.
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.LabeledStatement as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'identifier', _identifier));
-		patchCell(arena, record, 3, 8, carriedSlot(source, 'statement', _statement));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'statement', _statement));
 		const node = arena.view(record);
 		return node as unknown as T.LabeledStatement.Bound;
 	});
@@ -12738,10 +12758,10 @@ export function buildLocalFunctionStatement(config: T.LocalFunctionStatement.Con
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _type);
 		storeCell(arena, record, 5, 8, _name);
-		storeCell(arena, record, 6, 14, _type_parameters);
-		storeCell(arena, record, 7, 17, _parameters);
-		storeList(arena, record, 8, 20, _type_parameter_constraints_clause);
-		storeCell(arena, record, 9, 21, _body);
+		storeCell(arena, record, 6, 11, _type_parameters);
+		storeCell(arena, record, 7, 14, _parameters);
+		storeList(arena, record, 8, 17, _type_parameter_constraints_clause);
+		storeCell(arena, record, 9, 18, _body);
 		const node = arena.view(record);
 		return node as unknown as T.LocalFunctionStatement.Bound;
 	});
@@ -12813,10 +12833,10 @@ function buildLocalFunctionStatement$patch(
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 5, 8, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 6, 14, carriedSlot(source, 'typeParameters', _type_parameters));
-		patchCell(arena, record, 7, 17, carriedSlot(source, 'parameters', _parameters));
-		patchList(arena, record, 8, 20, _type_parameter_constraints_clause);
-		patchCell(arena, record, 9, 21, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 6, 11, carriedSlot(source, 'typeParameters', _type_parameters));
+		patchCell(arena, record, 7, 14, carriedSlot(source, 'parameters', _parameters));
+		patchList(arena, record, 8, 17, _type_parameter_constraints_clause);
+		patchCell(arena, record, 9, 18, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.LocalFunctionStatement.Bound;
 	});
@@ -13994,7 +14014,7 @@ export function buildRecursivePattern(
 		storeCell(arena, record, 2, 2, _type);
 		storeCell(arena, record, 3, 6, _positional_pattern_clause);
 		storeCell(arena, record, 4, 9, _property_pattern_clause);
-		storeCell(arena, record, 5, 14, _variable_designation);
+		storeCell(arena, record, 5, 12, _variable_designation);
 		const node = arena.view(record);
 		return node as unknown as T.RecursivePattern.Bound;
 	});
@@ -14033,7 +14053,7 @@ function buildRecursivePattern$patch(
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 3, 6, carriedSlot(source, 'positionalPatternClause', _positional_pattern_clause));
 		patchCell(arena, record, 4, 9, carriedSlot(source, 'propertyPatternClause', _property_pattern_clause));
-		patchCell(arena, record, 5, 14, carriedSlot(source, 'variableDesignation', _variable_designation));
+		patchCell(arena, record, 5, 12, carriedSlot(source, 'variableDesignation', _variable_designation));
 		const node = arena.view(record);
 		return node as unknown as T.RecursivePattern.Bound;
 	});
@@ -14129,7 +14149,12 @@ function withRecursivePattern(node: object, setter: string, args: readonly unkno
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.PropertyPatternClause as const, optional: true, make: buildPropertyPatternClause },
+						{
+							kind: TSKindId.PropertyPatternClause as const,
+							optional: true,
+							make: buildPropertyPatternClause,
+							element: { make: buildSubpattern, wrapper: { kind: TSKindId.Subpattern, content: 'pattern' } }
+						},
 						(value?: Admit<T.PropertyPatternClause>) =>
 							buildRecursivePattern$set(node, 'propertyPatternClause', { propertyPatternClause: value })
 					)
@@ -14270,7 +14295,12 @@ function withPropertyPatternClause(node: object, setter: string, args: readonly 
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.Subpatterns as const, optional: true, make: buildSubpatterns },
+								{
+									kind: TSKindId.Subpatterns as const,
+									optional: true,
+									make: buildSubpatterns,
+									element: { make: buildSubpattern, wrapper: { kind: TSKindId.Subpattern, content: 'pattern' } }
+								},
 								(value?: Admit<NonNullable<T.Subpatterns>>) => _buildPropertyPatternClause$patch(node, value)
 							)
 						)
@@ -14305,7 +14335,7 @@ export function buildSubpattern(config: T.Subpattern.Config): T.Subpattern.Bound
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.Subpattern as const);
 		storeCell(arena, record, 2, 2, _subpattern_arm);
-		storeCell(arena, record, 3, 14, _pattern);
+		storeCell(arena, record, 3, 5, _pattern);
 		const node = arena.view(record);
 		return node as unknown as T.Subpattern.Bound;
 	});
@@ -14322,7 +14352,7 @@ function buildSubpattern$patch(source: object, config: T.Subpattern.Config): T.S
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.Subpattern as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'subpatternArm', _subpattern_arm));
-		patchCell(arena, record, 3, 14, carriedSlot(source, 'pattern', _pattern));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'pattern', _pattern));
 		const node = arena.view(record);
 		return node as unknown as T.Subpattern.Bound;
 	});
@@ -15646,7 +15676,7 @@ export function buildFromClause(config: T.FromClause.Config): T.FromClause.Bound
 		const record = arena.record(TSKindId.FromClause as const);
 		storeCell(arena, record, 2, 2, _type);
 		storeCell(arena, record, 3, 6, _name);
-		storeCell(arena, record, 4, 12, _expression);
+		storeCell(arena, record, 4, 9, _expression);
 		const node = arena.view(record);
 		return node as unknown as T.FromClause.Bound;
 	});
@@ -15665,7 +15695,7 @@ function buildFromClause$patch(source: object, config: T.FromClause.Config): T.F
 		const record = arena.copy(source, TSKindId.FromClause as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 3, 6, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 4, 12, carriedSlot(source, 'expression', _expression));
+		patchCell(arena, record, 4, 9, carriedSlot(source, 'expression', _expression));
 		const node = arena.view(record);
 		return node as unknown as T.FromClause.Bound;
 	});
@@ -15807,10 +15837,10 @@ export function buildJoinClause(config: T.JoinClause.Config): T.JoinClause.Bound
 		const record = arena.record(TSKindId.JoinClause as const);
 		storeCell(arena, record, 2, 2, _type);
 		storeCell(arena, record, 3, 6, _name);
-		storeCell(arena, record, 4, 12, _source);
-		storeCell(arena, record, 5, 16, _left);
-		storeCell(arena, record, 6, 20, _right);
-		storeCell(arena, record, 7, 24, _join_into_clause);
+		storeCell(arena, record, 4, 9, _source);
+		storeCell(arena, record, 5, 13, _left);
+		storeCell(arena, record, 6, 17, _right);
+		storeCell(arena, record, 7, 21, _join_into_clause);
 		const node = arena.view(record);
 		return node as unknown as T.JoinClause.Bound;
 	});
@@ -15844,10 +15874,10 @@ function buildJoinClause$patch(source: object, config: T.JoinClause.Config): T.J
 		const record = arena.copy(source, TSKindId.JoinClause as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 3, 6, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 4, 12, carriedSlot(source, 'source', _source));
-		patchCell(arena, record, 5, 16, carriedSlot(source, 'left', _left));
-		patchCell(arena, record, 6, 20, carriedSlot(source, 'right', _right));
-		patchCell(arena, record, 7, 24, carriedSlot(source, 'joinIntoClause', _join_into_clause));
+		patchCell(arena, record, 4, 9, carriedSlot(source, 'source', _source));
+		patchCell(arena, record, 5, 13, carriedSlot(source, 'left', _left));
+		patchCell(arena, record, 6, 17, carriedSlot(source, 'right', _right));
+		patchCell(arena, record, 7, 21, carriedSlot(source, 'joinIntoClause', _join_into_clause));
 		const node = arena.view(record);
 		return node as unknown as T.JoinClause.Bound;
 	});
@@ -16131,7 +16161,7 @@ export function buildLetClause(config: T.LetClause.Config): T.LetClause.Bound {
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.LetClause as const);
 		storeCell(arena, record, 2, 2, _identifier);
-		storeCell(arena, record, 3, 8, _expression);
+		storeCell(arena, record, 3, 5, _expression);
 		const node = arena.view(record);
 		return node as unknown as T.LetClause.Bound;
 	});
@@ -16148,7 +16178,7 @@ function buildLetClause$patch(source: object, config: T.LetClause.Config): T.Let
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.LetClause as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'identifier', _identifier));
-		patchCell(arena, record, 3, 8, carriedSlot(source, 'expression', _expression));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'expression', _expression));
 		const node = arena.view(record);
 		return node as unknown as T.LetClause.Bound;
 	});
@@ -17483,7 +17513,7 @@ export function buildSwitchExpressionArm(config: T.SwitchExpressionArm.Config): 
 		const record = arena.record(TSKindId.SwitchExpressionArm as const);
 		storeCell(arena, record, 2, 2, _pattern);
 		storeCell(arena, record, 3, 6, _when_clause);
-		storeCell(arena, record, 4, 12, _expression);
+		storeCell(arena, record, 4, 9, _expression);
 		const node = arena.view(record);
 		return node as unknown as T.SwitchExpressionArm.Bound;
 	});
@@ -17510,7 +17540,7 @@ function buildSwitchExpressionArm$patch(
 		const record = arena.copy(source, TSKindId.SwitchExpressionArm as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'pattern', _pattern));
 		patchCell(arena, record, 3, 6, carriedSlot(source, 'whenClause', _when_clause));
-		patchCell(arena, record, 4, 12, carriedSlot(source, 'expression', _expression));
+		patchCell(arena, record, 4, 9, carriedSlot(source, 'expression', _expression));
 		const node = arena.view(record);
 		return node as unknown as T.SwitchExpressionArm.Bound;
 	});
@@ -17852,7 +17882,12 @@ function withElementAccessExpression(node: object, setter: string, args: readonl
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.BracketedArgumentList as const, optional: false, make: buildBracketedArgumentList },
+								{
+									kind: TSKindId.BracketedArgumentList as const,
+									optional: false,
+									make: buildBracketedArgumentList,
+									element: { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } }
+								},
 								(value: Admit<NonNullable<T.ElementAccessExpression.Config>['subscript']>) =>
 									buildElementAccessExpression$set(node, 'subscript', { subscript: value })
 							)
@@ -18227,8 +18262,8 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 		storeCell(arena, record, 2, 2, _interpolation_open_brace);
 		storeCell(arena, record, 3, 5, _expression);
 		storeCell(arena, record, 4, 9, _interpolation_alignment_clause);
-		storeCell(arena, record, 5, 15, _interpolation_format_clause);
-		storeCell(arena, record, 6, 18, _interpolation_close_brace);
+		storeCell(arena, record, 5, 12, _interpolation_format_clause);
+		storeCell(arena, record, 6, 15, _interpolation_close_brace);
 		const node = arena.view(record);
 		return node as unknown as T.Interpolation.Bound;
 	});
@@ -18273,8 +18308,8 @@ function buildInterpolation$patch(source: object, config: T.Interpolation.Config
 			9,
 			carriedSlot(source, 'interpolationAlignmentClause', _interpolation_alignment_clause)
 		);
-		patchCell(arena, record, 5, 15, carriedSlot(source, 'interpolationFormatClause', _interpolation_format_clause));
-		patchCell(arena, record, 6, 18, carriedSlot(source, 'interpolationCloseBrace', _interpolation_close_brace));
+		patchCell(arena, record, 5, 12, carriedSlot(source, 'interpolationFormatClause', _interpolation_format_clause));
+		patchCell(arena, record, 6, 15, carriedSlot(source, 'interpolationCloseBrace', _interpolation_close_brace));
 		const node = arena.view(record);
 		return node as unknown as T.Interpolation.Bound;
 	});
@@ -18950,7 +18985,7 @@ export function buildLambdaExpression(config: T.LambdaExpression.Config): T.Lamb
 		if (_async) storeFlag(record.data, record.base + 2, 2);
 		storeCell(arena, record, 4, 4, _type);
 		storeCell(arena, record, 5, 8, _parameters);
-		storeCell(arena, record, 6, 14, _body);
+		storeCell(arena, record, 6, 11, _body);
 		const node = arena.view(record);
 		return node as unknown as T.LambdaExpression.Bound;
 	});
@@ -18992,7 +19027,7 @@ function buildLambdaExpression$patch(source: object, config: T.LambdaExpression.
 		patchFlag(record, 2, 2, _async);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 5, 8, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 6, 14, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 6, 11, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.LambdaExpression.Bound;
 	});
@@ -20683,7 +20718,7 @@ export function buildWithInitializer(config: T.WithInitializer.Config): T.WithIn
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.WithInitializer as const);
 		storeCell(arena, record, 2, 2, _identifier);
-		storeCell(arena, record, 3, 8, _expression);
+		storeCell(arena, record, 3, 5, _expression);
 		const node = arena.view(record);
 		return node as unknown as T.WithInitializer.Bound;
 	});
@@ -20701,7 +20736,7 @@ function buildWithInitializer$patch(source: object, config: T.WithInitializer.Co
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.WithInitializer as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'identifier', _identifier));
-		patchCell(arena, record, 3, 8, carriedSlot(source, 'expression', _expression));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'expression', _expression));
 		const node = arena.view(record);
 		return node as unknown as T.WithInitializer.Bound;
 	});
@@ -23454,7 +23489,7 @@ export function buildPreprocIfInEnumMemberDeclaration(
 		storeCell(arena, record, 2, 2, _condition);
 		storeCell(arena, record, 3, 6, _preproc_if_text2);
 		storeCell(arena, record, 4, 9, _enum_member_declaration);
-		storeCell(arena, record, 5, 22, _alternative);
+		storeCell(arena, record, 5, 12, _alternative);
 		const node = arena.view(record);
 		return node as unknown as T.PreprocIfInEnumMemberDeclaration.Bound;
 	});
@@ -23489,7 +23524,7 @@ function buildPreprocIfInEnumMemberDeclaration$patch(
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'condition', _condition));
 		patchCell(arena, record, 3, 6, carriedSlot(source, 'preprocIfText2', _preproc_if_text2));
 		patchCell(arena, record, 4, 9, carriedSlot(source, 'enumMemberDeclaration', _enum_member_declaration));
-		patchCell(arena, record, 5, 22, carriedSlot(source, 'alternative', _alternative));
+		patchCell(arena, record, 5, 12, carriedSlot(source, 'alternative', _alternative));
 		const node = arena.view(record);
 		return node as unknown as T.PreprocIfInEnumMemberDeclaration.Bound;
 	});
@@ -23724,7 +23759,7 @@ export function buildPreprocElifInEnumMemberDeclaration(
 		storeCell(arena, record, 2, 2, _condition);
 		storeCell(arena, record, 3, 6, _preproc_if_text2);
 		storeCell(arena, record, 4, 9, _enum_member_declaration);
-		storeCell(arena, record, 5, 22, _alternative);
+		storeCell(arena, record, 5, 12, _alternative);
 		const node = arena.view(record);
 		return node as unknown as T.PreprocElifInEnumMemberDeclaration.Bound;
 	});
@@ -23759,7 +23794,7 @@ function buildPreprocElifInEnumMemberDeclaration$patch(
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'condition', _condition));
 		patchCell(arena, record, 3, 6, carriedSlot(source, 'preprocIfText2', _preproc_if_text2));
 		patchCell(arena, record, 4, 9, carriedSlot(source, 'enumMemberDeclaration', _enum_member_declaration));
-		patchCell(arena, record, 5, 22, carriedSlot(source, 'alternative', _alternative));
+		patchCell(arena, record, 5, 12, carriedSlot(source, 'alternative', _alternative));
 		const node = arena.view(record);
 		return node as unknown as T.PreprocElifInEnumMemberDeclaration.Bound;
 	});
@@ -23915,7 +23950,7 @@ export function buildPreprocIfInAttributeList(
 		storeCell(arena, record, 2, 2, _condition);
 		storeCell(arena, record, 3, 6, _preproc_if_text2);
 		storeCell(arena, record, 4, 9, _attribute_list);
-		storeCell(arena, record, 5, 17, _alternative);
+		storeCell(arena, record, 5, 12, _alternative);
 		const node = arena.view(record);
 		return node as unknown as T.PreprocIfInAttributeList.Bound;
 	});
@@ -23950,7 +23985,7 @@ function buildPreprocIfInAttributeList$patch(
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'condition', _condition));
 		patchCell(arena, record, 3, 6, carriedSlot(source, 'preprocIfText2', _preproc_if_text2));
 		patchCell(arena, record, 4, 9, carriedSlot(source, 'attributeList', _attribute_list));
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'alternative', _alternative));
+		patchCell(arena, record, 5, 12, carriedSlot(source, 'alternative', _alternative));
 		const node = arena.view(record);
 		return node as unknown as T.PreprocIfInAttributeList.Bound;
 	});
@@ -24166,7 +24201,7 @@ export function buildPreprocElifInAttributeList(
 		storeCell(arena, record, 2, 2, _condition);
 		storeCell(arena, record, 3, 6, _preproc_if_text2);
 		storeCell(arena, record, 4, 9, _attribute_list);
-		storeCell(arena, record, 5, 17, _alternative);
+		storeCell(arena, record, 5, 12, _alternative);
 		const node = arena.view(record);
 		return node as unknown as T.PreprocElifInAttributeList.Bound;
 	});
@@ -24201,7 +24236,7 @@ function buildPreprocElifInAttributeList$patch(
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'condition', _condition));
 		patchCell(arena, record, 3, 6, carriedSlot(source, 'preprocIfText2', _preproc_if_text2));
 		patchCell(arena, record, 4, 9, carriedSlot(source, 'attributeList', _attribute_list));
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'alternative', _alternative));
+		patchCell(arena, record, 5, 12, carriedSlot(source, 'alternative', _alternative));
 		const node = arena.view(record);
 		return node as unknown as T.PreprocElifInAttributeList.Bound;
 	});
@@ -24847,7 +24882,7 @@ export function buildPreprocLine(config: T.PreprocLine.Config): T.PreprocLine.Bo
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.PreprocLine as const);
 		storeCell(arena, record, 2, 2, _content);
-		storeCell(arena, record, 3, 26, _preproc_if_text2);
+		storeCell(arena, record, 3, 6, _preproc_if_text2);
 		const node = arena.view(record);
 		return node as unknown as T.PreprocLine.Bound;
 	});
@@ -24865,7 +24900,7 @@ function buildPreprocLine$patch(source: object, config: T.PreprocLine.Config): T
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.PreprocLine as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
-		patchCell(arena, record, 3, 26, carriedSlot(source, 'preprocIfText2', _preproc_if_text2));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'preprocIfText2', _preproc_if_text2));
 		const node = arena.view(record);
 		return node as unknown as T.PreprocLine.Bound;
 	});
@@ -24942,7 +24977,7 @@ export function buildPreprocPragma(config: T.PreprocPragma.Config): T.PreprocPra
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.PreprocPragma as const);
 		storeCell(arena, record, 2, 2, _content);
-		storeCell(arena, record, 3, 22, _preproc_if_text2);
+		storeCell(arena, record, 3, 5, _preproc_if_text2);
 		const node = arena.view(record);
 		return node as unknown as T.PreprocPragma.Bound;
 	});
@@ -24960,7 +24995,7 @@ function buildPreprocPragma$patch(source: object, config: T.PreprocPragma.Config
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.PreprocPragma as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
-		patchCell(arena, record, 3, 22, carriedSlot(source, 'preprocIfText2', _preproc_if_text2));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'preprocIfText2', _preproc_if_text2));
 		const node = arena.view(record);
 		return node as unknown as T.PreprocPragma.Bound;
 	});
@@ -26946,9 +26981,7 @@ function _buildAttributes(
 	currentHandle()?.admit(TSKindId.Attributes, elements);
 	const _mapped = elements.map(
 		(e): T.Attribute =>
-			(isNodeOfKind(e, TSKindId.Attribute)
-				? (e as unknown)
-				: buildAttribute({ name: e } as Parameters<typeof buildAttribute>[0])) as T.Attribute
+			toElement(e, { make: buildAttribute, wrapper: { kind: TSKindId.Attribute, content: 'name' } }) as T.Attribute
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -26973,9 +27006,7 @@ function _buildAttributes$patch(
 	currentHandle()?.admit(TSKindId.Attributes, elements);
 	const _mapped = elements.map(
 		(e): T.Attribute =>
-			(isNodeOfKind(e, TSKindId.Attribute)
-				? (e as unknown)
-				: buildAttribute({ name: e } as Parameters<typeof buildAttribute>[0])) as T.Attribute
+			toElement(e, { make: buildAttribute, wrapper: { kind: TSKindId.Attribute, content: 'name' } }) as T.Attribute
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -27024,9 +27055,7 @@ function _buildAttributes$set(
 			const elements = input;
 			const _mapped = elements.map(
 				(e): T.Attribute =>
-					(isNodeOfKind(e, TSKindId.Attribute)
-						? (e as unknown)
-						: buildAttribute({ name: e } as Parameters<typeof buildAttribute>[0])) as T.Attribute
+					toElement(e, { make: buildAttribute, wrapper: { kind: TSKindId.Attribute, content: 'name' } }) as T.Attribute
 			);
 			const _item = _mapped;
 			return setSlot(
@@ -27057,13 +27086,18 @@ function withAttributes(node: object, setter: string, args: readonly unknown[]):
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'items':
-			return applySetter(
-				args,
-				(
-					...vs: NonEmptyArray<
-						Admit<T.Attribute | T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>
-					>
-				) => rebuilt(node, handle, () => _buildAttributes$set(node, 'items', vs))
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', make: buildAttribute, wrapper: { kind: TSKindId.Attribute, content: 'name' } },
+						(
+							...vs: NonEmptyArray<
+								Admit<T.Attribute | T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>
+							>
+						) => _buildAttributes$set(node, 'items', vs)
+					)
+				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -27343,9 +27377,7 @@ function _buildArguments(
 	currentHandle()?.admit(TSKindId.Arguments, elements);
 	const _mapped = elements.map(
 		(e): T.Argument =>
-			(isNodeOfKind(e, TSKindId.Argument)
-				? (e as unknown)
-				: buildArgument({ content: e } as Parameters<typeof buildArgument>[0])) as T.Argument
+			toElement(e, { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } }) as T.Argument
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -27370,9 +27402,7 @@ function _buildArguments$patch(
 	currentHandle()?.admit(TSKindId.Arguments, elements);
 	const _mapped = elements.map(
 		(e): T.Argument =>
-			(isNodeOfKind(e, TSKindId.Argument)
-				? (e as unknown)
-				: buildArgument({ content: e } as Parameters<typeof buildArgument>[0])) as T.Argument
+			toElement(e, { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } }) as T.Argument
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -27416,9 +27446,7 @@ function _buildArguments$set(
 			const elements = input;
 			const _mapped = elements.map(
 				(e): T.Argument =>
-					(isNodeOfKind(e, TSKindId.Argument)
-						? (e as unknown)
-						: buildArgument({ content: e } as Parameters<typeof buildArgument>[0])) as T.Argument
+					toElement(e, { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } }) as T.Argument
 			);
 			const _item = _mapped;
 			return setSlot(
@@ -27449,8 +27477,15 @@ function withArguments(node: object, setter: string, args: readonly unknown[]): 
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Argument | T.Expression | T.DeclarationExpression>>) =>
-				rebuilt(node, handle, () => _buildArguments$set(node, 'items', vs))
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } },
+						(...vs: NonEmptyArray<Admit<T.Argument | T.Expression | T.DeclarationExpression>>) =>
+							_buildArguments$set(node, 'items', vs)
+					)
+				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -27817,9 +27852,10 @@ function _buildSubpatterns(
 	currentHandle()?.admit(TSKindId.Subpatterns, elements);
 	const _mapped = elements.map(
 		(e): T.Subpattern =>
-			(isNodeOfKind(e, TSKindId.Subpattern)
-				? (e as unknown)
-				: buildSubpattern({ pattern: e } as Parameters<typeof buildSubpattern>[0])) as T.Subpattern
+			toElement(e, {
+				make: buildSubpattern,
+				wrapper: { kind: TSKindId.Subpattern, content: 'pattern' }
+			}) as T.Subpattern
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -27844,9 +27880,10 @@ function _buildSubpatterns$patch(
 	currentHandle()?.admit(TSKindId.Subpatterns, elements);
 	const _mapped = elements.map(
 		(e): T.Subpattern =>
-			(isNodeOfKind(e, TSKindId.Subpattern)
-				? (e as unknown)
-				: buildSubpattern({ pattern: e } as Parameters<typeof buildSubpattern>[0])) as T.Subpattern
+			toElement(e, {
+				make: buildSubpattern,
+				wrapper: { kind: TSKindId.Subpattern, content: 'pattern' }
+			}) as T.Subpattern
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -27889,9 +27926,10 @@ function _buildSubpatterns$set(
 			const elements = input;
 			const _mapped = elements.map(
 				(e): T.Subpattern =>
-					(isNodeOfKind(e, TSKindId.Subpattern)
-						? (e as unknown)
-						: buildSubpattern({ pattern: e } as Parameters<typeof buildSubpattern>[0])) as T.Subpattern
+					toElement(e, {
+						make: buildSubpattern,
+						wrapper: { kind: TSKindId.Subpattern, content: 'pattern' }
+					}) as T.Subpattern
 			);
 			const _item = _mapped;
 			return setSlot(
@@ -27922,8 +27960,14 @@ function withSubpatterns(node: object, setter: string, args: readonly unknown[])
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Subpattern | T.Pattern>>) =>
-				rebuilt(node, handle, () => _buildSubpatterns$set(node, 'items', vs))
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', make: buildSubpattern, wrapper: { kind: TSKindId.Subpattern, content: 'pattern' } },
+						(...vs: NonEmptyArray<Admit<T.Subpattern | T.Pattern>>) => _buildSubpatterns$set(node, 'items', vs)
+					)
+				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -29033,8 +29077,8 @@ export function buildPreprocPragmaArm2(config: Partial<T.PreprocPragmaArm2.Confi
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.PreprocPragmaArm2 as const);
 		storeCell(arena, record, 2, 2, _file_name);
-		storeCell(arena, record, 3, 8, _guid);
-		storeCell(arena, record, 4, 14, _checksum);
+		storeCell(arena, record, 3, 5, _guid);
+		storeCell(arena, record, 4, 8, _checksum);
 		const node = arena.view(record);
 		return node as unknown as T.PreprocPragmaArm2.Bound;
 	});
@@ -29056,8 +29100,8 @@ function buildPreprocPragmaArm2$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.PreprocPragmaArm2 as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'fileName', _file_name));
-		patchCell(arena, record, 3, 8, carriedSlot(source, 'guid', _guid));
-		patchCell(arena, record, 4, 14, carriedSlot(source, 'checksum', _checksum));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'guid', _guid));
+		patchCell(arena, record, 4, 8, carriedSlot(source, 'checksum', _checksum));
 		const node = arena.view(record);
 		return node as unknown as T.PreprocPragmaArm2.Bound;
 	});
@@ -29150,7 +29194,7 @@ export function buildAttributeArgumentArm(config: T.AttributeArgumentArm.Config)
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.AttributeArgumentArm as const);
 		storeCell(arena, record, 2, 2, _name);
-		storeCell(arena, record, 3, 8, _operator);
+		storeCell(arena, record, 3, 5, _operator);
 		const node = arena.view(record);
 		return node as unknown as T.AttributeArgumentArm.Bound;
 	});
@@ -29170,7 +29214,7 @@ function buildAttributeArgumentArm$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.AttributeArgumentArm as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 3, 8, carriedSlot(source, 'operator', _operator));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'operator', _operator));
 		const node = arena.view(record);
 		return node as unknown as T.AttributeArgumentArm.Bound;
 	});
@@ -29697,8 +29741,8 @@ export function buildQueryBodyGroup(config: T.QueryBodyGroup.Config): T.QueryBod
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.QueryBodyGroup as const);
 		storeCell(arena, record, 2, 2, _identifier);
-		storeList(arena, record, 3, 8, _query_clauses);
-		storeCell(arena, record, 4, 9, _select_or_group_clause);
+		storeList(arena, record, 3, 5, _query_clauses);
+		storeCell(arena, record, 4, 6, _select_or_group_clause);
 		const node = arena.view(record);
 		return node as unknown as T.QueryBodyGroup.Bound;
 	});
@@ -29721,8 +29765,8 @@ function buildQueryBodyGroup$patch(source: object, config: T.QueryBodyGroup.Conf
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.QueryBodyGroup as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'identifier', _identifier));
-		patchList(arena, record, 3, 8, _query_clauses);
-		patchCell(arena, record, 4, 9, carriedSlot(source, 'selectOrGroupClause', _select_or_group_clause));
+		patchList(arena, record, 3, 5, _query_clauses);
+		patchCell(arena, record, 4, 6, carriedSlot(source, 'selectOrGroupClause', _select_or_group_clause));
 		const node = arena.view(record);
 		return node as unknown as T.QueryBodyGroup.Bound;
 	});
@@ -29842,7 +29886,7 @@ export function buildAnonymousObjectMemberDeclaratorArm(
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.AnonymousObjectMemberDeclaratorArm as const);
 		storeCell(arena, record, 2, 2, _name);
-		storeCell(arena, record, 3, 8, _value);
+		storeCell(arena, record, 3, 5, _value);
 		const node = arena.view(record);
 		return node as unknown as T.AnonymousObjectMemberDeclaratorArm.Bound;
 	});
@@ -29863,7 +29907,7 @@ function buildAnonymousObjectMemberDeclaratorArm$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.AnonymousObjectMemberDeclaratorArm as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 3, 8, carriedSlot(source, 'value', _value));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'value', _value));
 		const node = arena.view(record);
 		return node as unknown as T.AnonymousObjectMemberDeclaratorArm.Bound;
 	});
@@ -30533,8 +30577,8 @@ export function buildEnumDeclarationWithBody(
 		storeList(arena, record, 2, 2, _attribute_lists);
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 10, _base_list);
-		storeCell(arena, record, 6, 14, _body);
+		storeCell(arena, record, 5, 7, _base_list);
+		storeCell(arena, record, 6, 10, _body);
 		const node = arena.view(record);
 		return node as unknown as T.EnumDeclarationWithBody.Bound;
 	});
@@ -30589,8 +30633,8 @@ function buildEnumDeclarationWithBody$patch(
 		patchList(arena, record, 2, 2, _attribute_lists);
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 10, carriedSlot(source, 'baseList', _base_list));
-		patchCell(arena, record, 6, 14, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 5, 7, carriedSlot(source, 'baseList', _base_list));
+		patchCell(arena, record, 6, 10, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.EnumDeclarationWithBody.Bound;
 	});
@@ -30830,7 +30874,7 @@ export function buildEnumDeclarationWithoutBody(
 		storeList(arena, record, 2, 2, _attribute_lists);
 		storeList(arena, record, 3, 3, _modifier);
 		storeCell(arena, record, 4, 4, _name);
-		storeCell(arena, record, 5, 10, _base_list);
+		storeCell(arena, record, 5, 7, _base_list);
 		const node = arena.view(record);
 		return node as unknown as T.EnumDeclarationWithoutBody.Bound;
 	});
@@ -30870,7 +30914,7 @@ function buildEnumDeclarationWithoutBody$patch(
 		patchList(arena, record, 2, 2, _attribute_lists);
 		patchList(arena, record, 3, 3, _modifier);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 5, 10, carriedSlot(source, 'baseList', _base_list));
+		patchCell(arena, record, 5, 7, carriedSlot(source, 'baseList', _base_list));
 		const node = arena.view(record);
 		return node as unknown as T.EnumDeclarationWithoutBody.Bound;
 	});
@@ -31248,7 +31292,7 @@ export function buildRecordBasePrimaryConstructor(
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.RecordBasePrimaryConstructor as const);
 		storeCell(arena, record, 2, 2, _primary_constructor_base_type);
-		storeList(arena, record, 3, 10, _name);
+		storeList(arena, record, 3, 5, _name);
 		const node = arena.view(record);
 		return node as unknown as T.RecordBasePrimaryConstructor.Bound;
 	});
@@ -31272,7 +31316,7 @@ function buildRecordBasePrimaryConstructor$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.RecordBasePrimaryConstructor as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'primaryConstructorBaseType', _primary_constructor_base_type));
-		patchList(arena, record, 3, 10, _name);
+		patchList(arena, record, 3, 5, _name);
 		const node = arena.view(record);
 		return node as unknown as T.RecordBasePrimaryConstructor.Bound;
 	});
@@ -31361,7 +31405,7 @@ export function buildUsingDirectiveAlias(config: T.UsingDirectiveAlias.Config): 
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.UsingDirectiveAlias as const);
 		storeCell(arena, record, 2, 2, _name);
-		storeCell(arena, record, 3, 8, _type);
+		storeCell(arena, record, 3, 5, _type);
 		const node = arena.view(record);
 		return node as unknown as T.UsingDirectiveAlias.Bound;
 	});
@@ -31381,7 +31425,7 @@ function buildUsingDirectiveAlias$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.UsingDirectiveAlias as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 3, 8, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'type', _type));
 		const node = arena.view(record);
 		return node as unknown as T.UsingDirectiveAlias.Bound;
 	});
@@ -31853,7 +31897,12 @@ function withElementBindingExpression(node: object, setter: string, args: readon
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.Arguments as const, optional: false, make: buildArguments },
+								{
+									kind: TSKindId.Arguments as const,
+									optional: false,
+									make: buildArguments,
+									element: { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } }
+								},
 								(value: Admit<NonNullable<T.Arguments>>) => buildElementBindingExpression$patch(node, value)
 							)
 						)
@@ -33429,906 +33478,906 @@ export const builtViews: BuiltViews = Object.freeze({
 	}),
 	places: Object.freeze({
 		168: [
-			[2, 2, 2, 4, 0, 0],
-			[4, 3, 2, 4, 0, 0]
+			[2, 2, 2, 4, 0],
+			[4, 3, 2, 4, 0]
 		],
-		198: [[2, 2, 2, 4, 0, 0]],
+		198: [[2, 2, 2, 4, 0]],
 		202: [
-			[2, 2, 2, 4, 0, 0],
-			[4, 3, 2, 4, 0, 0],
-			[6, 4, 2, 4, 0, 0],
-			[8, 5, 2, 4, 0, 0],
-			[10, 6, 2, 4, 0, 0],
-			[12, 7, 2, 4, 0, 0]
+			[2, 2, 2, 4, 0],
+			[4, 3, 2, 4, 0],
+			[6, 4, 2, 4, 0],
+			[8, 5, 2, 4, 0],
+			[10, 6, 2, 4, 0],
+			[12, 7, 2, 4, 0]
 		],
 		203: [
-			[2, 2, 2, 4, 0, 0],
-			[4, 3, 2, 4, 0, 0],
-			[6, 4, 2, 4, 0, 0],
-			[8, 5, 2, 4, 0, 0],
-			[10, 6, 2, 4, 0, 0]
+			[2, 2, 2, 4, 0],
+			[4, 3, 2, 4, 0],
+			[6, 4, 2, 4, 0],
+			[8, 5, 2, 4, 0],
+			[10, 6, 2, 4, 0]
 		],
 		204: [
-			[2, 2, 2, 4, 0, 0],
-			[4, 3, 2, 4, 0, 0],
-			[6, 4, 2, 4, 0, 0],
-			[8, 5, 2, 4, 0, 0],
-			[10, 6, 2, 4, 0, 0]
+			[2, 2, 2, 4, 0],
+			[4, 3, 2, 4, 0],
+			[6, 4, 2, 4, 0],
+			[8, 5, 2, 4, 0],
+			[10, 6, 2, 4, 0]
 		],
 		205: [
-			[2, 2, 2, 4, 0, 0],
-			[4, 3, 2, 4, 0, 0]
+			[2, 2, 2, 4, 0],
+			[4, 3, 2, 4, 0]
 		],
-		210: [[2, 2, 2, 4, 0, 0]],
-		211: [[2, 2, 2, 4, 0, 0]],
+		210: [[2, 2, 2, 4, 0]],
+		211: [[2, 2, 2, 4, 0]],
 		251: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 1, 1, 0, 3]
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3]
 		],
-		253: [[2, 2, 4, 3, 0, 0]],
-		254: [[2, 2, 6, 8, 6, 0]],
+		253: [[2, 2, 4, 3, 0]],
+		254: [[2, 2, 3, 1, 0]],
 		255: [
 			[2, 0],
 			[2, 1],
 			[2, 2],
-			[3, 3, 3, 1, 0, 0]
+			[3, 3, 3, 1, 0]
 		],
 		256: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 3, 8, 3, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 3, 1, 0]
 		],
 		257: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 8, 3, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
-		258: [[2, 2, 1, 1, 0, 3]],
+		258: [[2, 2, 1, 1, 3]],
 		259: [
-			[2, 2, 9, 8, 9, 0],
-			[11, 3, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0]
 		],
 		260: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 8, 3, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		263: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 8, 3, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
-		264: [[2, 2, 3, 1, 0, 0]],
+		264: [[2, 2, 3, 1, 0]],
 		266: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 6, 8, 6, 0],
-			[10, 5, 1, 1, 0, 3],
-			[11, 6, 1, 1, 0, 3],
-			[12, 7, 6, 10, 5, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 3, 1, 0],
+			[7, 5, 1, 1, 3],
+			[8, 6, 1, 1, 3],
+			[9, 7, 4, 3, 0]
 		],
 		268: [
-			[3, 3, 1, 1, 0, 3],
-			[4, 4, 1, 2, 0, 1],
+			[3, 3, 1, 1, 3],
+			[4, 4, 1, 2, 1],
 			[2, 0],
-			[5, 5, 6, 8, 6, 0],
-			[11, 6, 1, 1, 0, 3],
-			[12, 7, 1, 1, 0, 3],
-			[13, 8, 6, 10, 5, 0]
+			[5, 5, 3, 1, 0],
+			[8, 6, 1, 1, 3],
+			[9, 7, 1, 1, 3],
+			[10, 8, 4, 3, 0]
 		],
-		272: [[2, 2, 3, 8, 3, 0]],
+		272: [[2, 2, 3, 1, 0]],
 		273: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 6, 8, 6, 0],
-			[9, 4, 4, 3, 0, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 3, 1, 0],
+			[6, 4, 4, 3, 0]
 		],
 		274: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 6, 8, 6, 0],
-			[10, 5, 3, 8, 3, 0],
-			[13, 6, 4, 8, 4, 0],
-			[17, 7, 1, 1, 0, 3],
-			[18, 8, 6, 10, 5, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 3, 1, 0],
+			[7, 5, 3, 1, 0],
+			[10, 6, 3, 1, 0],
+			[13, 7, 1, 1, 3],
+			[14, 8, 4, 3, 0]
 		],
 		276: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 4, 3, 0, 0],
-			[8, 5, 6, 8, 6, 0],
-			[14, 6, 3, 8, 3, 0],
-			[17, 7, 3, 8, 3, 0],
-			[20, 8, 1, 1, 0, 3]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 4, 3, 0],
+			[8, 5, 3, 1, 0],
+			[11, 6, 3, 1, 0],
+			[14, 7, 3, 1, 0],
+			[17, 8, 1, 1, 3]
 		],
 		278: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 1, 2, 0, 0],
-			[5, 5, 6, 8, 6, 0],
-			[11, 6, 1, 1, 0, 3],
-			[12, 7, 11, 8, 11, 0],
-			[23, 8, 1, 1, 0, 3],
-			[24, 9, 6, 10, 5, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 1, 2, 0],
+			[5, 5, 3, 1, 0],
+			[8, 6, 1, 1, 3],
+			[9, 7, 3, 1, 0],
+			[12, 8, 1, 1, 3],
+			[13, 9, 4, 3, 0]
 		],
 		282: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 8, 3, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
-		284: [[2, 2, 1, 1, 0, 3]],
+		284: [[2, 2, 1, 1, 3]],
 		285: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 0],
-			[4, 4, 6, 8, 6, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 0],
+			[4, 4, 3, 1, 0]
 		],
 		286: [
-			[2, 2, 1, 3, 0, 4],
-			[3, 3, 1, 1, 0, 3]
+			[2, 2, 1, 3, 4],
+			[3, 3, 1, 1, 3]
 		],
 		287: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 1, 3, 0, 4]
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 3, 4]
 		],
 		290: [
-			[3, 3, 1, 1, 0, 3],
-			[4, 4, 1, 2, 0, 1],
-			[5, 5, 4, 3, 0, 0],
-			[9, 6, 5, 8, 5, 0],
+			[3, 3, 1, 1, 3],
+			[4, 4, 1, 2, 1],
+			[5, 5, 4, 3, 0],
+			[9, 6, 3, 1, 0],
 			[2, 0],
-			[14, 7, 1, 2, 0, 0],
-			[15, 8, 3, 8, 3, 0],
-			[18, 9, 6, 8, 6, 0]
+			[12, 7, 1, 2, 0],
+			[13, 8, 3, 1, 0],
+			[16, 9, 3, 1, 0]
 		],
 		291: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 1, 2, 0, 0],
-			[5, 5, 1, 3, 0, 4],
-			[6, 6, 4, 3, 0, 0],
-			[10, 7, 3, 8, 3, 0],
-			[13, 8, 6, 8, 6, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 1, 2, 0],
+			[5, 5, 1, 3, 4],
+			[6, 6, 4, 3, 0],
+			[10, 7, 3, 1, 0],
+			[13, 8, 3, 1, 0]
 		],
-		292: [[2, 2, 1, 1, 0, 3]],
+		292: [[2, 2, 1, 1, 3]],
 		294: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 7, 8, 7, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 3, 1, 0]
 		],
 		295: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 6, 8, 6, 0],
-			[10, 5, 3, 8, 3, 0],
-			[13, 6, 6, 8, 6, 0],
-			[19, 7, 6, 8, 6, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 3, 1, 0],
+			[7, 5, 3, 1, 0],
+			[10, 6, 3, 1, 0],
+			[13, 7, 3, 1, 0]
 		],
 		297: [
-			[3, 3, 1, 1, 0, 3],
+			[3, 3, 1, 1, 3],
 			[2, 0],
-			[4, 4, 6, 8, 6, 0],
-			[10, 5, 3, 8, 3, 0],
-			[13, 6, 6, 8, 6, 0]
+			[4, 4, 3, 1, 0],
+			[7, 5, 3, 1, 0],
+			[10, 6, 3, 1, 0]
 		],
 		298: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 4, 3, 0, 0],
-			[8, 5, 5, 8, 5, 0],
-			[13, 6, 6, 8, 6, 0],
-			[19, 7, 3, 8, 3, 0],
-			[22, 8, 3, 8, 3, 0],
-			[25, 9, 1, 1, 0, 3],
-			[26, 10, 6, 8, 6, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 4, 3, 0],
+			[8, 5, 3, 1, 0],
+			[11, 6, 3, 1, 0],
+			[14, 7, 3, 1, 0],
+			[17, 8, 3, 1, 0],
+			[20, 9, 1, 1, 3],
+			[21, 10, 3, 1, 0]
 		],
 		299: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 4, 3, 0, 0],
-			[8, 5, 5, 8, 5, 0],
-			[13, 6, 6, 8, 6, 0],
-			[19, 7, 3, 8, 3, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 4, 3, 0],
+			[8, 5, 3, 1, 0],
+			[11, 6, 3, 1, 0],
+			[14, 7, 3, 1, 0]
 		],
 		300: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 7, 8, 7, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 3, 1, 0]
 		],
-		301: [[2, 2, 1, 1, 0, 3]],
+		301: [[2, 2, 1, 1, 3]],
 		302: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 7, 10, 6, 0],
-			[11, 5, 6, 8, 6, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 4, 3, 0],
+			[8, 5, 3, 1, 0]
 		],
 		303: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 4, 3, 0, 0],
-			[8, 5, 5, 8, 5, 0],
-			[13, 6, 3, 8, 3, 0],
-			[16, 7, 3, 8, 3, 0],
-			[19, 8, 6, 8, 6, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 4, 3, 0],
+			[8, 5, 3, 1, 0],
+			[11, 6, 3, 1, 0],
+			[14, 7, 3, 1, 0],
+			[17, 8, 3, 1, 0]
 		],
-		304: [[2, 2, 1, 1, 0, 3]],
+		304: [[2, 2, 1, 1, 3]],
 		305: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 4, 3, 0, 0],
-			[8, 5, 5, 8, 5, 0],
-			[13, 6, 6, 8, 6, 0],
-			[19, 7, 9, 8, 9, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 4, 3, 0],
+			[8, 5, 3, 1, 0],
+			[11, 6, 3, 1, 0],
+			[14, 7, 3, 1, 0]
 		],
-		306: [[2, 2, 3, 1, 0, 0]],
-		307: [[2, 2, 1, 1, 0, 3]],
+		306: [[2, 2, 3, 1, 0]],
+		307: [[2, 2, 1, 1, 3]],
 		308: [
-			[3, 3, 1, 1, 0, 3],
+			[3, 3, 1, 1, 3],
 			[2, 0],
 			[2, 1],
-			[4, 4, 1, 2, 0, 0],
-			[5, 5, 4, 3, 0, 0],
-			[9, 6, 6, 8, 6, 0],
-			[15, 7, 4, 3, 0, 0]
+			[4, 4, 1, 2, 0],
+			[5, 5, 4, 3, 0],
+			[9, 6, 3, 1, 0],
+			[12, 7, 4, 3, 0]
 		],
 		309: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 4, 3, 0, 0],
-			[7, 4, 6, 8, 6, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 4, 3, 0],
+			[7, 4, 3, 1, 0]
 		],
 		310: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 3, 8, 3, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 3, 1, 0]
 		],
-		311: [[2, 2, 1, 1, 0, 3]],
-		312: [[2, 2, 1, 3, 0, 4]],
+		311: [[2, 2, 1, 1, 3]],
+		312: [[2, 2, 1, 3, 4]],
 		313: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 1, 2, 0, 0],
-			[9, 4, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 2, 0],
+			[6, 4, 4, 3, 0]
 		],
-		314: [[2, 2, 1, 3, 0, 4]],
-		315: [[2, 2, 4, 3, 0, 0]],
+		314: [[2, 2, 1, 3, 4]],
+		315: [[2, 2, 4, 3, 0]],
 		317: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 1, 0, 3]
+			[2, 2, 4, 3, 0],
+			[6, 3, 1, 1, 3]
 		],
 		318: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 1, 0, 3]
+			[2, 2, 4, 3, 0],
+			[6, 3, 1, 1, 3]
 		],
 		319: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 5, 8, 5, 0],
-			[13, 4, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0],
+			[8, 4, 4, 3, 0]
 		],
 		320: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0]
 		],
-		321: [[2, 2, 3, 8, 3, 0]],
+		321: [[2, 2, 3, 1, 0]],
 		323: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 12, 8, 12, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		325: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 12, 8, 12, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		326: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 4, 9, 3, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		330: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
-		332: [[2, 2, 1, 3, 0, 4]],
-		333: [[2, 2, 4, 3, 0, 0]],
-		334: [[2, 2, 4, 3, 0, 0]],
+		332: [[2, 2, 1, 3, 4]],
+		333: [[2, 2, 4, 3, 0]],
+		334: [[2, 2, 4, 3, 0]],
 		336: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 1, 1, 0, 3],
-			[9, 4, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3],
+			[6, 4, 4, 3, 0]
 		],
-		337: [[2, 2, 4, 10, 3, 0]],
+		337: [[2, 2, 4, 3, 0]],
 		338: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 4, 3, 0, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 4, 3, 0]
 		],
 		340: [
 			[2, 0],
-			[3, 3, 4, 3, 0, 0]
+			[3, 3, 4, 3, 0]
 		],
-		342: [[2, 2, 3, 1, 0, 0]],
-		344: [[2, 2, 1, 1, 0, 3]],
+		342: [[2, 2, 3, 1, 0]],
+		344: [[2, 2, 1, 1, 3]],
 		345: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 6, 8, 6, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
 		348: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 3, 8, 3, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 3, 1, 0]
 		],
 		350: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
-		352: [[2, 2, 3, 1, 0, 0]],
+		352: [[2, 2, 3, 1, 0]],
 		353: [
-			[2, 2, 7, 8, 7, 0],
-			[9, 3, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0]
 		],
 		354: [
-			[2, 2, 3, 8, 3, 0],
-			[5, 3, 4, 3, 0, 0],
-			[9, 4, 1, 3, 0, 4],
-			[10, 5, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0],
+			[9, 4, 1, 3, 4],
+			[10, 5, 4, 3, 0]
 		],
-		356: [[2, 2, 4, 3, 0, 0]],
+		356: [[2, 2, 4, 3, 0]],
 		357: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
-		358: [[2, 2, 4, 3, 0, 0]],
-		360: [[2, 2, 1, 1, 0, 3]],
+		358: [[2, 2, 4, 3, 0]],
+		360: [[2, 2, 1, 1, 3]],
 		361: [
-			[2, 2, 7, 10, 6, 0],
-			[9, 3, 1, 3, 0, 4]
+			[2, 2, 4, 3, 0],
+			[6, 3, 1, 3, 4]
 		],
-		362: [[2, 2, 4, 3, 0, 0]],
+		362: [[2, 2, 4, 3, 0]],
 		363: [
-			[2, 2, 3, 8, 3, 0],
-			[5, 3, 1, 1, 0, 3],
-			[6, 4, 5, 8, 5, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3],
+			[6, 4, 3, 1, 0]
 		],
 		364: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 3, 8, 3, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 3, 1, 0]
 		],
 		365: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 6, 8, 6, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
-		366: [[2, 2, 4, 3, 0, 0]],
-		367: [[2, 2, 3, 8, 3, 0]],
-		368: [[2, 2, 3, 8, 3, 0]],
+		366: [[2, 2, 4, 3, 0]],
+		367: [[2, 2, 3, 1, 0]],
+		368: [[2, 2, 3, 1, 0]],
 		369: [
 			[2, 0],
-			[3, 3, 4, 3, 0, 0],
-			[7, 4, 4, 3, 0, 0]
+			[3, 3, 4, 3, 0],
+			[7, 4, 4, 3, 0]
 		],
 		370: [
 			[2, 0],
-			[3, 3, 4, 3, 0, 0],
-			[7, 4, 4, 3, 0, 0],
-			[11, 5, 4, 3, 0, 0]
+			[3, 3, 4, 3, 0],
+			[7, 4, 4, 3, 0],
+			[11, 5, 4, 3, 0]
 		],
 		372: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 4, 3, 0, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 4, 3, 0]
 		],
 		373: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0]
 		],
 		374: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0],
-			[10, 4, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0],
+			[10, 4, 4, 3, 0]
 		],
 		375: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
 		376: [
 			[2, 0],
 			[2, 1],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 7, 8, 7, 0]
+			[3, 3, 1, 2, 1],
+			[4, 4, 3, 1, 0]
 		],
 		377: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 4, 3, 0, 0],
-			[8, 5, 6, 8, 6, 0],
-			[14, 6, 3, 8, 3, 0],
-			[17, 7, 3, 8, 3, 0],
-			[20, 8, 1, 1, 0, 3],
-			[21, 9, 6, 8, 6, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 4, 3, 0],
+			[8, 5, 3, 1, 0],
+			[11, 6, 3, 1, 0],
+			[14, 7, 3, 1, 0],
+			[17, 8, 1, 1, 3],
+			[18, 9, 3, 1, 0]
 		],
 		380: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 7, 10, 6, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
-		381: [[2, 2, 4, 3, 0, 0]],
+		381: [[2, 2, 4, 3, 0]],
 		382: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 8, 3, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		383: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 8, 3, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
-		384: [[2, 2, 4, 3, 0, 0]],
-		385: [[2, 2, 7, 10, 6, 0]],
-		386: [[2, 2, 4, 3, 0, 0]],
+		384: [[2, 2, 4, 3, 0]],
+		385: [[2, 2, 4, 3, 0]],
+		386: [[2, 2, 4, 3, 0]],
 		387: [
-			[2, 2, 3, 8, 3, 0],
-			[5, 3, 9, 8, 9, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		388: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0],
-			[9, 4, 5, 8, 5, 0],
-			[14, 5, 7, 10, 6, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 3, 1, 0],
+			[12, 5, 4, 3, 0]
 		],
-		389: [[2, 2, 1, 1, 0, 3]],
-		390: [[2, 2, 3, 8, 3, 0]],
+		389: [[2, 2, 1, 1, 3]],
+		390: [[2, 2, 3, 1, 0]],
 		391: [
-			[2, 2, 12, 8, 12, 0],
-			[14, 3, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0]
 		],
 		392: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 4, 3, 0, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 4, 3, 0]
 		],
-		393: [[2, 2, 4, 3, 0, 0]],
+		393: [[2, 2, 4, 3, 0]],
 		394: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
 		395: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
 		396: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 7, 10, 6, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
-		397: [[2, 2, 7, 10, 6, 0]],
-		398: [[2, 2, 1, 3, 0, 4]],
+		397: [[2, 2, 4, 3, 0]],
+		398: [[2, 2, 1, 3, 4]],
 		403: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 2, 0, 0],
-			[7, 4, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 1, 2, 0],
+			[7, 4, 4, 3, 0]
 		],
 		404: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 2, 0, 0],
-			[7, 4, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 1, 2, 0],
+			[7, 4, 4, 3, 0]
 		],
 		405: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 2, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 1, 2, 0]
 		],
 		406: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 4, 3, 0, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 4, 3, 0]
 		],
-		407: [[2, 2, 4, 3, 0, 0]],
+		407: [[2, 2, 4, 3, 0]],
 		408: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 1, 1, 0, 3],
-			[6, 4, 3, 1, 0, 0],
-			[9, 5, 1, 1, 0, 3]
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3],
+			[6, 4, 3, 1, 0],
+			[9, 5, 1, 1, 3]
 		],
 		409: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 6, 8, 6, 0],
-			[12, 4, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 4, 3, 0]
 		],
 		412: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 6, 8, 6, 0],
-			[12, 4, 4, 3, 0, 0],
-			[16, 5, 4, 3, 0, 0],
-			[20, 6, 4, 3, 0, 0],
-			[24, 7, 8, 8, 8, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 4, 3, 0],
+			[13, 5, 4, 3, 0],
+			[17, 6, 4, 3, 0],
+			[21, 7, 3, 1, 0]
 		],
-		415: [[2, 2, 6, 8, 6, 0]],
+		415: [[2, 2, 3, 1, 0]],
 		416: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0]
 		],
-		417: [[2, 2, 1, 1, 0, 3]],
-		418: [[2, 2, 4, 3, 0, 0]],
+		417: [[2, 2, 1, 1, 3]],
+		418: [[2, 2, 4, 3, 0]],
 		420: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
-		421: [[2, 2, 4, 3, 0, 0]],
+		421: [[2, 2, 4, 3, 0]],
 		422: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0],
-			[10, 4, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0],
+			[10, 4, 4, 3, 0]
 		],
 		423: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 14, 8, 14, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
 		424: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
 		425: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
 		426: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
 		427: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
 		428: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 4, 3, 0, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 4, 3, 0]
 		],
 		429: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
 		430: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
 		432: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 6, 8, 6, 0],
-			[12, 4, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 4, 3, 0]
 		],
-		433: [[2, 2, 4, 3, 0, 0]],
-		434: [[2, 2, 4, 3, 0, 0]],
-		435: [[2, 2, 4, 3, 0, 0]],
+		433: [[2, 2, 4, 3, 0]],
+		434: [[2, 2, 4, 3, 0]],
+		435: [[2, 2, 4, 3, 0]],
 		436: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 5, 8, 5, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
 		437: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 1, 0, 3],
-			[4, 4, 1, 1, 0, 3],
-			[5, 5, 3, 1, 0, 0],
-			[8, 6, 3, 1, 0, 0],
-			[11, 7, 3, 1, 0, 0],
-			[14, 8, 3, 1, 0, 0],
-			[17, 9, 3, 1, 0, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 1, 3],
+			[4, 4, 1, 1, 3],
+			[5, 5, 3, 1, 0],
+			[8, 6, 3, 1, 0],
+			[11, 7, 3, 1, 0],
+			[14, 8, 3, 1, 0],
+			[17, 9, 3, 1, 0]
 		],
 		441: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 4, 3, 0, 0],
-			[9, 4, 6, 8, 6, 0],
-			[15, 5, 3, 1, 0, 0],
-			[18, 6, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0],
+			[9, 4, 3, 1, 0],
+			[12, 5, 3, 1, 0],
+			[15, 6, 3, 1, 0]
 		],
-		442: [[2, 2, 4, 3, 0, 0]],
+		442: [[2, 2, 4, 3, 0]],
 		444: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 2, 0, 0],
-			[7, 4, 12, 8, 12, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 1, 2, 0],
+			[7, 4, 3, 1, 0]
 		],
-		445: [[2, 2, 12, 8, 12, 0]],
+		445: [[2, 2, 3, 1, 0]],
 		446: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0],
-			[9, 4, 5, 8, 5, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 3, 1, 0]
 		],
-		447: [[2, 2, 4, 3, 0, 0]],
-		448: [[2, 2, 4, 3, 0, 0]],
+		447: [[2, 2, 4, 3, 0]],
+		448: [[2, 2, 4, 3, 0]],
 		449: [
-			[3, 3, 1, 1, 0, 3],
+			[3, 3, 1, 1, 3],
 			[2, 0],
 			[2, 1],
-			[4, 4, 4, 3, 0, 0],
-			[8, 5, 6, 8, 6, 0],
-			[14, 6, 4, 3, 0, 0]
+			[4, 4, 4, 3, 0],
+			[8, 5, 3, 1, 0],
+			[11, 6, 4, 3, 0]
 		],
 		452: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 5, 8, 5, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		453: [
 			[2, 0],
 			[2, 1],
-			[3, 3, 3, 8, 3, 0],
-			[6, 4, 3, 8, 3, 0]
+			[3, 3, 3, 1, 0],
+			[6, 4, 3, 1, 0]
 		],
-		454: [[2, 2, 3, 8, 3, 0]],
+		454: [[2, 2, 3, 1, 0]],
 		456: [
-			[2, 2, 1, 2, 0, 1],
-			[3, 3, 5, 8, 5, 0]
+			[2, 2, 1, 2, 1],
+			[3, 3, 3, 1, 0]
 		],
 		457: [
-			[2, 2, 3, 8, 3, 0],
-			[5, 3, 5, 8, 5, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
-		458: [[2, 2, 5, 8, 5, 0]],
-		459: [[2, 2, 3, 8, 3, 0]],
-		460: [[2, 2, 6, 8, 6, 0]],
-		461: [[2, 2, 4, 3, 0, 0]],
-		462: [[2, 2, 4, 3, 0, 0]],
-		463: [[2, 2, 3, 8, 3, 0]],
+		458: [[2, 2, 3, 1, 0]],
+		459: [[2, 2, 3, 1, 0]],
+		460: [[2, 2, 3, 1, 0]],
+		461: [[2, 2, 4, 3, 0]],
+		462: [[2, 2, 4, 3, 0]],
+		463: [[2, 2, 3, 1, 0]],
 		464: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 6, 8, 6, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
-		465: [[2, 2, 4, 3, 0, 0]],
+		465: [[2, 2, 4, 3, 0]],
 		466: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
 		468: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0]
 		],
-		469: [[2, 2, 4, 3, 0, 0]],
-		470: [[2, 2, 4, 3, 0, 0]],
-		471: [[2, 2, 4, 3, 0, 0]],
-		472: [[2, 2, 4, 3, 0, 0]],
-		473: [[2, 2, 4, 3, 0, 0]],
+		469: [[2, 2, 4, 3, 0]],
+		470: [[2, 2, 4, 3, 0]],
+		471: [[2, 2, 4, 3, 0]],
+		472: [[2, 2, 4, 3, 0]],
+		473: [[2, 2, 4, 3, 0]],
 		474: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
 		475: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 5, 8, 5, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		476: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
-		477: [[2, 2, 1, 1, 0, 3]],
-		479: [[2, 2, 3, 1, 0, 0]],
+		477: [[2, 2, 1, 1, 3]],
+		479: [[2, 2, 3, 1, 0]],
 		482: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 3, 1, 0, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 3, 1, 0]
 		],
 		484: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0],
-			[8, 4, 3, 1, 0, 0],
-			[11, 5, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0],
+			[8, 4, 3, 1, 0],
+			[11, 5, 3, 1, 0]
 		],
-		486: [[2, 2, 4, 3, 0, 0]],
+		486: [[2, 2, 4, 3, 0]],
 		488: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 1, 0, 0],
-			[9, 4, 1, 1, 0, 3],
-			[10, 5, 3, 1, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 1, 1, 3],
+			[10, 5, 3, 1, 0]
 		],
-		489: [[2, 2, 1, 1, 0, 3]],
+		489: [[2, 2, 1, 1, 3]],
 		490: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 1, 0, 0],
-			[9, 4, 1, 1, 0, 3],
-			[10, 5, 3, 1, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 1, 1, 3],
+			[10, 5, 3, 1, 0]
 		],
 		491: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 1, 0, 0],
-			[9, 4, 1, 3, 0, 4],
-			[10, 5, 3, 1, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 1, 3, 4],
+			[10, 5, 3, 1, 0]
 		],
-		492: [[2, 2, 1, 3, 0, 4]],
+		492: [[2, 2, 1, 3, 4]],
 		493: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 1, 0, 0],
-			[9, 4, 1, 3, 0, 4],
-			[10, 5, 3, 1, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 1, 3, 4],
+			[10, 5, 3, 1, 0]
 		],
 		494: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 1, 0, 0],
-			[9, 4, 4, 3, 0, 0],
-			[13, 5, 3, 1, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 4, 3, 0],
+			[13, 5, 3, 1, 0]
 		],
-		495: [[2, 2, 4, 3, 0, 0]],
+		495: [[2, 2, 4, 3, 0]],
 		496: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 1, 0, 0],
-			[9, 4, 4, 3, 0, 0],
-			[13, 5, 3, 1, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 4, 3, 0],
+			[13, 5, 3, 1, 0]
 		],
 		497: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 1, 0, 0],
-			[9, 4, 13, 8, 13, 0],
-			[22, 5, 3, 1, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 3, 1, 0],
+			[12, 5, 3, 1, 0]
 		],
-		498: [[2, 2, 13, 8, 13, 0]],
+		498: [[2, 2, 3, 1, 0]],
 		499: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 1, 0, 0],
-			[9, 4, 13, 8, 13, 0],
-			[22, 5, 3, 1, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 3, 1, 0],
+			[12, 5, 3, 1, 0]
 		],
 		500: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 1, 0, 0],
-			[9, 4, 8, 8, 8, 0],
-			[17, 5, 3, 1, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 3, 1, 0],
+			[12, 5, 3, 1, 0]
 		],
-		501: [[2, 2, 8, 8, 8, 0]],
+		501: [[2, 2, 3, 1, 0]],
 		502: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 1, 0, 0],
-			[9, 4, 8, 8, 8, 0],
-			[17, 5, 3, 1, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 3, 1, 0],
+			[12, 5, 3, 1, 0]
 		],
-		504: [[2, 2, 4, 3, 0, 0]],
-		505: [[2, 2, 4, 3, 0, 0]],
+		504: [[2, 2, 4, 3, 0]],
+		505: [[2, 2, 4, 3, 0]],
 		506: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 2, 0, 0],
-			[7, 4, 4, 3, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 1, 2, 0],
+			[7, 4, 4, 3, 0]
 		],
 		507: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		508: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		509: [
-			[2, 2, 24, 10, 23, 0],
-			[26, 3, 3, 1, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
 		510: [
-			[2, 2, 20, 8, 20, 0],
-			[22, 3, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		511: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 1, 2, 0, 0],
-			[4, 4, 3, 1, 0, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 1, 2, 0],
+			[4, 4, 3, 1, 0]
 		],
 		512: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		513: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		514: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		515: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		516: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 1, 3],
 			['side', true, false]
 		],
 		517: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 1, 3],
 			['side', true, false]
 		],
-		518: [[2, 2, 6, 8, 6, 0]],
+		518: [[2, 2, 3, 1, 0]],
 		520: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 1, 3],
 			['side', true, false]
 		],
-		521: [[2, 2, 1, 3, 0, 4]],
+		521: [[2, 2, 1, 3, 4]],
 		522: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 6, 8, 6, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
-		523: [[2, 2, 4, 3, 0, 0]],
+		523: [[2, 2, 4, 3, 0]],
 		524: [
-			[2, 2, 1, 3, 0, 4],
+			[2, 2, 1, 3, 4],
 			['side', true, false]
 		],
 		525: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 1, 3],
 			['side', true, false]
 		],
 		526: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 1, 3],
 			['side', true, false]
 		],
 		527: [
-			[2, 2, 1, 3, 0, 4],
+			[2, 2, 1, 3, 4],
 			['side', true, false]
 		],
 		528: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 1, 3],
 			['side', true, false]
 		],
 		529: [
-			[2, 2, 1, 3, 0, 4],
+			[2, 2, 1, 3, 4],
 			['side', true, false]
 		],
 		530: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 1, 3],
 			['side', true, false]
 		],
 		531: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 6, 8, 6, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		532: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0],
-			[8, 4, 3, 1, 0, 0],
-			[11, 5, 3, 1, 0, 0],
-			[14, 6, 3, 1, 0, 0],
-			[17, 7, 6, 8, 6, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0],
+			[8, 4, 3, 1, 0],
+			[11, 5, 3, 1, 0],
+			[14, 6, 3, 1, 0],
+			[17, 7, 3, 1, 0]
 		],
 		533: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 1, 1, 0, 3]
+			[2, 2, 1, 2, 0],
+			[3, 3, 1, 1, 3]
 		],
 		534: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 6, 8, 6, 0],
-			[14, 4, 6, 8, 6, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0],
+			[8, 4, 3, 1, 0]
 		],
 		535: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 1, 2, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 2, 0]
 		],
 		536: [
-			[2, 2, 3, 8, 3, 0],
-			[5, 3, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0]
 		],
-		537: [[2, 2, 1, 3, 0, 4]],
+		537: [[2, 2, 1, 3, 4]],
 		538: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 6, 8, 6, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
 		539: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 6, 8, 6, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
 		540: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 1, 1, 0, 3],
-			[9, 4, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3],
+			[6, 4, 3, 1, 0]
 		],
 		541: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0]
 		],
 		543: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 2, 0, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 1, 2, 0]
 		],
 		544: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
 		545: [
-			[2, 2, 3, 8, 3, 0],
-			[5, 3, 3, 8, 3, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
-		550: [[2, 2, 4, 3, 0, 0]],
+		550: [[2, 2, 4, 3, 0]],
 		551: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 6, 8, 6, 0],
-			[10, 5, 4, 8, 4, 0],
-			[14, 6, 5, 8, 5, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 3, 1, 0],
+			[7, 5, 3, 1, 0],
+			[10, 6, 3, 1, 0]
 		],
 		552: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 6, 8, 6, 0],
-			[10, 5, 4, 8, 4, 0]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 2, 1],
+			[4, 4, 3, 1, 0],
+			[7, 5, 3, 1, 0]
 		],
-		553: [[2, 2, 3, 8, 3, 0]],
-		556: [[2, 2, 1, 3, 0, 4]],
-		557: [[2, 2, 1, 1, 0, 3]],
+		553: [[2, 2, 3, 1, 0]],
+		556: [[2, 2, 1, 3, 4]],
+		557: [[2, 2, 1, 1, 3]],
 		558: [
-			[2, 2, 8, 8, 8, 0],
-			[10, 3, 1, 1, 0, 3]
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3]
 		],
 		559: [
-			[2, 2, 6, 8, 6, 0],
-			[8, 3, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0]
 		],
-		611: [[2, 2, 3, 8, 3, 0]],
-		612: [[2, 2, 4, 3, 0, 0]]
+		611: [[2, 2, 3, 1, 0]],
+		612: [[2, 2, 4, 3, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifierToken,

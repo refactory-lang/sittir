@@ -416,19 +416,30 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             .map(|part| {
                 Ok(match part {
                     crate::attrs::EdgePartAttr::Token(kind) => quote!(::sittir_core::arena::EdgePart::Token(#kind)),
-                    crate::attrs::EdgePartAttr::Slot(name) => {
+                    crate::attrs::EdgePartAttr::Slot(name, kinds) => {
                         let list = celled.iter().enumerate().find(|(_, (field, _))| field.ident == name).and_then(|(at, (_, slot))| Some((at, slot.separators.iter().flatten().next()?)));
-                        if let Some((at, separator)) = list {
-                            let at = u8::try_from(at).map_err(|_| syn::Error::new_spanned(name, format!("`{ident}` has more cells than a `u8` indexes")))?;
-                            quote!(::sittir_core::arena::EdgePart::List { cell: #at, separator: #separator })
-                        } else {
-                            let slot = body_slot(name)?;
-                            quote!(::sittir_core::arena::EdgePart::Slot(#slot))
+                        match (list, kinds) {
+                            (Some(_), Some(_)) => return Err(syn::Error::new_spanned(name, format!("`{ident}`'s list `{name}` is no edge part under an arm its kind picks"))),
+                            (Some((at, separator)), None) => {
+                                let at = u8::try_from(at).map_err(|_| syn::Error::new_spanned(name, format!("`{ident}` has more cells than a `u8` indexes")))?;
+                                quote!(::sittir_core::arena::EdgePart::List { cell: #at, separator: #separator })
+                            }
+                            (None, None) => {
+                                let slot = body_slot(name)?;
+                                quote!(::sittir_core::arena::EdgePart::Slot(#slot))
+                            }
+                            (None, Some(kinds)) => {
+                                let slot = body_slot(name)?;
+                                quote!(::sittir_core::arena::EdgePart::SlotOfKind { slot: #slot, kinds: #kinds })
+                            }
                         }
                     }
-                    crate::attrs::EdgePartAttr::Guarded(name, token) => {
+                    crate::attrs::EdgePartAttr::Guarded(name, token, kinds) => {
                         let slot = body_slot(name)?;
-                        quote!(::sittir_core::arena::EdgePart::Guarded { slot: #slot, token: #token })
+                        match kinds {
+                            None => quote!(::sittir_core::arena::EdgePart::Guarded { slot: #slot, token: #token }),
+                            Some(kinds) => quote!(::sittir_core::arena::EdgePart::GuardedByKind { slot: #slot, kinds: #kinds, token: #token }),
+                        }
                     }
                 })
             })
@@ -813,6 +824,26 @@ mod tests {
         assert!(out.contains("edges:[&[::sittir_core::arena::EdgePart::Token(kind::AMP)],&[::sittir_core::arena::EdgePart::Slot(::sittir_core::arena::BodySlot::Cell(0u8))]]"), "{out}");
         let refused = expand(&with(quote::quote!([target]))).expect_err("refused").to_string();
         assert!(refused.contains("names each of its cells and flags once"), "{refused}");
+    }
+
+    #[test]
+    fn an_edge_part_under_an_arm_its_slot_s_kind_picks_carries_those_kinds() {
+        let out = expand(&parse_quote! {
+            #[node(kind = kind::REFERENCE, words = 5, built_words = 3, order = [target], edges = ([guarded(target, kind::AMP, &[kind::NAME])], [slot(target, &[kind::BLOCK, kind::NAME])]), fields = ReferenceFields, view = ReferenceNodeRecord, prepare_fn = prepare_reference)]
+            pub struct ReferenceNode {
+                #[wire(key = "$_layout")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
+                #[wire(key = "_target")]
+                #[slot(field = field::TARGET, word = 2, width = 3, forms = 1, built = 2)]
+                pub target: SlotValue<TargetNode>,
+            }
+        })
+        .expect("expands")
+        .replace(' ', "");
+        assert!(out.contains("edges:[&[::sittir_core::arena::EdgePart::GuardedByKind{slot:::sittir_core::arena::BodySlot::Cell(0u8),kinds:&[kind::NAME],token:kind::AMP}],&[::sittir_core::arena::EdgePart::SlotOfKind{slot:::sittir_core::arena::BodySlot::Cell(0u8),kinds:&[kind::BLOCK,kind::NAME]}]]"), "{out}");
     }
 
     #[test]

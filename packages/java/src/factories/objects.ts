@@ -35,6 +35,7 @@ import {
 	listSlotWith,
 	holdBuiltItems,
 	storedElements,
+	elementsWith,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -55,7 +56,7 @@ import {
 	objectInner,
 	describeValue,
 	restItems,
-	isNodeOfKind,
+	toElement,
 	admitAliasContent,
 	kindIdStorage,
 	listStorage,
@@ -5827,7 +5828,12 @@ function buildEnumBody$with(node: Held, setter: string, args: readonly unknown[]
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.EnumConstants as const, optional: true, make: buildEnumConstants },
+								{
+									kind: TSKindId.EnumConstants as const,
+									optional: true,
+									make: buildEnumConstants,
+									element: { make: buildEnumConstant, wrapper: { kind: TSKindId.EnumConstant, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.EnumBody.Config>['enumConstants']>) =>
 									buildEnumBody({ ...config, enumConstants: value })
 							)
@@ -11061,9 +11067,10 @@ function _buildEnumConstants(
 	currentHandle()?.admit(TSKindId.EnumConstants, elements);
 	const _mapped = elements.map(
 		(e): T.EnumConstant =>
-			(isNodeOfKind(e, TSKindId.EnumConstant)
-				? (e as unknown)
-				: buildEnumConstant({ name: e } as Parameters<typeof buildEnumConstant>[0])) as T.EnumConstant
+			toElement(e, {
+				make: buildEnumConstant,
+				wrapper: { kind: TSKindId.EnumConstant, content: 'name' }
+			}) as T.EnumConstant
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -11133,8 +11140,14 @@ function buildEnumConstants$with(node: Held, setter: string, args: readonly unkn
 	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...vs: NonEmptyArray<Admit<T.EnumConstant | T.Identifier>>) =>
-				rebuilt(node, handle, () => buildEnumConstants(options, ...vs))
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', make: buildEnumConstant, wrapper: { kind: TSKindId.EnumConstant, content: 'name' } },
+						(...vs: NonEmptyArray<Admit<T.EnumConstant | T.Identifier>>) => buildEnumConstants(options, ...vs)
+					)
+				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>

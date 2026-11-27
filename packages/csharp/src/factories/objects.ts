@@ -58,7 +58,7 @@ import {
 	objectInner,
 	describeValue,
 	restItems,
-	isNodeOfKind,
+	toElement,
 	admitHoles,
 	admitSplicedEnvelope,
 	kindIdStorage,
@@ -507,7 +507,12 @@ function buildGlobalAttribute$with(node: Held, setter: string, args: readonly un
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.Attributes as const, optional: false, make: buildAttributes },
+								{
+									kind: TSKindId.Attributes as const,
+									optional: false,
+									make: buildAttributes,
+									element: { make: buildAttribute, wrapper: { kind: TSKindId.Attribute, content: 'name' } }
+								},
 								(value: Admit<NonNullable<T.GlobalAttribute.Config>['attributes']>) =>
 									buildGlobalAttribute({ ...config, attributes: value })
 							)
@@ -778,7 +783,12 @@ function buildAttributeList$with(node: Held, setter: string, args: readonly unkn
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.Attributes as const, optional: false, make: buildAttributes },
+								{
+									kind: TSKindId.Attributes as const,
+									optional: false,
+									make: buildAttributes,
+									element: { make: buildAttribute, wrapper: { kind: TSKindId.Attribute, content: 'name' } }
+								},
 								(value: Admit<NonNullable<T.AttributeList.Config>['attributes']>) =>
 									buildAttributeList({ ...config, attributes: value })
 							)
@@ -5544,7 +5554,12 @@ function buildVariableDeclarator$with(node: Held, setter: string, args: readonly
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.BracketedArgumentList as const, optional: true, make: buildBracketedArgumentList },
+								{
+									kind: TSKindId.BracketedArgumentList as const,
+									optional: true,
+									make: buildBracketedArgumentList,
+									element: { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } }
+								},
 								(value?: Admit<NonNullable<T.VariableDeclarator.Config>['bracketedArgumentList']>) =>
 									buildVariableDeclarator({ ...config, bracketedArgumentList: value })
 							)
@@ -5761,7 +5776,12 @@ function buildBracketedArgumentList$with(node: Held, setter: string, args: reado
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.Arguments as const, optional: false, make: buildArguments },
+								{
+									kind: TSKindId.Arguments as const,
+									optional: false,
+									make: buildArguments,
+									element: { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } }
+								},
 								(value: Admit<NonNullable<T.Arguments>>) => _buildBracketedArgumentList(value)
 							)
 						)
@@ -9465,7 +9485,12 @@ function buildRecursivePattern$with(node: Held, setter: string, args: readonly u
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.PropertyPatternClause as const, optional: true, make: buildPropertyPatternClause },
+						{
+							kind: TSKindId.PropertyPatternClause as const,
+							optional: true,
+							make: buildPropertyPatternClause,
+							element: { make: buildSubpattern, wrapper: { kind: TSKindId.Subpattern, content: 'pattern' } }
+						},
 						(value?: Admit<T.PropertyPatternClause>) =>
 							buildRecursivePattern({ ...config, propertyPatternClause: value })
 					)
@@ -9637,7 +9662,12 @@ function buildPropertyPatternClause$with(node: Held, setter: string, args: reado
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.Subpatterns as const, optional: true, make: buildSubpatterns },
+								{
+									kind: TSKindId.Subpatterns as const,
+									optional: true,
+									make: buildSubpatterns,
+									element: { make: buildSubpattern, wrapper: { kind: TSKindId.Subpattern, content: 'pattern' } }
+								},
 								(value?: Admit<NonNullable<T.Subpatterns>>) => _buildPropertyPatternClause(value)
 							)
 						)
@@ -12064,7 +12094,12 @@ function buildElementAccessExpression$with(node: Held, setter: string, args: rea
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.BracketedArgumentList as const, optional: false, make: buildBracketedArgumentList },
+								{
+									kind: TSKindId.BracketedArgumentList as const,
+									optional: false,
+									make: buildBracketedArgumentList,
+									element: { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } }
+								},
 								(value: Admit<NonNullable<T.ElementAccessExpression.Config>['subscript']>) =>
 									buildElementAccessExpression({ ...config, subscript: value })
 							)
@@ -18477,9 +18512,7 @@ function _buildAttributes(
 	currentHandle()?.admit(TSKindId.Attributes, elements);
 	const _mapped = elements.map(
 		(e): T.Attribute =>
-			(isNodeOfKind(e, TSKindId.Attribute)
-				? (e as unknown)
-				: buildAttribute({ name: e } as Parameters<typeof buildAttribute>[0])) as T.Attribute
+			toElement(e, { make: buildAttribute, wrapper: { kind: TSKindId.Attribute, content: 'name' } }) as T.Attribute
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -18551,13 +18584,18 @@ function buildAttributes$with(node: Held, setter: string, args: readonly unknown
 	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
 		case 'items':
-			return applySetter(
-				args,
-				(
-					...vs: NonEmptyArray<
-						Admit<T.Attribute | T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>
-					>
-				) => rebuilt(node, handle, () => buildAttributes(options, ...vs))
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', make: buildAttribute, wrapper: { kind: TSKindId.Attribute, content: 'name' } },
+						(
+							...vs: NonEmptyArray<
+								Admit<T.Attribute | T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>
+							>
+						) => buildAttributes(options, ...vs)
+					)
+				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -18836,9 +18874,7 @@ function _buildArguments(
 	currentHandle()?.admit(TSKindId.Arguments, elements);
 	const _mapped = elements.map(
 		(e): T.Argument =>
-			(isNodeOfKind(e, TSKindId.Argument)
-				? (e as unknown)
-				: buildArgument({ content: e } as Parameters<typeof buildArgument>[0])) as T.Argument
+			toElement(e, { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } }) as T.Argument
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -18908,8 +18944,15 @@ function buildArguments$with(node: Held, setter: string, args: readonly unknown[
 	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Argument | T.Expression | T.DeclarationExpression>>) =>
-				rebuilt(node, handle, () => buildArguments(options, ...vs))
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } },
+						(...vs: NonEmptyArray<Admit<T.Argument | T.Expression | T.DeclarationExpression>>) =>
+							buildArguments(options, ...vs)
+					)
+				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -19234,9 +19277,10 @@ function _buildSubpatterns(
 	currentHandle()?.admit(TSKindId.Subpatterns, elements);
 	const _mapped = elements.map(
 		(e): T.Subpattern =>
-			(isNodeOfKind(e, TSKindId.Subpattern)
-				? (e as unknown)
-				: buildSubpattern({ pattern: e } as Parameters<typeof buildSubpattern>[0])) as T.Subpattern
+			toElement(e, {
+				make: buildSubpattern,
+				wrapper: { kind: TSKindId.Subpattern, content: 'pattern' }
+			}) as T.Subpattern
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -19306,8 +19350,14 @@ function buildSubpatterns$with(node: Held, setter: string, args: readonly unknow
 	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
 		case 'items':
-			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Subpattern | T.Pattern>>) =>
-				rebuilt(node, handle, () => buildSubpatterns(options, ...vs))
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', make: buildSubpattern, wrapper: { kind: TSKindId.Subpattern, content: 'pattern' } },
+						(...vs: NonEmptyArray<Admit<T.Subpattern | T.Pattern>>) => buildSubpatterns(options, ...vs)
+					)
+				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -22218,7 +22268,12 @@ function buildElementBindingExpression$with(node: Held, setter: string, args: re
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.Arguments as const, optional: false, make: buildArguments },
+								{
+									kind: TSKindId.Arguments as const,
+									optional: false,
+									make: buildArguments,
+									element: { make: buildArgument, wrapper: { kind: TSKindId.Argument, content: 'content' } }
+								},
 								(value: Admit<NonNullable<T.Arguments>>) => buildElementBindingExpression(value)
 							)
 						)

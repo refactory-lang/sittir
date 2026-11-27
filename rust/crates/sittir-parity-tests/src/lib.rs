@@ -283,11 +283,11 @@ pub fn same_nodes<G: sittir_core::engine::EngineGrammar, B: sittir_core::engine:
         .collect()
 }
 
-/// An edge chain that ends, in the source, in a list's separator other than
-/// the list's resolved separator: the source, the side, and both chains.
+/// An edge chain a read's records give otherwise than the position walk of
+/// the tree they were read from: the source, the side, and both chains.
 #[cfg(feature = "arena")]
 #[derive(Debug)]
-pub struct ListedEdge {
+pub struct DifferingChain {
     pub source: String,
     pub side: sittir_core::options::Side,
     pub in_source: Vec<sittir_core::render::EdgeLevel>,
@@ -295,15 +295,24 @@ pub struct ListedEdge {
 }
 
 /// What comparing a read's edge chains found: the levels of the chains
-/// that are equal, how many others place the same marks, seams and line
-/// holds, the chains listed, and each source holding a chain that differs.
+/// that are equal or place the same, the chains that differ but place the
+/// same marks, seams and line holds, and the chains listed, which end, in
+/// the source, in a list's separator other than the list's resolved
+/// separator.
 #[cfg(feature = "arena")]
 #[derive(Debug, Default)]
 pub struct EdgeChains {
     pub compared: Vec<sittir_core::render::EdgeLevel>,
-    pub same_placed: usize,
-    pub listed: Vec<ListedEdge>,
-    pub differing: Vec<String>,
+    pub same_placed: Vec<DifferingChain>,
+    pub listed: Vec<DifferingChain>,
+}
+
+#[cfg(feature = "arena")]
+impl EdgeChains {
+    /// The source of each chain that differs, placing the same or listed.
+    pub fn differing(&self) -> impl Iterator<Item = &str> {
+        self.same_placed.iter().chain(&self.listed).map(|chain| chain.source.as_str())
+    }
 }
 
 /// One thing an edge chain makes a render place.
@@ -396,17 +405,16 @@ pub fn edge_chains<G: sittir_core::arena::RecordGrammar + Copy, N: sittir_core::
                     chains.compared.extend(in_source);
                     continue;
                 }
-                chains.differing.push(source.clone());
                 let (last, above) = in_source.split_last().expect("a chain holds its node");
                 let at_a_list = above.last().and_then(|holder| <G as EngineGrammar>::shape(holder.grammar)).is_some_and(|shape| shape.edges[side as usize].iter().any(|part| matches!(part, EdgePart::List { .. })));
                 if !(at_a_list && from_body.starts_with(above) && from_body.get(above.len()).is_none_or(|next| next.grammar != last.grammar)) {
                     let table = grammar.whitespace().0;
                     assert_eq!(placed(&read_options, table, &from_body, side), placed(&read_options, table, &in_source, side), "{name} {source:?}: {side:?} edge of {kid:?}:\n  in source {in_source:?}\n  from body {from_body:?}");
-                    chains.same_placed += 1;
-                    chains.compared.extend(in_source);
+                    chains.compared.extend_from_slice(&in_source);
+                    chains.same_placed.push(DifferingChain { source: source.clone(), side, in_source, from_body });
                     continue;
                 }
-                chains.listed.push(ListedEdge { source: source.clone(), side, in_source, from_body });
+                chains.listed.push(DifferingChain { source: source.clone(), side, in_source, from_body });
             }
         }
     }

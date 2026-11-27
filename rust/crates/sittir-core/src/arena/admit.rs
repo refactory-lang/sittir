@@ -59,6 +59,12 @@ pub enum EdgePart {
     List { cell: u8, separator: KindId },
     /// A fixed token the body writes there when `slot` is present.
     Guarded { slot: BodySlot, token: KindId },
+    /// A slot under an arm the body picks by the slot's kind: its content is
+    /// the edge when it is present and its kind is one of `kinds`.
+    SlotOfKind { slot: BodySlot, kinds: &'static [KindId] },
+    /// A fixed token under an arm the body picks by `slot`'s kind: the edge
+    /// when `slot` is present and its kind is one of `kinds`.
+    GuardedByKind { slot: BodySlot, kinds: &'static [KindId], token: KindId },
 }
 
 /// One slot's cell in a record: in a parsed record, its first word and

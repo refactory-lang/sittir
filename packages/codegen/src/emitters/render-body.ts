@@ -531,13 +531,29 @@ export function bodySlotOrder(body: Body): string[] {
 
 export type EdgePartSpec =
 	| { readonly token: string }
-	| { readonly cell: string }
-	| { readonly guarded: string; readonly token: string };
+	| { readonly cell: string; readonly kinds?: readonly string[] }
+	| { readonly guarded: string; readonly token: string; readonly kinds?: readonly string[] };
+
+interface EdgeGuard {
+	readonly slot: string;
+	readonly kinds?: readonly string[];
+}
 
 export function bodyEdgeParts(body: Body, side: 'before' | 'after', optional: (slot: string) => boolean = () => false): EdgePartSpec[] {
 	const parts: EdgePartSpec[] = [];
-	const token = (name: string, guard: string | undefined): EdgePartSpec => (guard === undefined ? { token: name } : { guarded: guard, token: name });
-	const walk = (nodes: Body, guard: string | undefined): boolean => {
+	const ofKinds = (guard: EdgeGuard | undefined) => (guard?.kinds === undefined ? {} : { kinds: guard.kinds });
+	const token = (name: string, guard: EdgeGuard | undefined): EdgePartSpec => (guard === undefined ? { token: name } : { guarded: guard.slot, token: name, ...ofKinds(guard) });
+	const refuseUnderKinds = (guard: EdgeGuard | undefined, slot: string): void => {
+		if (guard?.kinds !== undefined && guard.slot !== slot) {
+			throw new Error(`render body writes '${slot}' at its ${side} edge under an arm gated by '${guard.slot}''s kind`);
+		}
+	};
+	const within = (guard: EdgeGuard | undefined, arm: IfArm): EdgeGuard => {
+		refuseUnderKinds(guard, arm.test);
+		if (arm.kinds !== undefined) return { slot: arm.test, kinds: arm.kinds };
+		return guard?.slot === arm.test ? guard : { slot: arm.test };
+	};
+	const walk = (nodes: Body, guard: EdgeGuard | undefined): boolean => {
 		for (const node of side === 'before' ? nodes : [...nodes].reverse()) {
 			switch (node.kind) {
 				case 'text':
@@ -554,20 +570,18 @@ export function bodyEdgeParts(body: Body, side: 'before' | 'after', optional: (s
 					parts.push(token(DEDENT_TEXT, guard));
 					return true;
 				case 'slot':
-					parts.push({ cell: node.name });
-					if (node.name === guard || !optional(node.name)) return true;
+					refuseUnderKinds(guard, node.name);
+					parts.push({ cell: node.name, ...ofKinds(guard) });
+					if (node.name === guard?.slot || !optional(node.name)) return true;
 					break;
 				case 'if': {
-					const writes = (alternative: Body, test: string | undefined) => {
+					const writes = (alternative: Body, inner: EdgeGuard | undefined) => {
 						const at = parts.length;
-						const closes = walk(alternative, test);
+						const closes = walk(alternative, inner);
 						return { closes, wrote: parts.length > at };
 					};
-					const arms = node.arms.map((arm) => ({ ...writes(arm.body, arm.test), gatedByKind: arm.kinds !== undefined }));
+					const arms = node.arms.map((arm) => writes(arm.body, within(guard, arm)));
 					const otherwise = node.fallback === undefined ? undefined : writes(node.fallback, guard);
-					if (arms.some((arm) => arm.gatedByKind && arm.wrote)) {
-						throw new Error(`render body writes a token at its ${side} edge under an arm gated by a slot's kind`);
-					}
 					if (otherwise?.wrote === true && arms.some((arm) => !arm.wrote)) {
 						throw new Error(`render body's fallback writes at its ${side} edge beside an arm that writes nothing there`);
 					}

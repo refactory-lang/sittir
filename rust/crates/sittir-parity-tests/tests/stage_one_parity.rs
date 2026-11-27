@@ -162,7 +162,7 @@ fn edge_levels_agree_from_render_bodies() {
     fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
         let chains = edge_chains::<G, N>(name, grammar, options, &edge_sources(name));
         assert!(!chains.compared.is_empty(), "{name}: some edge level compared");
-        eprintln!("{name}: {} edge levels equal, {} chains place the same, {} chains listed", chains.compared.len(), chains.same_placed, chains.listed.len());
+        eprintln!("{name}: {} edge levels equal, {} chains place the same, {} chains listed", chains.compared.len(), chains.same_placed.len(), chains.listed.len());
     }
     each_grammar!(check);
 }
@@ -176,6 +176,50 @@ fn edge_levels_at_a_zero_width_fixed_token_agree() {
     }
     check::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults, sittir_python::render::kind_ids::_NEWLINE);
     check::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, sittir_typescript::render::kind_ids::_AUTOMATIC_SEMICOLON);
+}
+
+/// A record whose render body picks the arm at its edge by a slot's kind
+/// gives that edge's chain as its tree does, through the arm the cell's
+/// kind picks: C#'s member bodies after their block, arrow and bodiless
+/// forms, and Java's assert statements with and without a message.
+#[test]
+fn an_edge_under_a_kind_gated_arm_reads_the_arm_the_cell_s_kind_picks() {
+    use sittir_core::options::Side;
+    use sittir_csharp::render::kind_ids as cs;
+    use sittir_java::render::kind_ids as java;
+    fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions, sources: &[&str], gated: &[(KindId, Side)]) {
+        let sources: Vec<String> = sources.iter().map(|source| (*source).to_owned()).collect();
+        let chains = edge_chains::<G, N>(name, grammar, options, &sources);
+        let differing: Vec<_> = chains.same_placed.iter().chain(&chains.listed).filter(|chain| gated.iter().any(|&(holder, side)| chain.side == side && chain.in_source[0].grammar == holder)).collect();
+        assert!(differing.is_empty(), "{name}: a gated edge's chain differs from its tree's: {differing:#?}");
+        for (holder, _) in gated {
+            assert!(chains.compared.iter().any(|level| level.grammar == *holder), "{name}: an edge of {holder:?} compared");
+        }
+    }
+    let members = [cs::METHOD_DECLARATION, cs::CONSTRUCTOR_DECLARATION, cs::DESTRUCTOR_DECLARATION, cs::OPERATOR_DECLARATION, cs::CONVERSION_OPERATOR_DECLARATION, cs::ACCESSOR_DECLARATION, cs::PROPERTY_DECLARATION, cs::LOCAL_FUNCTION_STATEMENT];
+    check::<_, sittir_csharp::render::AnyNode>(
+        "csharp",
+        sittir_csharp::CsharpGrammar,
+        sittir_csharp::render::options::defaults,
+        &[
+            "abstract class C { int M() { return 1; } int N() => 1; abstract int O(); int z; }",
+            "abstract class C { C() { } C(int a) => z = a; extern C(long a); int z; }",
+            "abstract class C { ~C() { } ~C() => z = 0; extern ~C(); int z; }",
+            "abstract class C { public static C operator +(C a, C b) { return a; } public static C operator -(C a, C b) => a; public static extern C operator *(C a, C b); int z; }",
+            "abstract class C { public static implicit operator int(C c) { return 0; } public static explicit operator long(C c) => 0; public static extern implicit operator short(C c); int z; }",
+            "abstract class C { int P { get { return 1; } set => z = value; init; } int z; }",
+            "abstract class C { int P { get; set; } int Q => 1; int R { get; } = 1; int z; }",
+            "abstract class C { void M() { void A() { } int B() => 1; static extern int D(); int y = 0; } int z; }",
+        ],
+        &members.map(|member| (member, Side::After)),
+    );
+    check::<_, sittir_java::render::AnyNode>(
+        "java",
+        sittir_java::JavaGrammar,
+        sittir_java::render::options::defaults,
+        &["class A { void m() { int y = 0; assert y > 0; assert y > 0 : \"m\"; y = 1; } }"],
+        &[(java::ASSERT_STATEMENT, Side::Before), (java::ASSERT_STATEMENT, Side::After)],
+    );
 }
 
 #[test]

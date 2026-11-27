@@ -3663,10 +3663,12 @@ function bodyFactsArg(
 	};
 	const tokens = layoutTokens(node, ctx, printedSlots.map(({ slot }) => slot));
 	const optional = (name: string): boolean => slotOf(name)?.optional === true;
+	const kindsOf = (part: EdgePartSpec): string =>
+		'kinds' in part && part.kinds !== undefined ? `, ${rustKindIdSlice(part.kinds, ctx.nodeMap, buildKindIdByKind(ctx.kindEntries), node.kind)}` : '';
 	const printed = (part: EdgePartSpec): string => {
-		if ('cell' in part) return `slot(${fieldOf(part.cell)})`;
+		if ('cell' in part) return `slot(${fieldOf(part.cell)}${kindsOf(part)})`;
 		const token = ctx.names.kind(edgeTokenId(node, part.token, tokens));
-		return 'guarded' in part ? `guarded(${fieldOf(part.guarded)}, ${token})` : `token(${token})`;
+		return 'guarded' in part ? `guarded(${fieldOf(part.guarded)}, ${token}${kindsOf(part)})` : `token(${token})`;
 	};
 	const side = (edge: 'before' | 'after'): string => `[${bodyEdgeParts(body, edge, optional).map(printed).join(', ')}]`;
 	const written = bodySlotOrder(body).flatMap((name) => slotOf(name)?.field ?? []);

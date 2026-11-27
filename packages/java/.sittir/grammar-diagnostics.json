@@ -3014,30 +3014,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.boolean.false: arm 6 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.boolean.true: arm 5 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.null: arm 16 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "modifier: elements has no exact set"
   },
   {
