@@ -10,7 +10,6 @@ import {
 	floatOf,
 	holderOf,
 	holdsKey,
-	holdsOpaque,
 	integerOf,
 	integerValue,
 	isNode,
@@ -198,6 +197,7 @@ const SEATS3: Seats = [{ pattern: { source: '^(?:\\\\(?:[^xu]))$', flags: 'u' },
 const SEATS4: Seats = [{ pattern: { source: '^(?:\\\\(?:u[0-9a-fA-F]{4}))$', flags: 'u' }, text: true }];
 const SEATS5: Seats = [{ pattern: { source: '^(?:\\\\(?:u\\{[0-9a-fA-F]+\\}))$', flags: 'u' }, text: true }];
 const SEATS6: Seats = [{ pattern: { source: '^(?:\\\\(?:x[0-9a-fA-F]{2}))$', flags: 'u' }, text: true }];
+const ROW1: QuerySlotEntry = ['shebang', 0, undefined, '_shebang'];
 const SEATS7: Seats = [{ pattern: { source: '^(?:[\\r\\f\\t\\v ]*(?:[^[\\n][^\\x0A]*)?)$', flags: 'u' }, text: true }];
 const KINDS1 = new Set([
 	177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384,
@@ -489,6 +489,7 @@ const SEATS9: Seats = [
 const KINDS4 = new Set([183, 405, 406, 407]);
 const SEATS10: Seats = [{}];
 const KINDS5 = new Set([187, 408, 409, 410]);
+const ROW2: QuerySlotEntry = ['name', 0, undefined, '_name'];
 const KINDS6 = new Set([127]);
 const KINDS7 = new Set([11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 186]);
 const SEATS11: Seats = [
@@ -512,6 +513,7 @@ const SEATS11: Seats = [
 		}
 	}
 ];
+const ROW3: QuerySlotEntry = ['tokenPatterns', 0, undefined, '_token_patterns'];
 const KINDS8 = new Set([127, 183, 184, 185, 405, 406, 407]);
 const KINDS9 = new Set([
 	1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54, 55, 57,
@@ -630,7 +632,9 @@ const SEATS13: Seats = [
 ];
 const KINDS11 = new Set([8, 9, 10]);
 const SEATS14: Seats = [{ tokens: { '*': 9, '+': 8, '?': 10 } }];
+const ROW4: QuerySlotEntry = ['tokens', 0, undefined, '_tokens'];
 const KINDS12 = new Set([127, 187, 188, 408, 409, 410]);
+const ROW5: QuerySlotEntry = ['content', 0, undefined, '_content'];
 const SEATS15: Seats = [
 	{},
 	{
@@ -3710,6 +3714,7 @@ const SEATS17: Seats = [
 	{},
 	{}
 ];
+const ROW6: QuerySlotEntry = ['path', 0, undefined, '_path'];
 const KINDS16 = new Set([1, 125, 126, 127, 263, 480]);
 const SEATS18: Seats = [
 	{
@@ -3728,11 +3733,10 @@ const SEATS19: Seats = [
 	}
 ];
 const KINDS17 = new Set([260, 411, 412, 413]);
-const ROW1: QuerySlotEntry = ['visibilityModifier', 0, undefined, '_visibility_modifier'];
+const ROW7: QuerySlotEntry = ['visibilityModifier', 0, undefined, '_visibility_modifier'];
 const KINDS18 = new Set([235]);
-const ROW2: QuerySlotEntry = ['content', 0, undefined, '_content'];
 const KINDS19 = new Set([381]);
-const ROW3: QuerySlotEntry = ['visibilityModifierPubScope', 0, undefined, '_visibility_modifier_pub_scope'];
+const ROW8: QuerySlotEntry = ['visibilityModifierPubScope', 0, undefined, '_visibility_modifier_pub_scope'];
 const KINDS20 = new Set([380]);
 const KINDS21 = new Set([480]);
 const KINDS22 = new Set([126]);
@@ -3828,7 +3832,8 @@ const PRESETS4: ReadonlyArray<PortablePreset> = [
 	}
 ];
 const KINDS30 = new Set([200]);
-const ROW4: QuerySlotEntry = ['body', 2, undefined, '_body'];
+const ROW9: QuerySlotEntry = ['value', 3, undefined, '_value'];
+const ROW10: QuerySlotEntry = ['body', 2, undefined, '_body'];
 const KINDS31 = new Set([203]);
 const KINDS32 = new Set([201]);
 const KINDS33 = new Set([1]);
@@ -4006,6 +4011,7 @@ const PRESETS16: ReadonlyArray<PortablePreset> = [
 	},
 	{ steps: [{ key: 'body', optional: true }], builder: 'orderedFieldDeclarationList' }
 ];
+const ROW11: QuerySlotEntry = ['type', 2, undefined, '_type'];
 const KINDS35 = new Set([477]);
 const SEATS23: Seats = [
 	{
@@ -4046,10 +4052,15 @@ const SEATS24: Seats = [
 		texts: [1, 483]
 	}
 ];
-const ROW5: QuerySlotEntry = ['mutable', 2, 'mut', '_mutable', 57];
-const ROW6: QuerySlotEntry = ['byReference', 1, 'ref', '_by_reference', 114];
-const ROW7: QuerySlotEntry = ['functionModifiers', 1, undefined, '_function_modifiers'];
-const ROW8: QuerySlotEntry = ['modifiers', 0, undefined, '_modifier'];
+const ROW12: QuerySlotEntry = ['type', 4, undefined, '_type'];
+const ROW13: QuerySlotEntry = ['value', 5, undefined, '_value'];
+const ROW14: QuerySlotEntry = ['mutable', 2, 'mut', '_mutable', 57];
+const ROW15: QuerySlotEntry = ['byReference', 1, 'ref', '_by_reference', 114];
+const ROW16: QuerySlotEntry = ['value', 4, undefined, '_value'];
+const ROW17: QuerySlotEntry = ['name', 2, undefined, '_name'];
+const ROW18: QuerySlotEntry = ['returnType', 5, undefined, '_return_type'];
+const ROW19: QuerySlotEntry = ['functionModifiers', 1, undefined, '_function_modifiers'];
+const ROW20: QuerySlotEntry = ['modifiers', 0, undefined, '_modifier'];
 const KINDS37 = new Set([1, 127]);
 const KINDS38 = new Set([35, 50, 111, 112, 234]);
 const KINDS39 = new Set([234]);
@@ -4155,13 +4166,18 @@ const SEATS28: Seats = [
 		texts: [1, 483]
 	}
 ];
-const ROW9: QuerySlotEntry = ['unsafe', 1, 'unsafe', '_unsafe', 111];
+const ROW21: QuerySlotEntry = ['unsafe', 1, 'unsafe', '_unsafe', 111];
 const SEATS29: Seats = [{}, { tokens: { ';': 178 } }, {}, {}];
+const ROW22: QuerySlotEntry = ['bounds', 0, undefined, '_bounds'];
+const ROW23: QuerySlotEntry = ['type', 1, undefined, '_type'];
+const ROW24: QuerySlotEntry = ['type', 0, undefined, '_type'];
+const ROW25: QuerySlotEntry = ['default', 2, undefined, '_default'];
 const KINDS47 = new Set([
 	1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 313, 328, 330, 331, 332, 333, 334, 336, 367
 ]);
 const KINDS48 = new Set([239]);
-const ROW10: QuerySlotEntry = ['mutable', 0, 'mut', '_mutable', 57];
+const ROW26: QuerySlotEntry = ['name', 1, undefined, '_name'];
+const ROW27: QuerySlotEntry = ['mutable', 0, 'mut', '_mutable', 57];
 const KINDS49 = new Set([
 	1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318, 319, 321,
 	322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
@@ -4175,6 +4191,7 @@ const SEATS30: Seats = [
 	}
 ];
 const KINDS50 = new Set([313]);
+const ROW28: QuerySlotEntry = ['argument', 1, undefined, '_argument'];
 const KINDS51 = new Set([1, 125, 126, 127, 226, 227, 228, 229, 263, 480]);
 const KINDS52 = new Set([227]);
 const SEATS31: Seats = [
@@ -4187,15 +4204,19 @@ const SEATS31: Seats = [
 	}
 ];
 const KINDS53 = new Set([359]);
-const ROW11: QuerySlotEntry = ['reference', 0, '&', '_reference', 54];
+const ROW29: QuerySlotEntry = ['reference', 0, '&', '_reference', 54];
 const KINDS54 = new Set([57]);
-const ROW12: QuerySlotEntry = ['name', 1, undefined, '_name'];
+const ROW30: QuerySlotEntry = ['pattern', 1, undefined, '_pattern'];
 const KINDS55 = new Set([124]);
 const KINDS56 = new Set([332]);
 const KINDS57 = new Set([
 	58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 238, 240, 242, 243, 244, 246, 248,
 	252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 ]);
+const ROW31: QuerySlotEntry = ['alias', 1, undefined, '_alias'];
+const ROW32: QuerySlotEntry = ['element', 0, undefined, '_element'];
+const ROW33: QuerySlotEntry = ['length', 1, undefined, '_length'];
+const ROW34: QuerySlotEntry = ['returnType', 3, undefined, '_return_type'];
 const PRESETS17: ReadonlyArray<PortablePreset> = [
 	{
 		steps: [
@@ -4207,8 +4228,8 @@ const PRESETS17: ReadonlyArray<PortablePreset> = [
 		]
 	}
 ];
-const ROW13: QuerySlotEntry = ['content', 1, undefined, '_content'];
-const ROW14: QuerySlotEntry = ['functionModifiers', 0, undefined, '_function_modifiers'];
+const ROW35: QuerySlotEntry = ['content', 1, undefined, '_content'];
+const ROW36: QuerySlotEntry = ['functionModifiers', 0, undefined, '_function_modifiers'];
 const KINDS58 = new Set([383]);
 const KINDS59 = new Set([265, 483]);
 const KINDS60 = new Set([382]);
@@ -4216,6 +4237,8 @@ const KINDS61 = new Set([1, 263, 308]);
 const KINDS62 = new Set([432]);
 const KINDS63 = new Set([1, 265, 483]);
 const KINDS64 = new Set([263, 483]);
+const ROW37: QuerySlotEntry = ['left', 0, undefined, '_left'];
+const ROW38: QuerySlotEntry = ['right', 1, undefined, '_right'];
 const KINDS65 = new Set([
 	58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 239, 240, 242, 243, 244, 246, 248,
 	249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
@@ -4229,10 +4252,11 @@ const SEATS32: Seats = [
 		texts: [1, 483]
 	}
 ];
-const ROW15: QuerySlotEntry = ['exclusive', 1, 'mut', '_exclusive', 57];
+const ROW39: QuerySlotEntry = ['exclusive', 1, 'mut', '_exclusive', 57];
 const KINDS67 = new Set([218, 242, 243, 246, 248, 265, 483]);
 const KINDS68 = new Set([217, 242, 243, 246, 265, 483]);
 const KINDS69 = new Set([1, 263]);
+const ROW40: QuerySlotEntry = ['qualifier', 0, undefined, '_qualifier'];
 const KINDS70 = new Set([1, 125, 126, 127, 237, 247, 263, 480]);
 const KINDS71 = new Set([1, 125]);
 const SEATS33: Seats = [
@@ -4245,11 +4269,13 @@ const SEATS33: Seats = [
 ];
 const KINDS72 = new Set([1, 125, 126, 127, 247, 263, 480]);
 const KINDS73 = new Set([1, 125, 126, 127, 237, 246, 247, 263, 480]);
-const ROW16: QuerySlotEntry = ['operator', 0, undefined, '_operator'];
+const ROW41: QuerySlotEntry = ['operator', 0, undefined, '_operator'];
 const PRESETS18: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 9 }];
 const PRESETS19: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 75 }];
 const PRESETS20: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 29 }];
-const ROW17: QuerySlotEntry = ['operator', 1, undefined, '_operator'];
+const ROW42: QuerySlotEntry = ['argument', 0, undefined, '_argument'];
+const ROW43: QuerySlotEntry = ['right', 2, undefined, '_right'];
+const ROW44: QuerySlotEntry = ['operator', 1, undefined, '_operator'];
 const PRESETS21: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 8 }];
 const PRESETS22: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 86 }];
 const PRESETS23: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 87 }];
@@ -4276,7 +4302,8 @@ const PRESETS43: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }]
 const PRESETS44: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 96 }];
 const PRESETS45: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 97 }];
 const PRESETS46: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 89 }];
-const ROW18: QuerySlotEntry = ['function', 0, undefined, '_function'];
+const ROW45: QuerySlotEntry = ['expression', 0, undefined, '_expression'];
+const ROW46: QuerySlotEntry = ['function', 0, undefined, '_function'];
 const KINDS74 = new Set([245]);
 const KINDS75 = new Set([308]);
 const KINDS76 = new Set([263]);
@@ -4318,7 +4345,10 @@ const SEATS35: Seats = [
 ];
 const KINDS81 = new Set([247, 264, 483]);
 const KINDS82 = new Set([284, 285, 286]);
+const ROW47: QuerySlotEntry = ['value', 2, undefined, '_value'];
 const KINDS83 = new Set([141, 142, 143, 144, 331, 477]);
+const ROW48: QuerySlotEntry = ['value', 0, undefined, '_value'];
+const ROW49: QuerySlotEntry = ['condition', 0, undefined, '_condition'];
 const KINDS84 = new Set([
 	1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267, 268, 269,
 	270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 289, 292, 297, 298, 299, 300, 301, 304, 305,
@@ -4326,6 +4356,9 @@ const KINDS84 = new Set([
 	392, 393, 434, 435
 ]);
 const KINDS85 = new Set([291]);
+const ROW50: QuerySlotEntry = ['pattern', 0, undefined, '_pattern'];
+const ROW51: QuerySlotEntry = ['value', 1, undefined, '_value'];
+const ROW52: QuerySlotEntry = ['rights', 1, undefined, '_right'];
 const KINDS86 = new Set([
 	1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267, 268, 269,
 	270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 292, 297, 298, 299, 300, 301, 304, 305, 306,
@@ -4333,10 +4366,18 @@ const KINDS86 = new Set([
 	393, 434, 435
 ]);
 const KINDS87 = new Set([287]);
+const ROW53: QuerySlotEntry = ['subject', 0, undefined, '_subject'];
 const KINDS88 = new Set([294, 397, 398]);
 const KINDS89 = new Set([295]);
+const ROW54: QuerySlotEntry = ['condition', 1, undefined, '_condition'];
 const KINDS90 = new Set([303]);
-const ROW19: QuerySlotEntry = ['move', 0, 'move', '_move', 129];
+const ROW55: QuerySlotEntry = ['left', 1, undefined, '_left'];
+const ROW56: QuerySlotEntry = ['expression', 1, undefined, '_expression'];
+const ROW57: QuerySlotEntry = ['object', 0, undefined, '_object'];
+const ROW58: QuerySlotEntry = ['index', 1, undefined, '_index'];
+const ROW59: QuerySlotEntry = ['property', 1, undefined, '_property'];
+const ROW60: QuerySlotEntry = ['move', 0, 'move', '_move', 129];
+const ROW61: QuerySlotEntry = ['trailingExpression', 2, undefined, '_trailing_expression'];
 const KINDS91 = new Set([
 	1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 301, 314, 315, 316, 317, 318, 319,
 	321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 369, 370, 386, 387, 419, 420, 421, 425
@@ -4353,9 +4394,10 @@ const SEATS36: Seats = [
 const KINDS92 = new Set([1, 247, 263]);
 const KINDS93 = new Set([320, 321, 414, 415]);
 const SEATS37: Seats = [{}, { tokens: { '..': 321 } }];
-const ROW20: QuerySlotEntry = ['exclusive', 0, 'mut', '_exclusive', 57];
+const ROW62: QuerySlotEntry = ['exclusive', 0, 'mut', '_exclusive', 57];
 const KINDS94 = new Set([141, 142, 143, 144, 162, 331]);
-const ROW21: QuerySlotEntry = ['stringOpen', 0, undefined, '_string_open'];
+const ROW63: QuerySlotEntry = ['elements', 1, undefined, '_elements'];
+const ROW64: QuerySlotEntry = ['stringOpen', 0, undefined, '_string_open'];
 const PRESETS47: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'stringOpen' }], text: '"', builder: 'stringOpen' }];
 const KINDS95 = new Set([151, 152, 153, 154, 157, 335]);
 const SEATS38: Seats = [
@@ -4367,7 +4409,8 @@ const PRESETS48: ReadonlyArray<PortablePreset> = [
 const PRESETS49: ReadonlyArray<PortablePreset> = [
 	{ steps: [{ key: 'stringOpen' }], text: 'c"', builder: 'stringOpen' }
 ];
-const ROW22: QuerySlotEntry = ['rawStringLiteralStart', 0, undefined, '_raw_string_literal_start'];
+const ROW65: QuerySlotEntry = ['rawStringLiteralStart', 0, undefined, '_raw_string_literal_start'];
+const ROW66: QuerySlotEntry = ['rawStringLiteralEnd', 2, undefined, '_raw_string_literal_end'];
 const PRESETS50: ReadonlyArray<PortablePreset> = [
 	{ steps: [{ key: 'rawStringLiteralStart', flatten: true }, { key: 'prefix' }], text: 'br' }
 ];
@@ -4409,9 +4452,11 @@ const PRESETS57: ReadonlyArray<PortablePreset> = [
 		]
 	}
 ];
-const ROW23: QuerySlotEntry = ['static', 0, 'static', '_static', 128];
-const ROW24: QuerySlotEntry = ['async', 1, 'async', '_async', 112];
-const ROW25: QuerySlotEntry = ['move', 2, 'move', '_move', 129];
+const ROW67: QuerySlotEntry = ['items', 0, undefined, '_item'];
+const ROW68: QuerySlotEntry = ['returnType', 4, undefined, '_return_type'];
+const ROW69: QuerySlotEntry = ['static', 0, 'static', '_static', 128];
+const ROW70: QuerySlotEntry = ['async', 1, 'async', '_async', 112];
+const ROW71: QuerySlotEntry = ['move', 2, 'move', '_move', 129];
 const KINDS105 = new Set([233, 475]);
 const SEATS39: Seats = [
 	{},
@@ -4421,6 +4466,7 @@ const SEATS39: Seats = [
 		texts: [1, 475]
 	}
 ];
+const ROW72: QuerySlotEntry = ['body', 4, undefined, '_body'];
 const KINDS106 = new Set([
 	1, 116, 117, 124, 127, 136, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267, 268,
 	269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304, 305, 306,
@@ -4440,9 +4486,10 @@ const SEATS40: Seats = [
 		texts: [1]
 	}
 ];
-const ROW26: QuerySlotEntry = ['traitClause', 2, undefined, '_trait_clause'];
+const ROW73: QuerySlotEntry = ['type', 3, undefined, '_type'];
+const ROW74: QuerySlotEntry = ['traitClause', 2, undefined, '_trait_clause'];
 const KINDS108 = new Set([375]);
-const ROW27: QuerySlotEntry = ['unsafe', 0, 'unsafe', '_unsafe', 111];
+const ROW75: QuerySlotEntry = ['unsafe', 0, 'unsafe', '_unsafe', 111];
 const KINDS109 = new Set([376]);
 const PRESETS58: ReadonlyArray<PortablePreset> = [
 	{
@@ -4517,9 +4564,13 @@ const PRESETS62: ReadonlyArray<PortablePreset> = [
 		]
 	}
 ];
+const ROW76: QuerySlotEntry = ['right', 0, undefined, '_right'];
+const ROW77: QuerySlotEntry = ['start', 0, undefined, '_start'];
+const ROW78: QuerySlotEntry = ['end', 2, undefined, '_end'];
 const PRESETS63: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 100 }];
 const PRESETS64: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 137 }];
 const PRESETS65: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 48 }];
+const ROW79: QuerySlotEntry = ['end', 0, undefined, '_end'];
 const SEATS41: Seats = [
 	{ leaf: 'docComment', pattern: { source: '^(?:(?:[^\\x0A]*\\n?))$', flags: 'u' }, texts: [166] }
 ];
@@ -4631,8 +4682,8 @@ const SEATS43: Seats = [
 		texts: [1]
 	}
 ];
-const ROW28: QuerySlotEntry = ['mutable', 1, 'mut', '_mutable', 57];
-const ROW29: QuerySlotEntry = ['byReference', 0, 'ref', '_by_reference', 114];
+const ROW80: QuerySlotEntry = ['mutable', 1, 'mut', '_mutable', 57];
+const ROW81: QuerySlotEntry = ['byReference', 0, 'ref', '_by_reference', 114];
 const KINDS113 = new Set([481]);
 const SEATS44: Seats = [
 	{
@@ -4641,7 +4692,9 @@ const SEATS44: Seats = [
 		texts: [1, 481]
 	}
 ];
+const ROW82: QuerySlotEntry = ['pattern', 3, undefined, '_pattern'];
 const KINDS114 = new Set([181]);
+const ROW83: QuerySlotEntry = ['end', 1, undefined, '_end'];
 const KINDS115 = new Set([
 	1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332, 333, 334,
 	336, 367, 480
@@ -6328,7 +6381,7 @@ const SEATS48: Seats = [
 	{},
 	{}
 ];
-const ROW30: QuerySlotEntry = ['attributeItems', 0, undefined, '_attribute_item'];
+const ROW84: QuerySlotEntry = ['attributeItems', 0, undefined, '_attribute_item'];
 const KINDS116 = new Set([190]);
 const PRESETS66: ReadonlyArray<PortablePreset> = [
 	{ steps: [{ key: 'attributeItems', optional: true }], builder: 'attributeItem' }
@@ -6359,7 +6412,7 @@ const SEATS49: Seats = [
 		texts: [1]
 	}
 ];
-const ROW31: QuerySlotEntry = ['visibilityModifier', 1, undefined, '_visibility_modifier'];
+const ROW85: QuerySlotEntry = ['visibilityModifier', 1, undefined, '_visibility_modifier'];
 const KINDS117 = new Set([
 	58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 116, 117, 127, 141, 142, 143, 144, 145, 146, 147,
 	148, 149, 150, 162, 218, 236, 239, 240, 242, 243, 244, 246, 248, 251, 252, 253, 254, 255, 256, 259, 265, 313, 328,
@@ -6415,179 +6468,10 @@ const SEATS50: Seats = [
 	{},
 	{}
 ];
-const ROW32: QuerySlotEntry = ['parameters', 4, undefined, '_parameters'];
-const ROW33: QuerySlotEntry = ['elements', 0, undefined, '_elements'];
-const ROW34: QuerySlotEntry = ['receiver', 0, undefined, '_receiver'];
+const ROW86: QuerySlotEntry = ['parameters', 4, undefined, '_parameters'];
+const ROW87: QuerySlotEntry = ['elements', 0, undefined, '_elements'];
+const ROW88: QuerySlotEntry = ['receiver', 0, undefined, '_receiver'];
 const KINDS118 = new Set([231]);
-const ROW35: QuerySlotEntry = ['shebang', 0, undefined, '_shebang'];
-const ROW36: QuerySlotEntry = ['name', 0, undefined, '_name'];
-const ROW37: QuerySlotEntry = ['tokenPatterns', 0, undefined, '_token_patterns'];
-const ROW38: QuerySlotEntry = ['tokens', 0, undefined, '_tokens'];
-const ROW39: QuerySlotEntry = ['path', 0, undefined, '_path'];
-const ROW40: QuerySlotEntry = ['value', 3, undefined, '_value'];
-const ROW41: QuerySlotEntry = ['type', 2, undefined, '_type'];
-const ROW42: QuerySlotEntry = ['type', 4, undefined, '_type'];
-const ROW43: QuerySlotEntry = ['value', 5, undefined, '_value'];
-const ROW44: QuerySlotEntry = ['value', 4, undefined, '_value'];
-const ROW45: QuerySlotEntry = ['name', 2, undefined, '_name'];
-const ROW46: QuerySlotEntry = ['returnType', 5, undefined, '_return_type'];
-const ROW47: QuerySlotEntry = ['bounds', 0, undefined, '_bounds'];
-const ROW48: QuerySlotEntry = ['type', 1, undefined, '_type'];
-const ROW49: QuerySlotEntry = ['type', 0, undefined, '_type'];
-const ROW50: QuerySlotEntry = ['default', 2, undefined, '_default'];
-const ROW51: QuerySlotEntry = ['argument', 1, undefined, '_argument'];
-const ROW52: QuerySlotEntry = ['pattern', 1, undefined, '_pattern'];
-const ROW53: QuerySlotEntry = ['alias', 1, undefined, '_alias'];
-const ROW54: QuerySlotEntry = ['element', 0, undefined, '_element'];
-const ROW55: QuerySlotEntry = ['length', 1, undefined, '_length'];
-const ROW56: QuerySlotEntry = ['returnType', 3, undefined, '_return_type'];
-const ROW57: QuerySlotEntry = ['left', 0, undefined, '_left'];
-const ROW58: QuerySlotEntry = ['right', 1, undefined, '_right'];
-const ROW59: QuerySlotEntry = ['qualifier', 0, undefined, '_qualifier'];
-const ROW60: QuerySlotEntry = ['argument', 0, undefined, '_argument'];
-const ROW61: QuerySlotEntry = ['right', 2, undefined, '_right'];
-const ROW62: QuerySlotEntry = ['expression', 0, undefined, '_expression'];
-const ROW63: QuerySlotEntry = ['value', 2, undefined, '_value'];
-const ROW64: QuerySlotEntry = ['value', 0, undefined, '_value'];
-const ROW65: QuerySlotEntry = ['condition', 0, undefined, '_condition'];
-const ROW66: QuerySlotEntry = ['pattern', 0, undefined, '_pattern'];
-const ROW67: QuerySlotEntry = ['value', 1, undefined, '_value'];
-const ROW68: QuerySlotEntry = ['rights', 1, undefined, '_right'];
-const ROW69: QuerySlotEntry = ['subject', 0, undefined, '_subject'];
-const ROW70: QuerySlotEntry = ['condition', 1, undefined, '_condition'];
-const ROW71: QuerySlotEntry = ['left', 1, undefined, '_left'];
-const ROW72: QuerySlotEntry = ['expression', 1, undefined, '_expression'];
-const ROW73: QuerySlotEntry = ['object', 0, undefined, '_object'];
-const ROW74: QuerySlotEntry = ['index', 1, undefined, '_index'];
-const ROW75: QuerySlotEntry = ['property', 1, undefined, '_property'];
-const ROW76: QuerySlotEntry = ['trailingExpression', 2, undefined, '_trailing_expression'];
-const ROW77: QuerySlotEntry = ['elements', 1, undefined, '_elements'];
-const ROW78: QuerySlotEntry = ['rawStringLiteralEnd', 2, undefined, '_raw_string_literal_end'];
-const ROW79: QuerySlotEntry = ['items', 0, undefined, '_item'];
-const ROW80: QuerySlotEntry = ['returnType', 4, undefined, '_return_type'];
-const ROW81: QuerySlotEntry = ['body', 4, undefined, '_body'];
-const ROW82: QuerySlotEntry = ['type', 3, undefined, '_type'];
-const ROW83: QuerySlotEntry = ['right', 0, undefined, '_right'];
-const ROW84: QuerySlotEntry = ['start', 0, undefined, '_start'];
-const ROW85: QuerySlotEntry = ['end', 2, undefined, '_end'];
-const ROW86: QuerySlotEntry = ['end', 0, undefined, '_end'];
-const ROW87: QuerySlotEntry = ['pattern', 3, undefined, '_pattern'];
-const ROW88: QuerySlotEntry = ['end', 1, undefined, '_end'];
-const TOKENS0: Readonly<Record<number, readonly QuerySlotEntry[]>> = {
-	'176': [ROW35],
-	'184': [ROW36],
-	'185': [ROW37],
-	'188': [ROW38],
-	'189': [ROW2],
-	'192': [ROW39],
-	'200': [ROW40],
-	'202': [ROW41],
-	'205': [ROW41, ROW40],
-	'206': [ROW42, ROW43],
-	'207': [ROW44],
-	'208': [ROW45, ROW46],
-	'209': [ROW45, ROW46],
-	'216': [ROW47],
-	'217': [ROW48],
-	'218': [ROW49],
-	'220': [ROW48, ROW50],
-	'221': [ROW50],
-	'223': [ROW12, ROW41, ROW40],
-	'224': [ROW51],
-	'226': [ROW39],
-	'228': [ROW36],
-	'232': [ROW52],
-	'233': [ROW12, ROW41],
-	'237': [ROW49],
-	'238': [ROW49, ROW53],
-	'240': [ROW54, ROW55],
-	'242': [ROW56],
-	'248': [ROW57, ROW58],
-	'251': [ROW41],
-	'252': [ROW41],
-	'263': [ROW59],
-	'264': [ROW59],
-	'265': [ROW59],
-	'267': [ROW51],
-	'268': [ROW60],
-	'270': [ROW57, ROW61],
-	'271': [ROW57, ROW58],
-	'272': [ROW57, ROW61],
-	'273': [ROW62, ROW48],
-	'274': [ROW62],
-	'275': [ROW62],
-	'276': [ROW18],
-	'279': [ROW62],
-	'285': [ROW12, ROW63],
-	'286': [ROW64],
-	'287': [ROW65],
-	'288': [ROW66, ROW67],
-	'289': [ROW57, ROW68],
-	'292': [ROW69],
-	'295': [ROW4],
-	'296': [ROW66, ROW70],
-	'297': [ROW70],
-	'299': [ROW71, ROW61],
-	'304': [ROW72],
-	'306': [ROW73, ROW74],
-	'307': [ROW62],
-	'308': [ROW73, ROW75],
-	'313': [ROW76],
-	'322': [ROW66],
-	'324': [ROW66],
-	'325': [ROW52],
-	'326': [ROW52],
-	'330': [ROW64],
-	'332': [ROW77],
-	'333': [ROW22, ROW78],
-	'348': [ROW79],
-	'351': [ROW79],
-	'356': [ROW79],
-	'357': [ROW79],
-	'359': [ROW39],
-	'363': [ROW72],
-	'364': [ROW79],
-	'365': [ROW79],
-	'368': [ROW64],
-	'369': [ROW80],
-	'370': [ROW81],
-	'371': [ROW60],
-	'372': [ROW60],
-	'373': [ROW60],
-	'374': [ROW60],
-	'377': [ROW82],
-	'378': [ROW82],
-	'379': [ROW39],
-	'386': [ROW57, ROW58],
-	'387': [ROW83],
-	'388': [ROW49],
-	'389': [ROW49],
-	'390': [ROW84, ROW85],
-	'391': [ROW84],
-	'392': [ROW86],
-	'394': [ROW62],
-	'397': [ROW4],
-	'405': [ROW37],
-	'406': [ROW37],
-	'407': [ROW37],
-	'408': [ROW38],
-	'409': [ROW38],
-	'410': [ROW38],
-	'415': [ROW87],
-	'419': [ROW88],
-	'420': [ROW84, ROW85],
-	'421': [ROW84],
-	'428': [ROW13],
-	'429': [ROW13],
-	'430': [ROW72],
-	'431': [ROW41],
-	'432': [ROW2],
-	'434': [ROW54, ROW55],
-	'438': [ROW48],
-	'475': [ROW2],
-	'479': [ROW45, ROW46],
-	'482': [ROW45, ROW46]
-};
 const seats1 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats1(item) ?? { found: item, many: false }));
 	if (fits(KINDS0, value)) return { found: value, many: false };
@@ -14218,6 +14102,8 @@ const readDocComment = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readSourceFile = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW1);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'file';
 	switch (path) {
 		case 'file': {
@@ -14290,6 +14176,8 @@ const readMacroRule = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTokenBindingPattern = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'element.macro.token_binding';
 	switch (path) {
 		case 'element.macro.token_binding': {
@@ -14315,6 +14203,8 @@ const readTokenBindingPattern = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTokenRepetitionPattern = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW3);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'element.macro.token_repetition.pattern';
 	switch (path) {
 		case 'element.macro.token_repetition.pattern': {
@@ -14342,6 +14232,8 @@ const readTokenRepetitionPattern = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTokenRepetition = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW4);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'element.macro.token_repetition';
 	switch (path) {
 		case 'element.macro.token_repetition': {
@@ -14369,6 +14261,8 @@ const readTokenRepetition = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readNonSpecialToken = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW5);
+	if (slot0.some(opaque)) return node;
 	if (seats === undefined) {
 		const element = seats22(node);
 		if (element !== undefined && !element.many && kindOf(element.found) !== undefined)
@@ -14393,6 +14287,8 @@ const readInnerAttributeItem = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAttribute = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW6);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'attribute';
 	switch (path) {
 		case 'attribute': {
@@ -14419,61 +14315,61 @@ const readAttribute = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readUnionItem = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot0 = rowItems(node, ROW7);
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.type.union.private'
 		: e1
@@ -14648,61 +14544,61 @@ const readUnionItem = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readEnumItem = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot0 = rowItems(node, ROW7);
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.type.enum.private'
 		: e1
@@ -14877,183 +14773,185 @@ const readEnumItem = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readEnumVariant = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
-	const slot2 = rowItems(node, ROW4);
+	const slot3 = rowItems(node, ROW9);
+	const slot0 = rowItems(node, ROW7);
+	const slot2 = rowItems(node, ROW10);
+	if (slot3.some(opaque)) return node;
 	const container = holderOf(node);
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x)) &&
 		slot2.some((x) => kindIn(KINDS31, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x)) &&
 		slot2.some((x) => kindIn(KINDS31, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x)) &&
 		slot2.some((x) => kindIn(KINDS31, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x)) &&
 		slot2.some((x) => kindIn(KINDS31, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x)) &&
 		slot2.some((x) => kindIn(KINDS32, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x)) &&
 		slot2.some((x) => kindIn(KINDS32, x));
 	const e6 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x)) &&
 		slot2.some((x) => kindIn(KINDS32, x));
 	const e7 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x)) &&
 		slot2.some((x) => kindIn(KINDS32, x));
 	const e8 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e9 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e10 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e11 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e12 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot2.some((x) => kindIn(KINDS31, x));
 	const e13 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x)) &&
 		slot2.some((x) => kindIn(KINDS31, x));
 	const e14 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot2.some((x) => kindIn(KINDS32, x));
 	const e15 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x)) &&
 		slot2.some((x) => kindIn(KINDS32, x));
 	const e16 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e17 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const e18 = slot2.some((x) => kindIn(KINDS31, x));
 	const e19 = slot2.some((x) => kindIn(KINDS32, x));
 	const path: string | undefined = e0
@@ -15629,62 +15527,64 @@ const readEnumVariant = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readFieldDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot2 = rowItems(node, ROW11);
+	const slot0 = rowItems(node, ROW7);
+	if (slot2.some(opaque)) return node;
 	const container = holderOf(node);
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e6 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined =
 		!e1 && !e2 && !e3 && !e4 && !e5 && !e6
 			? 'declaration.member.field'
@@ -15860,61 +15760,61 @@ const readFieldDeclaration = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readExternCrateDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot0 = rowItems(node, ROW7);
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'statement.import.package.private'
 		: e1
@@ -16065,61 +15965,64 @@ const readExternCrateDeclaration = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readConstItem = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot2 = rowItems(node, ROW11);
+	const slot3 = rowItems(node, ROW9);
+	const slot0 = rowItems(node, ROW7);
+	if (slot2.some(opaque) || slot3.some(opaque)) return node;
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.constant.private'
 		: e1
@@ -16276,63 +16179,66 @@ const readConstItem = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readStaticItem = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
-	const slot2 = rowItems(node, ROW5);
-	const slot1 = rowItems(node, ROW6);
+	const slot4 = rowItems(node, ROW12);
+	const slot5 = rowItems(node, ROW13);
+	const slot0 = rowItems(node, ROW7);
+	const slot2 = rowItems(node, ROW14);
+	const slot1 = rowItems(node, ROW15);
+	if (slot4.some(opaque) || slot5.some(opaque)) return node;
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.variable.private'
 		: e1
@@ -16418,61 +16324,63 @@ const readStaticItem = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTypeItem = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot4 = rowItems(node, ROW16);
+	const slot0 = rowItems(node, ROW7);
+	if (slot4.some(opaque)) return node;
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.type.type_alias.private'
 		: e1
@@ -16647,62 +16555,65 @@ const readTypeItem = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readFunctionItem = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
-	const slot1 = rowItems(node, ROW7);
+	const slot2 = rowItems(node, ROW17);
+	const slot5 = rowItems(node, ROW18);
+	const slot0 = rowItems(node, ROW7);
+	const slot1 = rowItems(node, ROW19);
+	if (slot2.some(opaque) || slot5.some(opaque)) return node;
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.function.private'
 		: e1
@@ -16723,16 +16634,16 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 			const own = nodeText(node);
 			if (own !== undefined) return spelledText(K.FunctionItem, own, seats, undefined) ?? node;
 			const flags = [
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 					? ['async']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 					? ['const']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 					? ['unsafe']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 					? ['default']
 					: []),
 				...flagsSetOn(node)
@@ -16767,18 +16678,20 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -16815,18 +16728,20 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -16863,18 +16778,20 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -16911,18 +16828,20 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -16959,18 +16878,20 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -17007,62 +16928,65 @@ const readFunctionItem = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
-	const slot1 = rowItems(node, ROW7);
+	const slot2 = rowItems(node, ROW17);
+	const slot5 = rowItems(node, ROW18);
+	const slot0 = rowItems(node, ROW7);
+	const slot1 = rowItems(node, ROW19);
+	if (slot2.some(opaque) || slot5.some(opaque)) return node;
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.function.signature.private'
 		: e1
@@ -17083,16 +17007,16 @@ const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
 			const own = nodeText(node);
 			if (own !== undefined) return spelledText(K.FunctionSignatureItem, own, seats, undefined) ?? node;
 			const flags = [
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 					? ['async']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 					? ['const']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 					? ['unsafe']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 					? ['default']
 					: []),
 				...flagsSetOn(node)
@@ -17125,18 +17049,20 @@ const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionSignatureItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -17171,18 +17097,20 @@ const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionSignatureItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -17217,18 +17145,20 @@ const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionSignatureItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -17263,18 +17193,20 @@ const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionSignatureItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -17309,18 +17241,20 @@ const readFunctionSignatureItem = (node: Node, seats?: Seats): unknown => {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.FunctionSignatureItem, own, seats, undefined) ?? node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -17404,62 +17338,62 @@ const readWherePredicate = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTraitItem = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
-	const slot1 = rowItems(node, ROW9);
+	const slot0 = rowItems(node, ROW7);
+	const slot1 = rowItems(node, ROW21);
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.type.interface.trait.private'
 		: e1
@@ -17686,7 +17620,14 @@ const readAssociatedType = (node: Node, seats?: Seats): unknown => {
 	}
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
+const readTraitBounds = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW22);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
 const readHigherRankedTraitBound = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW23);
+	if (slot1.some(opaque)) return node;
 	const path: string | undefined = 'clause.bounds.higher_ranked';
 	switch (path) {
 		case 'clause.bounds.higher_ranked': {
@@ -17713,6 +17654,8 @@ const readHigherRankedTraitBound = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readRemovedTraitBound = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW24);
+	if (slot0.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'clause.bounds.removed';
 	switch (path) {
@@ -17736,6 +17679,9 @@ const readRemovedTraitBound = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readConstParameter = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW23);
+	const slot2 = rowItems(node, ROW25);
+	if (slot1.some(opaque) || slot2.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'declaration.type_parameter.value';
 	switch (path) {
@@ -17767,6 +17713,8 @@ const readConstParameter = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTypeParameter = (node: Node, seats?: Seats): unknown => {
+	const slot2 = rowItems(node, ROW25);
+	if (slot2.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'declaration.type_parameter';
 	switch (path) {
@@ -17830,7 +17778,11 @@ const readLifetimeParameter = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readLetDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW10);
+	const slot1 = rowItems(node, ROW26);
+	const slot2 = rowItems(node, ROW11);
+	const slot3 = rowItems(node, ROW9);
+	const slot0 = rowItems(node, ROW27);
+	if (slot1.some(opaque) || slot2.some(opaque) || slot3.some(opaque)) return node;
 	const path: string | undefined = 'declaration.variable';
 	switch (path) {
 		case 'declaration.variable': {
@@ -17860,61 +17812,63 @@ const readLetDeclaration = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readUseDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot1 = rowItems(node, ROW28);
+	const slot0 = rowItems(node, ROW7);
+	if (slot1.some(opaque)) return node;
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'statement.import.private'
 		: e1
@@ -18029,6 +17983,8 @@ const readUseDeclaration = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readScopedUseList = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW6);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'clause.import.list.scoped';
 	switch (path) {
 		case 'clause.import.list.scoped': {
@@ -18073,6 +18029,8 @@ const readUseList = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readUseAsClause = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'clause.import.alias';
 	switch (path) {
 		case 'clause.import.alias': {
@@ -18120,8 +18078,8 @@ const readUseWildcard = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readSelfParameter = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW11);
-	const slot2 = rowItems(node, ROW5);
+	const slot0 = rowItems(node, ROW29);
+	const slot2 = rowItems(node, ROW14);
 	const container = holderOf(node);
 	const path: string | undefined = 'declaration.parameter.receiver';
 	switch (path) {
@@ -18149,7 +18107,9 @@ const readSelfParameter = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readVariadicParameter = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW10);
+	const slot1 = rowItems(node, ROW30);
+	const slot0 = rowItems(node, ROW27);
+	if (slot1.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'declaration.parameter.variadic';
 	switch (path) {
@@ -18175,8 +18135,10 @@ const readVariadicParameter = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readParameter = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW12);
-	const slot0 = rowItems(node, ROW10);
+	const slot1 = rowItems(node, ROW26);
+	const slot2 = rowItems(node, ROW11);
+	const slot0 = rowItems(node, ROW27);
+	if (slot1.some(opaque) || slot2.some(opaque)) return node;
 	const container = holderOf(node);
 	const e0 = slot1.some((x) => kindIn(KINDS55, x));
 	const path: string | undefined = e0 ? 'declaration.parameter.receiver' : !e0 ? 'declaration.parameter' : undefined;
@@ -18228,6 +18190,8 @@ const readExternModifier = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readBracketedType = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW24);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'type.bracketed';
 	switch (path) {
 		case 'type.bracketed': {
@@ -18246,6 +18210,9 @@ const readBracketedType = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readQualifiedType = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW24);
+	const slot1 = rowItems(node, ROW31);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const path: string | undefined = 'type.qualified';
 	switch (path) {
 		case 'type.qualified': {
@@ -18289,6 +18256,9 @@ const readLifetime = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readArrayType = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW32);
+	const slot1 = rowItems(node, ROW33);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'type.array';
 	switch (path) {
@@ -18319,7 +18289,9 @@ const readArrayType = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readFunctionType = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW13);
+	const slot3 = rowItems(node, ROW34);
+	const slot1 = rowItems(node, ROW35);
+	if (slot3.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'type.function';
 	switch (path) {
@@ -18329,9 +18301,9 @@ const readFunctionType = (node: Node, seats?: Seats): unknown => {
 				if (own !== undefined) return spelledText(K.FunctionType, own, seats, undefined) ?? node;
 				const flags = [
 					...(slot1.filter(isNode).some((c0) =>
-						itemsAt(c0, K.FunctionTypeFnForm, ROW14)
+						itemsAt(c0, K.FunctionTypeFnForm, ROW36)
 							.filter(isNode)
-							.some((c1) => texts(itemsAt(c1, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+							.some((c1) => texts(itemsAt(c1, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 					)
 						? ['unsafe']
 						: []),
@@ -18368,9 +18340,9 @@ const readFunctionType = (node: Node, seats?: Seats): unknown => {
 			if (own !== undefined) return spelledText(K.FunctionType, own, seats, undefined) ?? node;
 			if (
 				slot1.filter(isNode).some((c0) =>
-					itemsAt(c0, K.FunctionTypeFnForm, ROW14)
+					itemsAt(c0, K.FunctionTypeFnForm, ROW36)
 						.filter(isNode)
-						.some((c1) => texts(itemsAt(c1, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+						.some((c1) => texts(itemsAt(c1, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 				)
 			)
 				return node;
@@ -18530,6 +18502,9 @@ const readGenericTypeWithTurbofish = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readBoundedType = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW37);
+	const slot1 = rowItems(node, ROW38);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'type.bounded';
 	switch (path) {
@@ -18579,6 +18554,8 @@ const readUseBounds = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTypeBinding = (node: Node, seats?: Seats): unknown => {
+	const slot2 = rowItems(node, ROW11);
+	if (slot2.some(opaque)) return node;
 	const path: string | undefined = 'element.type_binding';
 	switch (path) {
 		case 'element.type_binding': {
@@ -18606,7 +18583,9 @@ const readTypeBinding = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readReferenceType = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW15);
+	const slot2 = rowItems(node, ROW11);
+	const slot1 = rowItems(node, ROW39);
+	if (slot2.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'type.reference';
 	switch (path) {
@@ -18744,6 +18723,8 @@ const readMacroInvocation = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readScopedIdentifier = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW40);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'identifier.qualified';
 	switch (path) {
 		case 'identifier.qualified': {
@@ -18769,6 +18750,8 @@ const readScopedIdentifier = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readScopedTypeIdentifierInExpressionPosition = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW40);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'identifier.qualified';
 	switch (path) {
 		case 'identifier.qualified': {
@@ -18795,6 +18778,8 @@ const readScopedTypeIdentifierInExpressionPosition = (node: Node, seats?: Seats)
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readScopedTypeIdentifier = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW40);
+	if (slot0.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'identifier.qualified';
 	switch (path) {
@@ -18825,7 +18810,9 @@ const readScopedTypeIdentifier = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readUnaryExpression = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW16);
+	const slot1 = rowItems(node, ROW28);
+	const slot0 = rowItems(node, ROW41);
+	if (slot1.some(opaque)) return node;
 	const e1 = texts(slot0, FIXED).includes('-');
 	const e2 = texts(slot0, FIXED).includes('!');
 	const e3 = texts(slot0, FIXED).includes('*');
@@ -18889,6 +18876,8 @@ const readUnaryExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTryExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW42);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.propagate';
 	switch (path) {
 		case 'expression.propagate': {
@@ -18907,7 +18896,10 @@ const readTryExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readBinaryExpression = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW17);
+	const slot0 = rowItems(node, ROW37);
+	const slot2 = rowItems(node, ROW43);
+	const slot1 = rowItems(node, ROW44);
+	if (slot0.some(opaque) || slot2.some(opaque)) return node;
 	const e1 = texts(slot1, FIXED).includes('<<');
 	const e2 = texts(slot1, FIXED).includes('>>');
 	const e3 = texts(slot1, FIXED).includes('+');
@@ -19384,6 +19376,9 @@ const readBinaryExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAssignmentExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW37);
+	const slot1 = rowItems(node, ROW38);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const path: string | undefined = 'expression.assignment';
 	switch (path) {
 		case 'expression.assignment': {
@@ -19409,7 +19404,10 @@ const readAssignmentExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readCompoundAssignmentExpr = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW17);
+	const slot0 = rowItems(node, ROW37);
+	const slot2 = rowItems(node, ROW43);
+	const slot1 = rowItems(node, ROW44);
+	if (slot0.some(opaque) || slot2.some(opaque)) return node;
 	const e0 = texts(slot1, FIXED).includes('+=');
 	const e1 = texts(slot1, FIXED).includes('-=');
 	const e2 = texts(slot1, FIXED).includes('*=');
@@ -19668,6 +19666,9 @@ const readCompoundAssignmentExpr = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTypeCastExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW45);
+	const slot1 = rowItems(node, ROW23);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const path: string | undefined = 'expression.cast.conversion';
 	switch (path) {
 		case 'expression.cast.conversion': {
@@ -19693,6 +19694,8 @@ const readTypeCastExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readReturnExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW45);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'statement.return';
 	switch (path) {
 		case 'statement.return': {
@@ -19711,6 +19714,8 @@ const readReturnExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readYieldExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW45);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.yield';
 	switch (path) {
 		case 'expression.yield': {
@@ -19729,13 +19734,14 @@ const readYieldExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readCallExpression = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW18);
+	const slot0 = rowItems(node, ROW46);
+	if (slot0.some(opaque)) return node;
 	const e1 =
 		slot0.some((x) => kindIn(KINDS74, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.GenericFunction, ROW18)).some((x) => kindIn(KINDS75, x));
+		slot0.flatMap((x) => itemsAt(x, K.GenericFunction, ROW46)).some((x) => kindIn(KINDS75, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS74, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.GenericFunction, ROW18)).some((x) => kindIn(KINDS76, x));
+		slot0.flatMap((x) => itemsAt(x, K.GenericFunction, ROW46)).some((x) => kindIn(KINDS76, x));
 	const e3 = slot0.some((x) => kindIn(KINDS75, x));
 	const e4 = slot0.some((x) => kindIn(KINDS76, x));
 	const path: string | undefined =
@@ -19822,6 +19828,8 @@ const readCallExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readParenthesizedExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW45);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.parenthesized';
 	switch (path) {
 		case 'expression.parenthesized': {
@@ -19927,6 +19935,9 @@ const readShorthandFieldInitializer = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readFieldInitializer = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW26);
+	const slot2 = rowItems(node, ROW47);
+	if (slot1.some(opaque) || slot2.some(opaque)) return node;
 	const path: string | undefined = 'element.struct.field';
 	switch (path) {
 		case 'element.struct.field': {
@@ -19954,6 +19965,8 @@ const readFieldInitializer = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readBaseFieldInitializer = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW48);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'element.struct.base';
 	switch (path) {
 		case 'element.struct.base': {
@@ -19972,6 +19985,8 @@ const readBaseFieldInitializer = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readIfExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW49);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'statement.if';
 	switch (path) {
 		case 'statement.if': {
@@ -20000,6 +20015,9 @@ const readIfExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readLetCondition = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW50);
+	const slot1 = rowItems(node, ROW51);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const path: string | undefined = 'clause.let';
 	switch (path) {
 		case 'clause.let': {
@@ -20025,6 +20043,9 @@ const readLetCondition = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readLetChain = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW37);
+	const slot1 = rowItems(node, ROW52);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const path: string | undefined = 'clause.let.chain';
 	switch (path) {
 		case 'clause.let.chain': {
@@ -20078,6 +20099,8 @@ const readElseClause = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readMatchExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW53);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'statement.match';
 	switch (path) {
 		case 'statement.match': {
@@ -20104,6 +20127,8 @@ const readMatchExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readLastMatchArm = (node: Node, seats?: Seats): unknown => {
+	const slot2 = rowItems(node, ROW10);
+	if (slot2.some(opaque)) return node;
 	const path: string | undefined = 'clause.case.match';
 	switch (path) {
 		case 'clause.case.match': {
@@ -20131,7 +20156,15 @@ const readLastMatchArm = (node: Node, seats?: Seats): unknown => {
 	}
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
+const readMatchPattern = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW50);
+	const slot1 = rowItems(node, ROW54);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
 const readWhileExpression = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW54);
+	if (slot1.some(opaque)) return node;
 	const path: string | undefined = 'statement.loop.while';
 	switch (path) {
 		case 'statement.loop.while': {
@@ -20187,6 +20220,9 @@ const readLoopExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readForExpression = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW55);
+	const slot2 = rowItems(node, ROW43);
+	if (slot1.some(opaque) || slot2.some(opaque)) return node;
 	const path: string | undefined = 'statement.loop.for_each';
 	switch (path) {
 		case 'statement.loop.for_each': {
@@ -20260,6 +20296,8 @@ const readLabel = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readBreakExpression = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW56);
+	if (slot1.some(opaque)) return node;
 	const path: string | undefined = 'statement.break';
 	switch (path) {
 		case 'statement.break': {
@@ -20303,6 +20341,9 @@ const readContinueExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readIndexExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW57);
+	const slot1 = rowItems(node, ROW58);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const path: string | undefined = 'expression.subscript';
 	switch (path) {
 		case 'expression.subscript': {
@@ -20328,6 +20369,8 @@ const readIndexExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAwaitExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW45);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.await';
 	switch (path) {
 		case 'expression.await': {
@@ -20346,6 +20389,9 @@ const readAwaitExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readFieldExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW57);
+	const slot1 = rowItems(node, ROW59);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const path: string | undefined = 'expression.member';
 	switch (path) {
 		case 'expression.member': {
@@ -20397,7 +20443,7 @@ const readUnsafeBlock = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAsyncBlock = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW19);
+	const slot0 = rowItems(node, ROW60);
 	const path: string | undefined = 'statement.block.async';
 	switch (path) {
 		case 'statement.block.async': {
@@ -20426,7 +20472,7 @@ const readAsyncBlock = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readGenBlock = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW19);
+	const slot0 = rowItems(node, ROW60);
 	const path: string | undefined = 'statement.block.generator';
 	switch (path) {
 		case 'statement.block.generator': {
@@ -20481,6 +20527,8 @@ const readTryBlock = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readBlock = (node: Node, seats?: Seats): unknown => {
+	const slot2 = rowItems(node, ROW61);
+	if (slot2.some(opaque)) return node;
 	const path: string | undefined = 'statement.block';
 	switch (path) {
 		case 'statement.block': {
@@ -20640,6 +20688,8 @@ const readRemainingFieldPattern = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readMutPattern = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW50);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'pattern.mutable';
 	switch (path) {
 		case 'pattern.mutable': {
@@ -20658,6 +20708,8 @@ const readMutPattern = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readRefPattern = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW50);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'pattern.reference';
 	switch (path) {
 		case 'pattern.reference': {
@@ -20676,6 +20728,8 @@ const readRefPattern = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readCapturedPattern = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW30);
+	if (slot1.some(opaque)) return node;
 	const path: string | undefined = 'pattern.as';
 	switch (path) {
 		case 'pattern.as': {
@@ -20701,7 +20755,9 @@ const readCapturedPattern = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readReferencePattern = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW20);
+	const slot1 = rowItems(node, ROW30);
+	const slot0 = rowItems(node, ROW62);
+	if (slot1.some(opaque)) return node;
 	const path: string | undefined = 'pattern.reference.value';
 	switch (path) {
 		case 'pattern.reference.value': {
@@ -20722,6 +20778,8 @@ const readReferencePattern = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readNegativeLiteral = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW48);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'literal.number.negative';
 	switch (path) {
 		case 'literal.number.negative': {
@@ -20740,7 +20798,9 @@ const readNegativeLiteral = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readStringLiteral = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW21);
+	const slot1 = rowItems(node, ROW63);
+	const slot0 = rowItems(node, ROW64);
+	if (slot1.some(opaque)) return node;
 	const e0 = texts(slot0, FIXED).includes('"');
 	const e1 = texts(slot0, FIXED).includes('b"');
 	const e2 = texts(slot0, FIXED).includes('c"');
@@ -20807,7 +20867,9 @@ const readStringLiteral = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readRawStringLiteral = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW22);
+	const slot0 = rowItems(node, ROW65);
+	const slot2 = rowItems(node, ROW66);
+	if (slot0.some(opaque) || slot2.some(opaque)) return node;
 	const e0 = texts(slot0, FIXED).some((text) => text.startsWith('br'));
 	const e1 = texts(slot0, FIXED).some((text) => text.startsWith('cr'));
 	const path: string | undefined = e0
@@ -20863,7 +20925,7 @@ const readRawStringLiteral = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readLineComment = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW2);
+	const slot0 = rowItems(node, ROW5);
 	const e1 = slot0.some((x) => kindIn(KINDS97, x));
 	const e2 = slot0.some((x) => kindIn(KINDS98, x));
 	const path: string | undefined =
@@ -20919,7 +20981,7 @@ const readLineComment = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readBlockComment = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW2);
+	const slot0 = rowItems(node, ROW5);
 	const e1 = slot0.some((x) => kindIn(KINDS101, x));
 	const e2 = slot0.some((x) => kindIn(KINDS102, x));
 	const path: string | undefined =
@@ -20966,7 +21028,34 @@ const readBlockComment = (node: Node, seats?: Seats): unknown => {
 	}
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
+const readUseClauses = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW67);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
+const readTypes = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW67);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
+const readTuplePatternElements = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW67);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
+const readPatterns = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW67);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
+const readUseWildcardGroup = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW6);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
 const readAttributedElement = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW56);
+	if (slot1.some(opaque)) return node;
 	const path: string | undefined = 'element.attributed';
 	switch (path) {
 		case 'element.attributed': {
@@ -20992,10 +21081,27 @@ const readAttributedElement = (node: Node, seats?: Seats): unknown => {
 	}
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
+const readArrayExpressionListElements = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW67);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
+const readTupleExpressionElements = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW67);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
+const readAttributeInput = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW48);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
 const readClosureExpressionBlock = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW23);
-	const slot1 = rowItems(node, ROW24);
-	const slot2 = rowItems(node, ROW25);
+	const slot4 = rowItems(node, ROW68);
+	const slot0 = rowItems(node, ROW69);
+	const slot1 = rowItems(node, ROW70);
+	const slot2 = rowItems(node, ROW71);
+	if (slot4.some(opaque)) return node;
 	const path: string | undefined = 'expression.lambda';
 	switch (path) {
 		case 'expression.lambda': {
@@ -21029,9 +21135,11 @@ const readClosureExpressionBlock = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readClosureExpressionExpr = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW23);
-	const slot1 = rowItems(node, ROW24);
-	const slot2 = rowItems(node, ROW25);
+	const slot4 = rowItems(node, ROW72);
+	const slot0 = rowItems(node, ROW69);
+	const slot1 = rowItems(node, ROW70);
+	const slot2 = rowItems(node, ROW71);
+	if (slot4.some(opaque)) return node;
 	const path: string | undefined = 'expression.lambda';
 	switch (path) {
 		case 'expression.lambda': {
@@ -21064,6 +21172,8 @@ const readClosureExpressionExpr = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readReferenceExpressionRawConst = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW42);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.reference';
 	switch (path) {
 		case 'expression.reference': {
@@ -21082,6 +21192,8 @@ const readReferenceExpressionRawConst = (node: Node, seats?: Seats): unknown => 
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readReferenceExpressionRawMut = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW42);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.reference';
 	switch (path) {
 		case 'expression.reference': {
@@ -21100,6 +21212,8 @@ const readReferenceExpressionRawMut = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readReferenceExpressionMut = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW42);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.reference';
 	switch (path) {
 		case 'expression.reference': {
@@ -21118,6 +21232,8 @@ const readReferenceExpressionMut = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readReferenceExpressionBare = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW42);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.reference';
 	switch (path) {
 		case 'expression.reference': {
@@ -21136,8 +21252,10 @@ const readReferenceExpressionBare = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readImplItemBody = (node: Node, seats?: Seats): unknown => {
-	const slot2 = rowItems(node, ROW26);
-	const slot0 = rowItems(node, ROW27);
+	const slot3 = rowItems(node, ROW73);
+	const slot2 = rowItems(node, ROW74);
+	const slot0 = rowItems(node, ROW75);
+	if (slot3.some(opaque)) return node;
 	const e0 = slot2.some((x) => kindIn(KINDS108, x));
 	const path: string | undefined = e0 ? 'declaration.extension.conformance' : !e0 ? 'declaration.extension' : undefined;
 	switch (path) {
@@ -21201,7 +21319,9 @@ const readImplItemBody = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readImplItemSemi = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW27);
+	const slot3 = rowItems(node, ROW73);
+	const slot0 = rowItems(node, ROW75);
+	if (slot3.some(opaque)) return node;
 	const path: string | undefined = 'declaration.extension';
 	switch (path) {
 		case 'declaration.extension': {
@@ -21231,20 +21351,25 @@ const readImplItemSemi = (node: Node, seats?: Seats): unknown => {
 	}
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
+const readVisibilityModifierPubScopeInPath = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW6);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
 const readVisibilityModifierPub = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW3);
+	const slot0 = rowItems(node, ROW8);
 	const e0 =
 		slot0.some((x) => kindIn(KINDS20, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2)).some((x) => kindIn(KINDS21, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5)).some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS20, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2)).some((x) => kindIn(KINDS22, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5)).some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS20, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2)).some((x) => kindIn(KINDS23, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5)).some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS20, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2)).some((x) => kindIn(KINDS24, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5)).some((x) => kindIn(KINDS24, x));
 	const path: string | undefined = e0
 		? 'modifier.visibility.private'
 		: e1
@@ -21325,61 +21450,61 @@ const readVisibilityModifierPub = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readModItemExternal = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot0 = rowItems(node, ROW7);
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.module.private'
 		: e1
@@ -21494,61 +21619,61 @@ const readModItemExternal = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readModItemInline = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot0 = rowItems(node, ROW7);
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.module.private'
 		: e1
@@ -21705,6 +21830,9 @@ const readModItemInline = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readOrPatternBinary = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW37);
+	const slot1 = rowItems(node, ROW38);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const path: string | undefined = 'pattern.or';
 	switch (path) {
 		case 'pattern.or': {
@@ -21730,6 +21858,8 @@ const readOrPatternBinary = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readOrPatternPrefix = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW76);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'pattern.or';
 	switch (path) {
 		case 'pattern.or': {
@@ -21748,6 +21878,8 @@ const readOrPatternPrefix = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readPointerTypeConst = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW24);
+	if (slot0.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'type.pointer';
 	switch (path) {
@@ -21771,6 +21903,8 @@ const readPointerTypeConst = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readPointerTypeMut = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW24);
+	if (slot0.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'type.pointer';
 	switch (path) {
@@ -21794,7 +21928,10 @@ const readPointerTypeMut = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readRangeExpressionBounded = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW17);
+	const slot0 = rowItems(node, ROW77);
+	const slot2 = rowItems(node, ROW78);
+	const slot1 = rowItems(node, ROW44);
+	if (slot0.some(opaque) || slot2.some(opaque)) return node;
 	const e0 = texts(slot1, FIXED).includes('..=');
 	const e1 = texts(slot1, FIXED).includes('...');
 	const e2 = texts(slot1, FIXED).includes('..');
@@ -21879,6 +22016,8 @@ const readRangeExpressionBounded = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readRangeExpressionLowerBounded = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW77);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.range.exclusive';
 	switch (path) {
 		case 'expression.range': {
@@ -21909,6 +22048,8 @@ const readRangeExpressionLowerBounded = (node: Node, seats?: Seats): unknown => 
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readRangeExpressionUpperBounded = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW79);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.range.exclusive';
 	switch (path) {
 		case 'expression.range': {
@@ -21965,6 +22106,8 @@ const readRangeExpressionUnbounded = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readExpressionStatementWithSemi = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW45);
+	if (slot0.some(opaque)) return node;
 	if (seats === undefined) {
 		const element = seats8(node);
 		if (element !== undefined && !element.many && kindOf(element.found) !== undefined)
@@ -21973,7 +22116,7 @@ const readExpressionStatementWithSemi = (node: Node, seats?: Seats): unknown => 
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readForeignModItemSemi = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW27);
+	const slot0 = rowItems(node, ROW75);
 	const path: string | undefined = 'declaration.module.foreign';
 	switch (path) {
 		case 'declaration.module.foreign': {
@@ -21994,7 +22137,7 @@ const readForeignModItemSemi = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readForeignModItemBody = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW27);
+	const slot0 = rowItems(node, ROW75);
 	const path: string | undefined = 'declaration.module.foreign';
 	switch (path) {
 		case 'declaration.module.foreign': {
@@ -22023,6 +22166,8 @@ const readForeignModItemBody = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readMatchArmWithComma = (node: Node, seats?: Seats): unknown => {
+	const slot2 = rowItems(node, ROW10);
+	if (slot2.some(opaque)) return node;
 	const path: string | undefined = 'clause.case.match';
 	switch (path) {
 		case 'clause.case.match': {
@@ -22135,6 +22280,8 @@ const readBlockCommentRegular = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTokenTreePatternParen = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW3);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'element.macro.token_tree.pattern.paren';
 	switch (path) {
 		case 'element.macro.token_tree.pattern': {
@@ -22167,6 +22314,8 @@ const readTokenTreePatternParen = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTokenTreePatternBracket = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW3);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'element.macro.token_tree.pattern.bracket';
 	switch (path) {
 		case 'element.macro.token_tree.pattern': {
@@ -22199,6 +22348,8 @@ const readTokenTreePatternBracket = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTokenTreePatternBrace = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW3);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'element.macro.token_tree.pattern.brace';
 	switch (path) {
 		case 'element.macro.token_tree.pattern': {
@@ -22231,6 +22382,8 @@ const readTokenTreePatternBrace = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTokenTreeParen = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW4);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'element.macro.token_tree.paren';
 	switch (path) {
 		case 'element.macro.token_tree': {
@@ -22263,6 +22416,8 @@ const readTokenTreeParen = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTokenTreeBracket = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW4);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'element.macro.token_tree.bracket';
 	switch (path) {
 		case 'element.macro.token_tree': {
@@ -22295,6 +22450,8 @@ const readTokenTreeBracket = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTokenTreeBrace = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW4);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'element.macro.token_tree.brace';
 	switch (path) {
 		case 'element.macro.token_tree': {
@@ -22423,8 +22580,8 @@ const readDelimTokenTreeBrace = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readFieldPatternShorthand = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW28);
-	const slot0 = rowItems(node, ROW29);
+	const slot1 = rowItems(node, ROW80);
+	const slot0 = rowItems(node, ROW81);
 	const path: string | undefined = 'pattern.struct.field';
 	switch (path) {
 		case 'pattern.struct.field': {
@@ -22447,8 +22604,10 @@ const readFieldPatternShorthand = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readFieldPatternNamed = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW28);
-	const slot0 = rowItems(node, ROW29);
+	const slot3 = rowItems(node, ROW82);
+	const slot1 = rowItems(node, ROW80);
+	const slot0 = rowItems(node, ROW81);
+	if (slot3.some(opaque)) return node;
 	const path: string | undefined = 'pattern.struct.field';
 	switch (path) {
 		case 'pattern.struct.field': {
@@ -22616,7 +22775,9 @@ const readMacroDefinitionBrace = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readRangePatternUpperBounded = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW16);
+	const slot1 = rowItems(node, ROW83);
+	const slot0 = rowItems(node, ROW41);
+	if (slot1.some(opaque)) return node;
 	const e0 = texts(slot0, FIXED).includes('..=');
 	const e1 = texts(slot0, FIXED).includes('..');
 	const path: string | undefined = e0
@@ -22661,7 +22822,10 @@ const readRangePatternUpperBounded = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readRangePatternBounded = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW17);
+	const slot0 = rowItems(node, ROW77);
+	const slot2 = rowItems(node, ROW78);
+	const slot1 = rowItems(node, ROW44);
+	if (slot0.some(opaque) || slot2.some(opaque)) return node;
 	const e0 = texts(slot1, FIXED).includes('..=');
 	const e1 = texts(slot1, FIXED).includes('...');
 	const e2 = texts(slot1, FIXED).includes('..');
@@ -22746,6 +22910,8 @@ const readRangePatternBounded = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readRangePatternLowerBounded = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW77);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'pattern.range.exclusive';
 	switch (path) {
 		case 'pattern.range': {
@@ -22776,61 +22942,61 @@ const readRangePatternLowerBounded = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readStructItemBrace = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot0 = rowItems(node, ROW7);
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.type.struct.private'
 		: e1
@@ -23005,61 +23171,61 @@ const readStructItemBrace = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readStructItemTuple = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot0 = rowItems(node, ROW7);
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.type.struct.tuple.private'
 		: e1
@@ -23257,61 +23423,61 @@ const readStructItemTuple = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readStructItemUnit = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot0 = rowItems(node, ROW7);
 	const e0 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.type.struct.unit.private'
 		: e1
@@ -23520,6 +23686,8 @@ const readAttributedEnumVariant = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAttributedParameter = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW35);
+	if (slot1.some(opaque)) return node;
 	if (seats === undefined) {
 		const element = seats181(node);
 		if (element !== undefined && !element.many && kindOf(element.found) !== undefined)
@@ -23528,6 +23696,8 @@ const readAttributedParameter = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAttributedTypeParameter = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW35);
+	if (slot1.some(opaque)) return node;
 	if (seats === undefined) {
 		const element = seats183(node);
 		if (element !== undefined && !element.many && kindOf(element.found) !== undefined)
@@ -23536,7 +23706,9 @@ const readAttributedTypeParameter = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readArgument = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW30);
+	const slot1 = rowItems(node, ROW56);
+	const slot0 = rowItems(node, ROW84);
+	if (slot1.some(opaque)) return node;
 	const e0 = slot0.some((x) => kindIn(KINDS116, x));
 	const path: string | undefined = e0 ? 'argument' : undefined;
 	switch (path) {
@@ -23572,61 +23744,63 @@ const readArgument = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAttributedOrderedField = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW31);
+	const slot2 = rowItems(node, ROW11);
+	const slot1 = rowItems(node, ROW85);
+	if (slot2.some(opaque)) return node;
 	const e0 =
 		slot1.some((x) => kindIn(KINDS18, x)) &&
-		slot1.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot1.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot1
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot1
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e1 =
 		slot1.some((x) => kindIn(KINDS18, x)) &&
-		slot1.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot1.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot1
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot1
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e2 =
 		slot1.some((x) => kindIn(KINDS18, x)) &&
-		slot1.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot1.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot1
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot1
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e3 =
 		slot1.some((x) => kindIn(KINDS18, x)) &&
-		slot1.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot1.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot1
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot1
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e4 =
 		slot1.some((x) => kindIn(KINDS18, x)) &&
-		slot1.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot1.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e5 =
 		slot1.some((x) => kindIn(KINDS18, x)) &&
-		slot1.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot1.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined = e0
 		? 'declaration.member.field.private'
 		: e1
@@ -23783,6 +23957,8 @@ const readAttributedOrderedField = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTypeArgument = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW5);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'element.type_argument';
 	switch (path) {
 		case 'element.type_argument': {
@@ -23809,6 +23985,9 @@ const readTypeArgument = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readArrayExpressionSemi = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW32);
+	const slot1 = rowItems(node, ROW33);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const path: string | undefined = 'expression.collection.list.repeat';
 	switch (path) {
 		case 'expression.collection.list.repeat': {
@@ -23853,7 +24032,9 @@ const readArrayExpressionList = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readReceiverParameterDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW10);
+	const slot1 = rowItems(node, ROW23);
+	const slot0 = rowItems(node, ROW27);
+	if (slot1.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'declaration.parameter.receiver';
 	switch (path) {
@@ -23905,6 +24086,8 @@ const readAttributedParameterReceiver = (node: Node, seats?: Seats): unknown => 
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readClosureParameter = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW5);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'declaration.parameter';
 	switch (path) {
 		case 'declaration.parameter': {
@@ -23951,71 +24134,74 @@ const readFieldIdentifier = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot4 = rowItems(node, ROW32);
-	const slot0 = rowItems(node, ROW1);
-	const slot1 = rowItems(node, ROW7);
-	const e0 = !slot4.flatMap((x) => itemsAt(x, K.Parameters, ROW33)).some((x) => kindIn(KINDS42, x));
+	const slot2 = rowItems(node, ROW17);
+	const slot5 = rowItems(node, ROW18);
+	const slot4 = rowItems(node, ROW86);
+	const slot0 = rowItems(node, ROW7);
+	const slot1 = rowItems(node, ROW19);
+	if (slot2.some(opaque) || slot5.some(opaque)) return node;
+	const e0 = !slot4.flatMap((x) => itemsAt(x, K.Parameters, ROW87)).some((x) => kindIn(KINDS42, x));
 	const e1 =
-		slot4.flatMap((x) => itemsAt(x, K.Parameters, ROW33)).some((x) => kindIn(KINDS42, x)) &&
+		slot4.flatMap((x) => itemsAt(x, K.Parameters, ROW87)).some((x) => kindIn(KINDS42, x)) &&
 		slot4
-			.flatMap((x) => itemsAt(x, K.Parameters, ROW33))
-			.flatMap((x) => itemsAt(x, K.ParametersElementsReceiver, ROW34))
-			.flatMap((x) => itemsAt(x, K.AttributedParameterReceiver, ROW13))
+			.flatMap((x) => itemsAt(x, K.Parameters, ROW87))
+			.flatMap((x) => itemsAt(x, K.ParametersElementsReceiver, ROW88))
+			.flatMap((x) => itemsAt(x, K.AttributedParameterReceiver, ROW35))
 			.some((x) => kindIn(KINDS118, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e6 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e7 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e8 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined =
 		e0 && !e3 && !e4 && !e5 && !e6 && !e7 && !e8
 			? 'declaration.member.method'
@@ -24040,19 +24226,19 @@ const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 		case 'declaration.member.method': {
 			const own = nodeText(node);
 			if (own !== undefined) return spelledText(K.MethodDeclaration, own, seats, undefined) ?? node;
-			if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW33).some((x) => kindIn(KINDS42, x))))
+			if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 				return node;
 			const flags = [
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 					? ['async']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 					? ['const']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 					? ['unsafe']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 					? ['default']
 					: []),
 				...flagsSetOn(node)
@@ -24086,21 +24272,23 @@ const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS0, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.MethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW33).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -24136,21 +24324,23 @@ const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS1, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.MethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW33).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -24186,21 +24376,23 @@ const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS2, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.MethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW33).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -24236,21 +24428,23 @@ const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS3, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.MethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW33).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -24286,21 +24480,23 @@ const readMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS4, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.MethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW33).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -24365,64 +24561,67 @@ const readShorthandFieldIdentifier = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot4 = rowItems(node, ROW32);
-	const slot0 = rowItems(node, ROW1);
-	const slot1 = rowItems(node, ROW7);
-	const e0 = !slot4.flatMap((x) => itemsAt(x, K.Parameters, ROW33)).some((x) => kindIn(KINDS42, x));
+	const slot2 = rowItems(node, ROW17);
+	const slot5 = rowItems(node, ROW18);
+	const slot4 = rowItems(node, ROW86);
+	const slot0 = rowItems(node, ROW7);
+	const slot1 = rowItems(node, ROW19);
+	if (slot2.some(opaque) || slot5.some(opaque)) return node;
+	const e0 = !slot4.flatMap((x) => itemsAt(x, K.Parameters, ROW87)).some((x) => kindIn(KINDS42, x));
 	const e2 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS21, x));
 	const e3 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS22, x));
 	const e4 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS23, x));
 	const e5 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x)) &&
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
 			.some((x) => kindIn(KINDS20, x)) &&
 		slot0
-			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW3))
-			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW2))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPub, ROW8))
+			.flatMap((x) => itemsAt(x, K.VisibilityModifierPubScope, ROW5))
 			.some((x) => kindIn(KINDS24, x));
 	const e6 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS19, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS19, x));
 	const e7 =
 		slot0.some((x) => kindIn(KINDS18, x)) &&
-		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW2)).some((x) => kindIn(KINDS25, x));
+		slot0.flatMap((x) => itemsAt(x, K.VisibilityModifier, ROW5)).some((x) => kindIn(KINDS25, x));
 	const path: string | undefined =
 		e0 && !e2 && !e3 && !e4 && !e5 && !e6 && !e7
 			? 'declaration.member.method.signature'
@@ -24445,19 +24644,19 @@ const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 		case 'declaration.member.method.signature': {
 			const own = nodeText(node);
 			if (own !== undefined) return spelledText(K.SignatureMethodDeclaration, own, seats, undefined) ?? node;
-			if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW33).some((x) => kindIn(KINDS42, x))))
+			if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 				return node;
 			const flags = [
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 					? ['async']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 					? ['const']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 					? ['unsafe']
 					: []),
-				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+				...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 					? ['default']
 					: []),
 				...flagsSetOn(node)
@@ -24489,21 +24688,23 @@ const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS0, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.SignatureMethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW33).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -24537,21 +24738,23 @@ const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS1, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.SignatureMethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW33).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -24585,21 +24788,23 @@ const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS2, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.SignatureMethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW33).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -24633,21 +24838,23 @@ const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS3, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.SignatureMethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW33).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -24681,21 +24888,23 @@ const readSignatureMethodDeclaration = (node: Node, seats?: Seats): unknown => {
 			if (!contradicted(node, PRESETS4, SPELLINGS0, FIXED)) {
 				const own = nodeText(node);
 				if (own !== undefined) return spelledText(K.SignatureMethodDeclaration, own, seats, undefined) ?? node;
-				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW33).some((x) => kindIn(KINDS42, x))))
+				if (slot4.filter(isNode).some((c0) => !itemsAt(c0, K.Parameters, ROW87).some((x) => kindIn(KINDS42, x))))
 					return node;
 				const flags = [
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('async'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('async'))
 						? ['async']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('const'))
+					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('const'))
 						? ['const']
 						: []),
-					...(slot1.filter(isNode).some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('unsafe'))
+					...(slot1
+						.filter(isNode)
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('unsafe'))
 						? ['unsafe']
 						: []),
 					...(slot1
 						.filter(isNode)
-						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW8), FIXED).includes('default'))
+						.some((c0) => texts(itemsAt(c0, K.FunctionModifiers, ROW20), FIXED).includes('default'))
 						? ['default']
 						: []),
 					...flagsSetOn(node)
@@ -24742,7 +24951,7 @@ const readTypeIdentifier = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const classifyArgument = (node: Node): string | undefined => {
-	const slot0 = rowItems(node, ROW30);
+	const slot0 = rowItems(node, ROW84);
 	const e0 = slot0.some((x) => kindIn(KINDS116, x));
 	return e0 ? 'argument' : undefined;
 };
@@ -24765,7 +24974,7 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 		return tokenText(value, seats) ?? value;
 	}
 	if (!isNode(value)) return value;
-	if (erred(value) || opaque(value) || holdsOpaque(value, TOKENS0)) return value;
+	if (erred(value) || opaque(value)) return value;
 	switch (value.$type) {
 		case K.Identifier:
 			return readIdentifier(value, seats);
@@ -24935,6 +25144,8 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 			return readTraitItem(value, seats);
 		case K.AssociatedType:
 			return readAssociatedType(value, seats);
+		case K.TraitBounds:
+			return readTraitBounds(value, seats);
 		case K.HigherRankedTraitBound:
 			return readHigherRankedTraitBound(value, seats);
 		case K.RemovedTraitBound:
@@ -25051,6 +25262,8 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 			return readMatchExpression(value, seats);
 		case K.LastMatchArm:
 			return readLastMatchArm(value, seats);
+		case K.MatchPattern:
+			return readMatchPattern(value, seats);
 		case K.WhileExpression:
 			return readWhileExpression(value, seats);
 		case K.LoopExpression:
@@ -25111,8 +25324,24 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 			return readLineComment(value, seats);
 		case K.BlockComment:
 			return readBlockComment(value, seats);
+		case K.UseClauses:
+			return readUseClauses(value, seats);
+		case K.Types:
+			return readTypes(value, seats);
+		case K.TuplePatternElements:
+			return readTuplePatternElements(value, seats);
+		case K.Patterns:
+			return readPatterns(value, seats);
+		case K.UseWildcardGroup:
+			return readUseWildcardGroup(value, seats);
 		case K.AttributedElement:
 			return readAttributedElement(value, seats);
+		case K.ArrayExpressionListElements:
+			return readArrayExpressionListElements(value, seats);
+		case K.TupleExpressionElements:
+			return readTupleExpressionElements(value, seats);
+		case K.AttributeInput:
+			return readAttributeInput(value, seats);
 		case K.ClosureExpressionBlock:
 			return readClosureExpressionBlock(value, seats);
 		case K.ClosureExpressionExpr:
@@ -25129,6 +25358,8 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 			return readImplItemBody(value, seats);
 		case K.ImplItemSemi:
 			return readImplItemSemi(value, seats);
+		case K.VisibilityModifierPubScopeInPath:
+			return readVisibilityModifierPubScopeInPath(value, seats);
 		case K.VisibilityModifierPub:
 			return readVisibilityModifierPub(value, seats);
 		case K.ModItemExternal:

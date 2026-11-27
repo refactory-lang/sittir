@@ -10,7 +10,6 @@ import {
 	flagsSetOn,
 	holderOf,
 	holdsKey,
-	holdsOpaque,
 	integerOf,
 	integerValue,
 	isNode,
@@ -210,6 +209,7 @@ const FIXED: Readonly<Record<number, string>> = {
 	'452': '()',
 	'509': 'this'
 };
+const ROW0: QuerySlotEntry = ['shebang', 0, undefined, '_shebang'];
 const SEATS0: Seats = [{ pattern: { source: '^(?:[^\\x0A]*)$', flags: 'u' }, text: true }];
 const KINDS0 = new Set([
 	191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228,
@@ -251,7 +251,7 @@ const SEATS2: Seats = [
 ];
 const KINDS5 = new Set([194]);
 const SEATS3: Seats = [{}, {}];
-const ROW0: QuerySlotEntry = ['typeKeyword', 0, undefined, '_type_keyword'];
+const ROW1: QuerySlotEntry = ['typeKeyword', 0, undefined, '_type_keyword'];
 const PRESETS0: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'typeKeyword', optional: true }], kind: 8 }];
 const SPELLINGS0: Spellings = {};
 const KINDS6 = new Set([273, 309, 413, 426, 427]);
@@ -281,6 +281,7 @@ const KINDS17 = new Set([201]);
 const KINDS18 = new Set([12, 13]);
 const SEATS6: Seats = [{ tokens: { assert: 13, with: 12 } }];
 const KINDS19 = new Set([238]);
+const ROW2: QuerySlotEntry = ['expression', 0, undefined, '_expression'];
 const SEATS7: Seats = [
 	{ tokens: { ';': 227 } },
 	{
@@ -752,7 +753,7 @@ const SEATS7: Seats = [
 	{}
 ];
 const KINDS20 = new Set([210, 440, 441]);
-const ROW1: QuerySlotEntry = ['kind', 0, undefined, '_kind'];
+const ROW3: QuerySlotEntry = ['kind', 0, undefined, '_kind'];
 const PRESETS1: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'kind' }], kind: 68 }];
 const PRESETS2: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'kind' }], kind: 53 }];
 const KINDS21 = new Set([508]);
@@ -780,6 +781,9 @@ const KINDS27 = new Set([
 	303, 313, 314, 315, 316, 318, 320, 322, 325, 421, 422, 433, 434
 ]);
 const KINDS28 = new Set([230, 231]);
+const ROW4: QuerySlotEntry = ['initializer', 0, undefined, '_initializer'];
+const ROW5: QuerySlotEntry = ['condition', 1, undefined, '_condition'];
+const ROW6: QuerySlotEntry = ['increment', 2, undefined, '_increment'];
 const KINDS29 = new Set([
 	1, 110, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 227, 234, 235, 236, 237, 238, 242, 245, 248, 250,
 	252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283,
@@ -814,11 +818,12 @@ const SEATS10: Seats = [
 		texts: [1]
 	}
 ];
-const ROW2: QuerySlotEntry = ['async', 0, 'await', '_async', 51];
+const ROW7: QuerySlotEntry = ['async', 0, 'await', '_async', 51];
 const KINDS31 = new Set([217, 444, 445, 446, 447]);
 const KINDS32 = new Set([232]);
 const KINDS33 = new Set([233]);
-const ROW3: QuerySlotEntry = ['body', 1, undefined, '_body'];
+const ROW8: QuerySlotEntry = ['body', 1, undefined, '_body'];
+const ROW9: QuerySlotEntry = ['value', 0, undefined, '_value'];
 const KINDS34 = new Set([1, 239, 243]);
 const KINDS35 = new Set([
 	40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 364,
@@ -850,7 +855,6 @@ const SEATS11: Seats = [
 		texts: [1, 510]
 	}
 ];
-const ROW4: QuerySlotEntry = ['expression', 0, undefined, '_expression'];
 const KINDS36 = new Set([414]);
 const KINDS37 = new Set([
 	1, 110, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 234, 235, 236, 237, 238, 242, 245, 248, 250, 252,
@@ -893,6 +897,7 @@ const SEATS13: Seats = [
 		texts: [1, 507]
 	}
 ];
+const ROW10: QuerySlotEntry = ['right', 1, undefined, '_right'];
 const KINDS40 = new Set([291, 292]);
 const KINDS41 = new Set([1, 110, 239, 243, 259, 260, 300]);
 const SEATS14: Seats = [
@@ -908,6 +913,7 @@ const SEATS14: Seats = [
 	}
 ];
 const KINDS42 = new Set([239, 243, 507]);
+const ROW11: QuerySlotEntry = ['elements', 0, undefined, '_elements'];
 const KINDS43 = new Set([
 	1, 110, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 234, 235, 236, 237, 238, 242, 245, 248, 250, 252,
 	256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300,
@@ -974,7 +980,7 @@ const SEATS18: Seats = [
 	}
 ];
 const KINDS56 = new Set([312]);
-const ROW5: QuerySlotEntry = ['async', 0, 'async', '_async', 50];
+const ROW12: QuerySlotEntry = ['async', 0, 'async', '_async', 50];
 const KINDS57 = new Set([337]);
 const KINDS58 = new Set([352]);
 const SEATS19: Seats = [
@@ -1009,6 +1015,7 @@ const KINDS59 = new Set([328, 329]);
 const KINDS60 = new Set([387]);
 const KINDS61 = new Set([475]);
 const KINDS62 = new Set([473]);
+const ROW13: QuerySlotEntry = ['body', 2, undefined, '_body'];
 const KINDS63 = new Set([
 	1, 110, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 211, 234, 235, 236, 237, 238, 242, 245, 248, 250,
 	252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300,
@@ -1021,7 +1028,8 @@ const KINDS64 = new Set([
 ]);
 const KINDS65 = new Set([430]);
 const KINDS66 = new Set([370]);
-const ROW6: QuerySlotEntry = ['arguments', 2, undefined, '_arguments'];
+const ROW14: QuerySlotEntry = ['function', 0, undefined, '_function'];
+const ROW15: QuerySlotEntry = ['arguments', 2, undefined, '_arguments'];
 const KINDS67 = new Set([
 	1, 110, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 234, 236, 238, 242, 245, 248, 250, 252, 256, 259,
 	260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 404, 418, 419, 423, 424, 425, 426, 427, 442, 443
@@ -1039,9 +1047,10 @@ const SEATS20: Seats = [
 		texts: [1]
 	}
 ];
-const ROW7: QuerySlotEntry = ['operator', 1, undefined, '_operator'];
+const ROW16: QuerySlotEntry = ['object', 0, undefined, '_object'];
+const ROW17: QuerySlotEntry = ['property', 2, undefined, '_property'];
+const ROW18: QuerySlotEntry = ['operator', 1, undefined, '_operator'];
 const KINDS68 = new Set([255]);
-const ROW8: QuerySlotEntry = ['property', 2, undefined, '_property'];
 const KINDS69 = new Set([109]);
 const KINDS70 = new Set([
 	1, 110, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 197, 234, 235, 236, 237, 238, 242, 245, 248, 250,
@@ -1073,7 +1082,8 @@ const SEATS22: Seats = [
 		contents: { '109': 'content' }
 	}
 ];
-const ROW9: QuerySlotEntry = ['optionalChain', 1, '?.', '_optional_chain', 255];
+const ROW19: QuerySlotEntry = ['index', 2, undefined, '_index'];
+const ROW20: QuerySlotEntry = ['optionalChain', 1, '?.', '_optional_chain', 255];
 const SEATS23: Seats = [
 	{ tokens: { this: 279 } },
 	{
@@ -1236,6 +1246,7 @@ const SEATS23: Seats = [
 		texts: [1]
 	}
 ];
+const ROW21: QuerySlotEntry = ['right', 2, undefined, '_right'];
 const PRESETS4: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 79 }];
 const KINDS72 = new Set([1, 234, 259, 260, 300, 418, 419]);
 const PRESETS5: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 91 }];
@@ -1252,7 +1263,11 @@ const PRESETS15: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }]
 const PRESETS16: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 87 }];
 const PRESETS17: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 88 }];
 const PRESETS18: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 80 }];
-const ROW10: QuerySlotEntry = ['operator', 0, undefined, '_operator'];
+const ROW22: QuerySlotEntry = ['condition', 0, undefined, '_condition'];
+const ROW23: QuerySlotEntry = ['consequence', 1, undefined, '_consequence'];
+const ROW24: QuerySlotEntry = ['alternative', 2, undefined, '_alternative'];
+const ROW25: QuerySlotEntry = ['argument', 1, undefined, '_argument'];
+const ROW26: QuerySlotEntry = ['operator', 0, undefined, '_operator'];
 const PRESETS19: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 96 }];
 const PRESETS20: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 69 }];
 const PRESETS21: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 97 }];
@@ -1260,6 +1275,7 @@ const PRESETS22: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }]
 const PRESETS23: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 98 }];
 const PRESETS24: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 8 }];
 const PRESETS25: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 78 }];
+const ROW27: QuerySlotEntry = ['expressions', 0, undefined, '_expression'];
 const KINDS73 = new Set([101, 176, 275]);
 const SEATS24: Seats = [
 	{ leaf: 'templateChars', pattern: { source: '^(?:(?:[^`\\\\$]+))$', flags: 'u' }, texts: [176] }
@@ -1633,7 +1649,8 @@ const SEATS28: Seats = [
 	}
 ];
 const KINDS77 = new Set([1, 286]);
-const ROW11: QuerySlotEntry = ['key', 0, undefined, '_key'];
+const ROW28: QuerySlotEntry = ['key', 0, undefined, '_key'];
+const ROW29: QuerySlotEntry = ['value', 1, undefined, '_value'];
 const KINDS78 = new Set([297]);
 const KINDS79 = new Set([
 	109, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 273, 277, 404, 426, 427, 505
@@ -2718,6 +2735,7 @@ const SEATS30: Seats = [
 	}
 ];
 const KINDS80 = new Set([1, 286, 287]);
+const ROW30: QuerySlotEntry = ['expression', 1, undefined, '_expression'];
 const KINDS81 = new Set([
 	40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362,
 	364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
@@ -2751,23 +2769,25 @@ const SEATS31: Seats = [
 const KINDS82 = new Set([311]);
 const KINDS83 = new Set([196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401]);
 const KINDS84 = new Set([1, 244, 273, 426, 427]);
-const ROW12: QuerySlotEntry = ['body', 3, undefined, '_body'];
-const ROW13: QuerySlotEntry = ['opening', 0, undefined, '_opening'];
-const ROW14: QuerySlotEntry = ['closing', 2, undefined, '_closing'];
+const ROW31: QuerySlotEntry = ['body', 3, undefined, '_body'];
+const ROW32: QuerySlotEntry = ['opening', 0, undefined, '_opening'];
+const ROW33: QuerySlotEntry = ['closing', 2, undefined, '_closing'];
 const PRESETS26: ReadonlyArray<PortablePreset> = [
 	{ steps: [{ key: 'body', builder: 'interfaceBody' }, { key: 'opening' }], kind: 5 },
 	{ steps: [{ key: 'body', builder: 'interfaceBody' }, { key: 'closing' }], kind: 6 }
 ];
 const KINDS85 = new Set([319, 351, 510]);
 const KINDS86 = new Set([191, 301, 370, 371, 376, 377, 411, 412, 420, 421, 422, 433, 434, 461, 462, 463]);
-const ROW15: QuerySlotEntry = ['const', 0, 'const', '_const', 68];
+const ROW34: QuerySlotEntry = ['const', 0, 'const', '_const', 68];
 const KINDS87 = new Set([324, 388, 389]);
-const ROW16: QuerySlotEntry = ['accessibilityModifier', 1, undefined, '_accessibility_modifier'];
+const ROW35: QuerySlotEntry = ['name', 0, undefined, '_name'];
+const ROW36: QuerySlotEntry = ['value', 6, undefined, '_value'];
+const ROW37: QuerySlotEntry = ['accessibilityModifier', 1, undefined, '_accessibility_modifier'];
 const KINDS88 = new Set([34, 35, 36, 326]);
-const ROW17: QuerySlotEntry = ['name', 4, undefined, '_name'];
+const ROW38: QuerySlotEntry = ['name', 4, undefined, '_name'];
 const KINDS89 = new Set([279]);
-const ROW18: QuerySlotEntry = ['override', 2, 'override', '_override', 327];
-const ROW19: QuerySlotEntry = ['readonly', 3, 'readonly', '_readonly', 38];
+const ROW39: QuerySlotEntry = ['override', 2, 'override', '_override', 327];
+const ROW40: QuerySlotEntry = ['readonly', 3, 'readonly', '_readonly', 38];
 const PRESETS27: ReadonlyArray<PortablePreset> = [
 	{ steps: [{ key: 'accessibilityModifier', optional: true }], kind: 35 }
 ];
@@ -4884,12 +4904,11 @@ const SEATS34: Seats = [
 		texts: [1, 510]
 	}
 ];
+const ROW41: QuerySlotEntry = ['property', 1, undefined, '_property'];
 const KINDS91 = new Set([197, 335, 336]);
 const SEATS35: Seats = [{ tokens: { import: 197 } }];
-const ROW20: QuerySlotEntry = ['function', 0, undefined, '_function'];
 const KINDS92 = new Set([197]);
-const ROW21: QuerySlotEntry = ['arguments', 1, undefined, '_arguments'];
-const ROW22: QuerySlotEntry = ['elements', 0, undefined, '_elements'];
+const ROW42: QuerySlotEntry = ['arguments', 1, undefined, '_arguments'];
 const KINDS93 = new Set([426, 427]);
 const PRESETS30: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'function' }], kind: 197 }];
 const KINDS94 = new Set([1, 279, 352]);
@@ -5714,7 +5733,7 @@ const SEATS37: Seats = [
 	{}
 ];
 const KINDS95 = new Set([1, 292]);
-const ROW23: QuerySlotEntry = ['abstract', 0, 'abstract', '_abstract', 134];
+const ROW43: QuerySlotEntry = ['abstract', 0, 'abstract', '_abstract', 134];
 const KINDS96 = new Set([
 	40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 346, 348, 349, 350, 351, 358, 359, 360, 362, 364, 365, 366, 367, 369,
 	378, 379, 381, 382, 509, 510
@@ -5748,7 +5767,7 @@ const SEATS38: Seats = [
 ];
 const PRESETS31: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 63 }];
 const KINDS100 = new Set([1, 279, 354, 355, 356]);
-const ROW24: QuerySlotEntry = ['arguments', 0, undefined, '_arguments'];
+const ROW44: QuerySlotEntry = ['arguments', 0, undefined, '_arguments'];
 const KINDS101 = new Set([235, 236, 273, 426, 427]);
 const KINDS102 = new Set([1, 354, 355]);
 const KINDS103 = new Set([1, 279, 354, 355, 356, 357]);
@@ -5756,6 +5775,7 @@ const KINDS104 = new Set([
 	40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366, 367, 369, 378,
 	379, 381, 382, 509, 510
 ]);
+const ROW45: QuerySlotEntry = ['content', 0, undefined, '_content'];
 const KINDS105 = new Set([
 	110, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 273, 277, 281, 282, 283, 403, 404, 426, 427
 ]);
@@ -5763,9 +5783,9 @@ const KINDS106 = new Set([5, 130]);
 const SEATS39: Seats = [{ tokens: { '{': 5, '{|': 130 } }];
 const KINDS107 = new Set([6, 131]);
 const SEATS40: Seats = [{ tokens: { '|}': 131, '}': 6 } }];
-const ROW25: QuerySlotEntry = ['accessibilityModifier', 0, undefined, '_accessibility_modifier'];
-const ROW26: QuerySlotEntry = ['static', 1, 'static', '_static', 52];
-const ROW27: QuerySlotEntry = ['optional', 5, '?', '_optional', 121];
+const ROW46: QuerySlotEntry = ['accessibilityModifier', 0, undefined, '_accessibility_modifier'];
+const ROW47: QuerySlotEntry = ['static', 1, 'static', '_static', 52];
+const ROW48: QuerySlotEntry = ['optional', 5, '?', '_optional', 121];
 const SEATS41: Seats = [
 	{
 		leaf: 'identifier',
@@ -5798,6 +5818,7 @@ const KINDS110 = new Set([
 	362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 ]);
 const KINDS111 = new Set([140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 277, 404]);
+const ROW49: QuerySlotEntry = ['left', 0, undefined, '_left'];
 const KINDS112 = new Set([
 	1, 109, 110, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 234, 235, 236, 237, 238, 242, 245, 248, 250,
 	252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300,
@@ -5842,7 +5863,7 @@ const SEATS42: Seats = [
 	{},
 	{}
 ];
-const ROW28: QuerySlotEntry = ['readonly', 1, 'readonly', '_readonly', 38];
+const ROW50: QuerySlotEntry = ['readonly', 1, 'readonly', '_readonly', 38];
 const KINDS113 = new Set([97, 98]);
 const SEATS43: Seats = [{ tokens: { '+': 98, '-': 97 } }];
 const SEATS44: Seats = [
@@ -5963,11 +5984,12 @@ const KINDS122 = new Set([100, 101]);
 const SEATS46: Seats = [
 	{ leaf: 'unescapedSingleStringFragment', pattern: { source: "^(?:(?:[^'\\\\\\r\\n]+))$", flags: 'u' }, texts: [100] }
 ];
+const ROW51: QuerySlotEntry = ['argument', 0, undefined, '_argument'];
 const PRESETS55: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 172 }];
 const PRESETS56: ReadonlyArray<PortablePreset> = [{ steps: [{ key: 'operator' }], kind: 171 }];
-const ROW29: QuerySlotEntry = ['content', 1, undefined, '_content'];
+const ROW52: QuerySlotEntry = ['content', 1, undefined, '_content'];
 const KINDS123 = new Set([435]);
-const ROW30: QuerySlotEntry = ['typeOnly', 0, 'type', '_type_only', 7];
+const ROW53: QuerySlotEntry = ['typeOnly', 0, 'type', '_type_only', 7];
 const KINDS124 = new Set([193]);
 const KINDS125 = new Set([437]);
 const KINDS126 = new Set([192]);
@@ -5999,141 +6021,43 @@ const PRESETS58: ReadonlyArray<PortablePreset> = [
 ];
 const KINDS131 = new Set([196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 439]);
 const KINDS132 = new Set([439]);
-const ROW31: QuerySlotEntry = ['name', 0, undefined, '_name'];
+const ROW54: QuerySlotEntry = ['value', 2, undefined, '_value'];
 const KINDS133 = new Set([239, 243]);
-const ROW32: QuerySlotEntry = ['async', 4, 'async', '_async', 50];
-const ROW33: QuerySlotEntry = ['optional', 7, '?', '_optional', 121];
-const ROW34: QuerySlotEntry = ['generator', 5, '*', '_generator', 3];
-const ROW35: QuerySlotEntry = ['name', 6, undefined, '_name'];
-const ROW36: QuerySlotEntry = ['name', 3, undefined, '_name'];
+const ROW55: QuerySlotEntry = ['right', 3, undefined, '_right'];
+const ROW56: QuerySlotEntry = ['right', 4, undefined, '_right'];
+const ROW57: QuerySlotEntry = ['name', 6, undefined, '_name'];
+const ROW58: QuerySlotEntry = ['async', 4, 'async', '_async', 50];
+const ROW59: QuerySlotEntry = ['optional', 7, '?', '_optional', 121];
+const ROW60: QuerySlotEntry = ['generator', 5, '*', '_generator', 3];
+const ROW61: QuerySlotEntry = ['name', 3, undefined, '_name'];
 const KINDS134 = new Set([455]);
 const KINDS135 = new Set([453]);
 const KINDS136 = new Set([454]);
-const ROW37: QuerySlotEntry = ['override', 1, 'override', '_override', 327];
-const ROW38: QuerySlotEntry = ['optional', 4, '?', '_optional', 121];
-const ROW39: QuerySlotEntry = ['generator', 2, '*', '_generator', 3];
-const ROW40: QuerySlotEntry = ['name', 2, undefined, '_name'];
-const ROW41: QuerySlotEntry = ['accessibilityModifier', 2, undefined, '_accessibility_modifier'];
-const ROW42: QuerySlotEntry = ['declare', 1, 'declare', '_declare', 32];
-const ROW43: QuerySlotEntry = ['static', 3, 'static', '_static', 52];
-const ROW44: QuerySlotEntry = ['abstract', 4, 'abstract', '_abstract', 134];
-const ROW45: QuerySlotEntry = ['override', 5, 'override', '_override', 327];
-const ROW46: QuerySlotEntry = ['readonly', 6, 'readonly', '_readonly', 38];
-const ROW47: QuerySlotEntry = ['optionality', 8, undefined, '_optionality'];
-const ROW48: QuerySlotEntry = ['name', 7, undefined, '_name'];
+const ROW62: QuerySlotEntry = ['override', 1, 'override', '_override', 327];
+const ROW63: QuerySlotEntry = ['optional', 4, '?', '_optional', 121];
+const ROW64: QuerySlotEntry = ['generator', 2, '*', '_generator', 3];
+const ROW65: QuerySlotEntry = ['name', 2, undefined, '_name'];
+const ROW66: QuerySlotEntry = ['name', 7, undefined, '_name'];
+const ROW67: QuerySlotEntry = ['value', 10, undefined, '_value'];
+const ROW68: QuerySlotEntry = ['accessibilityModifier', 2, undefined, '_accessibility_modifier'];
+const ROW69: QuerySlotEntry = ['declare', 1, 'declare', '_declare', 32];
+const ROW70: QuerySlotEntry = ['static', 3, 'static', '_static', 52];
+const ROW71: QuerySlotEntry = ['abstract', 4, 'abstract', '_abstract', 134];
+const ROW72: QuerySlotEntry = ['override', 5, 'override', '_override', 327];
+const ROW73: QuerySlotEntry = ['readonly', 6, 'readonly', '_readonly', 38];
+const ROW74: QuerySlotEntry = ['optionality', 8, undefined, '_optionality'];
 const KINDS137 = new Set([95, 121]);
 const SEATS47: Seats = [{ tokens: { '!': 95, '?': 121 } }];
-const ROW49: QuerySlotEntry = ['abstract', 3, 'abstract', '_abstract', 134];
-const ROW50: QuerySlotEntry = ['static', 2, 'static', '_static', 52];
-const ROW51: QuerySlotEntry = ['override', 4, 'override', '_override', 327];
-const ROW52: QuerySlotEntry = ['name', 5, undefined, '_name'];
+const ROW75: QuerySlotEntry = ['name', 5, undefined, '_name'];
+const ROW76: QuerySlotEntry = ['value', 7, undefined, '_value'];
+const ROW77: QuerySlotEntry = ['abstract', 3, 'abstract', '_abstract', 134];
+const ROW78: QuerySlotEntry = ['static', 2, 'static', '_static', 52];
+const ROW79: QuerySlotEntry = ['override', 4, 'override', '_override', 327];
 const MEANING0: Readonly<Record<number, readonly string[]>> = {};
 const PRESETS59: ReadonlyArray<PortablePreset> = [
 	{ steps: [{ key: 'abstract', optional: true }], kind: 134, presence: true }
 ];
-const ROW53: QuerySlotEntry = ['shebang', 0, undefined, '_shebang'];
-const ROW54: QuerySlotEntry = ['initializer', 0, undefined, '_initializer'];
-const ROW55: QuerySlotEntry = ['condition', 1, undefined, '_condition'];
-const ROW56: QuerySlotEntry = ['increment', 2, undefined, '_increment'];
-const ROW57: QuerySlotEntry = ['value', 0, undefined, '_value'];
-const ROW58: QuerySlotEntry = ['right', 1, undefined, '_right'];
-const ROW59: QuerySlotEntry = ['body', 2, undefined, '_body'];
-const ROW60: QuerySlotEntry = ['object', 0, undefined, '_object'];
-const ROW61: QuerySlotEntry = ['index', 2, undefined, '_index'];
-const ROW62: QuerySlotEntry = ['right', 2, undefined, '_right'];
-const ROW63: QuerySlotEntry = ['condition', 0, undefined, '_condition'];
-const ROW64: QuerySlotEntry = ['consequence', 1, undefined, '_consequence'];
-const ROW65: QuerySlotEntry = ['alternative', 2, undefined, '_alternative'];
-const ROW66: QuerySlotEntry = ['argument', 1, undefined, '_argument'];
-const ROW67: QuerySlotEntry = ['expressions', 0, undefined, '_expression'];
-const ROW68: QuerySlotEntry = ['value', 1, undefined, '_value'];
-const ROW69: QuerySlotEntry = ['expression', 1, undefined, '_expression'];
-const ROW70: QuerySlotEntry = ['value', 6, undefined, '_value'];
-const ROW71: QuerySlotEntry = ['property', 1, undefined, '_property'];
-const ROW72: QuerySlotEntry = ['content', 0, undefined, '_content'];
-const ROW73: QuerySlotEntry = ['left', 0, undefined, '_left'];
-const ROW74: QuerySlotEntry = ['argument', 0, undefined, '_argument'];
-const ROW75: QuerySlotEntry = ['value', 2, undefined, '_value'];
-const ROW76: QuerySlotEntry = ['right', 3, undefined, '_right'];
-const ROW77: QuerySlotEntry = ['right', 4, undefined, '_right'];
-const ROW78: QuerySlotEntry = ['value', 10, undefined, '_value'];
-const ROW79: QuerySlotEntry = ['value', 7, undefined, '_value'];
 const ROW80: QuerySlotEntry = ['value', 5, undefined, '_value'];
-const TOKENS0: Readonly<Record<number, readonly QuerySlotEntry[]>> = {
-	'190': [ROW53],
-	'206': [ROW4],
-	'215': [ROW54, ROW55, ROW56],
-	'225': [ROW4],
-	'226': [ROW4],
-	'230': [ROW57],
-	'237': [ROW4],
-	'240': [ROW58],
-	'241': [ROW58],
-	'242': [ROW22],
-	'252': [ROW59],
-	'257': [ROW20],
-	'258': [ROW4],
-	'259': [ROW60, ROW8],
-	'260': [ROW60, ROW61],
-	'262': [ROW58],
-	'264': [ROW62],
-	'267': [ROW4],
-	'268': [ROW63, ROW64, ROW65],
-	'270': [ROW66],
-	'272': [ROW67],
-	'274': [ROW22],
-	'275': [ROW4],
-	'284': [ROW22],
-	'294': [ROW11, ROW68],
-	'295': [ROW11],
-	'297': [ROW4],
-	'300': [ROW4],
-	'305': [ROW69],
-	'306': [ROW4],
-	'307': [ROW4],
-	'308': [ROW20],
-	'311': [ROW57],
-	'324': [ROW31, ROW68],
-	'328': [ROW70],
-	'329': [ROW70],
-	'335': [ROW71],
-	'354': [ROW8],
-	'355': [ROW61],
-	'362': [ROW72],
-	'371': [ROW17],
-	'388': [ROW31],
-	'403': [ROW57],
-	'405': [ROW73, ROW58],
-	'406': [ROW73, ROW62],
-	'414': [ROW4],
-	'418': [ROW4],
-	'421': [ROW57],
-	'423': [ROW20],
-	'424': [ROW20],
-	'425': [ROW20],
-	'426': [ROW22],
-	'427': [ROW22],
-	'428': [ROW74],
-	'429': [ROW66],
-	'439': [ROW57],
-	'440': [ROW75],
-	'444': [ROW62],
-	'445': [ROW68, ROW76],
-	'446': [ROW77],
-	'447': [ROW77],
-	'458': [ROW35],
-	'459': [ROW36],
-	'460': [ROW36],
-	'461': [ROW35],
-	'462': [ROW36],
-	'463': [ROW36],
-	'464': [ROW36],
-	'465': [ROW40],
-	'466': [ROW40],
-	'467': [ROW48, ROW78],
-	'468': [ROW52, ROW79],
-	'473': [ROW80]
-};
 const seats0 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats0(item) ?? { found: item, many: false }));
 	return undefined;
@@ -12464,6 +12388,8 @@ const readHtmlComment = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readProgram = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW0);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'file';
 	switch (path) {
 		case 'file': {
@@ -12532,7 +12458,7 @@ const readExportClause = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readExportSpecifier = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW0);
+	const slot0 = rowItems(node, ROW1);
 	const e0 = texts(slot0, FIXED).includes('typeof');
 	const path: string | undefined = e0 ? 'clause.export.specifier.typeof' : !e0 ? 'clause.export.specifier' : undefined;
 	switch (path) {
@@ -12601,7 +12527,7 @@ const readImport = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readImportStatement = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW0);
+	const slot0 = rowItems(node, ROW1);
 	const e1 = texts(slot0, FIXED).includes('typeof');
 	const path: string | undefined = !e1 ? 'statement.import' : e1 ? 'statement.import.typeof' : undefined;
 	switch (path) {
@@ -12728,6 +12654,8 @@ const readImportAttribute = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readExpressionStatement = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	if (seats === undefined) {
 		const element = seats19(node);
 		if (element !== undefined && !element.many && kindOf(element.found) !== undefined)
@@ -12755,7 +12683,7 @@ const readVariableDeclaration = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readLexicalDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot0 = rowItems(node, ROW3);
 	const e0 = texts(slot0, FIXED).includes('const');
 	const e1 = texts(slot0, FIXED).includes('let');
 	const path: string | undefined = e0
@@ -12915,6 +12843,10 @@ const readSwitchStatement = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readForStatement = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW4);
+	const slot1 = rowItems(node, ROW5);
+	const slot2 = rowItems(node, ROW6);
+	if (slot0.some(opaque) || slot1.some(opaque) || slot2.some(opaque)) return node;
 	const container = holderOf(node);
 	const path: string | undefined = 'statement.loop.counted';
 	switch (path) {
@@ -12949,7 +12881,7 @@ const readForStatement = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readForInStatement = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW2);
+	const slot0 = rowItems(node, ROW7);
 	const container = holderOf(node);
 	const path: string | undefined = 'statement.loop.for_each';
 	switch (path) {
@@ -13153,6 +13085,8 @@ const readDebuggerStatement = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readReturnStatement = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'statement.return';
 	switch (path) {
 		case 'statement.return': {
@@ -13171,6 +13105,8 @@ const readReturnStatement = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readThrowStatement = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'statement.throw';
 	switch (path) {
 		case 'statement.throw': {
@@ -13205,7 +13141,7 @@ const readEmptyStatement = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readLabeledStatement = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW3);
+	const slot1 = rowItems(node, ROW8);
 	const e0 = !slot1.some((x) => kindIn(KINDS3, x));
 	const path: string | undefined = e0 ? 'statement.labeled' : undefined;
 	switch (path) {
@@ -13237,6 +13173,8 @@ const readLabeledStatement = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readSwitchCase = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW9);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'clause.case.switch';
 	switch (path) {
 		case 'clause.case.switch': {
@@ -13328,7 +13266,8 @@ const readFinallyClause = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readYieldExpression = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW4);
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	const e1 = slot0.some((x) => kindIn(KINDS36, x));
 	const path: string | undefined = !e1 ? 'expression.yield' : e1 ? 'expression.yield.delegate' : undefined;
 	switch (path) {
@@ -13405,6 +13344,8 @@ const readObjectPattern = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAssignmentPattern = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW10);
+	if (slot1.some(opaque)) return node;
 	const path: string | undefined = 'pattern.assignment';
 	switch (path) {
 		case 'pattern.assignment': {
@@ -13430,6 +13371,8 @@ const readAssignmentPattern = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readObjectAssignmentPattern = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW10);
+	if (slot1.some(opaque)) return node;
 	const path: string | undefined = 'pattern.object.assignment';
 	switch (path) {
 		case 'pattern.object.assignment': {
@@ -13455,6 +13398,8 @@ const readObjectAssignmentPattern = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readArray = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW11);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.collection.list';
 	switch (path) {
 		case 'expression.collection.list': {
@@ -13585,7 +13530,7 @@ const readClassDeclaration = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readFunctionExpression = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW5);
+	const slot0 = rowItems(node, ROW12);
 	const path: string | undefined = 'expression.function';
 	switch (path) {
 		case 'expression.function': {
@@ -13621,7 +13566,7 @@ const readFunctionExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readFunctionDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW5);
+	const slot0 = rowItems(node, ROW12);
 	const path: string | undefined = 'declaration.function';
 	switch (path) {
 		case 'declaration.function': {
@@ -13656,7 +13601,7 @@ const readFunctionDeclaration = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readGeneratorFunction = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW5);
+	const slot0 = rowItems(node, ROW12);
 	const path: string | undefined = 'expression.function';
 	switch (path) {
 		case 'expression.function': {
@@ -13692,7 +13637,7 @@ const readGeneratorFunction = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readGeneratorFunctionDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW5);
+	const slot0 = rowItems(node, ROW12);
 	const path: string | undefined = 'declaration.function';
 	switch (path) {
 		case 'declaration.function': {
@@ -13727,7 +13672,9 @@ const readGeneratorFunctionDeclaration = (node: Node, seats?: Seats): unknown =>
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readArrowFunction = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW5);
+	const slot2 = rowItems(node, ROW13);
+	const slot0 = rowItems(node, ROW12);
+	if (slot2.some(opaque)) return node;
 	const path: string | undefined = 'expression.lambda';
 	switch (path) {
 		case 'expression.lambda': {
@@ -13761,7 +13708,9 @@ const readArrowFunction = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readNewExpression = (node: Node, seats?: Seats): unknown => {
-	const slot2 = rowItems(node, ROW6);
+	const slot0 = rowItems(node, ROW14);
+	const slot2 = rowItems(node, ROW15);
+	if (slot0.some(opaque)) return node;
 	const e1 = !(texts(slot2, FIXED).length > 0);
 	const path: string | undefined = !e1
 		? 'expression.call.construct'
@@ -13814,6 +13763,8 @@ const readNewExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAwaitExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.await';
 	switch (path) {
 		case 'expression.await': {
@@ -13832,8 +13783,10 @@ const readAwaitExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readMemberExpression = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW7);
-	const slot2 = rowItems(node, ROW8);
+	const slot0 = rowItems(node, ROW16);
+	const slot2 = rowItems(node, ROW17);
+	const slot1 = rowItems(node, ROW18);
+	if (slot0.some(opaque) || slot2.some(opaque)) return node;
 	const path: string | undefined = 'expression.member';
 	switch (path) {
 		case 'expression.member': {
@@ -13863,7 +13816,10 @@ const readMemberExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readSubscriptExpression = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW9);
+	const slot0 = rowItems(node, ROW16);
+	const slot2 = rowItems(node, ROW19);
+	const slot1 = rowItems(node, ROW20);
+	if (slot0.some(opaque) || slot2.some(opaque)) return node;
 	const path: string | undefined = 'expression.subscript';
 	switch (path) {
 		case 'expression.subscript': {
@@ -13899,6 +13855,8 @@ const readLhsExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAssignmentExpression = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW10);
+	if (slot1.some(opaque)) return node;
 	const path: string | undefined = 'expression.assignment';
 	switch (path) {
 		case 'expression.assignment': {
@@ -13924,7 +13882,9 @@ const readAssignmentExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAugmentedAssignmentExpression = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW7);
+	const slot2 = rowItems(node, ROW21);
+	const slot1 = rowItems(node, ROW18);
+	if (slot2.some(opaque)) return node;
 	const e0 = texts(slot1, FIXED).includes('+=');
 	const e1 = texts(slot1, FIXED).includes('-=');
 	const e2 = texts(slot1, FIXED).includes('*=');
@@ -14322,6 +14282,8 @@ const readAugmentedAssignmentExpression = (node: Node, seats?: Seats): unknown =
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readSpreadElement = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'element.spread';
 	switch (path) {
 		case 'element.spread': {
@@ -14340,6 +14302,10 @@ const readSpreadElement = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTernaryExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW22);
+	const slot1 = rowItems(node, ROW23);
+	const slot2 = rowItems(node, ROW24);
+	if (slot0.some(opaque) || slot1.some(opaque) || slot2.some(opaque)) return node;
 	const path: string | undefined = 'expression.conditional';
 	switch (path) {
 		case 'expression.conditional': {
@@ -14366,7 +14332,9 @@ const readTernaryExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readUnaryExpression = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW10);
+	const slot1 = rowItems(node, ROW25);
+	const slot0 = rowItems(node, ROW26);
+	if (slot1.some(opaque)) return node;
 	const e1 = texts(slot0, FIXED).includes('-');
 	const e2 = texts(slot0, FIXED).includes('+');
 	const e3 = texts(slot0, FIXED).includes('!');
@@ -14502,6 +14470,8 @@ const readUnaryExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readSequenceExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW27);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.sequence';
 	switch (path) {
 		case 'expression.sequence': {
@@ -14521,6 +14491,8 @@ const readSequenceExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTemplateString = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW11);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'literal.string.interpolated';
 	switch (path) {
 		case 'literal.string.interpolated': {
@@ -14540,6 +14512,8 @@ const readTemplateString = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTemplateSubstitution = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.interpolation';
 	switch (path) {
 		case 'expression.interpolation': {
@@ -14641,6 +14615,11 @@ const readNull = (node: Node, seats?: Seats): unknown => {
 	}
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
+const readArguments = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW11);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
 const readDecorator = (node: Node, seats?: Seats): unknown => {
 	if (seats === undefined) {
 		const element = seats84(node);
@@ -14740,7 +14719,9 @@ const readRestPattern = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readPair = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW11);
+	const slot0 = rowItems(node, ROW28);
+	const slot1 = rowItems(node, ROW29);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const path: string | undefined = 'element.pair';
 	switch (path) {
 		case 'element.pair': {
@@ -14768,7 +14749,8 @@ const readPair = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readPairPattern = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW11);
+	const slot0 = rowItems(node, ROW28);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'pattern.object.pair';
 	switch (path) {
 		case 'pattern.object.pair': {
@@ -14796,6 +14778,8 @@ const readPairPattern = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readComputedPropertyName = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	if (seats === undefined) {
 		const element = seats90(node);
 		if (element !== undefined && !element.many && kindOf(element.found) !== undefined)
@@ -14804,6 +14788,8 @@ const readComputedPropertyName = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readNonNullExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.cast.non_null';
 	switch (path) {
 		case 'expression.cast.non_null': {
@@ -14822,7 +14808,7 @@ const readNonNullExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readFunctionSignature = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW5);
+	const slot0 = rowItems(node, ROW12);
 	const path: string | undefined = 'declaration.function.signature';
 	switch (path) {
 		case 'declaration.function.signature': {
@@ -14874,6 +14860,8 @@ const readDecoratorParenthesizedExpression = (node: Node, seats?: Seats): unknow
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTypeAssertion = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW30);
+	if (slot1.some(opaque)) return node;
 	const path: string | undefined = 'expression.cast.assertion.angle_bracket';
 	switch (path) {
 		case 'expression.cast.assertion.angle_bracket': {
@@ -14899,6 +14887,8 @@ const readTypeAssertion = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAsExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.cast.assertion';
 	switch (path) {
 		case 'expression.cast.assertion': {
@@ -14924,6 +14914,8 @@ const readAsExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readSatisfiesExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.cast.satisfies';
 	switch (path) {
 		case 'expression.cast.satisfies': {
@@ -14949,6 +14941,8 @@ const readSatisfiesExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readInstantiationExpression = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW14);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.instantiation';
 	switch (path) {
 		case 'expression.instantiation': {
@@ -15016,6 +15010,11 @@ const readExtendsClause = (node: Node, seats?: Seats): unknown => {
 			return structure;
 		}
 	}
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
+const readExtendsClauseSingle = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW9);
+	if (slot0.some(opaque)) return node;
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readImplementsClause = (node: Node, seats?: Seats): unknown => {
@@ -15189,14 +15188,14 @@ const readNestedTypeIdentifier = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readInterfaceDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot3 = rowItems(node, ROW12);
+	const slot3 = rowItems(node, ROW31);
 	const e0 =
 		texts(
-			slot3.flatMap((x) => itemsAt(x, K.InterfaceBody, ROW13)),
+			slot3.flatMap((x) => itemsAt(x, K.InterfaceBody, ROW32)),
 			FIXED
 		).includes('{') &&
 		texts(
-			slot3.flatMap((x) => itemsAt(x, K.InterfaceBody, ROW14)),
+			slot3.flatMap((x) => itemsAt(x, K.InterfaceBody, ROW33)),
 			FIXED
 		).includes('}');
 	const path: string | undefined = e0 ? 'declaration.type.interface' : undefined;
@@ -15251,7 +15250,7 @@ const readExtendsTypeClause = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readEnumDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW15);
+	const slot0 = rowItems(node, ROW34);
 	const path: string | undefined = 'declaration.type.enum';
 	switch (path) {
 		case 'declaration.type.enum': {
@@ -15280,6 +15279,9 @@ const readEnumDeclaration = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readEnumAssignment = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW35);
+	const slot1 = rowItems(node, ROW29);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const path: string | undefined = 'declaration.member.enum_member';
 	switch (path) {
 		case 'declaration.member.enum_member': {
@@ -15332,10 +15334,12 @@ const readTypeAliasDeclaration = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readRequiredParameter = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW16);
-	const slot4 = rowItems(node, ROW17);
-	const slot2 = rowItems(node, ROW18);
-	const slot3 = rowItems(node, ROW19);
+	const slot6 = rowItems(node, ROW36);
+	const slot1 = rowItems(node, ROW37);
+	const slot4 = rowItems(node, ROW38);
+	const slot2 = rowItems(node, ROW39);
+	const slot3 = rowItems(node, ROW40);
+	if (slot6.some(opaque)) return node;
 	const e0 = slot1.some((x) => kindIn(KINDS88, x)) && texts(slot1, FIXED).includes('private');
 	const e1 = slot1.some((x) => kindIn(KINDS88, x)) && texts(slot1, FIXED).includes('protected');
 	const e2 = slot1.some((x) => kindIn(KINDS88, x)) && texts(slot1, FIXED).includes('public');
@@ -15469,9 +15473,11 @@ const readRequiredParameter = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readOptionalParameter = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW16);
-	const slot2 = rowItems(node, ROW18);
-	const slot3 = rowItems(node, ROW19);
+	const slot6 = rowItems(node, ROW36);
+	const slot1 = rowItems(node, ROW37);
+	const slot2 = rowItems(node, ROW39);
+	const slot3 = rowItems(node, ROW40);
+	if (slot6.some(opaque)) return node;
 	const e0 = slot1.some((x) => kindIn(KINDS88, x)) && texts(slot1, FIXED).includes('private');
 	const e1 = slot1.some((x) => kindIn(KINDS88, x)) && texts(slot1, FIXED).includes('protected');
 	const e2 = slot1.some((x) => kindIn(KINDS88, x)) && texts(slot1, FIXED).includes('public');
@@ -15638,6 +15644,8 @@ const readTypeAnnotation = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTypeQueryMemberExpressionInTypeAnnotation = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW41);
+	if (slot1.some(opaque)) return node;
 	const path: string | undefined = 'identifier.qualified';
 	switch (path) {
 		case 'identifier.qualified': {
@@ -15664,11 +15672,11 @@ const readTypeQueryMemberExpressionInTypeAnnotation = (node: Node, seats?: Seats
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTypeQueryCallExpressionInTypeAnnotation = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW20);
-	const slot1 = rowItems(node, ROW21);
+	const slot0 = rowItems(node, ROW14);
+	const slot1 = rowItems(node, ROW42);
 	const e0 =
 		slot0.some((x) => kindIn(KINDS92, x)) &&
-		slot1.flatMap((x) => only(itemsAt(x, K.Arguments, ROW22))).some((x) => kindIn(KINDS93, x));
+		slot1.flatMap((x) => only(itemsAt(x, K.Arguments, ROW11))).some((x) => kindIn(KINDS93, x));
 	const path: string | undefined = e0 ? 'type.import' : undefined;
 	switch (path) {
 		case 'type.import': {
@@ -15803,7 +15811,7 @@ const readRestType = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readConstructorType = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW23);
+	const slot0 = rowItems(node, ROW43);
 	const path: string | undefined = 'type.function.constructor';
 	switch (path) {
 		case 'type.function.constructor': {
@@ -15984,7 +15992,9 @@ const readTypePredicateAnnotation = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTypeQueryMemberExpression = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW7);
+	const slot2 = rowItems(node, ROW17);
+	const slot1 = rowItems(node, ROW18);
+	if (slot2.some(opaque)) return node;
 	const e0 = texts(slot1, FIXED).includes('.');
 	const path: string | undefined = e0 ? 'identifier.qualified' : undefined;
 	switch (path) {
@@ -16013,9 +16023,14 @@ const readTypeQueryMemberExpression = (node: Node, seats?: Seats): unknown => {
 	}
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
+const readTypeQuerySubscriptExpression = (node: Node, seats?: Seats): unknown => {
+	const slot2 = rowItems(node, ROW19);
+	if (slot2.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
 const readTypeQueryCallExpression = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW24);
-	const e0 = slot0.flatMap((x) => only(itemsAt(x, K.Arguments, ROW22))).some((x) => kindIn(KINDS93, x));
+	const slot0 = rowItems(node, ROW44);
+	const e0 = slot0.flatMap((x) => only(itemsAt(x, K.Arguments, ROW11))).some((x) => kindIn(KINDS93, x));
 	const path: string | undefined = e0 ? 'type.import' : undefined;
 	switch (path) {
 		case 'type.import': {
@@ -16034,7 +16049,7 @@ const readTypeQueryCallExpression = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTypeQueryInstantiationExpression = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW20);
+	const slot0 = rowItems(node, ROW14);
 	const e0 = slot0.some((x) => kindIn(KINDS102, x));
 	const path: string | undefined = e0 ? 'expression.instantiation' : undefined;
 	switch (path) {
@@ -16149,6 +16164,8 @@ const readMappedTypeClause = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readLiteralType = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW45);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'type.literal';
 	switch (path) {
 		case 'type.literal': {
@@ -16276,12 +16293,13 @@ const readCallSignature = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readPropertySignature = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW25);
-	const slot1 = rowItems(node, ROW26);
-	const slot2 = rowItems(node, ROW18);
-	const slot3 = rowItems(node, ROW19);
-	const slot5 = rowItems(node, ROW27);
-	const slot4 = rowItems(node, ROW17);
+	const slot4 = rowItems(node, ROW38);
+	const slot0 = rowItems(node, ROW46);
+	const slot1 = rowItems(node, ROW47);
+	const slot2 = rowItems(node, ROW39);
+	const slot3 = rowItems(node, ROW40);
+	const slot5 = rowItems(node, ROW48);
+	if (slot4.some(opaque)) return node;
 	const e0 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('private');
 	const e1 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('protected');
 	const e2 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('public');
@@ -16416,7 +16434,7 @@ const readPropertySignature = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readTypeParameter = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW15);
+	const slot0 = rowItems(node, ROW34);
 	const path: string | undefined = 'declaration.type_parameter';
 	switch (path) {
 		case 'declaration.type_parameter': {
@@ -16464,7 +16482,7 @@ const readDefaultType = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readConstructSignature = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW23);
+	const slot0 = rowItems(node, ROW43);
 	const path: string | undefined = 'declaration.member.signature.construct';
 	switch (path) {
 		case 'declaration.member.signature.construct': {
@@ -16634,6 +16652,8 @@ const readFunctionType = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readEnumBodyElementName = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW35);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'declaration.member.enum_member';
 	switch (path) {
 		case 'declaration.member.enum_member': {
@@ -16685,6 +16705,8 @@ const readAmbientDeclarationModule = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readLiteralTypeNegativeNumber = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW9);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'literal.number.negative';
 	switch (path) {
 		case 'literal.number.negative': {
@@ -16703,6 +16725,9 @@ const readLiteralTypeNegativeNumber = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readBinaryExpressionIn = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW49);
+	const slot1 = rowItems(node, ROW10);
+	if (slot0.some(opaque) || slot1.some(opaque)) return node;
 	const path: string | undefined = 'expression.binary.membership.in';
 	switch (path) {
 		case 'expression.binary.membership.in': {
@@ -16728,7 +16753,10 @@ const readBinaryExpressionIn = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readBinaryExpressionDefault = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW7);
+	const slot0 = rowItems(node, ROW49);
+	const slot2 = rowItems(node, ROW21);
+	const slot1 = rowItems(node, ROW18);
+	if (slot0.some(opaque) || slot2.some(opaque)) return node;
 	const e0 = texts(slot1, FIXED).includes('<<');
 	const e1 = texts(slot1, FIXED).includes('>>');
 	const e2 = texts(slot1, FIXED).includes('>>>');
@@ -17384,7 +17412,7 @@ const readClassBodyMemberDeclaration = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readIndexSignatureColon = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW28);
+	const slot1 = rowItems(node, ROW50);
 	const path: string | undefined = 'declaration.member.signature.index';
 	switch (path) {
 		case 'declaration.member.signature.index': {
@@ -17414,7 +17442,7 @@ const readIndexSignatureColon = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readIndexSignatureMappedTypeClause = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW28);
+	const slot1 = rowItems(node, ROW50);
 	const path: string | undefined = 'declaration.member.signature.index.mapped';
 	switch (path) {
 		case 'declaration.member.signature.index.mapped': {
@@ -17442,8 +17470,13 @@ const readIndexSignatureMappedTypeClause = (node: Node, seats?: Seats): unknown 
 	}
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
+const readYieldExpressionDelegate = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
 const readImportSpecifierName = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW0);
+	const slot0 = rowItems(node, ROW1);
 	const e0 = texts(slot0, FIXED).includes('typeof');
 	const path: string | undefined = e0 ? 'clause.import.specifier.typeof' : !e0 ? 'clause.import.specifier' : undefined;
 	switch (path) {
@@ -17482,7 +17515,7 @@ const readImportSpecifierName = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readImportSpecifierAs = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW0);
+	const slot0 = rowItems(node, ROW1);
 	const e0 = texts(slot0, FIXED).includes('typeof');
 	const path: string | undefined = e0 ? 'clause.import.specifier.typeof' : !e0 ? 'clause.import.specifier' : undefined;
 	switch (path) {
@@ -17535,6 +17568,8 @@ const readImportSpecifierAs = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readParenthesizedExpressionTyped = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW2);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.parenthesized';
 	switch (path) {
 		case 'expression.parenthesized': {
@@ -17578,6 +17613,8 @@ const readParenthesizedExpressionSequence = (node: Node, seats?: Seats): unknown
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readExportStatementEqualsExport = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW9);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'statement.export';
 	switch (path) {
 		case 'statement.export': {
@@ -17614,7 +17651,8 @@ const readExportStatementNamespaceExport = (node: Node, seats?: Seats): unknown 
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readCallExpressionCall = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW20);
+	const slot0 = rowItems(node, ROW14);
+	if (slot0.some(opaque)) return node;
 	const e0 = slot0.some((x) => kindIn(KINDS116, x));
 	const path: string | undefined = e0 ? 'expression.call.member' : !e0 ? 'expression.call' : undefined;
 	switch (path) {
@@ -17667,6 +17705,8 @@ const readCallExpressionCall = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readCallExpressionTemplateCall = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW14);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.call.template';
 	switch (path) {
 		case 'expression.call.template': {
@@ -17692,6 +17732,8 @@ const readCallExpressionTemplateCall = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readCallExpressionMember = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW14);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'expression.call';
 	switch (path) {
 		case 'expression.call': {
@@ -17719,6 +17761,8 @@ const readCallExpressionMember = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readStringDouble = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW11);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'literal.string';
 	switch (path) {
 		case 'literal.string': {
@@ -17738,6 +17782,8 @@ const readStringDouble = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readStringSingle = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW11);
+	if (slot0.some(opaque)) return node;
 	const path: string | undefined = 'literal.string';
 	switch (path) {
 		case 'literal.string': {
@@ -17757,7 +17803,9 @@ const readStringSingle = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readUpdateExpressionPostfix = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW7);
+	const slot0 = rowItems(node, ROW51);
+	const slot1 = rowItems(node, ROW18);
+	if (slot0.some(opaque)) return node;
 	const e0 = texts(slot1, FIXED).includes('++');
 	const e1 = texts(slot1, FIXED).includes('--');
 	const path: string | undefined = e0
@@ -17802,7 +17850,9 @@ const readUpdateExpressionPostfix = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readUpdateExpressionPrefix = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW10);
+	const slot1 = rowItems(node, ROW25);
+	const slot0 = rowItems(node, ROW26);
+	if (slot1.some(opaque)) return node;
 	const e0 = texts(slot0, FIXED).includes('++');
 	const e1 = texts(slot0, FIXED).includes('--');
 	const path: string | undefined = e0
@@ -17847,8 +17897,8 @@ const readUpdateExpressionPrefix = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readExportStatementDefaultFrom = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW29);
-	const slot0 = rowItems(node, ROW30);
+	const slot1 = rowItems(node, ROW52);
+	const slot0 = rowItems(node, ROW53);
 	const e0 = slot1.some((x) => kindIn(KINDS123, x));
 	const path: string | undefined = e0 ? 'statement.export.all' : !e0 ? 'statement.export' : undefined;
 	switch (path) {
@@ -17896,7 +17946,7 @@ const readExportStatementDefaultFrom = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readExportStatementDefaultDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW29);
+	const slot1 = rowItems(node, ROW52);
 	const e0 = slot1.some((x) => kindIn(KINDS128, x));
 	const path: string | undefined = e0 ? 'statement.export.default' : !e0 ? 'statement.export' : undefined;
 	switch (path) {
@@ -17947,8 +17997,15 @@ const readExportStatementDefaultDeclaration = (node: Node, seats?: Seats): unkno
 	}
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
+const readExportStatementDefaultDeclarationDefaultKwValue = (node: Node, seats?: Seats): unknown => {
+	const slot0 = rowItems(node, ROW9);
+	if (slot0.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
 const readVariableDeclaratorPlain = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW31);
+	const slot2 = rowItems(node, ROW54);
+	const slot0 = rowItems(node, ROW35);
+	if (slot2.some(opaque)) return node;
 	const e0 = slot0.some((x) => kindIn(KINDS133, x));
 	const path: string | undefined = e0 ? 'declaration.variable.pattern' : !e0 ? 'declaration.variable' : undefined;
 	switch (path) {
@@ -18052,8 +18109,29 @@ const readMetaPropertyImportMeta = (node: Node, seats?: Seats): unknown => {
 	}
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
+const readForHeaderLhs = (node: Node, seats?: Seats): unknown => {
+	const slot2 = rowItems(node, ROW21);
+	if (slot2.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
+const readForHeaderVarKind = (node: Node, seats?: Seats): unknown => {
+	const slot1 = rowItems(node, ROW29);
+	const slot3 = rowItems(node, ROW55);
+	if (slot1.some(opaque) || slot3.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
+const readForHeaderLetConstKind = (node: Node, seats?: Seats): unknown => {
+	const slot4 = rowItems(node, ROW56);
+	if (slot4.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
+const readForHeaderUsingKind = (node: Node, seats?: Seats): unknown => {
+	const slot4 = rowItems(node, ROW56);
+	if (slot4.some(opaque)) return node;
+	return unclaimedText(node, seats, FIXED) ?? node;
+};
 const readForInitializerLetConstKind = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW1);
+	const slot0 = rowItems(node, ROW3);
 	const e0 = texts(slot0, FIXED).includes('const');
 	const e1 = texts(slot0, FIXED).includes('let');
 	const path: string | undefined = e0
@@ -18127,9 +18205,9 @@ const readForInitializerVarKind = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readSetterParameter = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW16);
-	const slot2 = rowItems(node, ROW18);
-	const slot3 = rowItems(node, ROW19);
+	const slot1 = rowItems(node, ROW37);
+	const slot2 = rowItems(node, ROW39);
+	const slot3 = rowItems(node, ROW40);
 	const e0 = slot1.some((x) => kindIn(KINDS88, x)) && texts(slot1, FIXED).includes('private');
 	const e1 = slot1.some((x) => kindIn(KINDS88, x)) && texts(slot1, FIXED).includes('protected');
 	const e2 = slot1.some((x) => kindIn(KINDS88, x)) && texts(slot1, FIXED).includes('public');
@@ -18256,14 +18334,15 @@ const readSetterParameter = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readMethodDefinitionPlain = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW25);
-	const slot1 = rowItems(node, ROW26);
-	const slot2 = rowItems(node, ROW18);
-	const slot3 = rowItems(node, ROW19);
-	const slot4 = rowItems(node, ROW32);
-	const slot7 = rowItems(node, ROW33);
-	const slot5 = rowItems(node, ROW34);
-	const slot6 = rowItems(node, ROW35);
+	const slot6 = rowItems(node, ROW57);
+	const slot0 = rowItems(node, ROW46);
+	const slot1 = rowItems(node, ROW47);
+	const slot2 = rowItems(node, ROW39);
+	const slot3 = rowItems(node, ROW40);
+	const slot4 = rowItems(node, ROW58);
+	const slot7 = rowItems(node, ROW59);
+	const slot5 = rowItems(node, ROW60);
+	if (slot6.some(opaque)) return node;
 	const container = holderOf(node);
 	const e0 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('private');
 	const e1 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('protected');
@@ -18451,10 +18530,11 @@ const readMethodDefinitionPlain = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readMethodDefinitionGetter = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW25);
-	const slot1 = rowItems(node, ROW26);
-	const slot2 = rowItems(node, ROW18);
-	const slot3 = rowItems(node, ROW36);
+	const slot3 = rowItems(node, ROW61);
+	const slot0 = rowItems(node, ROW46);
+	const slot1 = rowItems(node, ROW47);
+	const slot2 = rowItems(node, ROW39);
+	if (slot3.some(opaque)) return node;
 	const container = holderOf(node);
 	const e0 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('private');
 	const e1 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('protected');
@@ -18606,10 +18686,11 @@ const readMethodDefinitionGetter = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readMethodDefinitionSetter = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW25);
-	const slot1 = rowItems(node, ROW26);
-	const slot2 = rowItems(node, ROW18);
-	const slot3 = rowItems(node, ROW36);
+	const slot3 = rowItems(node, ROW61);
+	const slot0 = rowItems(node, ROW46);
+	const slot1 = rowItems(node, ROW47);
+	const slot2 = rowItems(node, ROW39);
+	if (slot3.some(opaque)) return node;
 	const container = holderOf(node);
 	const e0 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('private');
 	const e1 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('protected');
@@ -18765,14 +18846,15 @@ const readMethodDefinitionSetter = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readMethodSignaturePlain = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW25);
-	const slot1 = rowItems(node, ROW26);
-	const slot2 = rowItems(node, ROW18);
-	const slot3 = rowItems(node, ROW19);
-	const slot4 = rowItems(node, ROW32);
-	const slot7 = rowItems(node, ROW33);
-	const slot5 = rowItems(node, ROW34);
-	const slot6 = rowItems(node, ROW35);
+	const slot6 = rowItems(node, ROW57);
+	const slot0 = rowItems(node, ROW46);
+	const slot1 = rowItems(node, ROW47);
+	const slot2 = rowItems(node, ROW39);
+	const slot3 = rowItems(node, ROW40);
+	const slot4 = rowItems(node, ROW58);
+	const slot7 = rowItems(node, ROW59);
+	const slot5 = rowItems(node, ROW60);
+	if (slot6.some(opaque)) return node;
 	const e0 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('private');
 	const e1 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('protected');
 	const e2 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('public');
@@ -18939,10 +19021,11 @@ const readMethodSignaturePlain = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readMethodSignatureGetter = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW25);
-	const slot1 = rowItems(node, ROW26);
-	const slot2 = rowItems(node, ROW18);
-	const slot3 = rowItems(node, ROW36);
+	const slot3 = rowItems(node, ROW61);
+	const slot0 = rowItems(node, ROW46);
+	const slot1 = rowItems(node, ROW47);
+	const slot2 = rowItems(node, ROW39);
+	if (slot3.some(opaque)) return node;
 	const e0 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('private');
 	const e1 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('protected');
 	const e2 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('public');
@@ -19069,10 +19152,11 @@ const readMethodSignatureGetter = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readMethodSignatureSetter = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW25);
-	const slot1 = rowItems(node, ROW26);
-	const slot2 = rowItems(node, ROW18);
-	const slot3 = rowItems(node, ROW36);
+	const slot3 = rowItems(node, ROW61);
+	const slot0 = rowItems(node, ROW46);
+	const slot1 = rowItems(node, ROW47);
+	const slot2 = rowItems(node, ROW39);
+	if (slot3.some(opaque)) return node;
 	const e0 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('private');
 	const e1 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('protected');
 	const e2 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('public');
@@ -19203,11 +19287,12 @@ const readMethodSignatureSetter = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAbstractMethodSignaturePlain = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW25);
-	const slot1 = rowItems(node, ROW37);
-	const slot4 = rowItems(node, ROW38);
-	const slot2 = rowItems(node, ROW39);
-	const slot3 = rowItems(node, ROW36);
+	const slot3 = rowItems(node, ROW61);
+	const slot0 = rowItems(node, ROW46);
+	const slot1 = rowItems(node, ROW62);
+	const slot4 = rowItems(node, ROW63);
+	const slot2 = rowItems(node, ROW64);
+	if (slot3.some(opaque)) return node;
 	const e0 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('private');
 	const e1 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('protected');
 	const e2 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('public');
@@ -19362,9 +19447,10 @@ const readAbstractMethodSignaturePlain = (node: Node, seats?: Seats): unknown =>
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAbstractMethodSignatureGetter = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW25);
-	const slot1 = rowItems(node, ROW37);
-	const slot2 = rowItems(node, ROW40);
+	const slot2 = rowItems(node, ROW65);
+	const slot0 = rowItems(node, ROW46);
+	const slot1 = rowItems(node, ROW62);
+	if (slot2.some(opaque)) return node;
 	const e0 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('private');
 	const e1 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('protected');
 	const e2 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('public');
@@ -19487,9 +19573,10 @@ const readAbstractMethodSignatureGetter = (node: Node, seats?: Seats): unknown =
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readAbstractMethodSignatureSetter = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW25);
-	const slot1 = rowItems(node, ROW37);
-	const slot2 = rowItems(node, ROW40);
+	const slot2 = rowItems(node, ROW65);
+	const slot0 = rowItems(node, ROW46);
+	const slot1 = rowItems(node, ROW62);
+	if (slot2.some(opaque)) return node;
 	const e0 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('private');
 	const e1 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('protected');
 	const e2 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('public');
@@ -19616,14 +19703,16 @@ const readAbstractMethodSignatureSetter = (node: Node, seats?: Seats): unknown =
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readPublicFieldDefinitionPlain = (node: Node, seats?: Seats): unknown => {
-	const slot2 = rowItems(node, ROW41);
-	const slot1 = rowItems(node, ROW42);
-	const slot3 = rowItems(node, ROW43);
-	const slot4 = rowItems(node, ROW44);
-	const slot5 = rowItems(node, ROW45);
-	const slot6 = rowItems(node, ROW46);
-	const slot8 = rowItems(node, ROW47);
-	const slot7 = rowItems(node, ROW48);
+	const slot7 = rowItems(node, ROW66);
+	const slot10 = rowItems(node, ROW67);
+	const slot2 = rowItems(node, ROW68);
+	const slot1 = rowItems(node, ROW69);
+	const slot3 = rowItems(node, ROW70);
+	const slot4 = rowItems(node, ROW71);
+	const slot5 = rowItems(node, ROW72);
+	const slot6 = rowItems(node, ROW73);
+	const slot8 = rowItems(node, ROW74);
+	if (slot7.some(opaque) || slot10.some(opaque)) return node;
 	const e0 = slot2.some((x) => kindIn(KINDS88, x)) && texts(slot2, FIXED).includes('private');
 	const e1 = slot2.some((x) => kindIn(KINDS88, x)) && texts(slot2, FIXED).includes('protected');
 	const e2 = slot2.some((x) => kindIn(KINDS88, x)) && texts(slot2, FIXED).includes('public');
@@ -19786,11 +19875,13 @@ const readPublicFieldDefinitionPlain = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readPublicFieldDefinitionAccessor = (node: Node, seats?: Seats): unknown => {
-	const slot1 = rowItems(node, ROW16);
-	const slot3 = rowItems(node, ROW49);
-	const slot2 = rowItems(node, ROW50);
-	const slot4 = rowItems(node, ROW51);
-	const slot5 = rowItems(node, ROW52);
+	const slot5 = rowItems(node, ROW75);
+	const slot7 = rowItems(node, ROW76);
+	const slot1 = rowItems(node, ROW37);
+	const slot3 = rowItems(node, ROW77);
+	const slot2 = rowItems(node, ROW78);
+	const slot4 = rowItems(node, ROW79);
+	if (slot5.some(opaque) || slot7.some(opaque)) return node;
 	const e0 = slot1.some((x) => kindIn(KINDS88, x)) && texts(slot1, FIXED).includes('private');
 	const e1 = slot1.some((x) => kindIn(KINDS88, x)) && texts(slot1, FIXED).includes('protected');
 	const e2 = slot1.some((x) => kindIn(KINDS88, x)) && texts(slot1, FIXED).includes('public');
@@ -19862,7 +19953,7 @@ const readPublicFieldDefinitionAccessor = (node: Node, seats?: Seats): unknown =
 				);
 				if (!holdsKey(structure, 'decorators')) structure['decorators'] = [];
 				if (extra !== undefined) return node;
-				if (unread(rowItems(node, ROW49), true, MEANING0, FIXED)) return node;
+				if (unread(slot3, true, MEANING0, FIXED)) return node;
 				return structure;
 			}
 			return node;
@@ -19894,7 +19985,7 @@ const readPublicFieldDefinitionAccessor = (node: Node, seats?: Seats): unknown =
 				);
 				if (!holdsKey(structure, 'decorators')) structure['decorators'] = [];
 				if (extra !== undefined) return node;
-				if (unread(rowItems(node, ROW49), true, MEANING0, FIXED)) return node;
+				if (unread(slot3, true, MEANING0, FIXED)) return node;
 				return structure;
 			}
 			return node;
@@ -19926,7 +20017,7 @@ const readPublicFieldDefinitionAccessor = (node: Node, seats?: Seats): unknown =
 				);
 				if (!holdsKey(structure, 'decorators')) structure['decorators'] = [];
 				if (extra !== undefined) return node;
-				if (unread(rowItems(node, ROW49), true, MEANING0, FIXED)) return node;
+				if (unread(slot3, true, MEANING0, FIXED)) return node;
 				return structure;
 			}
 			return node;
@@ -19966,7 +20057,7 @@ const readPublicFieldDefinitionAccessor = (node: Node, seats?: Seats): unknown =
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readConstructorDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot0 = rowItems(node, ROW25);
+	const slot0 = rowItems(node, ROW46);
 	const container = holderOf(node);
 	const e1 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('private');
 	const e2 = slot0.some((x) => kindIn(KINDS88, x)) && texts(slot0, FIXED).includes('protected');
@@ -20095,8 +20186,11 @@ const readConstructorDeclaration = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const readReceiverParameterDeclaration = (node: Node, seats?: Seats): unknown => {
-	const slot2 = rowItems(node, ROW18);
-	const slot3 = rowItems(node, ROW19);
+	const slot5 = rowItems(node, ROW80);
+	const slot2 = rowItems(node, ROW39);
+	const slot3 = rowItems(node, ROW40);
+	const slot1 = rowItems(node, ROW37);
+	if (slot5.some(opaque)) return node;
 	const path: string | undefined = 'declaration.parameter.receiver';
 	switch (path) {
 		case 'declaration.parameter': {
@@ -20231,7 +20325,7 @@ const readReceiverParameterDeclaration = (node: Node, seats?: Seats): unknown =>
 			);
 			if (!holdsKey(structure, 'decorators')) structure['decorators'] = [];
 			if (extra !== undefined) return node;
-			if (unread(rowItems(node, ROW16), true, MEANING0, FIXED)) return node;
+			if (unread(slot1, true, MEANING0, FIXED)) return node;
 			return structure;
 		}
 	}
@@ -20316,7 +20410,7 @@ const readTypeIdentifier = (node: Node, seats?: Seats): unknown => {
 	return unclaimedText(node, seats, FIXED) ?? node;
 };
 const classifyLabeledStatement = (node: Node): string | undefined => {
-	const slot1 = rowItems(node, ROW3);
+	const slot1 = rowItems(node, ROW8);
 	const e0 = !slot1.some((x) => kindIn(KINDS3, x));
 	return e0 ? 'statement.labeled' : undefined;
 };
@@ -20343,7 +20437,7 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 		return tokenText(value, seats) ?? value;
 	}
 	if (!isNode(value)) return value;
-	if (erred(value) || opaque(value) || holdsOpaque(value, TOKENS0)) return value;
+	if (erred(value) || opaque(value)) return value;
 	switch (value.$type) {
 		case K.Identifier:
 			return readIdentifier(value, seats);
@@ -20553,6 +20647,8 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 			return readFalse(value, seats);
 		case K.Null:
 			return readNull(value, seats);
+		case K.Arguments:
+			return readArguments(value, seats);
 		case K.Decorator:
 			return readDecorator(value, seats);
 		case K.DecoratorMemberExpression:
@@ -20587,6 +20683,8 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 			return readImportRequireClause(value, seats);
 		case K.ExtendsClause:
 			return readExtendsClause(value, seats);
+		case K.ExtendsClauseSingle:
+			return readExtendsClauseSingle(value, seats);
 		case K.ImplementsClause:
 			return readImplementsClause(value, seats);
 		case K.AmbientDeclaration:
@@ -20657,6 +20755,8 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 			return readTypePredicateAnnotation(value, seats);
 		case K.TypeQueryMemberExpression:
 			return readTypeQueryMemberExpression(value, seats);
+		case K.TypeQuerySubscriptExpression:
+			return readTypeQuerySubscriptExpression(value, seats);
 		case K.TypeQueryCallExpression:
 			return readTypeQueryCallExpression(value, seats);
 		case K.TypeQueryInstantiationExpression:
@@ -20723,6 +20823,8 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 			return readIndexSignatureColon(value, seats);
 		case K.IndexSignatureMappedTypeClause:
 			return readIndexSignatureMappedTypeClause(value, seats);
+		case K.YieldExpressionDelegate:
+			return readYieldExpressionDelegate(value, seats);
 		case K.ImportSpecifierName:
 			return readImportSpecifierName(value, seats);
 		case K.ImportSpecifierAs:
@@ -20753,6 +20855,8 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 			return readExportStatementDefaultFrom(value, seats);
 		case K.ExportStatementDefaultDeclaration:
 			return readExportStatementDefaultDeclaration(value, seats);
+		case K.ExportStatementDefaultDeclarationDefaultKwValue:
+			return readExportStatementDefaultDeclarationDefaultKwValue(value, seats);
 		case K.VariableDeclaratorPlain:
 			return readVariableDeclaratorPlain(value, seats);
 		case K.VariableDeclaratorDefinite:
@@ -20761,6 +20865,14 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 			return readMetaPropertyNewTarget(value, seats);
 		case K.MetaPropertyImportMeta:
 			return readMetaPropertyImportMeta(value, seats);
+		case K.ForHeaderLhs:
+			return readForHeaderLhs(value, seats);
+		case K.ForHeaderVarKind:
+			return readForHeaderVarKind(value, seats);
+		case K.ForHeaderLetConstKind:
+			return readForHeaderLetConstKind(value, seats);
+		case K.ForHeaderUsingKind:
+			return readForHeaderUsingKind(value, seats);
 		case K.ForInitializerLetConstKind:
 			return readForInitializerLetConstKind(value, seats);
 		case K.ForInitializerVarKind:

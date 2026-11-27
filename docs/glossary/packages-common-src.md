@@ -1872,8 +1872,4 @@ Whether a slot's items (`rowItems`, with the slot's query row) hold something a 
 
 ### `packages/common/src/portable/project.ts::opaque`
 
-Whether an item is a node holding verbatim text (`$verbatim`), as a parse gives a token whose text its interior doesn't read (python's `bf"a"` prefix). No read rebuilds it. Today's read keeps such a node, or one whose token slots hold one (`holdsOpaque`), whole as an `opaque` carry, and a generated projection's `project` checks both before reading any node.
-
-### `packages/common/src/portable/project.ts::holdsOpaque`
-
-Whether a node's slots that can hold a token read by its interior hold an opaque item (`opaque`). `tokens` gives those slots' query rows by kind id. A generated projection writes it from the build table's `tokens` (`PortableBuildTable::tokens`), the same slots today's read checks by accessor.
+Whether an item is a node holding verbatim text (`$verbatim`), as a parse gives a token whose text its interior doesn't read (python's `bf"a"` prefix). No read rebuilds it. Today's read keeps such a node whole as an `opaque` carry, and likewise a node whose slots that can hold a token read by its interior (the build table's `tokens`) hold one. A generated projection's `project` checks the node itself, and each kind's `read<Kind>` checks those slots first.

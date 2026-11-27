@@ -317,5 +317,3 @@ export const unread = (items: readonly unknown[], otherTested: boolean, meaning:
 	items.some((item) => (isNode(item) ? meaningfulText(item, meaning[item.$type], (value) => textOf(value, fixed)) !== '' : typeof item === 'number' && otherTested));
 
 export const opaque = (item: unknown): boolean => isNode(item) && typeof (item as { readonly $verbatim?: unknown }).$verbatim === 'string';
-
-export const holdsOpaque = (node: Node, tokens: Readonly<Record<number, readonly QuerySlotEntry[]>>): boolean => (tokens[node.$type] ?? []).some((row) => rowItems(node, row).some(opaque));

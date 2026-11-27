@@ -67,7 +67,6 @@ const IMPORTS = [
 	'floatOf',
 	'holderOf',
 	'holdsKey',
-	'holdsOpaque',
 	'integerOf',
 	'integerValue',
 	'isNode',
@@ -224,16 +223,19 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 		return arms.length === 0 ? t.array() : arms.length === 1 ? arms[0]! : t.array(...arms.map((arm) => t.spreadElement(arm)));
 	};
 	let hoisted = new Map<number, readonly [string, Expression]>();
-	const nodeSlotItems = (kind: number, subject: SlotSubject): Expression => {
-		const number = subject.slots[kind];
-		if (number === undefined) return t.array();
+	const slotRead = (entry: QuerySlotEntry): Primary => {
+		const number = entry[1];
 		const known = hoisted.get(number);
 		if (known !== undefined) return id(known[0]);
-		const entry = slotEntry(kind, number);
-		if (entry === undefined) return t.array();
 		const name = `slot${number}`;
 		hoisted.set(number, [name, call(id('rowItems'), id('node'), rowOf(entry))]);
 		return id(name);
+	};
+	const slotsRead = (entries: readonly QuerySlotEntry[]): Expression => (entries.length === 1 ? slotRead(entries[0]!) : t.array(...entries.map((entry) => t.spreadElement(slotRead(entry)))));
+	const nodeSlotItems = (kind: number, subject: SlotSubject): Expression => {
+		const number = subject.slots[kind];
+		const entry = number === undefined ? undefined : slotEntry(kind, number);
+		return entry === undefined ? t.array() : slotRead(entry);
 	};
 	type Reached = { readonly one: Primary; readonly kind?: number } | { readonly many: Expression };
 	const subjectsOf = (reached: Reached, subject: QuerySubject): Expression => {
@@ -277,7 +279,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 
 	const kindPaths = new Map<number, Set<string>>();
 	for (const [path, row] of Object.entries(table.paths)) for (const arm of row.arms) (kindPaths.get(arm.kind) ?? kindPaths.set(arm.kind, new Set()).get(arm.kind)!).add(path);
-	const readKinds = [...new Set([...kindPaths.keys(), ...Object.keys(unwrap).map(Number), ...Object.keys(readOnlyHolders).map(Number)])].sort((a, b) => a - b);
+	const readKinds = [...new Set([...kindPaths.keys(), ...[unwrap, readOnlyHolders, table.tokens ?? {}].flatMap((byKind) => Object.keys(byKind).map(Number))])].sort((a, b) => a - b);
 	const fnName = (kind: number) => `read${input.kinds[kind]}`;
 	const refinedKinds = new Set<number>();
 
@@ -490,10 +492,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 		const arms = all.filter((arm) => arm.kind === kind);
 		return arms.length > 0 && arms.every((arm) => (textBuilt[path] ?? []).includes(all.indexOf(arm))) ? path : undefined;
 	};
-	const slotItemsOfKind = (kind: number): Expression => {
-		const reads = (querySlots[kind] ?? []).map((entry) => t.spreadElement(call(id('rowItems'), id('node'), rowOf(entry))));
-		return t.array(...reads);
-	};
+	const slotItemsOfKind = (kind: number): Expression => slotsRead(querySlots[kind] ?? []);
 	const contentKinds = Object.entries(table.delimiters ?? {}).flatMap(([kind, token]) => (token.content === undefined ? [] : [[Number(kind), token.content] as const]));
 	const closersFor = (routes: readonly PortableSlotRoute[]) =>
 		Object.fromEntries(
@@ -588,7 +587,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 			const meaning = Object.fromEntries(Object.entries(table.delimiters ?? {}).map(([at, token]) => [at, token.meaning] as const));
 			const meanings = intern('MEANING', meaning, (name) => declare(name, numberRecord(t.readonlyType(t.arrayType('string'))), literal(meaning)));
 			const unreadIn = lost.map(({ accessor, otherTested, flags: reading }) =>
-				and([call(id('unread'), call(id('rowItems'), id('node'), rowOf(slotNamed(kind, accessor))), truth(otherTested), meanings, id('FIXED')), ...reading.map((flag) => not(call(dot(id('flags'), 'includes'), str(flag))))])
+				and([call(id('unread'), slotRead(slotNamed(kind, accessor)), truth(otherTested), meanings, id('FIXED')), ...reading.map((flag) => not(call(dot(id('flags'), 'includes'), str(flag))))])
 			);
 			statements.push(when(or(unreadIn), ret(id('node'))));
 		}
@@ -666,10 +665,12 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 		hoisted = new Map();
 		const statements: Statement[] = [];
 		const paths = [...(kindPaths.get(kind) ?? [])].sort();
+		const lexed = table.tokens?.[kind] ?? [];
+		if (lexed.length > 0) statements.push(when(or(lexed.map((accessor) => call(dot(slotRead(slotNamed(kind, accessor)), 'some'), id('opaque')))), ret(id('node'))));
 		const holding = readOnlyHolders[kind] ?? [];
 		if (holding.length > 0) {
 			const readOnly = Object.fromEntries(Object.entries(table.delimiters ?? {}).flatMap(([at, token]) => (token.readOnly === undefined ? [] : [[at, token.readOnly] as const])));
-			const items = t.array(...(querySlots[kind] ?? []).filter(([accessor]) => holding.includes(accessor)).map((entry) => t.spreadElement(call(id('rowItems'), id('node'), rowOf(entry)))));
+			const items = slotsRead((querySlots[kind] ?? []).filter(([accessor]) => holding.includes(accessor)));
 			statements.push(when(call(id('readOnlySpelled'), items, intern('READONLY', readOnly, (name) => declare(name, undefined, literal(readOnly))), spellingsOf(), id('FIXED')), ret(id('node'))));
 		}
 		if (paths.length > 0) {
@@ -717,9 +718,6 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 		const value = table.paths[path]?.arms.find((arm) => arm.kind === Number(kind) && arm.literal !== undefined)?.literal;
 		return value === undefined ? [] : [t.switchCase({ value: kindRef(Number(kind)), bodies: [ret(obj([['$path', str(path)], ...(value.value === undefined ? [] : [['$value', value.value ? t.true : t.false] as const])]))] })];
 	});
-	const tokenRows = Object.entries(table.tokens ?? {}).map(([kind, accessors]) => [kind, t.array(...accessors.map((accessor) => rowOf(slotNamed(Number(kind), accessor))))] as const);
-	const holdsOpaque =
-		tokenRows.length === 0 ? [] : [call(id('holdsOpaque'), id('value'), intern('TOKENS', table.tokens, (name) => declare(name, numberRecord(t.readonlyType(t.arrayType(typeName('QuerySlotEntry')))), obj(tokenRows))))];
 	const project = t.exportStatementDefaultDeclaration({ content: constant(
 		'project',
 		typed(
@@ -730,7 +728,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 					block(...(tokens.length === 0 ? [] : [t.switchStatement({ value: paren(id('value')), body: t.switchBody(...tokens) })]), ret(binary(call(id('tokenText'), id('value'), id('seats')), '??', id('value'))))
 				),
 				when(not(call(id('isNode'), id('value'))), ret(id('value'))),
-				when(or([call(id('erred'), id('value')), call(id('opaque'), id('value')), ...holdsOpaque]), ret(id('value'))),
+				when(or([call(id('erred'), id('value')), call(id('opaque'), id('value'))]), ret(id('value'))),
 				t.switchStatement({ value: paren(dot(id('value'), '$type')), body: t.switchBody(...readKinds.map((kind) => t.switchCase({ value: kindRef(kind), bodies: [ret(call(id(fnName(kind)), id('value'), id('seats')))] }))) }),
 				ret(binary(call(id('unclaimedText'), id('value'), id('seats'), id('FIXED')), '??', id('value')))
 			),
