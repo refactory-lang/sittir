@@ -100,6 +100,18 @@ const optionalInner = {
 	options: "options: { inner: { 'inner_comma:': preference('blank') } }"
 };
 
+const emptyRequired = {
+	rules: [
+		'source: ($) => repeat($.outer)',
+		"outer: ($) => field('inner', $.inner)",
+		"inner: ($) => seq(\"(\", optional(field('n', $.identifier)), \")\")",
+		"lp: () => '('",
+		"rp: () => ')'",
+		...tokens
+	],
+	options: ''
+};
+
 const transparentOverTwoLevel = {
 	rules: [
 		'source: ($) => repeat($.top)',
@@ -321,4 +333,16 @@ describe('a loose input that forwards options to an optional child', () => {
 		expect(() => callCoerce([{ $type: 'Inner' }, { innerComma: ',' }])).toThrow('carries its own options');
 		expect(() => callCoerce([{ inner: { $type: 'Inner' } }, { innerComma: ',' }])).toThrow('carries its own options');
 	});
+});
+
+describe('a required child whose default is not built by forwarding is filled with it when omitted', () => {
+	it('builds with no value, and the emitted factory fills the child with its default', async () => {
+		const { pkg, factories } = await emitted(emptyRequired);
+		expect(emittedFunction(factories, 'buildOuter')).toContain('orDefault(');
+		const diagnostics = await typeProbe(
+			pkg,
+			["import { buildInner, buildOuter } from './factories.ts';", 'export const built = buildOuter(buildInner());', 'export const bare = buildOuter();'].join('\n')
+		);
+		expect(diagnostics.map((d) => d.head)).toEqual([]);
+	}, 300_000);
 });

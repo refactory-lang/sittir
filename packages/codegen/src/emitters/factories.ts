@@ -1792,6 +1792,10 @@ export function forwardedConstructorTarget(
 	kindEntries: readonly KindEnumEntry[]
 ): string | null {
 	if (resolveFactorySurface(node, nodeMap, kindEntries).directParamType === undefined) return null;
+	return forwardedChildTarget(node, nodeMap, kindEntries);
+}
+
+function forwardedChildTarget(node: FieldCarryingNode, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string | null {
 	const target = forwardedTargetKind(node, nodeMap);
 	if (target === null) return null;
 	if (!hasCatalogEntry(kindEntries, target)) return null;
@@ -2288,7 +2292,7 @@ function fieldCarryingFactoryText(
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
 		valueSourceFor = (f) =>
-			slotStorageFromValueExpr(f, holdsFixedText(f) ? defaultedValueExpr(f, 'value', nodeMap, kindEntries) : 'value', nodeMap, kindEntries, node.typeName);
+			slotStorageFromValueExpr(f, holdsFixedText(f) || (isRequired(f) && forwardedChildTarget(node, nodeMap, kindEntries) === null) ? defaultedValueExpr(f, 'value', nodeMap, kindEntries) : 'value', nodeMap, kindEntries, node.typeName);
 		const setterType = setterElemType(singleField, elemType, elemType, nodeMap, true);
 		const setterSig = setterValueSignature(singleField, setterType);
 		valueType = isRequired(singleField) ? admitNodes(setterType) : `${admitNodes(setterType)} | undefined`;
