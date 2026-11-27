@@ -3032,7 +3032,9 @@ did when the enum was its own arm.
 ### `packages/codegen/src/emitters/render-module.ts::ChoiceUnit`
 
 One fixed-literal kind as an arm of a choice: its registry entry (`fixed`),
-whether the site marks it immediate when its kind is not (`siteImmediate`),
+whether it starts tight at its site when its kind is not immediate
+(`siteImmediate`: the literal is marked immediate there, or `tightSlotArmsOf`
+finds the slot's position or the literal's member tight),
 and the owner's seam sites around it (`seams`).
 
 ### `packages/codegen/src/emitters/render-module.ts::choiceUnitsOf`
@@ -3108,19 +3110,20 @@ and between the owner's seam sites when it has any (`literalSeamedArm`).
 #### body
 
 ```text
-// A structural kind whose leftmost terminal is grammar-immediate
-// (`isLeftImmediateKind`) renders seam-free on its left in every
-// context — mark before delegating. Leaf kinds carry their mark
-// inside their own render fn, so marking here would double-declare.
+// A kind that starts tight in this slot (`tightSlotArmsOf`: the slot's
+// position, the arm's member, or the kind's leftmost token) renders
+// seam-free on its left — mark before delegating. An immediate leaf kind
+// carries its mark inside its own render fn, so marking here would
+// double-declare; a leaf that is not immediate is marked like any kind.
 ```
 
 #### body
 
 ```text
 // An immediate fixed-literal kind writes seam-free inside its own
-// render function (see `w.adjacent()`). A literal the site marks
-// immediate (`literal.immediate`) whose kind is not immediate marks
-// `w.adjacent()` before the call.
+// render function (see `w.adjacent()`). A unit whose kind is not
+// immediate but that starts tight at its site (`ChoiceUnit.siteImmediate`)
+// marks `w.adjacent()` before the call.
 ```
 
 
@@ -11820,7 +11823,8 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
  * stamp, leaf kind refs via the referenced node's stamp. Non-leaf refs
  * can't scalarize and are ignored. Requires at least one scalar-capable
  * source — a vacuous pass would mark positions whose text comes from paths
- * this gate can't see.
+ * this gate can't see. The verbatim arm also starts tight when the slot's
+ * position is proven tight (`TightSlotArms.verbatim`).
  */
 ```
 
@@ -12890,7 +12894,7 @@ Per kind id, the leaf's `LeafEdges` packed into one cell: the leading set in the
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::kindFlagsOf`
 
-Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`), `KIND_LINE_BREAK_TERMINATED` when it is an outermost kind ending in the declared newline token (`lineBreakTerminatedKinds`), `KIND_ROOT` for the grammar root (`grammarRoot`), whose edges the writer writes at a render's two ends, `KIND_FLANK_BEFORE` and `KIND_FLANK_AFTER` on the root for each side in `rootFlankOnly`, where a node of the root kind inside another node writes no edge, `KIND_JOINS_NEXT` for a kind whose last token can join the next, and `KIND_TERMINATOR_ONLY` for a list item kind that spells nothing but its list's terminator (`terminatorOnlyKinds`), before which the writer breaks no line (`RenderSink::stay_on_line`). The bit values match `sittir_core::options::KindFlags`'s constants. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a native node, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`) as a `LineHold::Terminated`; a node of a kind ending in the declared newline token holds it as a `LineHold::Break`, which the end of a render drops.
+Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`), `KIND_LINE_BREAK_TERMINATED` when it is an outermost kind ending in the declared newline token (`lineBreakTerminatedKinds`), `KIND_ROOT` for the grammar root (`grammarRoot`), whose edges the writer writes at a render's two ends, `KIND_FLANK_BEFORE` and `KIND_FLANK_AFTER` on the root for each of its sides in `tightSides`, where a node of the root kind inside another node writes no edge, `KIND_JOINS_NEXT` for a kind whose last token can join the next, and `KIND_TERMINATOR_ONLY` for a list item kind that spells nothing but its list's terminator (`terminatorOnlyKinds`), before which the writer breaks no line (`RenderSink::stay_on_line`). The bit values match `sittir_core::options::KindFlags`'s constants. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a native node, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`) as a `LineHold::Terminated`; a node of a kind ending in the declared newline token holds it as a `LineHold::Break`, which the end of a render drops.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::EdgeSiteRow`
 

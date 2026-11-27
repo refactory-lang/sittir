@@ -1,5 +1,7 @@
 export type SeparatorSide = 'before' | 'after';
 
+export type SeamRole = 'before' | 'element';
+
 export type FlankSide = 'start' | 'end';
 
 export type SpacingAddress =

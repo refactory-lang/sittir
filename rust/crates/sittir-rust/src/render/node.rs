@@ -46783,6 +46783,9 @@ fn render_token_repetition_pattern<N: TokenRepetitionPatternFields + ?Sized>(nod
             w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
         }
     }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(10)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_PLUS_AFTER); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_STAR_AFTER); }
@@ -46832,6 +46835,9 @@ fn render_token_repetition<N: TokenRepetitionFields + ?Sized>(node: &N, w: &mut 
             w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
         }
     }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(10)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_TOKEN_REPETITION_PLUS_AFTER); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_TOKEN_REPETITION_STAR_AFTER); }
@@ -48705,6 +48711,7 @@ fn render_line_comment<N: LineCommentFields + ?Sized>(node: &N, w: &mut dyn ::si
     let content = node.content();
     w.edge(::sittir_core::types::KindId(337), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("//")?;
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(399)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
     if content.kind_in(&*w, &[::sittir_core::types::KindId(400)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
     if content.kind_in(&*w, &[::sittir_core::types::KindId(401)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;

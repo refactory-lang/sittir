@@ -5,6 +5,7 @@ import type { GrammarRule } from '../../../grammar-shapes/grammar-json.ts';
 import { canonical } from '../../../transpile/evaluate-for-derivation.ts';
 import type { ExternalRole } from '../../../types/ir.ts';
 import type { AnyRule, Rule, RuleId } from '../../../types/rule.ts';
+import type { SeamRole } from '../../../types/spacing.ts';
 import { ownRuleIds, ruleIdsWithin } from '../../../dsl/rule-attrs.ts';
 import { sha256 } from '../../../util/content-hash.ts';
 import { compareOrdinal } from '../../../emitters/shared.ts';
@@ -93,7 +94,7 @@ export interface JoinFacts {
 	readonly joinsNextKinds: ReadonlySet<string>;
 	readonly pairs: readonly string[];
 	readonly seamIds: ReadonlyMap<string, ReadonlySet<RuleId>>;
-	readonly tight: ReadonlySet<RuleId>;
+	readonly tight: ReadonlyMap<RuleId, ReadonlySet<SeamRole>>;
 	readonly tightAfter: ReadonlyMap<RuleId, ReadonlySet<RuleId>>;
 }
 
@@ -107,7 +108,7 @@ export const NO_JOINS: JoinFacts = {
 	joinsNextKinds: new Set(),
 	pairs: [],
 	seamIds: new Map(),
-	tight: new Set(),
+	tight: new Map(),
 	tightAfter: new Map()
 };
 
@@ -643,7 +644,9 @@ export function joinFactsOf(facts: JoinSeamFacts, input: Pick<JoinSeamInput, 'pa
 	const rules = input.parser.grammar.rules;
 	const alignment = alignRuleIds(rules, input.evaluated);
 	const idsOfKey = new Map<string, Set<RuleId>>();
-	forEachSeamKey(rules, (rule, _, key) => {
+	const roleOfKey = new Map<string, SeamRole>();
+	forEachSeamKey(rules, (rule, _, key, role) => {
+		roleOfKey.set(key, role);
 		const ids = alignment.idsOf.get(rule);
 		if (ids === undefined) return;
 		let set = idsOfKey.get(key);
@@ -684,13 +687,25 @@ export function joinFactsOf(facts: JoinSeamFacts, input: Pick<JoinSeamInput, 'pa
 			for (const member of previous) set.add(member);
 		}
 	}
+	const tight = new Map<RuleId, Set<SeamRole>>();
+	for (const { seam, after } of facts.tight) {
+		if (after !== undefined) continue;
+		const ids = idsOf([seam]);
+		const role = roleOfKey.get(seam);
+		if (role === undefined) continue;
+		for (const id of ids) {
+			let roles = tight.get(id);
+			if (roles === undefined) tight.set(id, (roles = new Set()));
+			roles.add(role);
+		}
+	}
 	return {
 		joinsNext,
 		joinsPrevious,
 		joinsNextKinds: new Set(facts.joinsNextKinds),
 		pairs: facts.pairs.map((record) => record.pair),
 		seamIds,
-		tight: idsOf(facts.tight.flatMap((record) => (record.after === undefined ? [record.seam] : []))),
+		tight,
 		tightAfter,
 		unmapped
 	};

@@ -2128,7 +2128,7 @@ for them.
 ```text
 /** The smallest context a kind-level lookup needs: the assembled node map
  *  by kind. `NodeMap` satisfies it structurally; richer contexts
- *  (`LeftImmediateCtx`) extend it. */
+ *  (`SlotArmsCtx`) extend it. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::storageTargetOf`
@@ -2915,35 +2915,6 @@ and for a parsed one cut down to one element alike. With more elements the
 option decides. Nothing else reads the fact, and the factory accepts one
 element without the option.
 
-### `packages/codegen/src/compiler/model/node-map.ts::LeftImmediateCtx`
-
-```text
-/**
- * Duck-typed against `NodeMap` rather than importing it — `NodeMap` (in
- * `compiler/types.ts`) references `AssembledNode`, defined in THIS module,
- * so a direct import would be circular (same pattern as `SlotAliasPairsCtx`).
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::isLeftImmediateKind`
-
-```text
-/**
- * Grammar-declared LEFT-immediacy of a kind: true when every leftmost
- * terminal of the kind's rule forbids preceding whitespace
- * (`token.immediate`), making every reference to the kind seam-free on its
- * left in every context — the structural counterpart of
- * `AssembledLeaf.immediate`. Walks the normalized (render-view) rule
- * leftmost-first: an `immediate` attribute anywhere on the leftmost path
- * decides true; a CHOICE requires every arm; a nullable leftmost item
- * (optional/array multiplicity) decides false because the true left edge
- * then varies per instance; an unresolvable reference decides false. A
- * conservative false never costs
- * correctness — only a runtime seam check that static resolution could
- * have skipped.
- */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::startsImmediateWhenPresent`
 
 Whether a rule's leftmost terminal is immediate whatever its multiplicity: the
@@ -2999,8 +2970,9 @@ The join-seams grammar view (`join-seams/grammar-view.ts`) keeps its own nullabl
 ### `packages/codegen/src/compiler/model/node-map.ts::EdgeClassCtx`
 
 ```text
-/** Duck-typed against `NodeMap` (same circularity rationale as
- *  `LeftImmediateCtx`), plus the word predicate the classes are relative to. */
+/** Duck-typed against `NodeMap`, which `compiler/types.ts` defines over
+ *  this module's `AssembledNode`, so importing it here would be circular;
+ *  plus the word predicate the classes are relative to. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::REGEX_CONTROL_ESCAPES`
@@ -3401,9 +3373,11 @@ kind's node, which holds no field for it. Finishes by validating the
 declared defaults over every site of the result. Then every compound kind
 that owns its edges (`ownsKindEdges`) gets its kind edge seams
 (`withKindEdges`), except on a side `tightKindEdgesOf` finds tight; a
-seated unit whose after side is tight gets no unit edge either. The
-grammar root keeps its edges on its tight sides, and the result carries
-those sides as `rootFlankOnly` for the kind flag table. A grammar
+seated unit whose after side is tight gets no unit edge either. Each
+kind's tight sides (`tightEdgeSides`) are computed once and carried in
+the result as `tightSides`: `withKindEdges` reads a kind's own, and the
+kind flag table reads the grammar root's, which keeps its edges on those
+sides. A grammar
 with no layout kinds gets the spaced rules back untouched.
 
 #### token interior
@@ -3433,7 +3407,7 @@ edges (`else_clause_before`) as well. A side where the kind meets its
 neighbour tight (`tightEdgeSides`) gets no edge choice and records no
 arms, except on the grammar root: the file's start and end are gaps of
 their own, so the root keeps both edge choices to classify and write its
-source flanks, and its tight sides become flanks only (`rootFlankOnly`). A rule that is not a seq holds no literal of its own and
+source flanks, and its tight sides become flanks only (its entry in `tightSides`). A rule that is not a seq holds no literal of its own and
 is returned unchanged.
 
 The kind's edge terminal cascades onto the edge: when the seq opens (or
@@ -3803,9 +3777,11 @@ The user-facing address of a site: `<kind>.<slot>_<side>` for a flank,
 
 ```text
 /** Whether a repeat forbids whitespace between its elements. A separated
- *  repeat admits it unless the rule itself is tokenized or admits only a
- *  tight join, or its separator token does (`admitsOnlyTight`: immediate,
- *  or proven tight by the join-seams derivation): the elements are separate nodes
+ *  repeat admits it unless the rule itself is tokenized or its elements
+ *  admit only a tight join (`elementsAdmitOnlyTight`: immediate, or proven
+ *  tight before each element by the join-seams derivation; a seam proven
+ *  tight only before the whole list does not glue its elements), or its
+ *  separator token admits only one (`admitsOnlyTight`): the elements are separate nodes
  *  whatever kinds they may be, so a choice element that may be a token
  *  (a typescript enum member may be a `number`) does not glue the list.
  *  An unseparated repeat is glued when the rule or anything beneath its
@@ -6353,11 +6329,33 @@ The text sittir writes for one separator arm of a list. A string arm writes its 
 
 ### `packages/codegen/src/compiler/model/node-map.ts::admitsOnlyTight`
 
-Whether a rule admits only a tight join before it: it is an immediate token, or one of its own ids (`ownRuleIds`, so a lowered literal answers for the rules it absorbed) is in `tight`, the ids the join-seams derivation proves tight. The leftmost walks (`LeftmostWalkCtx`) and `admitsNoExtras` both read it, so a derived tight seam and an authored `token.immediate` decide a boundary the same way.
+Whether a rule admits only a tight join before it: it is an immediate token, or one of its own ids (`ownRuleIds`, so a lowered literal answers for the rules it absorbed) is in `tight`, the ids the join-seams derivation proves tight, with either role (`SeamRole`). The leftmost walks (`LeftmostWalkCtx`) and `admitsNoExtras` read it, so a derived tight seam and an authored `token.immediate` decide a boundary the same way. The gaps between a list's elements read `elementsAdmitOnlyTight` instead, since a list rule also holds the id of the seam before the whole list.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AdmitsOnlyTightCtx`
 
-The context `admitsOnlyTight` reads: `tight`, the rule ids the join-seams derivation proves tight, absent when the caller has no join facts. `LeftmostWalkCtx` extends it, so the leftmost walks pass their own context, and `admitsNoExtras` passes just the set.
+The context `admitsOnlyTight` and `elementsAdmitOnlyTight` read: `tight`, each rule id the join-seams derivation proves tight with its roles (`SeamRole`), absent when the caller has no join facts. `LeftmostWalkCtx` and `SlotArmsCtx` extend it, so the leftmost walks and the per-slot arms pass their own context, and `admitsNoExtras` passes just the map.
+
+### `packages/codegen/src/compiler/model/node-map.ts::elementsAdmitOnlyTight`
+
+Whether each element of a list rule admits only a tight join before it: the rule is immediate, or one of its own ids is proven tight with the `element` role (`SeamRole`). A list's render rule holds the repeat's id beside its element's ids, so `admitsOnlyTight`, which reads either role, would also answer for the seam before the whole list. Python's `string_content`, a prec around a repeat, is one rule holding the ids of the prec, the repeat and the element, and only the element's id is proven tight with the `element` role. A list whose start alone is proven tight keeps the gaps between its elements. `admitsNoExtras` reads it for the list rule itself, and `tightSlotArmsOf` for a list slot's position.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SlotArmsCtx`
+
+The context `tightSlotArmsOf` reads: the node map's nodes, which a supertype member is expanded through (`concreteKindsOf`); the normalized rules, in which a slot's positions and a child kind's leftmost walk are read; and, from `AdmitsOnlyTightCtx`, `tight`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::tightSlotArmsOf`
+
+For a slot of an owner kind, which arms of its per-slot child enum start tight (`TightSlotArms`), so that the arm writes a tight seam before its value (`emitPerSlotChildEnum`). The gap before a slot's value has an address in the owner and one in the child, and it is tight when either is:
+
+- the slot's position in the owner's normalized rule: for a list slot its elements (`elementsAdmitOnlyTight`), for a holder the position itself (`admitsOnlyTight`);
+- the arm's member of that position (`admitsOnlyTight`): the symbol referencing the child kind or a supertype holding it, or, for a literal, the string with its text or the symbol of its kind;
+- for a kind arm, the child kind's own leftmost token: a lexical token that is `immediate`, or a leftmost walk of the kind's rule that reads the derived tight facts (`leftmostTerminalImmediate`).
+
+A verbatim arm has only the slot's position. A slot's positions are the outermost rules of the owner holding one of its `sourceRuleIds`, and an arm is judged at the positions whose rule references it (at every position when none does). One arm writes every position, so an arm tight at all of them starts tight, one tight at none does not, and one tight at some and free at others fails codegen (`slot-tight-positions-disagree`) naming the slot, the arm and both sets of positions. Kind-level edge facts (`tightKindEdgesOf`, `tightSides`) are not read: they decide only whether a kind's edge site survives, and a kind tight before it in one list may be spaced in another.
+
+### `packages/codegen/src/compiler/model/node-map.ts::TightSlotArms`
+
+What `tightSlotArmsOf` answers for one slot, per kind of arm: `kind` for an arm holding a node or a fixed-text kind, `literal` for a literal the slot stores (its kind, text and hidden enum kind, as `NodeLiteral` carries them), and `verbatim` for the arm holding text with no kind. Each is asked lazily, so a slot fails on disagreeing positions only for an arm it has.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 
@@ -6389,7 +6387,7 @@ The member `rule` stamped `staticSeamBefore: 'glued'`. `withTokenSeams` stamps t
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::tightEdgeSides`
 
-The sides on which `kind` meets its neighbours tight: before, when its rule starts immediate or `tightKindEdgesOf` lists it there; after, when `tightKindEdgesOf` does. `withKindEdges` drops the edge site on those sides for every kind but the grammar root, whose edges are the render's flanks; `seamRenderRules` records the root's tight sides as `rootFlankOnly`.
+The sides on which `kind` meets its neighbours tight: before, when its rule starts immediate or `tightKindEdgesOf` lists it there; after, when `tightKindEdgesOf` does. `withKindEdges` drops the edge site on those sides for every kind but the grammar root, whose edges are the render's flanks; `seamRenderRules` computes them once per kind and carries them as `tightSides`, where `withKindEdges` and the kind flag table read them. They decide only a kind's edge sites; the gap before a slot's value is decided at its own position (`tightSlotArmsOf`).
 
 ### `packages/codegen/src/compiler/model/accessor-classes.ts::accessorValueClassOf`
 

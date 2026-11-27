@@ -1556,6 +1556,10 @@ a gap sits on.
 
 `start` or `end`: the end of a flanked array a flank gap sits at.
 
+### `packages/codegen/src/types/spacing.ts::SeamRole`
+
+Where a seam key of the join-seams derivation sits: `before` a rule position, or `element`, before each element of a repeat. `forEachSeamKey` gives `element` to a repeat's content, the one place it adds a `content` segment to the key, and to the wrappers inside it, which share that key. `JoinFacts.tight` keeps each proven-tight rule id's roles, so a reader of the gaps between a list's elements (`elementsAdmitOnlyTight`) can tell them from the seam before the whole list. Collapsing the list folds both into one render rule.
+
 ### `packages/codegen/src/types/rule.ts::SymbolRule::copyOf`
 
 The copy a symbol rule refers to, when it is a copy.

@@ -16,6 +16,7 @@ import type {
 	RuleAnnotations,
 	LabelProvenance
 } from '../../types/rule.ts';
+import type { SeamRole } from '../../types/spacing.ts';
 import { isBlank, isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
 import { ownRuleIds } from '../../dsl/rule-attrs.ts';
 import { patternDfa, uniqueShortestAccepted } from './pattern-automaton.ts';
@@ -2795,23 +2796,11 @@ export interface NodesCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNode>;
 }
 
-export interface LeftImmediateCtx extends NodesCtx {
-	readonly normalizedRules?: Record<string, RenderRule>;
-}
-
 export const isNullableMultiplicity = (rule: RenderRule): boolean =>
 	rule.multiplicity === 'optional' || rule.multiplicity === 'array';
 
-export function isLeftImmediateKind(kind: string, ctx: LeftImmediateCtx): boolean {
-	const node = ctx.nodes.get(kind);
-	if (isLexicalToken(node)) return node.immediate;
-	const rules = ctx.normalizedRules;
-	if (!rules) return false;
-	return leftmostTerminalImmediate(rules[kind], { rules, visiting: new Set([kind]) });
-}
-
 export interface AdmitsOnlyTightCtx {
-	readonly tight?: ReadonlySet<RuleId>;
+	readonly tight?: ReadonlyMap<RuleId, ReadonlySet<SeamRole>>;
 }
 
 export interface LeftmostWalkCtx extends AdmitsOnlyTightCtx {
@@ -2819,11 +2808,73 @@ export interface LeftmostWalkCtx extends AdmitsOnlyTightCtx {
 	readonly visiting: Set<string>;
 }
 
-export function admitsOnlyTight(
-	rule: { readonly immediate?: boolean; readonly id?: RuleId; readonly absorbedIds?: readonly RuleId[] },
-	{ tight }: AdmitsOnlyTightCtx
-): boolean {
+type TightPosition = { readonly immediate?: boolean; readonly id?: RuleId; readonly absorbedIds?: readonly RuleId[] };
+
+export function admitsOnlyTight(rule: TightPosition, { tight }: AdmitsOnlyTightCtx): boolean {
 	return rule.immediate === true || (tight !== undefined && ownRuleIds(rule).some((id) => tight.has(id)));
+}
+
+export function elementsAdmitOnlyTight(rule: TightPosition, { tight }: AdmitsOnlyTightCtx): boolean {
+	return rule.immediate === true || (tight !== undefined && ownRuleIds(rule).some((id) => tight.get(id)?.has('element') === true));
+}
+
+export interface SlotArmsCtx extends AdmitsOnlyTightCtx, NodesCtx {
+	readonly rules: Record<string, RenderRule>;
+}
+
+export interface TightSlotArms {
+	readonly kind: (kind: string) => boolean;
+	readonly literal: (literal: { readonly kind: string; readonly text: string; readonly enumKind?: string }) => boolean;
+	readonly verbatim: () => boolean;
+}
+
+export function tightSlotArmsOf(
+	{ owner, slot }: { readonly owner: string; readonly slot: AssembledNonterminal | undefined },
+	ctx: SlotArmsCtx
+): TightSlotArms {
+	const ids = new Set(slot?.sourceRuleIds ?? []);
+	const positions: RenderRule[] = [];
+	const collect = (rule: RenderRule | undefined): void => {
+		if (rule === undefined) return;
+		if (ownRuleIds(rule).some((id) => ids.has(id))) positions.push(rule);
+		else for (const child of renderRuleWalker.childrenOf(rule)) collect(child);
+	};
+	collect(ctx.rules[owner]);
+	const atPosition = (position: RenderRule): boolean =>
+		slot !== undefined && (isMultiple(slot) ? elementsAdmitOnlyTight(position, ctx) : admitsOnlyTight(position, ctx));
+	const startsTight = ({ arm, refers }: { readonly arm: string; readonly refers: (rule: RenderRule) => boolean }): boolean => {
+		const holding = positions.filter((position) => renderRuleWalker.fold(position, false, (found, rule) => found || refers(rule)));
+		const votes = (holding.length > 0 ? holding : positions).map((position) => ({
+			position,
+			tight: atPosition(position) || renderRuleWalker.fold(position, false, (found, rule) => found || (rule !== position && refers(rule) && admitsOnlyTight(rule, ctx)))
+		}));
+		const tight = votes.filter((vote) => vote.tight).map((vote) => ownRuleIds(vote.position).join(' '));
+		if (tight.length === 0) return false;
+		if (tight.length === votes.length) return true;
+		const free = votes.filter((vote) => !vote.tight).map((vote) => ownRuleIds(vote.position).join(' '));
+		throw emitShapeFailure({
+			code: 'slot-tight-positions-disagree',
+			ownerKind: owner,
+			slotName: slot?.name,
+			message: `${owner}.${slot?.name}: the ${arm} arm starts tight at [${tight.join('; ')}] but not at [${free.join('; ')}], and one arm writes every position of the slot`,
+			details: { arm, tight, free }
+		});
+	};
+	const refersTo = (kind: string) => (rule: RenderRule): boolean =>
+		rule.type === SYMBOL && (rule.name === kind || concreteKindsOf(rule.name, ctx).includes(kind));
+	return {
+		kind: (kind) => {
+			const node = ctx.nodes.get(kind);
+			const walk = { rules: ctx.rules, visiting: new Set([kind]), ...(ctx.tight === undefined ? {} : { tight: ctx.tight }) };
+			return (isLexicalToken(node) && node.immediate) || leftmostTerminalImmediate(ctx.rules[kind], walk) || startsTight({ arm: kind, refers: refersTo(kind) });
+		},
+		literal: (literal) =>
+			startsTight({
+				arm: `'${literal.text}'`,
+				refers: (rule) => (rule.type === STRING && rule.value === literal.text) || (rule.type === SYMBOL && (rule.name === literal.kind || rule.name === literal.enumKind))
+			}),
+		verbatim: () => startsTight({ arm: 'verbatim', refers: () => false })
+	};
 }
 
 function coreLeftmostImmediate(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {

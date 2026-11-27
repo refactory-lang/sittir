@@ -2,6 +2,7 @@ import { tokenBodyKey, tokenBodyOwners } from '../../../dsl/rule-transforms.ts';
 import type { GrammarJson, GrammarRule } from '../../../grammar-shapes/grammar-json.ts';
 import type { ExternalRole } from '../../../types/ir.ts';
 import type { Rule } from '../../../types/rule.ts';
+import type { SeamRole } from '../../../types/spacing.ts';
 import { matchesWordShape, ruleToRegexSource, wordCharClass } from '../../../util/word-matcher.ts';
 import {
 	acceptsSomeStartingWith,
@@ -72,16 +73,16 @@ function symbolsIn(rule: GrammarRule, out: Set<string>): void {
 
 export function forEachSeamKey(
 	rules: Readonly<Record<string, GrammarRule>>,
-	visit: (rule: GrammarRule, owner: string, key: string) => void
+	visit: (rule: GrammarRule, owner: string, key: string, role: SeamRole) => void
 ): void {
-	const index = (rule: GrammarRule, owner: string, path: string): void => {
-		visit(rule, owner, `${owner}:${path}`);
+	const index = (rule: GrammarRule, owner: string, path: string, role: SeamRole): void => {
+		visit(rule, owner, `${owner}:${path}`, role);
 		const sub = (segment: string): string => (path === 'root' ? segment : `${path}/${segment}`);
-		if (rule.type === 'SEQ' || rule.type === 'CHOICE') rule.members.forEach((member, k) => index(member, owner, sub(`members.${k}`)));
-		else if (rule.type === 'REPEAT' || rule.type === 'REPEAT1') index(rule.content, owner, sub('content'));
-		else if ('content' in rule) index(rule.content, owner, path);
+		if (rule.type === 'SEQ' || rule.type === 'CHOICE') rule.members.forEach((member, k) => index(member, owner, sub(`members.${k}`), 'before'));
+		else if (rule.type === 'REPEAT' || rule.type === 'REPEAT1') index(rule.content, owner, sub('content'), 'element');
+		else if ('content' in rule) index(rule.content, owner, path, role);
 	};
-	for (const [name, rule] of Object.entries(rules)) index(rule, name, 'root');
+	for (const [name, rule] of Object.entries(rules)) index(rule, name, 'root', 'before');
 }
 
 export class GrammarView {

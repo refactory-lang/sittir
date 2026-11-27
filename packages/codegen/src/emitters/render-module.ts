@@ -38,10 +38,12 @@ import {
 	storageKindOfRef,
 	storageKindOfValue,
 	isSurfaceHiddenIn,
-	isLeftImmediateKind,
 	isKindIdStored,
 	isDelimiterToken,
-	fixedTextOfKind
+	fixedTextOfKind,
+	tightSlotArmsOf,
+	type SlotArmsCtx,
+	type TightSlotArms
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { computeBundleHash, type BundleFile } from './bundle-hash.ts';
@@ -1057,7 +1059,7 @@ function planRenderOptionsFor(
 		declaredIndent,
 		lang,
 		seatWrappersOf(nodeMap, generatedIdTables),
-		inputs.renderRules.rootFlankOnly
+		inputs.renderRules.tightSides
 	);
 	const addresses = inputs.addresses ?? addressTablesFor(nodeMap, kindEntries, sites, inputs.options);
 	return { plan, addresses, kindEntries };
@@ -1480,7 +1482,7 @@ function renderNodeSupport(
 
 	const perSlotEnums = collectPerSlotChildEnums(owned, nodeMap);
 	const choices = shareIdenticalChoices(perSlotEnums, (entry) =>
-		emitPerSlotChildEnum(entry, kidByKind, nodeMap, fixed, kindEntries, plan, read)
+		emitPerSlotChildEnum(entry, kidByKind, nodeMap, fixed, kindEntries, plan, read, { nodes: nodeMap.nodes, rules: nodeMap.normalizedRules ?? {}, tight: joins.tight })
 	);
 	for (const name of choices.folded) read.nodes.delete(name);
 	const perSlotEnumLines: string[] = choices.emitted.flatMap(({ lines }) => lines);
@@ -2290,13 +2292,14 @@ function choiceUnitsOf(
 	validKinds: readonly { readonly node: AssembledNode }[],
 	fixed: FixedLiterals,
 	plan: RenderPlan,
-	kindEntries: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[],
+	tight: TightSlotArms
 ): ReadonlyMap<string, ChoiceUnit> {
 	const units = new Map<string, ChoiceUnit>();
 	for (const { node } of validKinds) {
 		if (!isFixedTextLeaf(node)) continue;
 		const unit = fixedLiteralOf(fixed, node.kind);
-		units.set(unit.variant, { fixed: unit, siteImmediate: false, seams: undefined });
+		units.set(unit.variant, { fixed: unit, siteImmediate: !unit.immediate && tight.kind(node.kind), seams: undefined });
 	}
 	for (const literal of entry.literals) {
 		const unit = fixedLiteralOf(fixed, literal.kind, literal.text);
@@ -2317,7 +2320,7 @@ function choiceUnitsOf(
 		}
 		units.set(unit.variant, {
 			fixed: unit,
-			siteImmediate: (prior?.siteImmediate ?? false) || (literal.immediate === true && !unit.immediate),
+			siteImmediate: (prior?.siteImmediate ?? false) || (!unit.immediate && (literal.immediate === true || tight.literal(literal))),
 			seams: prior?.seams ?? seams
 		});
 	}
@@ -2394,19 +2397,23 @@ function emitPerSlotChildEnum(
 	fixed: FixedLiterals,
 	kindEntries: readonly KindEnumEntry[],
 	plan: RenderPlan,
-	read: ReadPrint
+	read: ReadPrint,
+	arms: SlotArmsCtx
 ): string[] {
 	const enumName = perSlotEnumName(entry.typeName, entry.fieldName);
 	const lines: string[] = [];
 	const ownerKind = entry.ownerKind;
 
+	const modelSlot = nodeMap.nodes.get(ownerKind)?.slots.find((candidate) => candidate.name === entry.fieldName);
+	const tight = tightSlotArmsOf({ owner: ownerKind, slot: modelSlot }, arms);
+	const startsTight = (kind: string, node: AssembledNode): boolean => !(node instanceof AssembledLeaf && node.immediate) && tight.kind(kind);
 	const validKinds = expandConcreteNodeKinds(entry.kinds, nodeMap);
 	const nodeKinds = validKinds.filter(({ node }) => !isFixedTextLeaf(node));
-	const units = choiceUnitsOf(entry, validKinds, fixed, plan, kindEntries);
+	const units = choiceUnitsOf(entry, validKinds, fixed, plan, kindEntries, tight);
 	const admitsVerbatim = validKinds.some(({ node }) => node.modelType === 'pattern');
+	const verbatimTight = admitsVerbatim && (entry.verbatimImmediate || tight.verbatim());
 
 	const isBoxed = (variantNode: AssembledNode): boolean => boxedInEnum(variantNode, read.boxedPayloads);
-	const modelSlot = nodeMap.nodes.get(ownerKind)?.slots.find((candidate) => candidate.name === entry.fieldName);
 	const blank = modelSlot !== undefined && hasBlankArm(modelSlot);
 
 	const acceptedIdsOf = (kind: string, node: AssembledNode): readonly number[] => {
@@ -2457,7 +2464,7 @@ function emitPerSlotChildEnum(
 		return [{ kinds: rustKindIds(ids), before: unit.seams?.before, immediate: unit.siteImmediate, after: unit.seams?.after }];
 	});
 	const nodeArmSeams = nodeKinds.flatMap(({ kind, node }): ArmSeams[] =>
-		node instanceof AssembledLeaf || !isLeftImmediateKind(kind, nodeMap)
+		!startsTight(kind, node)
 			? []
 			: [{ kinds: rustKindIds([...(claimedBy.get(rustTypeIdent(node.typeName)) ?? []), ...acceptedIdsOf(kind, node)]), immediate: true }]
 	);
@@ -2519,12 +2526,12 @@ function emitPerSlotChildEnum(
 			const variant = rustTypeIdent(node.typeName);
 			const call = `${payloadExpr(subject, isBoxed(node))}.render(w)`;
 			const arm =
-				!holderSeams && !(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap) ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
+				!holderSeams && startsTight(kind, node) ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
 			out.push(`            ${subject.path}::${variant}(inner) => ${arm},`);
 		}
 		for (const unit of units.values()) out.push(...choiceUnitArm(subject.path, unit, !holderSeams));
 		if (blank) out.push(`            ${subject.path}::${BLANK_VARIANT} => Ok(()),`);
-		if (admitsVerbatim) out.push(`            ${verbatimRenderArm(subject.path, entry.verbatimImmediate)}`);
+		if (admitsVerbatim) out.push(`            ${verbatimRenderArm(subject.path, verbatimTight)}`);
 		out.push(`        }`, `    }`, `}`);
 		return out;
 	};

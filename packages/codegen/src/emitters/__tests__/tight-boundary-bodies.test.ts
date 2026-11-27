@@ -62,7 +62,7 @@ describe('a boundary the grammar admits no seam at', () => {
 
 	it('keeps two literals as two writes joined tight when the derivation proves the seam tight', async () => {
 		const minus = 'rule:toggle:members.1' as RuleId;
-		expect(await shapeOf(toggle, 'toggle', { tight: new Set([minus]) })).toContain('"(?" ^ "-"');
+		expect(await shapeOf(toggle, 'toggle', { tight: new Map([[minus, new Set(['before'] as const)]]) })).toContain('"(?" ^ "-"');
 		expect(await shapeOf(toggle, 'toggle')).not.toContain('"(?" ^ "-"');
 	});
 });

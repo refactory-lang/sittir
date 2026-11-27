@@ -158,19 +158,20 @@ function kindFlagsOf(
 	kindEntries: readonly IdEntry[],
 	nodeMap: NodeMap,
 	joins: JoinFacts,
-	rootFlankOnly: ReadonlySet<SeparatorSide>
+	tightSides: ReadonlyMap<string, ReadonlySet<SeparatorSide>>
 ): { readonly id: number; readonly flags: number }[] {
 	const flags = new Map<number, number>();
 	for (const entry of kindEntries) {
 		if (entry.id === undefined) continue;
 		const root = nodeMap.nodes.get(entry.kind)?.grammarRoot === true;
+		const flanks = root ? tightSides.get(entry.kind) : undefined;
 		const bits =
 			(entry.anon === true ? KIND_ANON : 0) |
 			(lineTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_TERMINATED : 0) |
 			(lineBreakTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_BREAK_TERMINATED : 0) |
 			(root ? KIND_ROOT : 0) |
-			(root && rootFlankOnly.has('before') ? KIND_FLANK_BEFORE : 0) |
-			(root && rootFlankOnly.has('after') ? KIND_FLANK_AFTER : 0) |
+			(flanks?.has('before') === true ? KIND_FLANK_BEFORE : 0) |
+			(flanks?.has('after') === true ? KIND_FLANK_AFTER : 0) |
 			([entry.kind, entry.symbolName, entry.parseName].some((name) => name !== undefined && joins.joinsNextKinds.has(name)) ? KIND_JOINS_NEXT : 0) |
 			(terminatorOnlyKinds(nodeMap).has(entry.kind) ? KIND_TERMINATOR_ONLY : 0);
 		if (bits !== 0) flags.set(entry.id, (flags.get(entry.id) ?? 0) | bits);
@@ -198,7 +199,7 @@ export function planRenderOptions(
 	declaredIndent: string | undefined,
 	grammar: string,
 	seatWrappers: readonly SeatWrapper[] = [],
-	rootFlankOnly: ReadonlySet<SeparatorSide> = new Set()
+	tightSides: ReadonlyMap<string, ReadonlySet<SeparatorSide>> = new Map()
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
 	const delimiters: DelimiterSite[] = [];
@@ -299,7 +300,7 @@ export function planRenderOptions(
 		whitespaceText: [...whitespaceText]
 			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'renderAs'), text }))
 			.sort((a, b) => a.id - b.id),
-		kindFlags: kindFlagsOf(kindEntries, nodeMap, joins, rootFlankOnly),
+		kindFlags: kindFlagsOf(kindEntries, nodeMap, joins, tightSides),
 		leafEdges: leafEdgesTable(kindEntries, nodeMap),
 		seatWrappers: [...seatWrappers].sort((a, b) => a.id - b.id),
 		gaps: [...whitespaceText.keys()]

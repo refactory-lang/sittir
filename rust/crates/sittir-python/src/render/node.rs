@@ -11315,8 +11315,8 @@ impl ::sittir_core::view::KindOf for StringContentNodeSlot {
 impl ::sittir_core::render::Render for StringContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StringContentNodeSlot::Interpolation(inner) => inner.as_ref().render(w),
-            StringContentNodeSlot::StringContent(inner) => inner.render(w),
+            StringContentNodeSlot::Interpolation(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.as_ref().render(w) },
+            StringContentNodeSlot::StringContent(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
 }
@@ -11334,8 +11334,8 @@ impl ::sittir_core::view::KindOf for StringContentNodeSlotRecord<'_> {
 impl ::sittir_core::render::Render for StringContentNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StringContentNodeSlotRecord::Interpolation(inner) => inner.render(w),
-            StringContentNodeSlotRecord::StringContent(inner) => inner.render(w),
+            StringContentNodeSlotRecord::Interpolation(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentNodeSlotRecord::StringContent(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
 }

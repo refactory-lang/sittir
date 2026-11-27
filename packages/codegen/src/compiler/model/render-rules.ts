@@ -8,7 +8,7 @@ import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type R
 import { ALIAS, CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
-import { type AssembledNode, AbstractAssembledCompound, AssembledLexedPattern, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isFixedTextLeaf, isVisiblePunctuationLeaf, layoutNodeOf, literalLeafText, admitsOnlyTight, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
+import { type AssembledNode, AbstractAssembledCompound, AssembledLexedPattern, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isFixedTextLeaf, isVisiblePunctuationLeaf, layoutNodeOf, literalLeafText, admitsOnlyTight, elementsAdmitOnlyTight, startsImmediateWhenPresent, leftmostTerminalImmediate, type AdmitsOnlyTightCtx } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/node-common.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
 import { lineTerminatedKinds, triviaKinds } from './trivia.ts';
@@ -71,7 +71,7 @@ export interface RenderRules {
 	readonly edgeArms?: ReadonlyMap<string, EdgeArmDefault>;
 	readonly unitEdges?: ReadonlyMap<string, SpacingPart>;
 	readonly noExtrasLists?: ReadonlySet<RuleId>;
-	readonly rootFlankOnly?: ReadonlySet<SeparatorSide>;
+	readonly tightSides?: ReadonlyMap<string, ReadonlySet<SeparatorSide>>;
 }
 
 export interface RenderRulesConfig {
@@ -82,7 +82,7 @@ export interface RenderRulesConfig {
 	readonly normalizedRules?: Record<string, RenderRule>;
 	readonly choiceArmNodes?: ReadonlySet<RenderRule>;
 	readonly noExtrasLists?: ReadonlySet<RuleId>;
-	readonly tight?: ReadonlySet<RuleId>;
+	readonly tight?: AdmitsOnlyTightCtx['tight'];
 	readonly tightAfter?: ReadonlyMap<RuleId, ReadonlySet<RuleId>>;
 }
 
@@ -165,10 +165,11 @@ function admitsNoExtras(
 	rules: Readonly<Record<string, RenderRule>>,
 	externals: ReadonlySet<string>,
 	plainTokens: boolean,
-	tight: ReadonlySet<RuleId> | undefined
+	tight: AdmitsOnlyTightCtx['tight'],
+	admits: typeof admitsOnlyTight = admitsOnlyTight
 ): boolean {
 	const r = bag(rule);
-	if (admitsOnlyTight(r, { tight })) return true;
+	if (admits(r, { tight })) return true;
 	if (r.tokenized === true) return plainTokens;
 	if (r.separator !== undefined) return admitsOnlyTight(bag(r.separator.value), { tight });
 	if (r.type === SYMBOL && r.name !== undefined) return isLexicalSymbol(r.name, rules, externals, new Set(), plainTokens);
@@ -239,8 +240,8 @@ function collectGaps(
 			if (id === undefined || !isRepeated(r) || gaps.has(id)) return undefined;
 			const slot = config.nodeMap.slotByRuleId.get(kind)?.get(id);
 			if (slot === undefined) return undefined;
-			if (admitsNoExtras(r, rules, externals, true, config.tight)) {
-				if (bag(r).tokenized === true || !spaceIsExtra || admitsNoExtras(r, rules, externals, false, config.tight)) for (const listed of [id, ...slot.sourceRuleIds]) noExtrasLists.add(listed);
+			if (admitsNoExtras(r, rules, externals, true, config.tight, elementsAdmitOnlyTight)) {
+				if (bag(r).tokenized === true || !spaceIsExtra || admitsNoExtras(r, rules, externals, false, config.tight, elementsAdmitOnlyTight)) for (const listed of [id, ...slot.sourceRuleIds]) noExtrasLists.add(listed);
 				return undefined;
 			}
 			const gap = gapOf(kind, r, config);
@@ -1043,7 +1044,7 @@ function withKindEdges(
 	resolver: DefaultResolver,
 	seams: SeamArms,
 	edgeArms: Map<string, EdgeArmDefault>,
-	tightEdges: TightKindEdges
+	tight: ReadonlySet<SeparatorSide>
 ): RenderRule {
 	const r = bag(rule);
 	const root = config.nodeMap.nodes.get(kind)?.grammarRoot === true;
@@ -1064,7 +1065,6 @@ function withKindEdges(
 			edgeArms.set(edgeArmKey(kind, spacingLabelOf(address)), { arm, origin, kindId });
 		}
 	};
-	const tight = tightEdgeSides(rule, kind, config, tightEdges);
 	const dropsBefore = !root && tight.has('before');
 	const dropsAfter = !root && tight.has('after');
 	if (!dropsBefore) recordArms('before');
@@ -1107,7 +1107,7 @@ export function seamRenderRules(
 		const edgeArms = new Map<string, EdgeArmDefault>();
 		const seatedUnits = seatedUnitKinds(spaced.rules, config.nodeMap, (kind) => config.nodeMap.nodes.get(kind)?.grammarRoot === true || ownsKindEdges(kind, config.nodeMap));
 		const unitEdges = new Map<string, SpacingPart>();
-		let rootFlankOnly: ReadonlySet<SeparatorSide> = new Set();
+		const tightSides = new Map<string, ReadonlySet<SeparatorSide>>();
 		for (const [kind, rule] of Object.entries(spaced.rules)) {
 			if (inlined.has(kind)) {
 				out[kind] = rule;
@@ -1122,11 +1122,12 @@ export function seamRenderRules(
 			const seamed = isLexedKind(kind, config.nodeMap) || tokenInterior(kind) ? rule : visit(walker.map(rule, visit));
 			const insideTrivia = tokenInterior(kind) && !triviaKinds(config.nodeMap).has(kind);
 			const grammarRoot = config.nodeMap.nodes.get(kind)?.grammarRoot === true;
-			if (grammarRoot) rootFlankOnly = tightEdgeSides(seamed, kind, immediateConfig, tightEdges);
+			const sides = tightEdgeSides(seamed, kind, immediateConfig, tightEdges);
+			if (sides.size > 0) tightSides.set(kind, sides);
 			if (seatedUnits.has(kind) && !tightEdges.after.has(kind)) unitEdges.set(kind, seamPartOf(kindEdgeSeam(seamed, kind, 'after', immediateConfig, resolver, seams)));
-			out[kind] = (ownsKindEdges(kind, config.nodeMap) || grammarRoot) && !insideTrivia ? withKindEdges(seamed, kind, immediateConfig, resolver, seams, edgeArms, tightEdges) : seamed;
+			out[kind] = (ownsKindEdges(kind, config.nodeMap) || grammarRoot) && !insideTrivia ? withKindEdges(seamed, kind, immediateConfig, resolver, seams, edgeArms, sides) : seamed;
 		}
-		return { rules: out, edgeArms, unitEdges, noExtrasLists, rootFlankOnly };
+		return { rules: out, edgeArms, unitEdges, noExtrasLists, tightSides };
 	};
 	const result = build();
 	const sites = spacingSitesOf(result, config.nodeMap);

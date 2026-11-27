@@ -942,14 +942,14 @@ impl ::sittir_core::view::KindOf for CharacterClassClassAtomsNodeSlot {
 impl ::sittir_core::render::Render for CharacterClassClassAtomsNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            CharacterClassClassAtomsNodeSlot::ClassCharacter(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlot::IdentityEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlot::CharacterClassEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlot::ControlEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlot::ControlLetterEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlot::PosixCharacterClass(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlot::ClassRange(inner) => inner.as_ref().render(w),
-            CharacterClassClassAtomsNodeSlot::Verbatim(inner) => inner.render(w),
+            CharacterClassClassAtomsNodeSlot::ClassCharacter(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlot::IdentityEscape(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlot::CharacterClassEscape(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlot::ControlEscape(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlot::ControlLetterEscape(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlot::PosixCharacterClass(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlot::ClassRange(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.as_ref().render(w) },
+            CharacterClassClassAtomsNodeSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
 }
@@ -973,14 +973,14 @@ impl ::sittir_core::view::KindOf for CharacterClassClassAtomsNodeSlotRecord<'_> 
 impl ::sittir_core::render::Render for CharacterClassClassAtomsNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            CharacterClassClassAtomsNodeSlotRecord::ClassCharacter(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlotRecord::IdentityEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlotRecord::CharacterClassEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlotRecord::ControlEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlotRecord::ControlLetterEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlotRecord::PosixCharacterClass(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlotRecord::ClassRange(inner) => inner.render(w),
-            CharacterClassClassAtomsNodeSlotRecord::Verbatim(inner) => inner.render(w),
+            CharacterClassClassAtomsNodeSlotRecord::ClassCharacter(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlotRecord::IdentityEscape(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlotRecord::CharacterClassEscape(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlotRecord::ControlEscape(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlotRecord::ControlLetterEscape(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlotRecord::PosixCharacterClass(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlotRecord::ClassRange(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            CharacterClassClassAtomsNodeSlotRecord::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
 }
@@ -1091,6 +1091,116 @@ impl ::sittir_core::render::Render for ClassRangeStartNodeSlotRecord<'_> {
             ClassRangeStartNodeSlotRecord::ControlEscape(inner) => inner.render(w),
             ClassRangeStartNodeSlotRecord::Dash => render_dash(w),
             ClassRangeStartNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp, view = ClassRangeEndNodeSlotRecord)]
+pub enum ClassRangeEndNodeSlot {
+    #[kind(kind::CLASS_CHARACTER)]
+    ClassCharacter(ClassCharacterNode),
+    #[kind(kind::CHARACTER_CLASS_ESCAPE)]
+    CharacterClassEscape(CharacterClassEscapeNode),
+    #[kind(kind::CONTROL_ESCAPE)]
+    ControlEscape(ControlEscapeNode),
+    #[kind(kind::DASH)]
+    Dash,
+    #[node(verbatim)]
+    Verbatim(VerbatimNode),
+}
+
+impl ::sittir_core::prepare::Prepare for ClassRangeEndNodeSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        match self {
+            ClassRangeEndNodeSlot::ClassCharacter(t) => t.prepare(ctx),
+            ClassRangeEndNodeSlot::CharacterClassEscape(t) => t.prepare(ctx),
+            ClassRangeEndNodeSlot::ControlEscape(t) => t.prepare(ctx),
+            ClassRangeEndNodeSlot::Dash => Ok(()),
+            ClassRangeEndNodeSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            ClassRangeEndNodeSlot::ClassCharacter(t) => t.gap_edges(),
+            ClassRangeEndNodeSlot::CharacterClassEscape(t) => t.gap_edges(),
+            ClassRangeEndNodeSlot::ControlEscape(t) => t.gap_edges(),
+            ClassRangeEndNodeSlot::Dash => None,
+            ClassRangeEndNodeSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ClassRangeEndNodeSlot::ClassCharacter(t) => t.snapshot_edge(),
+            ClassRangeEndNodeSlot::CharacterClassEscape(t) => t.snapshot_edge(),
+            ClassRangeEndNodeSlot::ControlEscape(t) => t.snapshot_edge(),
+            ClassRangeEndNodeSlot::Dash => None,
+            ClassRangeEndNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ClassRangeEndNodeSlot::ClassCharacter(t) => t.source_coordinate(),
+            ClassRangeEndNodeSlot::CharacterClassEscape(t) => t.source_coordinate(),
+            ClassRangeEndNodeSlot::ControlEscape(t) => t.source_coordinate(),
+            ClassRangeEndNodeSlot::Dash => None,
+            ClassRangeEndNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(cursor, ctx))
+    }
+    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
+        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
+    }
+}
+
+impl ::sittir_core::view::KindOf for ClassRangeEndNodeSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ClassCharacter(inner) => inner.kind_in(kinds),
+            Self::CharacterClassEscape(inner) => inner.kind_in(kinds),
+            Self::ControlEscape(inner) => inner.kind_in(kinds),
+            Self::Dash => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(20), ::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ClassRangeEndNodeSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ClassRangeEndNodeSlot::ClassCharacter(inner) => inner.render(w),
+            ClassRangeEndNodeSlot::CharacterClassEscape(inner) => inner.render(w),
+            ClassRangeEndNodeSlot::ControlEscape(inner) => inner.render(w),
+            ClassRangeEndNodeSlot::Dash => render_dash(w),
+            ClassRangeEndNodeSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+        }
+    }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ClassRangeEndNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ClassCharacter(inner) => inner.kind_in(kinds),
+            Self::CharacterClassEscape(inner) => inner.kind_in(kinds),
+            Self::ControlEscape(inner) => inner.kind_in(kinds),
+            Self::Dash => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(20), ::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ClassRangeEndNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ClassRangeEndNodeSlotRecord::ClassCharacter(inner) => inner.render(w),
+            ClassRangeEndNodeSlotRecord::CharacterClassEscape(inner) => inner.render(w),
+            ClassRangeEndNodeSlotRecord::ControlEscape(inner) => inner.render(w),
+            ClassRangeEndNodeSlotRecord::Dash => render_dash(w),
+            ClassRangeEndNodeSlotRecord::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
 }
@@ -2648,7 +2758,7 @@ pub struct ClassRangeNode {
     pub start: ::sittir_core::SlotValue<ClassRangeStartNodeSlot>,
     #[wire(key = "_end")]
     #[slot(field = field::END, listed = kind::DASH, word = 6, width = 4, forms = 3, built = 3)]
-    pub end: ::sittir_core::SlotValue<ClassRangeStartNodeSlot>,
+    pub end: ::sittir_core::SlotValue<ClassRangeEndNodeSlot>,
 }
 
 impl ::sittir_core::view::KindOf for ClassRangeNode {
@@ -6014,6 +6124,8 @@ impl ::sittir_core::render::Render for ColonNode {
 fn render_pattern<N: PatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = node.content();
     w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(52)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(53)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -6066,6 +6178,8 @@ fn render_lookahead_assertion<N: LookaheadAssertionFields + ?Sized>(node: &N, w:
     let pattern = node.pattern();
     w.text("(?")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
@@ -6142,6 +6256,10 @@ fn render_class_range<N: ClassRangeFields + ?Sized>(node: &N, w: &mut dyn ::sitt
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_start", ::sittir_core::types::ItemIndex(0), w, |w| start.render(w))?;
     w.text("-")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+    if end.kind_in(&*w, &[::sittir_core::types::KindId(14), ::sittir_core::types::KindId(20)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if end.kind_in(&*w, &[::sittir_core::types::KindId(73)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if end.kind_in(&*w, &[::sittir_core::types::KindId(76)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if end.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_end", ::sittir_core::types::ItemIndex(0), w, |w| end.render(w))?;
     Ok(())
 }
@@ -6314,6 +6432,10 @@ fn render_term_group<N: TermGroupFields + ?Sized>(node: &N, w: &mut dyn ::sittir
     let content = node.content();
     let quantifier = View::new(node.quantifier(), "{}");
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    if quantifier.kind_in(&*w, &[::sittir_core::types::KindId(67)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if quantifier.kind_in(&*w, &[::sittir_core::types::KindId(68)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if quantifier.kind_in(&*w, &[::sittir_core::types::KindId(69)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if quantifier.kind_in(&*w, &[::sittir_core::types::KindId(70)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_quantifier", ::sittir_core::types::ItemIndex(0), w, |w| quantifier.render(w))?;
     Ok(())
 }
@@ -7068,7 +7190,7 @@ const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionNode>
 const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueNode>() <= 256, "UnicodePropertyValueNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ZeroOrMoreNode>() <= 256, "ZeroOrMoreNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, PatternContentNodeSlot, LookaroundAssertionContentNodeSlot, LookaheadAssertionOperatorNodeSlot, CharacterClassClassAtomsNodeSlot, ClassRangeStartNodeSlot, NamedCapturingGroupOperatorNodeSlot, CountQuantifierContentNodeSlot, CharacterClassEscapeContentNodeSlot, TermGroupQuantifierNodeSlot, TermGroupContentNodeSlot, PatternNode, AlternationNode, TermNode, AnyCharacterNode, StartAssertionNode, EndAssertionNode, BoundaryAssertionNode, NonBoundaryAssertionNode, LookaroundAssertionNode, LookaheadAssertionNode, LookbehindAssertionNode, PatternCharacterNode, CharacterClassNode, PosixCharacterClassNode, PosixClassNameNode, ClassRangeNode, ClassCharacterNode, AnonymousCapturingGroupNode, NamedCapturingGroupNode, NonCapturingGroupNode, FlagsNode, ZeroOrMoreNode, OneOrMoreNode, OptionalNode, CountQuantifierNode, BackreferenceEscapeNode, NamedGroupBackreferenceNode, DecimalEscapeNode, CharacterClassEscapeNode, CharacterClassEscapeText1Node, CharacterClassEscapeText2Node, UnicodeCharacterEscapeNode, UnicodePropertyValueExpressionNode, UnicodePropertyValueNode, ControlEscapeNode, ControlLetterEscapeNode, IdentityEscapeNode, GroupNameNode, DecimalDigitsNode, LazyNode, TermGroupNode, CountQuantifierGroupNode, CountQuantifierArmNode, CharacterClassEscapeArmNode, UnicodePropertyValueExpressionGroupNode, NegationNode, InlineFlagsGroupEnableNode, InlineFlagsGroupToggleNode, InlineFlagsGroupDisableNode, TightNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, CaretNode, LparenQmarkNode, EqNode, BangNode, RparenNode, LparenQmarkLtNode, LbrackNode, DashNode, BslashDashNode, RbrackNode, LbrackColonNode, ColonRbrackNode, LparenNode, LparenQmarkPLtNode, GtNode, LparenQmarkColonNode, StarNode, PlusNode, QmarkNode, LbraceNode, CommaNode, RbraceNode, BslashkNode, LtNode, LparenQmarkPEqNode, ColonNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, PatternContentNodeSlot, LookaroundAssertionContentNodeSlot, LookaheadAssertionOperatorNodeSlot, CharacterClassClassAtomsNodeSlot, ClassRangeStartNodeSlot, ClassRangeEndNodeSlot, NamedCapturingGroupOperatorNodeSlot, CountQuantifierContentNodeSlot, CharacterClassEscapeContentNodeSlot, TermGroupQuantifierNodeSlot, TermGroupContentNodeSlot, PatternNode, AlternationNode, TermNode, AnyCharacterNode, StartAssertionNode, EndAssertionNode, BoundaryAssertionNode, NonBoundaryAssertionNode, LookaroundAssertionNode, LookaheadAssertionNode, LookbehindAssertionNode, PatternCharacterNode, CharacterClassNode, PosixCharacterClassNode, PosixClassNameNode, ClassRangeNode, ClassCharacterNode, AnonymousCapturingGroupNode, NamedCapturingGroupNode, NonCapturingGroupNode, FlagsNode, ZeroOrMoreNode, OneOrMoreNode, OptionalNode, CountQuantifierNode, BackreferenceEscapeNode, NamedGroupBackreferenceNode, DecimalEscapeNode, CharacterClassEscapeNode, CharacterClassEscapeText1Node, CharacterClassEscapeText2Node, UnicodeCharacterEscapeNode, UnicodePropertyValueExpressionNode, UnicodePropertyValueNode, ControlEscapeNode, ControlLetterEscapeNode, IdentityEscapeNode, GroupNameNode, DecimalDigitsNode, LazyNode, TermGroupNode, CountQuantifierGroupNode, CountQuantifierArmNode, CharacterClassEscapeArmNode, UnicodePropertyValueExpressionGroupNode, NegationNode, InlineFlagsGroupEnableNode, InlineFlagsGroupToggleNode, InlineFlagsGroupDisableNode, TightNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, CaretNode, LparenQmarkNode, EqNode, BangNode, RparenNode, LparenQmarkLtNode, LbrackNode, DashNode, BslashDashNode, RbrackNode, LbrackColonNode, ColonRbrackNode, LparenNode, LparenQmarkPLtNode, GtNode, LparenQmarkColonNode, StarNode, PlusNode, QmarkNode, LbraceNode, CommaNode, RbraceNode, BslashkNode, LtNode, LparenQmarkPEqNode, ColonNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AlternationNode>() == 40, "AlternationNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -7107,6 +7229,8 @@ const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeText2Node>() ==
 const _: () = assert!(::core::mem::size_of::<CharacterClassNode>() == 40, "CharacterClassNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ClassCharacterNode>() == 32, "ClassCharacterNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<ClassRangeEndNodeSlot>() == 200, "ClassRangeEndNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ClassRangeNode>() == 416, "ClassRangeNode is not the 416 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
