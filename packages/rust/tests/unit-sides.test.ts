@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { writeUnitSides } from '@sittir/common/utils';
+import { unitSidesOf } from '../../common/src/node-data.ts';
 import { constructions } from './constructions.mts';
 
 const source = 'fn f() {\n    /* c */ ;\n    x();\n}\n';
@@ -34,6 +35,24 @@ describe.each(constructions)("a unit's sides through a rebuild (%s)", (_, rs) =>
 		const other = rebuilt(parsed()) as Block & Disposable;
 		other[Symbol.dispose]();
 		expect(rendered(block)).toBe(kept);
+	});
+});
+
+describe.each(constructions)("a built node's sites once it takes the place of a parsed node of its kind (%s)", (_, rs) => {
+	it("keeps the unit side and the leaf side written to it before, in the copy that names the parsed node", () => {
+		const declaration = rs.parse('fn f() {\n    let r = a..b;\n}\n').$query().$descendants.ofType(rs.kinds.LetDeclaration).at(0);
+		if (declaration === undefined || typeof declaration !== 'object') throw new Error('expected a let declaration');
+		const comment = (text: string) => rs.build.blockComment(rs.build.blockCommentRegular(text));
+		const text = (entries: readonly unknown[] | undefined) => entries?.map((entry) => String((entry as { $render(): unknown }).$render()));
+		const start = rs.build.identifier('c');
+		const range = rs.build.rangeExpression.bounded({ start, operator: rs.kinds.DotDot, end: rs.build.identifier('d') });
+		writeUnitSides(range, [{ slot: '_operator', item: 0, trailing: [comment(' u ')] }]);
+		start.$trivia.leading(comment(' l '));
+		const edited = declaration.$with.value(range);
+		const value = edited.value() as typeof range;
+		expect(edited.$render()).toBe('let r = /* l */ c.. /* u */d;');
+		expect(text((value.start() as typeof start).$trivia.leading() as readonly unknown[])).toEqual(['/* l */']);
+		expect(unitSidesOf(value)?.map((unit) => ({ ...unit, trailing: text(unit.trailing) }))).toEqual([{ slot: '_operator', item: 0, trailing: ['/* u */'] }]);
 	});
 });
 
