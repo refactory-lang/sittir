@@ -32,9 +32,17 @@ pub mod flag {
 /// (`Hydration::set_apart`).
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct HeaderLayout {
-    pub leading: [LayoutKinds; 3],
+    pub leading: [LayoutKinds; LEADING_CODES],
     pub trailing: LayoutKinds,
 }
+
+/// The layout codes a header holds for a record's leading side
+/// (`HeaderLayout::leading`).
+pub const LEADING_CODES: usize = 3;
+
+/// The layout codes a header holds for a record's trailing side, its one
+/// `HeaderLayout::trailing`.
+pub const TRAILING_CODES: usize = 1;
 
 impl HeaderLayout {
     /// The layout `word`, a header whose kind field takes `bits` bits,

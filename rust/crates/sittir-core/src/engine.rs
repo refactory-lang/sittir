@@ -48,8 +48,14 @@ pub trait EngineGrammar: Copy {
     }
     /// The grammar's trivia type: what a side of a parsed node holds.
     type Trivia: crate::trivia::FromTriviaText + crate::trivia::TriviaItem;
+    /// The grammar's whitespace table.
+    const WHITESPACE: &'static crate::render::WhitespaceTable;
+    /// The grammar's layout kinds, the whitespace table's domain.
+    const LAYOUT_KINDS: &'static [KindId];
     /// The grammar's whitespace table, and its layout kinds (the table's domain).
-    fn whitespace(self) -> (&'static crate::render::WhitespaceTable, &'static [KindId]);
+    fn whitespace(self) -> (&'static crate::render::WhitespaceTable, &'static [KindId]) {
+        (Self::WHITESPACE, Self::LAYOUT_KINDS)
+    }
     /// The grammar's surface kinds the trivia placement reads
     /// (`Placement`).
     fn surface_kinds(self) -> crate::trivia_table::SurfaceKinds;
@@ -3700,9 +3706,8 @@ mod tests {
 
         type Trivia = TestTrivia;
 
-        fn whitespace(self) -> (&'static crate::render::WhitespaceTable, &'static [KindId]) {
-            (&TEST_WHITESPACE, &[KindId(1), KindId(2)])
-        }
+        const WHITESPACE: &'static crate::render::WhitespaceTable = &TEST_WHITESPACE;
+        const LAYOUT_KINDS: &'static [KindId] = &[KindId(1), KindId(2)];
 
         fn surface_kinds(self) -> crate::trivia_table::SurfaceKinds {
             crate::trivia_table::SurfaceKinds::default()

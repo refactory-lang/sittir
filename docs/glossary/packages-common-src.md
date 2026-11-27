@@ -997,7 +997,7 @@ The required numeric codec exports supplied by each native addon. JavaScript val
 
 ### `packages/common/src/record-cell.ts::CellFormat`
 
-The checked JavaScript decoder format derived from native codec exports. It carries cell tags, the inline-record header size, packed chunk addressing, ordered side fields, and the fields of a side record of rows (`sideRows`, `SideRowFields`). Slot capacities remain literal arguments from generated accessors rather than runtime format lookups.
+The checked JavaScript decoder format derived from native codec exports. It carries cell tags, the inline-record header size, packed chunk addressing, ordered side fields, the fields of a side record of rows (`sideRows`, `SideRowFields`), and the header's layout codes (`layout`, `HeaderLayoutFormat`). Slot capacities remain literal arguments from generated accessors rather than runtime format lookups.
 
 ### `packages/common/src/record-cell.ts::RecordCell`
 
@@ -1038,7 +1038,23 @@ Two groups read a record's word 1 through it, so the rows a native side write le
 - the readers that want a record's spans, edges, sides or delimiter (`sideOf`, `readRow`);
 - a copy that shares only the record's own side record.
 
-It costs one read of the mask, plus one of NEXT when rows are there.
+It reads through `decodeSideRows`: one read of the mask, plus the row fields when rows are there.
+
+### `packages/common/src/record-cell.ts::HeaderLayoutFormat`
+
+The layout codes a record header holds above its flags, as the addon's `LAYOUT_*` exports give them: the bits each code takes, how many codes the leading side and the trailing side hold, and each code's gap kind id. `gapKinds` is indexed by code. Code 0 is no gap, and codes 1 to 6 name the gaps narrowest first (tight, space, tab, newline, blank line, double blank line), as native's `LayoutKinds::code` numbers them. A gap the grammar has no member for holds `none`, the addon's `LAYOUT_GAP_NONE`. Each grammar's addon exports its own kind ids, from its `EngineGrammar::WHITESPACE`, so the codes have one source.
+
+### `packages/common/src/record-cell.ts::headerGapKinds`
+
+The gap kind ids a record header keeps at the head of a side, read from its layout codes (`HeaderLayoutFormat`) up to the first empty one. The leading side holds up to three codes and the trailing side one; an inner side holds none. A code that names no gap of the grammar is refused, as native's `HeaderLayout::of` refuses it. A side's entries are these gap kinds, then its row's entries, as native's `TriviaStore::kept_side` reads them.
+
+### `packages/common/src/record-cell.ts::SideRows`
+
+What a side record of rows holds, each row as its list cell: the side record it was written over (`next`, 0 for none), the record's own leading, trailing and inner rows (`undefined` for a side no write gave), and its sites' rows as `[key, cell]` pairs in key order. An empty written side is the cell 0, the empty list, which is not `undefined`.
+
+### `packages/common/src/record-cell.ts::decodeSideRows`
+
+The rows of the side record at an address (`SideRows`), `undefined` for address 0 and for a side record that holds no rows. It reads the fields in the order native writes them (`RowFields::read_after`): NEXT, LEADING, TRAILING, INNER, then SITES' count and its pairs. `sideUnderRows` reads NEXT through it, so the layout of a side record of rows is read in one place.
 
 ### `packages/common/src/source-stamp.ts::sourceOf`
 

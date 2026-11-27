@@ -148,13 +148,6 @@ export declare function builtLeafSide(engine: object, holder: number, word: numb
 export declare function builtMemory(engine: object): { chunks: number; counts: number; live: number }
 
 /**
- * r" The entries a write gave `side` (`leading`, `trailing` or
- * r" `inner`) of the built record at `address`, or `null` when
- * r" no write did. Refuses address 0 and any other side.
- */
-export declare function builtTriviaSide(engine: object, address: number, side: string): import('@sittir/types').WireNode[] | null
-
-/**
  * r" The sides writes gave each unit the record at `address` in
  * r" the arena this engine built holds: `{ slot, item, leading?,
  * r" trailing?, inner? }`. Refuses an arena this engine no
@@ -315,6 +308,36 @@ export declare function isEmpty(treeId: TreeId, index: NodeIndex): boolean
  * r" in the built arena (`EngineGrammar::KIND_BITS`).
  */
 export declare const KIND_BITS: number
+
+/**
+ * r" The layout codes a record header holds above its flags
+ * r" (`arena::cell::HeaderLayout`): the bits each takes, and how
+ * r" many its leading side and its trailing side hold.
+ */
+export declare const LAYOUT_CODE_BITS: number
+
+export declare const LAYOUT_GAP_BLANKLINE: number
+
+export declare const LAYOUT_GAP_DOUBLE_BLANKLINE: number
+
+export declare const LAYOUT_GAP_NEWLINE: number
+
+/**
+ * r" The kind id the grammar gives the gap each layout code names
+ * r" (`WhitespaceTable::gap_kind`), `LAYOUT_GAP_NONE` for a gap it
+ * r" has no member for (`napi_engine::gap_kind_word`).
+ */
+export declare const LAYOUT_GAP_NONE: number
+
+export declare const LAYOUT_GAP_SPACE: number
+
+export declare const LAYOUT_GAP_TAB: number
+
+export declare const LAYOUT_GAP_TIGHT: number
+
+export declare const LAYOUT_LEADING_CODES: number
+
+export declare const LAYOUT_TRAILING_CODES: number
 
 /**
  * The work the live tree `treeId`'s layout reads have done so far
@@ -728,8 +751,9 @@ export declare function writeBuiltLeafSide(engine: object, sites: number[], side
 /**
  * r" Replace `side` of the built record at `address` with
  * r" `entries`, which `renderBuilt` then writes; a built record
- * r" among them renders as `writeTriviaSide` says. Refuses as
- * r" `builtTriviaSide` does.
+ * r" among them renders as `writeTriviaSide` says. Refuses
+ * r" address 0, an address past what the arena wrote, and any
+ * r" side but `leading`, `trailing` or `inner`.
  */
 export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: import('@sittir/types').WireNode[]): void
 

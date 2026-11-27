@@ -19,6 +19,16 @@ export interface RecordCodecConstants {
 	readonly KIND_BITS: number;
 	readonly RECORD_FLAG_LINK: number;
 	readonly RECORD_FLAG_BITS: number;
+	readonly LAYOUT_CODE_BITS: number;
+	readonly LAYOUT_LEADING_CODES: number;
+	readonly LAYOUT_TRAILING_CODES: number;
+	readonly LAYOUT_GAP_NONE: number;
+	readonly LAYOUT_GAP_TIGHT: number;
+	readonly LAYOUT_GAP_SPACE: number;
+	readonly LAYOUT_GAP_TAB: number;
+	readonly LAYOUT_GAP_NEWLINE: number;
+	readonly LAYOUT_GAP_BLANKLINE: number;
+	readonly LAYOUT_GAP_DOUBLE_BLANKLINE: number;
 	readonly LINK_RECORD_WORDS: number;
 	readonly RECORD_HEADER_WORDS: number;
 	readonly COUNT_OWNED: number;
@@ -65,6 +75,15 @@ export interface SideField {
 	readonly words: number;
 }
 
+/** The layout codes a record header holds above its flags: the bits each takes, how many each side holds, and each code's gap kind id, by code, `none` at code 0 and for a gap the grammar has no member for. */
+export interface HeaderLayoutFormat {
+	readonly codeBits: number;
+	readonly leadingCodes: number;
+	readonly trailingCodes: number;
+	readonly gapKinds: readonly number[];
+	readonly none: number;
+}
+
 export interface SideRowFields {
 	readonly next: number;
 	readonly leading: number;
@@ -96,6 +115,7 @@ export interface CellFormat {
 	readonly linkFlag: number;
 	/** The bits a record header's flags take above its kind field. */
 	readonly flagBits: number;
+	readonly layout: HeaderLayoutFormat;
 	readonly linkWords: number;
 	readonly headerWords: number;
 	readonly countOwned: number;
@@ -171,6 +191,16 @@ const CODEC_KEYS = [
 	'KIND_BITS',
 	'RECORD_FLAG_LINK',
 	'RECORD_FLAG_BITS',
+	'LAYOUT_CODE_BITS',
+	'LAYOUT_LEADING_CODES',
+	'LAYOUT_TRAILING_CODES',
+	'LAYOUT_GAP_NONE',
+	'LAYOUT_GAP_TIGHT',
+	'LAYOUT_GAP_SPACE',
+	'LAYOUT_GAP_TAB',
+	'LAYOUT_GAP_NEWLINE',
+	'LAYOUT_GAP_BLANKLINE',
+	'LAYOUT_GAP_DOUBLE_BLANKLINE',
 	'LINK_RECORD_WORDS',
 	'RECORD_HEADER_WORDS',
 	'COUNT_OWNED',
@@ -221,6 +251,13 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		kindBits: codec.KIND_BITS,
 		linkFlag: codec.RECORD_FLAG_LINK,
 		flagBits: codec.RECORD_FLAG_BITS,
+		layout: {
+			codeBits: codec.LAYOUT_CODE_BITS,
+			leadingCodes: codec.LAYOUT_LEADING_CODES,
+			trailingCodes: codec.LAYOUT_TRAILING_CODES,
+			gapKinds: [codec.LAYOUT_GAP_NONE, codec.LAYOUT_GAP_TIGHT, codec.LAYOUT_GAP_SPACE, codec.LAYOUT_GAP_TAB, codec.LAYOUT_GAP_NEWLINE, codec.LAYOUT_GAP_BLANKLINE, codec.LAYOUT_GAP_DOUBLE_BLANKLINE],
+			none: codec.LAYOUT_GAP_NONE
+		},
 		linkWords: codec.LINK_RECORD_WORDS,
 		headerWords: codec.RECORD_HEADER_WORDS,
 		countOwned: codec.COUNT_OWNED,
@@ -384,13 +421,55 @@ export function decodeSideRow(words: ArrayLike<number>, at: number, format: Cell
 	return { kind: word(1), span: { start: word(2), end: word(3) } };
 }
 
-export function sideUnderRows(records: RecordWords, side: number): number {
-	if (side === 0) return 0;
-	const start = wordOf(side, records.format);
+/** The gap kind ids the record header `header` keeps at the head of `side`, by its layout codes up to the first empty one: none for an inner side. */
+export function headerGapKinds(header: number, format: CellFormat, side: 'leading' | 'trailing' | 'inner'): number[] {
+	if (side === 'inner') return [];
+	const { codeBits, leadingCodes, trailingCodes, gapKinds, none } = format.layout;
+	const [first, count] = side === 'leading' ? [0, leadingCodes] : [leadingCodes, trailingCodes];
+	const codes = header >>> (format.kindBits + format.flagBits);
+	const kinds: number[] = [];
+	for (let n = first; n < first + count; n++) {
+		const code = (codes >>> (n * codeBits)) & ((1 << codeBits) - 1);
+		if (code === 0) break;
+		const kind = gapKinds[code];
+		if (kind === undefined || kind === none) throw new Error(`a record header's layout code ${code} names no gap kind of the grammar`);
+		kinds.push(kind);
+	}
+	return kinds;
+}
+
+/** The rows a side record of rows holds, each a list cell: the side record it was written over, its record's own sides' rows, and its sites' rows by key, in key order. */
+export interface SideRows {
+	readonly next: number;
+	readonly leading: number | undefined;
+	readonly trailing: number | undefined;
+	readonly inner: number | undefined;
+	readonly sites: readonly (readonly [key: number, cell: number])[];
+}
+
+/** The rows the side record at `side` holds, `undefined` for none or a side record that holds no rows. */
+export function decodeSideRows(records: RecordWords, side: number): SideRows | undefined {
+	if (side === 0) return undefined;
 	const rows = records.format.sideRows;
+	const start = wordOf(side, records.format);
 	const mask = records.words(side, 1)[start]!;
-	if ((mask & (rows.next | rows.leading | rows.trailing | rows.inner | rows.sites)) === 0) return side;
-	return (mask & rows.next) === 0 ? 0 : records.words(side, 2)[start + 1]!;
+	if ((mask & (rows.next | rows.leading | rows.trailing | rows.inner | rows.sites)) === 0) return undefined;
+	const fields = [rows.next, rows.leading, rows.trailing, rows.inner].filter((bit) => (mask & bit) !== 0).length;
+	const head = records.words(side, 1 + fields + ((mask & rows.sites) === 0 ? 0 : 1));
+	let at = start + 1;
+	const field = (bit: number): number | undefined => ((mask & bit) === 0 ? undefined : head[at++]!);
+	const next = field(rows.next) ?? 0;
+	const leading = field(rows.leading);
+	const trailing = field(rows.trailing);
+	const inner = field(rows.inner);
+	const count = field(rows.sites) ?? 0;
+	const table = count === 0 ? head : records.words(side, at - start + count * rows.siteWords);
+	const sites = Array.from({ length: count }, (_, n) => [table[at + n * rows.siteWords]!, table[at + n * rows.siteWords + 1]!] as const);
+	return { next, leading, trailing, inner, sites };
+}
+
+export function sideUnderRows(records: RecordWords, side: number): number {
+	return decodeSideRows(records, side)?.next ?? side;
 }
 
 export function decodeSideDelimiter(words: ArrayLike<number>, at: number, format: CellFormat): number | undefined {

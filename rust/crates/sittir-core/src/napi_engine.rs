@@ -789,6 +789,32 @@ macro_rules! napi_engine {
             /// its layout codes lie above them (`arena::cell::flag::BITS`).
             #[::napi_derive::napi]
             pub const RECORD_FLAG_BITS: u32 = $crate::arena::cell::flag::BITS;
+            /// The layout codes a record header holds above its flags
+            /// (`arena::cell::HeaderLayout`): the bits each takes, and how
+            /// many its leading side and its trailing side hold.
+            #[::napi_derive::napi]
+            pub const LAYOUT_CODE_BITS: u32 = $crate::layout_kinds::LayoutKinds::CODE_BITS;
+            #[::napi_derive::napi]
+            pub const LAYOUT_LEADING_CODES: u32 = $crate::arena::cell::LEADING_CODES as u32;
+            #[::napi_derive::napi]
+            pub const LAYOUT_TRAILING_CODES: u32 = $crate::arena::cell::TRAILING_CODES as u32;
+            /// The kind id the grammar gives the gap each layout code names
+            /// (`WhitespaceTable::gap_kind`), `LAYOUT_GAP_NONE` for a gap it
+            /// has no member for (`napi_engine::gap_kind_word`).
+            #[::napi_derive::napi]
+            pub const LAYOUT_GAP_NONE: u32 = $crate::napi_engine::LAYOUT_GAP_NONE;
+            #[::napi_derive::napi]
+            pub const LAYOUT_GAP_TIGHT: u32 = $crate::napi_engine::gap_kind_word::<$grammar>($crate::layout_kinds::LayoutKinds::TIGHT);
+            #[::napi_derive::napi]
+            pub const LAYOUT_GAP_SPACE: u32 = $crate::napi_engine::gap_kind_word::<$grammar>($crate::layout_kinds::LayoutKinds::SPACE);
+            #[::napi_derive::napi]
+            pub const LAYOUT_GAP_TAB: u32 = $crate::napi_engine::gap_kind_word::<$grammar>($crate::layout_kinds::LayoutKinds::TAB);
+            #[::napi_derive::napi]
+            pub const LAYOUT_GAP_NEWLINE: u32 = $crate::napi_engine::gap_kind_word::<$grammar>($crate::layout_kinds::LayoutKinds::NEWLINE);
+            #[::napi_derive::napi]
+            pub const LAYOUT_GAP_BLANKLINE: u32 = $crate::napi_engine::gap_kind_word::<$grammar>($crate::layout_kinds::LayoutKinds::BLANKLINE);
+            #[::napi_derive::napi]
+            pub const LAYOUT_GAP_DOUBLE_BLANKLINE: u32 = $crate::napi_engine::gap_kind_word::<$grammar>($crate::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE);
             /// The words of a link record (`arena::cell::LINK_WORDS`).
             #[::napi_derive::napi]
             pub const LINK_RECORD_WORDS: u32 = $crate::arena::cell::LINK_WORDS;
@@ -1323,17 +1349,6 @@ macro_rules! napi_engine {
             }
 
             /// The entries a write gave `side` (`leading`, `trailing` or
-            /// `inner`) of the built record at `address`, or `null` when
-            /// no write did. Refuses address 0 and any other side.
-            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').WireNode[] | null")]
-            pub fn built_trivia_side(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, address: f64, side: String) -> ::napi::Result<Option<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>>> {
-                let engine = engine_of(engine)?;
-                let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
-                let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
-                engine.built_trivia_side(address, side).map_err(|e| ::napi::Error::from_reason(e.to_string()))
-            }
-
-            /// The entries a write gave `side` (`leading`, `trailing` or
             /// `inner`) of the built leaf at the site `holder`, `word`,
             /// `item`, or `null` when no write did. Refuses holder 0 and
             /// any other side.
@@ -1417,8 +1432,9 @@ macro_rules! napi_engine {
 
             /// Replace `side` of the built record at `address` with
             /// `entries`, which `renderBuilt` then writes; a built record
-            /// among them renders as `writeTriviaSide` says. Refuses as
-            /// `builtTriviaSide` does.
+            /// among them renders as `writeTriviaSide` says. Refuses
+            /// address 0, an address past what the arena wrote, and any
+            /// side but `leading`, `trailing` or `inner`.
             #[::napi_derive::napi(ts_args_type = "engine: object, address: number, side: string, entries: import('@sittir/types').WireNode[]")]
             pub fn write_built_trivia_side(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
@@ -1539,6 +1555,21 @@ impl BackerParityRead {
     pub fn new(parity: crate::arena::BackerParity) -> Self {
         let crate::arena::BackerParity { nodes, differing, first } = parity;
         Self { nodes, differing, first }
+    }
+}
+
+/// The value `gap_kind_word` answers for a gap the grammar has no member
+/// for: no kind id is this wide.
+pub const LAYOUT_GAP_NONE: u32 = u32::MAX;
+
+/// The kind id `G` gives the gap `gap` (`WhitespaceTable::gap_kind`), else
+/// `LAYOUT_GAP_NONE`.
+#[must_use]
+pub const fn gap_kind_word<G: crate::engine::EngineGrammar>(gap: crate::layout_kinds::LayoutKinds) -> u32 {
+    match G::WHITESPACE.gap_kind(gap) {
+        #[allow(clippy::cast_lossless, reason = "a const fn cannot call From")]
+        Some(kind) => kind.0 as u32,
+        None => LAYOUT_GAP_NONE,
     }
 }
 

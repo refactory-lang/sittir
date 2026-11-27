@@ -269,7 +269,6 @@ export interface NativeEngineLike<TNode = unknown> {
 		create: boolean,
 		options?: object
 	): boolean;
-	builtTriviaSide?(address: number, side: TriviaSideName): WireNode[] | null;
 	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly WireNode[]): void;
 	builtUnitSides?(address: number): UnitSidesWire[];
 	writeBuiltUnitSides?(address: number, units: readonly UnitSidesWire[]): void;
@@ -388,7 +387,6 @@ const ENGINE_FUNCTIONS = [
 	'readIsEmpty',
 	'readSources',
 	'builtMemory',
-	'builtTriviaSide',
 	'writeBuiltTriviaSide',
 	'builtUnitSides',
 	'writeBuiltUnitSides',
@@ -841,12 +839,11 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readIsEmpty, readSources } = engine;
+	const { writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readIsEmpty, readSources } = engine;
 	if (
 		holdSaturated === undefined ||
 		releaseBuilt === undefined ||
 		crossReleases === undefined ||
-		builtTriviaSide === undefined ||
 		writeBuiltTriviaSide === undefined ||
 		builtUnitSides === undefined ||
 		writeBuiltUnitSides === undefined ||
@@ -894,7 +891,6 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 			sources: (nodes) => readSources.call(engine, nodes)
 		},
 		trivia: {
-			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
 			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),
 			unitSides: (at) => builtUnitSides.call(engine, at),
 			writeUnitSides: (at, units) => writeBuiltUnitSides.call(engine, at, units),

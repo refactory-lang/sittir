@@ -107,7 +107,6 @@ type WireTypes = {
 	readonly triviaSide: WireNode[];
 	readonly unitSides: UnitSidesWire[];
 	readonly slotLayouts: SlotLayoutWire[];
-	readonly builtTriviaSide: WireNode[] | null;
 	readonly builtLeafSide: WireNode[] | null;
 	readonly builtUnitSides: UnitSidesWire[];
 };

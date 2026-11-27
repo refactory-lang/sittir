@@ -113,8 +113,15 @@ impl WhitespaceTable {
     /// The kind id the grammar gives the gap kind `gap` (`gap_of` read
     /// backwards); none when it has no member of that kind.
     #[must_use]
-    pub fn gap_kind(&self, gap: crate::layout_kinds::LayoutKinds) -> Option<KindId> {
-        self.gaps.iter().find(|(bit, _)| *bit == gap.0).map(|(_, id)| *id)
+    pub const fn gap_kind(&self, gap: crate::layout_kinds::LayoutKinds) -> Option<KindId> {
+        let mut n = 0;
+        while n < self.gaps.len() {
+            if self.gaps[n].0 == gap.0 {
+                return Some(self.gaps[n].1);
+            }
+            n += 1;
+        }
+        None
     }
 
     /// The text the grammar spells a gap with, as it admits it (`admit`); a

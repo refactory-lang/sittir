@@ -251,9 +251,8 @@ impl EngineGrammar for ${v.Name}Grammar {
 
     type Trivia = render::node::${TRIVIA_NODE};
 
-    fn whitespace(self) -> (&'static sittir_core::render::WhitespaceTable, &'static [sittir_core::types::KindId]) {
-        (&render::options::WHITESPACE, render::options::LAYOUT_KINDS)
-    }
+    const WHITESPACE: &'static sittir_core::render::WhitespaceTable = &render::options::WHITESPACE;
+    const LAYOUT_KINDS: &'static [sittir_core::types::KindId] = render::options::LAYOUT_KINDS;
 
     fn surface_kinds(self) -> sittir_core::trivia_table::SurfaceKinds {
         render::kind_ids::SURFACE_KINDS

@@ -3,7 +3,7 @@ import { BuiltArena, builtCell, cellFormatOf, chunkOf, decodeBuiltCell, unitCell
 import { builtRecordOf, childSlot, handleDispose, LEAF_SITES, positionWords, storeCell, storeList, storeListOptions, writeLeafSites } from '@sittir/common/utils';
 import type { BuiltText, LeafSite, TreeHandle } from '@sittir/common/utils';
 import { patchCell, sideEntryOf } from '../../common/src/built-arena.ts';
-import type { UnitSidesWire, WireNode } from '@sittir/types';
+import type { UnitSidesWire } from '@sittir/types';
 import type { RecordHandle } from '../../common/src/handle.ts';
 import { leafSitesOf, placeLeaf } from '../../common/src/built-ref.ts';
 import { PLAIN_KINDS, setTriviaOf } from '../../common/src/node-data.ts';
@@ -14,7 +14,6 @@ const format = backend.name === 'native' ? cellFormatOf(backend.native) : undefi
 type Records = ConstructorParameters<typeof BuiltArena>[0];
 type SideStore = Records['trivia'];
 const NO_SIDES: SideStore = {
-	triviaSide: () => undefined,
 	writeTriviaSide: () => undefined,
 	unitSides: () => [],
 	writeUnitSides: () => undefined,
@@ -123,14 +122,11 @@ describe('a built arena', () => {
 		expect(placed(arena, arena.view(wide), 5000).slice(0, 4)).toEqual([6, 0, 0, 0]);
 	});
 
-	it('asks its native side store only about places a write gave sides', () => {
+	it('asks its native side store only about the unit sides of a record a write gave them', () => {
 		const asked: string[] = [];
-		const stored = new Map<string, readonly WireNode[]>();
 		const storedUnits = new Map<number, readonly UnitSidesWire[]>();
 		const arena = arenaOf({
 			...NO_SIDES,
-			triviaSide: (at, side) => (asked.push(`${side} of ${at}`), stored.get(`${at} ${side}`) as WireNode[] | undefined),
-			writeTriviaSide: (at, side, entries) => void stored.set(`${at} ${side}`, entries),
 			unitSides: (at) => (asked.push(`units of ${at}`), [...(storedUnits.get(at) ?? [])]),
 			writeUnitSides: (at, units) => void storedUnits.set(at, units)
 		});
@@ -138,15 +134,10 @@ describe('a built arena', () => {
 		const b = builtRecordOf(arena.view(arena.draft(7, 2)), arena)!;
 		expect([arena.tree.triviaSide(a, 'leading'), arena.tree.triviaSide(b, 'inner'), arena.tree.unitSides(a)]).toEqual([undefined, undefined, []]);
 		expect(asked).toEqual([]);
-		arena.tree.writeTriviaSide(a, 'trailing', [3]);
-		arena.tree.writeTriviaSide(b, 'leading', []);
 		arena.tree.writeUnitSides(b, [{ slot: '_items', item: 0, leading: [4] }]);
-		expect(arena.tree.triviaSide(a, 'trailing')).toEqual([3]);
-		expect(arena.tree.triviaSide(a, 'leading')).toBeUndefined();
-		expect(arena.tree.triviaSide(b, 'leading')).toEqual([]);
 		expect(arena.tree.unitSides(a)).toEqual([]);
 		expect(arena.tree.unitSides(b)).toEqual([{ slot: '_items', item: 0, leading: [4] }]);
-		expect(asked).toEqual([`trailing of ${a}`, `leading of ${b}`, `units of ${b}`]);
+		expect(asked).toEqual([`units of ${b}`]);
 	});
 
 	it('copies the sites of a record after the work waiting on it, so the copy holds the unit sides that work writes', () => {

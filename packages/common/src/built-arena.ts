@@ -8,7 +8,7 @@ import type { ChunkWords, TreeHandle, TriviaSideName } from './read.ts';
 import type { TreeQuery } from './query.ts';
 import { BLANK_KIND_ID } from './blank-arm.ts';
 import { checkedKindId } from './kind-id.ts';
-import { addressOf, chunkOf, headerKind, headerOf, kindField, leafItemPastNames, sideUnderRows, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
+import { addressOf, chunkOf, decodeListCell, decodeSideRows, headerGapKinds, headerKind, headerOf, kindField, leafItemPastNames, sideUnderRows, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, leafSitesOf, liveRecordAt, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { cacheOf, freedRecord, recordDelimiter, recordFlag, recordSeparator, recordSlot, recordSlots, readLeaf, readPosition } from './record-view.ts';
 import { isParsedPosition, isRecordPosition, type LeafMaker, type RecordHandle, type RecordPosition } from './handle.ts';
@@ -75,7 +75,6 @@ export interface BuiltRecords {
 	readonly query: TreeQuery;
 	readonly reads: ReadNodes;
 	readonly trivia: {
-		triviaSide(at: number, side: TriviaSideName): WireNode[] | undefined;
 		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly WireNode[]): void;
 		unitSides(at: number): UnitSidesWire[];
 		writeUnitSides(at: number, units: readonly UnitSidesWire[]): void;
@@ -278,7 +277,6 @@ function popcount(word: number): number {
 	return Math.imul(x, 0x01010101) >>> 24;
 }
 
-const SIDE_BITS: Readonly<Record<TriviaSideName, number>> = { leading: 1, trailing: 2, inner: 4 };
 const sideHolds = new WeakMap<object, Map<string, readonly TreeToken[]>>();
 const NO_ERRORS: readonly unknown[] = Object.freeze([]);
 const NO_RECORDS = 'a side names a built record, and its engine builds no records';
@@ -329,7 +327,6 @@ export class BuiltArena {
 	readonly #errors = new Map<number, readonly unknown[]>();
 	readonly #entries: (Map<string, BuiltText> | undefined)[] = [];
 	readonly #entryAt: (Map<number, BuiltText> | undefined)[] = [];
-	readonly #sided: (Map<number, number> | undefined)[] = [];
 	readonly #unitSided: (Set<number> | undefined)[] = [];
 	readonly #leafSited: (Set<number> | undefined)[] = [];
 	readonly #trivia: BuiltRecords['trivia'];
@@ -395,8 +392,7 @@ export class BuiltArena {
 			isEmpty: reads.isEmpty,
 			triviaSide: (at, side) => {
 				if (at < 0 || this.reads(at)) return readEntries(this.tree, sidesOf(at)[side].slice());
-				if (((this.#sided[chunkOf(at, format)]?.get(at) ?? 0) & SIDE_BITS[side]) === 0) return undefined;
-				const entries = trivia.triviaSide(at, side);
+				const entries = this.#ownSide(at, side);
 				return entries === undefined ? undefined : readEntries(this.tree, entries);
 			},
 			writeTriviaSide: (at, side, entries) => {
@@ -406,8 +402,6 @@ export class BuiltArena {
 				}
 				this.#forgetReadSides(at);
 				trivia.writeTriviaSide(at, side, entries);
-				const sided = (this.#sided[chunkOf(at, format)] ??= new Map());
-				sided.set(at, (sided.get(at) ?? 0) | SIDE_BITS[side]);
 			},
 			unitSides: (at) => {
 				if (at < 0) return readUnits(this.tree, unitsOf(at));
@@ -465,7 +459,6 @@ export class BuiltArena {
 			this.#cells[chunk] = undefined;
 			this.#heads[chunk] = undefined;
 			this.#entryAt[chunk] = undefined;
-			this.#sided[chunk] = undefined;
 			this.#unitSided[chunk] = undefined;
 			this.#leafSited[chunk] = undefined;
 			this.#deferredCount -= this.#deferred[chunk]?.size ?? 0;
@@ -1098,6 +1091,34 @@ export class BuiltArena {
 	/** The chunk `at` lies in, `length` words from `at` of it written. */
 	words(at: number, length: number): ChunkWords {
 		return this.#chunk(at, length);
+	}
+
+	/** The entries `side` of the built record at `at` holds, as their wires: the gap kinds its header's codes keep, then its row's entries; `undefined` when it holds neither. */
+	#ownSide(at: number, side: TriviaSideName): WireNode[] | undefined {
+		const words = this.words(at, 2);
+		const start = wordOf(at, this.format);
+		const gaps = headerGapKinds(words[start]!, this.format, side);
+		const row = decodeSideRows(this, words[start + 1]!)?.[side];
+		if (row === undefined) return gaps.length === 0 ? undefined : gaps;
+		return [...gaps, ...this.#rowEntries(row)];
+	}
+
+	/** The entries of the row whose list cell is `cell`, as their wires: a layout member its kind id, a comment record or `ERROR` its kind and address, a leaf entry its kind and text. */
+	#rowEntries(cell: number): WireNode[] {
+		const { run, len } = decodeListCell(this, cell);
+		if (len === 0) return [];
+		const cells = this.words(run, len);
+		const start = wordOf(run, this.format);
+		const entries: WireNode[] = [];
+		for (let n = 0; n < len; n++) {
+			const entry = decodeBuiltCell(this, cells[start + n]!);
+			if (entry.form === 'unit' && entry.kind !== BLANK_KIND_ID) entries.push(entry.kind);
+			else if (entry.form === 'child') entries.push({ $type: entry.kind, $record: entry.at } as WireNode);
+			else if (entry.form === 'builtLeaf') entries.push({ $type: entry.kind, $text: this.entryAt(entry.offset).entry.text } as WireNode);
+			else if (entry.form === 'builtText') entries.push({ $type: BLANK_KIND_ID, $text: this.entryAt(entry.offset).entry.text } as WireNode);
+			else throw new Error(`a side's row holds a ${entry.form} cell, which no write gives a side`);
+		}
+		return entries;
 	}
 
 	/** Whether a render of the record at `at` should ask for its sides: a read wrote it and the arena keeps none for it yet. */
