@@ -211123,5 +211123,441 @@
     "sourceIn": ":.2f",
     "wrappedOffset": 9,
     "wrappedText": "_ = (f\"{b:.2f}\")"
+  },
+  {
+    "expectedOutput": "'k'",
+    "grammar": "python",
+    "input": {
+      "$type": 253,
+      "_content": [
+        {
+          "$type": 254,
+          "_elements": [
+            {
+              "$text": "k",
+              "$type": 125
+            }
+          ]
+        }
+      ],
+      "_string_end": {
+        "$type": 127,
+        "_content": "",
+        "_quote": "'"
+      },
+      "_string_start": {
+        "$type": 124,
+        "_quote": "'"
+      }
+    },
+    "kind": "render",
+    "pattern": "string",
+    "source": "\na = f\"{ {1} }\"\nb = f\"{ {'k': 1}['k']}\"\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))",
+    "expectedSourceOut": "'k'",
+    "grammar": "python",
+    "kind": "roundtrip",
+    "pattern": "string",
+    "sourceIn": "'k'",
+    "wrappedOffset": 5,
+    "wrappedText": "_ = ('k')"
+  },
+  {
+    "expectedOutput": "'k'",
+    "grammar": "python",
+    "input": {
+      "$type": 253,
+      "_content": [
+        {
+          "$type": 254,
+          "_elements": [
+            {
+              "$text": "k",
+              "$type": 125
+            }
+          ]
+        }
+      ],
+      "_string_end": {
+        "$type": 127,
+        "_content": "",
+        "_quote": "'"
+      },
+      "_string_start": {
+        "$type": 124,
+        "_quote": "'"
+      }
+    },
+    "kind": "render",
+    "pattern": "string",
+    "source": "\na = f\"{ {1} }\"\nb = f\"{ {'k': 1}['k']}\"\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))",
+    "expectedSourceOut": "'k'",
+    "grammar": "python",
+    "kind": "roundtrip",
+    "pattern": "string",
+    "sourceIn": "'k'",
+    "wrappedOffset": 5,
+    "wrappedText": "_ = ('k')"
+  },
+  {
+    "expectedOutput": "{1}",
+    "grammar": "python",
+    "input": {
+      "$type": 239,
+      "_elements": {
+        "$type": 248,
+        "_delimiter": 0,
+        "_item": [
+          {
+            "$text": "1",
+            "$type": 100
+          }
+        ]
+      }
+    },
+    "kind": "render",
+    "pattern": "set",
+    "source": "\na = f\"{ {1} }\"\nb = f\"{ {'k': 1}['k']}\"\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(set elements: (collection_elements item: (integer_decimal_plain)))",
+    "expectedSourceOut": "{1}",
+    "grammar": "python",
+    "kind": "roundtrip",
+    "pattern": "set",
+    "sourceIn": "{1}",
+    "wrappedOffset": 5,
+    "wrappedText": "_ = ({1})"
+  },
+  {
+    "expectedOutput": "1",
+    "grammar": "python",
+    "input": {
+      "$type": 248,
+      "_delimiter": 0,
+      "_item": [
+        {
+          "$text": "1",
+          "$type": 100
+        }
+      ]
+    },
+    "kind": "render",
+    "pattern": "collection_elements",
+    "source": "\na = f\"{ {1} }\"\nb = f\"{ {'k': 1}['k']}\"\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(collection_elements item: (integer_decimal_plain))",
+    "expectedSourceOut": "1",
+    "grammar": "python",
+    "kind": "roundtrip",
+    "pattern": "collection_elements",
+    "sourceIn": "1",
+    "wrappedOffset": 6,
+    "wrappedText": "_ = ([1])"
+  },
+  {
+    "expectedOutput": "{'k': 1}['k']",
+    "grammar": "python",
+    "input": {
+      "$type": 227,
+      "_index": {
+        "$type": 272,
+        "_delimiter": 0,
+        "_elements": [
+          {
+            "$type": 253,
+            "_content": [
+              {
+                "$type": 254,
+                "_elements": [
+                  {
+                    "$text": "k",
+                    "$type": 125
+                  }
+                ]
+              }
+            ],
+            "_string_end": {
+              "$type": 127,
+              "_content": "",
+              "_quote": "'"
+            },
+            "_string_start": {
+              "$type": 124,
+              "_quote": "'"
+            }
+          }
+        ]
+      },
+      "_object": {
+        "$type": 241,
+        "_elements": {
+          "$type": 273,
+          "_delimiter": 0,
+          "_item": [
+            {
+              "$type": 242,
+              "_key": {
+                "$type": 253,
+                "_content": [
+                  {
+                    "$type": 254,
+                    "_elements": [
+                      {
+                        "$text": "k",
+                        "$type": 125
+                      }
+                    ]
+                  }
+                ],
+                "_string_end": {
+                  "$type": 127,
+                  "_content": "",
+                  "_quote": "'"
+                },
+                "_string_start": {
+                  "$type": 124,
+                  "_quote": "'"
+                }
+              },
+              "_value": {
+                "$text": "1",
+                "$type": 100
+              }
+            }
+          ]
+        }
+      }
+    },
+    "kind": "render",
+    "pattern": "subscript",
+    "source": "\na = f\"{ {1} }\"\nb = f\"{ {'k': 1}['k']}\"\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(subscript object: (dictionary elements: (dictionary_elements item: (pair key: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) value: (integer_decimal_plain)))) index: (subscripts elements: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))",
+    "expectedSourceOut": "{'k': 1}['k']",
+    "grammar": "python",
+    "kind": "roundtrip",
+    "pattern": "subscript",
+    "sourceIn": "{'k': 1}['k']",
+    "wrappedOffset": 1,
+    "wrappedText": "[{'k': 1}['k']]"
+  },
+  {
+    "expectedOutput": "{'k': 1}",
+    "grammar": "python",
+    "input": {
+      "$type": 241,
+      "_elements": {
+        "$type": 273,
+        "_delimiter": 0,
+        "_item": [
+          {
+            "$type": 242,
+            "_key": {
+              "$type": 253,
+              "_content": [
+                {
+                  "$type": 254,
+                  "_elements": [
+                    {
+                      "$text": "k",
+                      "$type": 125
+                    }
+                  ]
+                }
+              ],
+              "_string_end": {
+                "$type": 127,
+                "_content": "",
+                "_quote": "'"
+              },
+              "_string_start": {
+                "$type": 124,
+                "_quote": "'"
+              }
+            },
+            "_value": {
+              "$text": "1",
+              "$type": 100
+            }
+          }
+        ]
+      }
+    },
+    "kind": "render",
+    "pattern": "dictionary",
+    "source": "\na = f\"{ {1} }\"\nb = f\"{ {'k': 1}['k']}\"\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(dictionary elements: (dictionary_elements item: (pair key: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) value: (integer_decimal_plain))))",
+    "expectedSourceOut": "{'k': 1}",
+    "grammar": "python",
+    "kind": "roundtrip",
+    "pattern": "dictionary",
+    "sourceIn": "{'k': 1}",
+    "wrappedOffset": 5,
+    "wrappedText": "_ = ({'k': 1})"
+  },
+  {
+    "expectedOutput": "'k': 1",
+    "grammar": "python",
+    "input": {
+      "$type": 273,
+      "_delimiter": 0,
+      "_item": [
+        {
+          "$type": 242,
+          "_key": {
+            "$type": 253,
+            "_content": [
+              {
+                "$type": 254,
+                "_elements": [
+                  {
+                    "$text": "k",
+                    "$type": 125
+                  }
+                ]
+              }
+            ],
+            "_string_end": {
+              "$type": 127,
+              "_content": "",
+              "_quote": "'"
+            },
+            "_string_start": {
+              "$type": 124,
+              "_quote": "'"
+            }
+          },
+          "_value": {
+            "$text": "1",
+            "$type": 100
+          }
+        }
+      ]
+    },
+    "kind": "render",
+    "pattern": "dictionary_elements",
+    "source": "\na = f\"{ {1} }\"\nb = f\"{ {'k': 1}['k']}\"\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(dictionary_elements item: (pair key: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) value: (integer_decimal_plain)))",
+    "expectedSourceOut": "'k': 1",
+    "grammar": "python",
+    "kind": "roundtrip",
+    "pattern": "dictionary_elements",
+    "sourceIn": "'k': 1",
+    "wrappedOffset": 6,
+    "wrappedText": "_ = ({'k': 1})"
+  },
+  {
+    "expectedOutput": "'k': 1",
+    "grammar": "python",
+    "input": {
+      "$type": 242,
+      "_key": {
+        "$type": 253,
+        "_content": [
+          {
+            "$type": 254,
+            "_elements": [
+              {
+                "$text": "k",
+                "$type": 125
+              }
+            ]
+          }
+        ],
+        "_string_end": {
+          "$type": 127,
+          "_content": "",
+          "_quote": "'"
+        },
+        "_string_start": {
+          "$type": 124,
+          "_quote": "'"
+        }
+      },
+      "_value": {
+        "$text": "1",
+        "$type": 100
+      }
+    },
+    "kind": "render",
+    "pattern": "pair",
+    "source": "\na = f\"{ {1} }\"\nb = f\"{ {'k': 1}['k']}\"\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(pair key: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) value: (integer_decimal_plain))",
+    "expectedSourceOut": "'k': 1",
+    "grammar": "python",
+    "kind": "roundtrip",
+    "pattern": "pair",
+    "sourceIn": "'k': 1",
+    "wrappedOffset": 6,
+    "wrappedText": "_ = ({'k': 1 for a, b in items})"
+  },
+  {
+    "expectedOutput": "'k'",
+    "grammar": "python",
+    "input": {
+      "$type": 272,
+      "_delimiter": 0,
+      "_elements": [
+        {
+          "$type": 253,
+          "_content": [
+            {
+              "$type": 254,
+              "_elements": [
+                {
+                  "$text": "k",
+                  "$type": 125
+                }
+              ]
+            }
+          ],
+          "_string_end": {
+            "$type": 127,
+            "_content": "",
+            "_quote": "'"
+          },
+          "_string_start": {
+            "$type": 124,
+            "_quote": "'"
+          }
+        }
+      ]
+    },
+    "kind": "render",
+    "pattern": "subscripts",
+    "source": "\na = f\"{ {1} }\"\nb = f\"{ {'k': 1}['k']}\"\n"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(subscripts elements: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))",
+    "expectedSourceOut": "'k'",
+    "grammar": "python",
+    "kind": "roundtrip",
+    "pattern": "subscripts",
+    "sourceIn": "'k'",
+    "wrappedOffset": 3,
+    "wrappedText": "[a['k']]"
   }
 ]
