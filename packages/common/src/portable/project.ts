@@ -227,6 +227,7 @@ export const walkSteps = (value: unknown, steps: readonly Pick<PortableSlotStep,
 	for (let i = 0; i < steps.length; i++) {
 		if (Array.isArray(reached)) return walkSteps(reached, steps.slice(i));
 		if (!hasKind(reached)) return undefined;
+		touch(reached);
 		const { key, stored, builder, kinds } = steps[i]!;
 		const read = stored === undefined ? slotOf(reached, key) : storedSlotRead(reached, key, stored);
 		const next = kinds === undefined ? read : Array.isArray(read) ? read.filter((item) => kinds.includes(kindOf(item) ?? -1)) : kinds.includes(kindOf(read) ?? -1) ? read : undefined;

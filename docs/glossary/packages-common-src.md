@@ -1796,7 +1796,7 @@ Each delimiter kind's spellings, by kind id and facet: a spelled text to the slo
 
 ### `packages/common/src/portable/project.ts::walkSteps`
 
-Walks a preset's steps from a value. Each step reads its slot (through `storedSlotRead` when it names a storage key) and, when it names kinds, keeps only items of those kinds. A list is walked item by item, flattening what each reaches. A step that names a builder and reaches a list skips the step after it, since the list's items are what that step reads. Nothing is reached once a step finds nothing.
+Walks a preset's steps from a value. Each step touches the node it reads from, as today's read does for a slot it reads inside a frame, so an erred node a preset reaches keeps the node being read whole. Each step reads its slot (through `storedSlotRead` when it names a storage key) and, when it names kinds, keeps only items of those kinds. A list is walked item by item, flattening what each reaches. A step that names a builder and reaches a list skips the step after it, since the list's items are what that step reads. Nothing is reached once a step finds nothing.
 
 ### `packages/common/src/portable/project.ts::contradicted`
 

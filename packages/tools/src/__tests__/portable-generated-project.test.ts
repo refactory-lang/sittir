@@ -25,11 +25,17 @@ const SOURCES: Readonly<Record<(typeof GRAMMARS)[number], readonly { readonly na
 		{ name: 'a parse error in resolved list elements', source: 'x = [1, @]\n' },
 		{ name: 'a missing delimiter in resolved parameters', source: 'def f(a:\n    pass\n' }
 	],
-	rust: [{ name: 'a missing delimiter in resolved arguments', source: 'fn f() { g(a }\n' }],
+	rust: [
+		{ name: 'a missing delimiter in resolved arguments', source: 'fn f() { g(a }\n' },
+		{ name: 'a parse error on a unit side of a restricted visibility', source: 'pub(@ crate) fn f() {}\n' }
+	],
 	typescript: [
 		{ name: 'a receiver with an accessibility modifier', source: 'function f(public this: T[]) {}\n' },
 		{ name: 'a parse error in a walked statement block', source: 'function f() { @ }\n' },
-		{ name: 'a parse error in a resolved array pattern', source: 'let [a, @] = b;\n' }
+		{ name: 'a parse error in a resolved array pattern', source: 'let [a, @] = b;\n' },
+		{ name: 'a parse error on a unit side of an import call', source: "let x = import @ ('a');\n" },
+		{ name: 'a parse error on a unit side of an optional member access', source: 'let x = a ?. @ b;\n' },
+		{ name: 'a parse error on a unit side in a walked statement block', source: 'function g() { @ ; }\n' }
 	]
 };
 
