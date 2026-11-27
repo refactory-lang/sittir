@@ -14,7 +14,7 @@ describe.each(Object.keys(engines) as (keyof typeof engines)[])("a statement edi
 		['const x = y;\n', 'x', 'const x = y;\n'],
 		["foo('a');\n", 'foo', "foo('a');\n"],
 		['export { A };\n', '{ A }', 'export { A };\n'],
-		["export type { A } from './z.ts';\n", '{ A }', "export type { A } from './z.ts';\n"],
+		["export type { A } from './z.ts';\n", "{ A } from './z.ts'", "export type { A } from './z.ts';\n"],
 		["import { A } from './z.ts';\n", '{ A }', "import { A } from './z.ts';\n"],
 		["import { A } from './z.ts' ;\n", '{ A }', "import { A } from './z.ts';\n"]
 	])('%j, edited at %j, renders %j', (source, text, expected) => {

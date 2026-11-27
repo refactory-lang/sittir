@@ -63,7 +63,9 @@ impl<G: RecordGrammar> Engine<G> {
     /// # Errors
     ///
     /// `ArenaError::Malformed` for a name whose record is address 0 or names
-    /// no source, and what finding a unit's bytes refuses.
+    /// no source, `ArenaError::NotEmpty` for an inner side of a node that is
+    /// not empty (`engine::refuses_inner`), and what finding a unit's bytes
+    /// refuses.
     pub fn write_read_side(&self, name: crate::types::NodeId, side: TriviaSide, entries: &[TriviaEntry<G::Trivia>]) -> Result<(), ArenaError> {
         let record = Address(name.address()).record()?;
         let (placed, unit) = {
@@ -77,6 +79,9 @@ impl<G: RecordGrammar> Engine<G> {
         let offset = self
             .read_named(spanned, |tree, index| {
                 use crate::nodes::Nodes as _;
+                if let Some(kind) = (!unit).then(|| crate::engine::refuses_inner(tree, index, side)).flatten() {
+                    return Err(ArenaError::NotEmpty { kind });
+                }
                 let mut nodes = tree.nodes();
                 let node = nodes.kid(index);
                 let span = if unit { self.unit_span(crate::engine::Backing::source(tree), node, name)? } else { node.span() };
@@ -484,8 +489,8 @@ pub fn render_entry_at<G: RecordGrammar>(grammar: G, built: &super::BuiltChunks,
 }
 
 /// The record at `at` of the engine's built arena `built`, a node a read
-/// left, written into `w` as a render writes a node a write lies in, under
-/// `ctx`, from the arena alone (`root_at`): through its template, as the
+/// left, written into `w` as a render writes a node whose own inner side a
+/// write replaced, under `ctx`, from the arena alone (`root_at`): through its template, as the
 /// record its grammar renders where `w` stands (`RecordGrammar::render_entry`),
 /// its sides from `store`.
 ///

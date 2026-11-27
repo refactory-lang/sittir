@@ -248,14 +248,6 @@ export declare function descendants(from: string, kinds: Array<import('../src/ty
  */
 export declare function disposeTree(treeId: number): void
 
-/**
- * Whether a write replaced a side of a node under the node at
- * `index` of the live tree `treeId`, its own `inner` included, and
- * its own leading and trailing too when `ownSides` is set. Refuses
- * a tree that is not live and an index naming no node of it.
- */
-export declare function editedWithin(treeId: TreeId, index: NodeIndex, ownSides: boolean): boolean
-
 export interface EngineOptions {
   /**
    * Resolved against the grammar's site table at construction. A
@@ -774,3 +766,12 @@ export declare function writeText(path: string, text: string, create: boolean): 
  * wherever the side renders. Refuses as `triviaSide` does.
  */
 export declare function writeTriviaSide(treeId: number, index: number, side: string, entries: import('@sittir/types').WireNode[]): void
+
+/**
+ * Replace each side `units` gives (`{ slot, item, leading?,
+ * trailing?, inner? }`) of a unit child of the node at `index` of
+ * the live tree `treeId`, as `writeTriviaSide` replaces a node's
+ * side; the unit sides `units` does not give stay. Refuses as
+ * `writeTriviaSide` does, and a unit no child of the node is.
+ */
+export declare function writeUnitSides(treeId: number, index: number, units: import('@sittir/types').UnitSidesWire[]): void

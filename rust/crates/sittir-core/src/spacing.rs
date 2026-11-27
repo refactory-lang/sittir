@@ -410,10 +410,9 @@ fn spans_hold(span: crate::types::Span, other: crate::types::Span) -> bool {
 
 /// The table a render that counts holes' levels reads through
 /// (`SpacingWriter::levels_toward`): `sources`' answers, except that a
-/// write lies in a node exactly when it holds one of `nodes`
-/// (`edited_within`), so the render writes each node holding one through
-/// its template and every other as its source, reading no templates beyond
-/// those; and the slice of each of `nodes`, or of a node holding one that
+/// node renders through its template exactly when it holds one of `nodes`
+/// (`renders_through_template`), and every other as its source, so the
+/// render reads no templates beyond those; and the slice of each of `nodes`, or of a node holding one that
 /// renders as its source, opens with a range `Counted` fills (`holes`),
 /// which notes the levels there. `starts` orders `nodes` by where they
 /// start; `given` marks each node a range was given for, and `left` counts
@@ -559,7 +558,7 @@ impl crate::render::SourceTable for MeasuringTable<'_> {
         self.sources.framed_span(coord)
     }
 
-    fn edited_within(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+    fn renders_through_template(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
         self.holds(coord)
     }
 

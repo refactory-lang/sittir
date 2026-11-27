@@ -256,15 +256,15 @@ function writeSites(arena: BuiltArena, sites: readonly number[], trivia: NodeTri
 }
 
 export function writeUnitSides(node: object, units: readonly UnitSidesWire[]): void {
-	const built = builtRefOf(node);
-	if (built?.at === undefined) {
+	const at = tableAt(node);
+	if (at?.tree.writeUnitSides === undefined) {
 		for (const unit of units) refuseBuiltEntries(unit);
 		setUnitSides(node, units);
 		return;
 	}
 	const wire = entryWire(node);
-	built.arena.tree.writeUnitSides(built.at, units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit as TriviaSides<TriviaEntry>, (entries) => entries.map(wire)) })));
-	holdSideEntries(built.arena.tree, `${built.at}:units`, units.flatMap((unit) => TRIVIA_SIDES.flatMap((side) => unit[side] ?? [])));
+	at.tree.writeUnitSides(at.index, units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit as TriviaSides<TriviaEntry>, (entries) => entries.map(wire)) })));
+	holdSideEntries(at.tree, `${at.index}:units`, units.flatMap((unit) => TRIVIA_SIDES.flatMap((side) => unit[side] ?? [])));
 }
 
 function isReadRecord(built: BuiltRef | undefined): boolean {

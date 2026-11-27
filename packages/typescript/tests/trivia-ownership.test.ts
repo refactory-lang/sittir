@@ -22,7 +22,7 @@ describe('a comment between two of its owner tokens, with no named child beside 
 		const root = engine.parse('for /* keep */ (;;) { x(); }\n');
 		expect(engine.render(root.$snapshot()).toString()).toBe('for ( /* keep */ ;;) {\n  x();\n}\n');
 		leadLastStatementOfFirstBody(root);
-		expect(root.$render()).toBe({ object: 'for ( /* keep */ ;;) {\n  // lead\n  x();\n}\n', arena: 'for /* keep */ (;;) { // lead\n  x(); }\n' }[nodeStorage]);
+		expect(root.$render()).toBe('for /* keep */ (;;) { // lead\n  x(); }\n');
 	});
 
 	it.each(['object', 'arena'] as const)("drops the source line break beside it once it sits between other tokens, as the options write it there (%s storage)", async (nodeStorage) => {

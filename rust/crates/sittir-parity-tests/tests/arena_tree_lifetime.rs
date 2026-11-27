@@ -6,6 +6,7 @@
 #![cfg(feature = "arena")]
 
 use sittir_core::engine::Backing as _;
+use sittir_core::render::SourceTable as _;
 use sittir_core::arena::source::Source;
 use sittir_core::arena::{HydrateNode, RunNodes, RunTable, LINK_WORDS};
 use sittir_core::engine::{Engine, EngineGrammar};
@@ -267,11 +268,13 @@ fn a_side_written_to_a_read_s_node_is_read_by_every_later_call() {
     let mut nodes = records.nodes();
     let (at, first, second) = (at_path(&mut nodes, &path), at_path(&mut nodes, &[0]), at_path(&mut nodes, &[1]));
     assert!(records.side_entries(at, side, false).is_empty(), "the written side is the one read");
-    assert!(!records.edited_within(NodeIndex::ROOT, false), "a write below a node leaves it rendering as its source");
-    assert!(!records.edited_within(first, false) || first == at);
-    assert_eq!(records.edited_within(at, true), side == TriviaSide::Inner, "a node renders through its template for its own inner side alone");
-    assert_eq!(records.edited_within(at, false), side == TriviaSide::Inner, "a node's own leading and trailing are not within it");
-    assert!(!records.edited_within(second, true), "the second function holds no write");
+    let sources = sittir_core::engine::SourceRecords::new(&engine, &built, |_| Ok(()));
+    let table = sittir_core::engine::ReadSources::over(&sources);
+    let named = |index: NodeIndex| sittir_core::slot::NodeIdOrCoordinate::of(records.name_at(index).expect("a named node"));
+    assert!(table.renders_as_source(named(NodeIndex::ROOT)), "a write below a node leaves it rendering as its source");
+    assert!(table.renders_as_source(named(first)) || first == at);
+    assert_eq!(table.renders_through_template(named(at)), side == TriviaSide::Inner, "a node renders through its template for its own inner side alone");
+    assert!(table.renders_as_source(named(second)), "the second function holds no write");
 }
 
 /// The sources of `name`'s fixtures whose records store another layout

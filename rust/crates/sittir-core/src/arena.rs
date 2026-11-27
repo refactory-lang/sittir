@@ -228,6 +228,9 @@ pub enum ArenaError {
     /// at `holder`, asked of a row named on its own: a row's parent is known
     /// only from the node a walk reached it through.
     RowParentUnknown { holder: Address, word: u32 },
+    /// An inner side written to a node of the kind `kind` names that is not
+    /// empty (`engine::refuses_inner`).
+    NotEmpty { kind: &'static str },
 }
 
 /// A record entry whose arena, or the store that holds its sides, is gone.
@@ -258,6 +261,7 @@ impl fmt::Display for ArenaError {
                 crate::types::NodeId::ITEM_BITS
             ),
             ArenaError::RowParentUnknown { holder, word } => write!(f, "the row at word {word} of the run of record {} was named on its own, so no walk reached it through its parent", holder.0),
+            ArenaError::NotEmpty { kind } => f.write_str(&crate::engine::not_empty(kind)),
         }
     }
 }

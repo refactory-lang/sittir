@@ -163,6 +163,14 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	unitSides(treeId: number, index: number): UnitSidesWire<ReadOutput>[];
 	/**
+	 * Replaces each side `units` gives of a unit child of the node at descendant `index` of tree
+	 * `treeId`, the unit named by its slot's wire key and its item there; the unit sides `units`
+	 * does not give stay.
+	 *
+	 * @throws as {@link writeTriviaSide} does, and for a unit no child of the node is.
+	 */
+	writeUnitSides(treeId: number, index: number, units: readonly UnitSidesWire[]): void;
+	/**
 	 * The stored layout of each list slot of the node at descendant `index` of tree `treeId` that
 	 * stores any: each `{ slot, before?, after?, separator? }`, by its slot's wire key.
 	 *
@@ -177,14 +185,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * @throws as {@link triviaSide} does.
 	 */
 	slotSeparator(treeId: number, index: number): number | null;
-	/**
-	 * Whether a write replaced a side of a node under the node at descendant `index` of tree `treeId`:
-	 * of a descendant or of the node's own `inner`, and of its own leading and trailing too when
-	 * `ownSides` is set.
-	 *
-	 * @throws when the tree is not live or `index` is past its last node.
-	 */
-	editedWithin(treeId: number, index: number, ownSides: boolean): boolean;
 	/**
 	 * Whether the node at descendant `index` of tree `treeId` is empty: no child of it has width.
 	 *
@@ -345,9 +345,9 @@ const TREE_FUNCTIONS = [
 	'triviaSide',
 	'writeTriviaSide',
 	'unitSides',
+	'writeUnitSides',
 	'slotLayouts',
 	'slotSeparator',
-	'editedWithin',
 	'isEmpty',
 	'text',
 	'storedLayout',
@@ -694,9 +694,9 @@ export function createNativeEngine<
 				triviaSide: (index, side) => readOwnEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
 				writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
 				unitSides: (index) => readOwnUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),
+				writeUnitSides: (index, units) => engine.writeUnitSides(parsed.treeId, index, units),
 				slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
 				slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,
-				editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
 				isEmpty: (index) => engine.isEmpty(parsed.treeId, index),
 				query: queryOver(engine.descendants, engine.planHolds)
 			};

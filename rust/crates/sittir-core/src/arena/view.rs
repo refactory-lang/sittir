@@ -17,8 +17,9 @@ use crate::view::{KindOf, KindTest, Slot};
 
 /// The node a render's root record renders as: its own, for a parsed record
 /// its source renders (`SourceTable::renders_as_source`), as a native read of
-/// it renders; none for a built record, or a parsed one a write lies in,
-/// which render through their views.
+/// it renders; none for a built record, or a parsed one that renders
+/// through its template (`SourceTable::renders_through_template`), which
+/// render through their views.
 ///
 /// # Errors
 ///
@@ -34,13 +35,13 @@ pub fn source_root<T>(root: super::CellAt, built: &dyn ArenaRead, reads: Option<
 }
 
 /// Whether the parsed node `at` names, held by `cell`, renders through its
-/// record rather than as its source bytes: a write lies in its range
-/// (`SourceTable::edited_within`), or the render reads templates
+/// record rather than as its source bytes: it renders through its template
+/// (`SourceTable::renders_through_template`), or the render reads templates
 /// (`SourceTable::reads_templates`) and the node has a record, read or not,
 /// which a leaf and a unit never do.
 #[must_use]
 pub fn through_record(sources: &dyn SourceTable, at: NodeIdOrCoordinate<'_>, cell: Cell) -> bool {
-    sources.edited_within(at) || (sources.reads_templates() && matches!(cell, Cell::Child { .. }))
+    sources.renders_through_template(at) || (sources.reads_templates() && matches!(cell, Cell::Child { .. }))
 }
 
 /// What a record's view reads through: the arena its record is in and, for
@@ -717,8 +718,9 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
         row.at(self.ctx.prepared.coordinate_edges(self.site))
     }
 
-    /// The view a parsed node renders through when a write lies in its rows:
-    /// its cell's, which names its record once its prepare wrote it.
+    /// The view a parsed node renders through when it renders through its
+    /// template: its cell's, which names its record once its prepare wrote
+    /// it.
     fn edited(&self, cell: Cell) -> Result<V, ArenaError> {
         V::from_cell(self.ctx, cell, Some(self.site))
     }

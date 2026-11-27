@@ -358,11 +358,11 @@ export function carryPlace(from: object, to: object, source: SourceIdentity | un
 
 /** A tree whose trivia table answers for a node: the tree and the node's index in it. */
 interface TableAt {
-	readonly tree: Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide'>>;
+	readonly tree: TreeHandle & Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide'>>;
 	readonly index: number;
 }
 
-function writesSides(tree: TreeHandle | undefined): tree is TreeHandle & TableAt['tree'] {
+function writesSides(tree: TreeHandle | undefined): tree is TableAt['tree'] {
 	return tree?.triviaSide !== undefined && tree.writeTriviaSide !== undefined;
 }
 

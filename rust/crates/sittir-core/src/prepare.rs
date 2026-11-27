@@ -621,18 +621,18 @@ pub fn seat_read_node(edges: &mut Edges, seated: CoordinateEdges) {
     }
 }
 
-/// The node a coordinate names, read one level into `T` when a write lies in
-/// its range (`SourceTable::edited_within`), or when the render reads
-/// templates (`SourceTable::reads_templates`) and `T` reads the node as one
-/// with a record (`Prepare::reads_record`), its changed edges carried into
-/// the read (`ReadCtx::with_changed`); `None` for any other, or when `T`
-/// reads nothing.
+/// The node a coordinate names, read one level into `T` when it renders
+/// through its template (`SourceTable::renders_through_template`), or when
+/// the render reads templates (`SourceTable::reads_templates`) and `T` reads
+/// the node as one with a record (`Prepare::reads_record`), its changed
+/// edges carried into the read (`ReadCtx::with_changed`); `None` for any
+/// other, or when `T` reads nothing.
 pub(crate) fn read_edited<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> Result<Option<T>, CoordinateError> {
-    let edited = ctx.sources.edited_within(coord.into());
-    if !edited && !ctx.sources.reads_templates() {
+    let through = ctx.sources.renders_through_template(coord.into());
+    if !through && !ctx.sources.reads_templates() {
         return Ok(None);
     }
-    read_one_level::<T>(coord, ctx, |grammar, display| edited || T::reads_record(grammar, display))
+    read_one_level::<T>(coord, ctx, |grammar, display| through || T::reads_record(grammar, display))
 }
 
 /// The node `coord` names, read one level into `T` when `admits` takes its
@@ -652,8 +652,8 @@ fn read_one_level<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContext<'_>, a
     node.transpose().map_err(|error| unread(coord, &error))
 }
 
-/// The parsed node `at` names, written into `w` as a render writes a node a
-/// write lies in: read one level into `T`, prepared, and rendered from its
+/// The parsed node `at` names, written into `w` as a render writes a node
+/// whose own inner side a write replaced: read one level into `T`, prepared, and rendered from its
 /// template, each node under it as the render's table decides; as its
 /// source bytes when the table says it renders as them
 /// (`SourceTable::renders_as_source`), as a record's render writes it

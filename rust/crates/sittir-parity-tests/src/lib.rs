@@ -428,18 +428,6 @@ macro_rules! each_grammar {
     };
 }
 
-/// Writes the node at `index` its own inner side back, unchanged: a write in
-/// its range, so its render is its template's, with no text changed. A test
-/// harness only; no engine path writes a side to force a template.
-///
-/// # Panics
-///
-/// When the store refuses the write.
-pub fn edit_in_place<G: sittir_core::engine::EngineGrammar>(tree: &mut sittir_core::engine::ParsedTree<G>, index: sittir_core::types::NodeIndex) {
-    let inner = sittir_core::trivia_table::TriviaSide::Inner;
-    tree.write_trivia_side(index, inner, tree.trivia_side(index, inner)).expect("the node's own side writes back");
-}
-
 /// `tree` read whole into plain data that names no tree: each node with its
 /// span measured from the source's start, and each side's extras and
 /// `ERROR`s as their text.
@@ -453,26 +441,31 @@ pub fn plain_read<G: sittir_core::engine::EngineGrammar, N: sittir_core::read::R
     sittir_core::read::read_at::<N>(&mut seating.cursor(sittir_core::types::NodeIndex::ROOT), &mut ctx, sittir_core::types::NodeIndex::ROOT, sittir_core::read::Depth::All)
 }
 
-/// `$source` parsed by `$krate`'s `$grammar` under its default options with
-/// every node's inner side written back (`edit_in_place`), so every node
-/// renders from its template, read whole seating its sides, and rendered.
+/// `$source` parsed by `$krate`'s `$grammar` under its default options, read
+/// whole seating its sides, and rendered with every node that has a record
+/// from its template (`ThroughTemplates`), through the table of live trees a
+/// render reads (`ReadSources`).
 #[macro_export]
 macro_rules! edited_rendered {
     ($krate:ident, $grammar:expr, $source:expr) => {{
         let mut engine = ::sittir_core::engine::Engine::new($grammar, $krate::render::options::defaults()).expect("an engine");
-        let mut tree = engine.parse($source, ::sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse");
-        (0..::sittir_core::read::descendant_count(&tree.tree().root_node())).map(::sittir_core::types::NodeIndex::new).for_each(|index| $crate::edit_in_place(&mut tree, index));
-        let seating = tree.seating();
-        let root: $krate::render::AnyNode = ::sittir_core::read::read_at(&mut seating.cursor(::sittir_core::types::NodeIndex::ROOT), &mut seating.ctx(), ::sittir_core::types::NodeIndex::ROOT, ::sittir_core::read::Depth::All).expect("a root");
+        let tree = engine.parse($source, ::sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse");
+        let root: $krate::render::AnyNode = {
+            let seating = tree.seating();
+            ::sittir_core::read::read_at(&mut seating.cursor(::sittir_core::types::NodeIndex::ROOT), &mut seating.ctx(), ::sittir_core::types::NodeIndex::ROOT, ::sittir_core::read::Depth::All).expect("a root")
+        };
         let options = engine.options().clone();
-        let ctx = ::sittir_core::prepare::RenderContext::new(&options, &seating);
+        let trees = ::std::collections::HashMap::from([(tree.tree_id(), tree)]);
+        let sources = ::sittir_core::engine::ReadSources::new(&trees);
+        let through = ::sittir_core::render::ThroughTemplates(&sources);
+        let ctx = ::sittir_core::prepare::RenderContext::new(&options, &through);
         $krate::render::render_node_parts(::sittir_core::SlotValue::Node(root), &ctx).expect("a render").1
     }};
 }
 
-/// Each `$source` renders as it reads with every node edited
-/// (`edited_rendered`), or, given as `$source => $expected`, renders as
-/// `$expected`.
+/// Each `$source` renders as it reads with every node rendered from its
+/// template (`edited_rendered`), or, given as `$source => $expected`,
+/// renders as `$expected`.
 #[macro_export]
 macro_rules! renders_as_read {
     ($krate:ident, $grammar:expr, $($source:expr => $expected:expr),+ $(,)?) => {
@@ -789,18 +782,24 @@ impl<G: sittir_core::arena::RecordGrammar> OverRead<G> {
         };
         self.render_at(at, sittir_core::slot::ChangedEdges::default(), options, false).expect("a record render")
     }
+}
 
-    /// Writes the inner side of the tree's node at `index` back to the
-    /// record the read left it, as `edit_in_place` does to a tree: its
-    /// render is its template's, with no text changed.
-    ///
-    /// # Panics
-    ///
-    /// When the node has no record, or the store refuses the write.
-    pub fn edit_in_place(&self, index: sittir_core::types::NodeIndex) {
-        let inner = sittir_core::trivia_table::TriviaSide::Inner;
-        let name = self.name(index).expect("the edited node has a record");
-        let entries = self.engine.read_named(name, |parsed, at| parsed.trivia_side(at, inner)).expect("the records read").expect("a read wrote the record");
-        self.engine.write_read_side(name, inner, &entries).expect("the node's own side writes back");
+/// Whether `arena` is `object` less spaces beside a `'`. A bare `'` in a rust
+/// token tree is the one token object storage spaces where a built node
+/// writes it tight, and that space is a lexical error (`rustc` E0762).
+#[must_use]
+pub fn apart_only_beside_a_quote(object: &str, arena: &str) -> bool {
+    let (object, arena) = (object.as_bytes(), arena.as_bytes());
+    let (mut one, mut other) = (0, 0);
+    while one < object.len() {
+        if other < arena.len() && object[one] == arena[other] {
+            one += 1;
+            other += 1;
+        } else if object[one] == b' ' && (object.get(one + 1) == Some(&b'\'') || one > 0 && object[one - 1] == b'\'') {
+            one += 1;
+        } else {
+            return false;
+        }
     }
+    other == arena.len()
 }

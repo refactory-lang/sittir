@@ -32,8 +32,6 @@ export interface TreeHandle {
 	slotLayouts?(index: number): SlotLayoutWire[];
 	/** The separator the list at descendant `index` writes between its items: its slot's stored one, else the read-time options'. */
 	slotSeparator?(index: number): number | undefined;
-	/** Whether a write replaced a side of a node under the node at descendant `index`, its own `inner` included, and its own leading and trailing too when `ownSides` is set. */
-	editedWithin?(index: number, ownSides: boolean): boolean;
 	/** Whether the node at descendant `index` is empty: no child of it has width. */
 	isEmpty?(index: number): boolean;
 	/** The built arena whose records this handle's views read, for the handle a built arena reads through (`BuiltArena.tree`). */

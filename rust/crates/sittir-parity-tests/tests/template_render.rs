@@ -23,7 +23,7 @@ use sittir_core::spacing::{SpacingWriter, WordMatcher};
 use sittir_core::types::{NodeId, NodeIndex};
 use sittir_core::SlotValue;
 use sittir_parity_tests::OverRead;
-use sittir_parity_tests::{load_fixtures, ParityFixture};
+use sittir_parity_tests::{apart_only_beside_a_quote, load_fixtures, ParityFixture};
 
 /// A grammar's native render of a root (`render_node_parts`).
 type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>) -> Result<(sittir_core::types::Source, String), RenderError>;
@@ -159,25 +159,6 @@ impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
         }
         Ok(rendered)
     }
-}
-
-/// Whether `arena` is `object` less spaces beside a `'`. A bare `'` in a rust
-/// token tree is the one token object storage spaces where a built node
-/// writes it tight, and that space is a lexical error (`rustc` E0762).
-fn apart_only_beside_a_quote(object: &str, arena: &str) -> bool {
-    let (object, arena) = (object.as_bytes(), arena.as_bytes());
-    let (mut one, mut other) = (0, 0);
-    while one < object.len() {
-        if other < arena.len() && object[one] == arena[other] {
-            one += 1;
-            other += 1;
-        } else if object[one] == b' ' && (object.get(one + 1) == Some(&b'\'') || one > 0 && object[one - 1] == b'\'') {
-            one += 1;
-        } else {
-            return false;
-        }
-    }
-    other == arena.len()
 }
 
 /// How one source renders from its templates.

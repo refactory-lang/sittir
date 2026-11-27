@@ -517,14 +517,25 @@ macro_rules! napi_engine {
             $crate::napi_engine::settle(&env, &store)
         }
 
-        /// Whether a write replaced a side of a node under the node at
-        /// `index` of the live tree `treeId`, its own `inner` included, and
-        /// its own leading and trailing too when `ownSides` is set. Refuses
-        /// a tree that is not live and an index naming no node of it.
-        #[::napi_derive::napi]
-        pub fn edited_within(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, own_sides: bool) -> ::napi::Result<bool> {
-            with_live_node(&env, tree_id, index, |parsed, index| Ok(parsed.edited_within(index, own_sides)))
+        /// Replace each side `units` gives (`{ slot, item, leading?,
+        /// trailing?, inner? }`) of a unit child of the node at `index` of
+        /// the live tree `treeId`, as `writeTriviaSide` replaces a node's
+        /// side; the unit sides `units` does not give stay. Refuses as
+        /// `writeTriviaSide` does, and a unit no child of the node is.
+        #[::napi_derive::napi(ts_args_type = "treeId: number, index: number, units: import('@sittir/types').UnitSidesWire[]")]
+        pub fn write_unit_sides(
+            env: ::napi::Env,
+            tree_id: $crate::types::TreeId,
+            index: $crate::types::NodeIndex,
+            units: Vec<$crate::layout::UnitSides<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+        ) -> ::napi::Result<()> {
+            let store = with_live_node(&env, tree_id, index, |parsed, index| {
+                parsed.write_unit_sides(index, units).map_err(::napi::Error::from_reason)?;
+                Ok(parsed.store().clone())
+            })?;
+            $crate::napi_engine::settle(&env, &store)
         }
+
         /// The text `span` covers in the source of the live tree `treeId`:
         /// one string of that span's characters, so the source itself
         /// never crosses. Refuses a tree that is not live and a span that
@@ -2189,8 +2200,8 @@ where
         self.trees.framed_span(at)
     }
 
-    fn edited_within(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
-        crate::render::SourceTable::edited_within(self.trees, at)
+    fn renders_through_template(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        crate::render::SourceTable::renders_through_template(self.trees, at)
     }
 
     fn renders_as_source(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {

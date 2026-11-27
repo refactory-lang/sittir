@@ -4,28 +4,28 @@ import { sharedEngine } from '@sittir/common/testing';
 import { writeUnitSides } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 
-const engine = await sharedEngine(() => createEngine(rust, { nodeStorage: 'arena' }));
-const { build } = engine;
-const indented = await sharedEngine(() => createEngine(rust, { nodeStorage: 'arena', render: { closureExpressionBlock: { dashGt: { after: engine.kinds.Indent }, after: engine.kinds.Dedent } } }));
-type Root = ReturnType<typeof engine.parse>;
-
-function statementAt(root: Root, fnAt: number, at: number) {
-	const fn = root.statements()[fnAt];
-	if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
-	const statement = fn.body().statements()[at];
-	if (statement === undefined || typeof statement !== 'object') throw new Error('expected a statement');
-	return statement;
-}
-
-function rendersAs(root: { $render(): string }, expected: string): void {
-	const out = root.$render();
-	expect(out).toBe(expected);
-	expect(engine.parse(out).$errors).toEqual([]);
-}
-
 const IRREGULAR = 'fn f() {\n    a();  // keep\n\n    b();\n}\n\n\nfn g() {}\n';
 
-describe('a side written to a parsed node replaces its range of the source, and every other byte stays', () => {
+describe.each(['object', 'arena'] as const)('a side written to a parsed node replaces its range of the source, and every other byte stays (%s storage)', async (nodeStorage) => {
+	const engine = await sharedEngine(() => createEngine(rust, { nodeStorage }));
+	const { build } = engine;
+	const indented = await sharedEngine(() => createEngine(rust, { nodeStorage, render: { closureExpressionBlock: { dashGt: { after: engine.kinds.Indent }, after: engine.kinds.Dedent } } }));
+	type Root = ReturnType<typeof engine.parse>;
+
+	const statementAt = (root: Root, fnAt: number, at: number) => {
+		const fn = root.statements()[fnAt];
+		if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
+		const statement = fn.body().statements()[at];
+		if (statement === undefined || typeof statement !== 'object') throw new Error('expected a statement');
+		return statement;
+	};
+
+	const rendersAs = (root: { $render(): string }, expected: string): void => {
+		const out = root.$render();
+		expect(out).toBe(expected);
+		expect(engine.parse(out).$errors).toEqual([]);
+	};
+
 	it('inserts a leading side where its node starts', () => {
 		const root = engine.parse(IRREGULAR);
 		statementAt(root, 0, 1).$trivia.leading(build.lineComment(' c'));
@@ -140,7 +140,6 @@ describe('a side written to a parsed node replaces its range of the source, and 
 			rendersAs(root, 'fn f() { if c { x // c\n        += 1; } }\n');
 		});
 
-		it.todo('renders each of these the same in object storage, once its parsed tree keeps the list of replaced ranges');
 	});
 
 	it('moves a written parsed node with its source when a built holder reindents it', () => {

@@ -21,7 +21,7 @@ describe.each(Object.keys(engines) as (keyof typeof engines)[])('an automatic se
 		['function f(): void\nfunction f() {}\n', 'f'],
 		['class A {\n  m(): void\n  m() {}\n}\n', 'm'],
 		['do x()\nwhile (y)\n', 'y'],
-		['class A {\n  a\n  *b() {}\n}\n', 'a']
+		['class A {\n  a\n  *b() {}\n}\n', 'a\n*b() {}']
 	])('%j, edited at %j, renders on source', (source, text) => {
 		expect(editedRender(engines[storage], source, text)).toBe(source);
 	});

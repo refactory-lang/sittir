@@ -4,9 +4,9 @@ import { sharedEngine } from '@sittir/common/testing';
 import { writeUnitSides } from '@sittir/common/utils';
 import typescript from '../src/index.ts';
 
-const engine = await sharedEngine(() => createEngine(typescript, { nodeStorage: 'arena' }));
+describe.each(['object', 'arena'] as const)("a side written to a parsed node's unit replaces its range of the source, and every other byte stays (%s storage)", async (nodeStorage) => {
+	const engine = await sharedEngine(() => createEngine(typescript, { nodeStorage }));
 
-describe("a side written to a parsed node's unit replaces its range of the source, and every other byte stays", () => {
 	it('finds the unit of a node that shares its bytes with its parent by its kind', () => {
 		const root = engine.parse('x  +=  1\n');
 		const assignment = root.$query().$descendants.ofType(engine.kinds.AugmentedAssignmentExpression).at(0);
@@ -16,6 +16,4 @@ describe("a side written to a parsed node's unit replaces its range of the sourc
 		expect(out).toBe('x  /* c */ +=  1\n');
 		expect(engine.parse(out).$errors).toEqual([]);
 	});
-
-	it.todo('renders the same in object storage, once its parsed tree keeps the list of replaced ranges');
 });

@@ -14,7 +14,7 @@ const writtenSources = [
 	'fn f() { let /*a*/ x /*b*/ = 1; }\n',
 	'fn f() { let /*a*/   x\n /*b*/ = 1; }\n'
 ];
-const keptInArena: Record<string, Partial<Record<'leading' | 'trailing', string>>> = {
+const kept: Record<string, Partial<Record<'leading' | 'trailing', string>>> = {
 	'fn f() { let /*a*/   x\n /*b*/ = 1; }\n': { leading: 'let /*w*/ x\n /*b*/ = 1;', trailing: 'let /*a*/   x /*w*/ = 1;' }
 };
 
@@ -43,7 +43,7 @@ describe.each(['arena', 'object'] as const)(
 		it.each(
 			writtenSources.flatMap((source) => (['leading', 'trailing'] as const).map((side) => [source, side] as const))
 		)(
-			'a parsed leaf with a side written after the parse renders its written side alone as within its holder, which keeps its other bytes in arena storage: %j, %s',
+			'a parsed leaf with a side written after the parse renders its written side alone as within its holder, which keeps its other bytes: %j, %s',
 			async (source, side) => {
 				using rs: any = await createEngine(rust, { nodeStorage });
 				const holder = rs
@@ -56,8 +56,7 @@ describe.each(['arena', 'object'] as const)(
 				leaf.$trivia[side](rs.build.blockComment(rs.build.blockCommentRegular('w')));
 				const alone = String(leaf.$render());
 				expect(alone).toContain('/*w*/');
-				const kept = nodeStorage === 'arena' ? keptInArena[source]?.[side] : undefined;
-				expect(String(holder.$render())).toBe(kept ?? `let ${alone} = 1;`);
+				expect(String(holder.$render())).toBe(kept[source]?.[side] ?? `let ${alone} = 1;`);
 			}
 		);
 	}

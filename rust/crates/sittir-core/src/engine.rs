@@ -94,7 +94,7 @@ pub trait EngineGrammar: Copy {
         None
     }
     /// Writes the parsed node `at` names into `w` as a render writes a node
-    /// a write lies in, read from its tree one level into the grammar's
+    /// whose own inner side a write replaced, read from its tree one level into the grammar's
     /// node (`prepare::render_read_node`); a grammar with no nodes refuses.
     ///
     /// # Errors
@@ -149,6 +149,33 @@ pub fn node_at_index(tree: &tree_sitter::Tree, index: NodeIndex) -> Option<tree_
 /// node.
 fn node(nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> Option<Kid> {
     nodes.names(index).then(|| nodes.kid(index))
+}
+
+/// The display kind's name of the node at `index` of `tree` when a write of
+/// `side` to it is refused: an inner side of a node that is not empty
+/// (`Backing::is_empty`), whose trivia is its children's leading and
+/// trailing sides, as the `$trivia` surface refuses it (`not_empty`).
+pub(crate) fn refuses_inner<G: EngineGrammar, B: Backing<G>>(tree: &B, index: NodeIndex, side: TriviaSide) -> Option<&'static str> {
+    if side != TriviaSide::Inner || tree.is_empty(index) {
+        return None;
+    }
+    let mut nodes = tree.nodes();
+    Some(G::kind_name(node(&mut nodes, index).map_or(KindId::ERROR, |kid| kid.display)))
+}
+
+/// What the `$trivia` surface says when it refuses an inner side written to
+/// a node of the kind `kind` names that is not empty (`refuses_inner`).
+pub(crate) fn not_empty(kind: &str) -> String {
+    format!("trivia: {kind} is not empty; attach to a child with leading/trailing")
+}
+
+/// The spans of the extras and `ERROR`s a parse placed on `side` of the
+/// node at `index`, as `tree`'s table of placements assigns them
+/// (`Backing::cover_side`); none for a backer that keeps no such table.
+fn placed_records<'t, G: EngineGrammar, B: Backing<G>>(tree: &'t B, nodes: &mut Navigation<'t>, index: NodeIndex, side: TriviaSide) -> Vec<Span> {
+    let Some(table) = tree.cover_side(nodes, index, side) else { return Vec::new() };
+    let placed: Vec<NodeIndex> = table.side(index, side).iter().filter(|assigned| !matches!(assigned, crate::trivia_table::Assigned::Member(_))).map(|assigned| assigned.index()).collect();
+    placed.into_iter().map(|at| nodes.kid(at).span()).collect()
 }
 
 /// The byte offsets in `source` of the lines under the node at `index` that
@@ -468,10 +495,6 @@ pub trait Backing<G: EngineGrammar>: Sized {
     /// The entries a write gave `side` of the node at `index`, where this
     /// backer keeps its written sides itself.
     fn written_side(&self, index: NodeIndex, side: TriviaSide) -> Option<Vec<TriviaEntry<G::Trivia>>>;
-
-    /// Whether a write lies on the node at `index`, on a side `own_sides`
-    /// counts, or under it, and how many written sides that walked.
-    fn edited_in(&self, nodes: &mut dyn Nodes<'_>, index: NodeIndex, own_sides: bool) -> (bool, u64);
 
     /// Each side the list of replaced ranges of the read this backer is over
     /// names: its node, by the id this call gives it, or for a unit, which
@@ -982,22 +1005,6 @@ pub trait Backing<G: EngineGrammar>: Sized {
         let mut nodes = self.nodes();
         node(&mut nodes, index).is_some() && crate::trivia_table::is_empty(&mut nodes, index, &|kind| self.options().token_seam(kind).is_some())
     }
-
-    /// Whether a write replaced a side of a node under the node at `index`:
-    /// of a descendant, or of the node's own `inner`, and of its own leading
-    /// and trailing too when `own_sides` is set. It walks the written rows
-    /// alone (`TriviaStore::edit_walks`).
-    fn edited_within(&self, index: NodeIndex, own_sides: bool) -> bool {
-        edited_under(self, &mut self.nodes(), index, own_sides)
-    }
-}
-
-/// `Backing::edited_within`, through `nodes`, the walk counted in the
-/// engine's store.
-fn edited_under<G: EngineGrammar, B: Backing<G>>(tree: &B, nodes: &mut dyn Nodes<'_>, index: NodeIndex, own_sides: bool) -> bool {
-    let (edited, walked) = tree.edited_in(nodes, index, own_sides);
-    tree.store().walked(walked);
-    edited
 }
 
 /// What a walk of a node's descendants found (`Backing::descendants_under`).
@@ -1118,8 +1125,31 @@ impl<G: EngineGrammar> Backing<G> for ParsedTree<G> {
         self.sides.get(index, side).map(|written| self.store.answered(written))
     }
 
-    fn edited_in(&self, nodes: &mut dyn Nodes<'_>, index: NodeIndex, own_sides: bool) -> (bool, u64) {
-        node(nodes, index).map_or((false, 0), |kid| self.sides.edited_within(index, index + kid.count, own_sides))
+    fn replaces_ranges(&self) -> bool {
+        !self.sides.is_empty()
+    }
+
+    /// Each side a write gave a parsed node, keyed by its node, a unit's
+    /// included, with where its range starts: where the first record its
+    /// parse placed on a leading or inner side starts, else where the node
+    /// starts, and where the node ends for a trailing side.
+    fn replaced_sides(&self) -> Vec<(NodeIndex, Option<crate::types::NodeId>, TriviaSide, u32)> {
+        if self.sides.is_empty() {
+            return Vec::new();
+        }
+        let written: Vec<(NodeIndex, TriviaSide)> = self.sides.range(..).map(|(&key, _)| key).collect();
+        let mut nodes = self.nodes();
+        written
+            .into_iter()
+            .filter_map(|(index, side)| {
+                let kid = node(&mut nodes, index)?;
+                let offset = match side {
+                    TriviaSide::Trailing => kid.end,
+                    TriviaSide::Leading | TriviaSide::Inner => placed_records(self, &mut nodes, index, side).first().map_or(kid.start, |span| span.start),
+                };
+                Some((index, None, side, offset))
+            })
+            .collect()
     }
 
     fn node_names(&self) -> Option<&dyn crate::read::NodeNames> {
@@ -1357,14 +1387,6 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
 
     fn written_side(&self, _: NodeIndex, _: TriviaSide) -> Option<Vec<TriviaEntry<G::Trivia>>> {
         None
-    }
-
-    /// A read's node renders through its template only where its read's
-    /// list replaces its own inner side; every other side the list holds is
-    /// a hole in the bytes of a node above it (`Lookups::holes`).
-    fn edited_in(&self, _: &mut dyn Nodes<'_>, index: NodeIndex, _: bool) -> (bool, u64) {
-        let replaced = self.replaced_sides();
-        (replaced.iter().any(|&(at, unit, side, _)| at == index && unit.is_none() && side == TriviaSide::Inner), u64::try_from(replaced.len()).unwrap_or(u64::MAX))
     }
 
     fn under(&self, _: &mut dyn Nodes<'_>, holder: NodeIndex, index: NodeIndex) -> bool {
@@ -1888,10 +1910,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
     ///
     /// # Errors
     ///
-    /// What holding or releasing a built record refuses, before the side is
+    /// An inner side of a node that is not empty (`refuses_inner`), and what
+    /// holding or releasing a built record refuses, before the side is
     /// written when a new entry's record is refused.
     #[cfg(feature = "arena")]
     pub fn write_trivia_side(&mut self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
+        if let Some(kind) = refuses_inner(self, index, side) {
+            return Err(not_empty(kind));
+        }
         let entries = crate::trivia_store::kept(entries);
         self.store.adopt(&entries).map_err(|e| e.to_string())?;
         let replaced = self.sides.insert(index, side, entries);
@@ -1904,11 +1930,44 @@ impl<G: EngineGrammar> ParsedTree<G> {
     ///
     /// # Errors
     ///
-    /// None: no entry names a built record.
+    /// An inner side of a node that is not empty (`refuses_inner`); no entry
+    /// names a built record.
     #[cfg(not(feature = "arena"))]
     pub fn write_trivia_side(&mut self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
+        if let Some(kind) = refuses_inner(self, index, side) {
+            return Err(not_empty(kind));
+        }
         self.sides.insert(index, side, crate::trivia_store::kept(entries));
         self.grew();
+        Ok(())
+    }
+
+    /// Replace each side `units` gives of a unit child of the node at
+    /// `index`, the unit named by its slot's key and its item there
+    /// (`read::unit_child`), as `write_trivia_side` replaces a node's side;
+    /// the sides `units` does not give stay.
+    ///
+    /// # Errors
+    ///
+    /// A unit no child of the node is, and what `write_trivia_side`
+    /// refuses, before any side is written when a unit is none.
+    pub fn write_unit_sides(&mut self, index: crate::types::NodeIndex, units: Vec<crate::layout::UnitSides<G::Trivia>>) -> Result<(), String> {
+        let targets = {
+            let seating = self.seating();
+            let routed = seating.routed(index);
+            let routed = routed.as_ref().as_ref().ok_or_else(|| format!("the node at {index:?} has no unit children"))?;
+            units
+                .into_iter()
+                .map(|unit| crate::read::unit_child(routed, &unit.slot, unit.item).map(|at| (at, unit.trivia)).ok_or_else(|| format!("the node at {index:?} has no unit at {} item {:?}", unit.slot, unit.item)))
+                .collect::<Result<Vec<_>, String>>()?
+        };
+        for (at, trivia) in targets {
+            for (side, entries) in [(TriviaSide::Leading, trivia.leading), (TriviaSide::Trailing, trivia.trailing), (TriviaSide::Inner, trivia.inner)] {
+                if let Some(entries) = entries {
+                    self.write_trivia_side(at, side, entries)?;
+                }
+            }
+        }
         Ok(())
     }
 }
@@ -2378,19 +2437,20 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
         }
     }
 
-    /// Whether a write replaced a side of a node under the node at `index`
-    /// or of its own `inner` (`ParsedTree::edited_within`).
-    fn edited_within(&mut self, index: NodeIndex) -> bool {
-        edited_under(self.tree, &mut self.nodes, index, false)
+    /// Whether the node at `index` renders through its template: the read's
+    /// list of replaced ranges replaces its own inner side. Every other side
+    /// the list holds is a hole in the bytes of a node above it (`holes`).
+    fn renders_through_template(&mut self, index: NodeIndex) -> bool {
+        self.tree.replaces_ranges() && self.tree.replaced_sides().iter().any(|&(at, unit, side, _)| at == index && unit.is_none() && side == TriviaSide::Inner)
     }
 
-    /// Whether the node at `index` still renders as its source: no write
-    /// lies in it (`edited_within`). The one test a render's root
+    /// Whether the node at `index` still renders as its source bytes, holes
+    /// aside (`renders_through_template`). The one test a render's root
     /// (`arena::source_root`), a record's prepared sides
     /// (`SourceTable::renders_as_source`) and a side its parse placed
     /// (`parse_placed`) apply to a read's node.
     fn renders_as_source(&mut self, index: NodeIndex) -> bool {
-        !self.edited_within(index)
+        !self.renders_through_template(index)
     }
 
     /// What `SourceTable::holes` answers for `at`: each side the read's
@@ -2549,15 +2609,10 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
     /// `index` ends, the list's writes aside; none where it placed none.
     fn placed_end(&mut self, index: NodeIndex, side: TriviaSide) -> Option<u32> {
         #[cfg(feature = "arena")]
-        {
-            let place = self.tree.place(index)?;
-            self.placed_spans(place, side).into_iter().map(|span| span.end).max()
+        if let Some(place) = self.tree.place(index) {
+            return self.placed_spans(place, side).into_iter().map(|span| span.end).max();
         }
-        #[cfg(not(feature = "arena"))]
-        {
-            let _ = (&self, index, side);
-            None
-        }
+        placed_records(self.tree, &mut self.nodes, index, side).into_iter().map(|span| span.end).max()
     }
 
     /// The bytes of each record the parse placed on `side` of the node or
@@ -2836,8 +2891,8 @@ impl<G: EngineGrammar, B: Backing<G>> SourceTable for Seating<'_, G, B> {
         }
     }
 
-    fn edited_within(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
-        self.own(at).is_some_and(|(mut lookups, named)| lookups.edited_within(named.index))
+    fn renders_through_template(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        self.own(at).is_some_and(|(mut lookups, named)| lookups.renders_through_template(named.index))
     }
 
     fn renders_as_source(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
@@ -3494,8 +3549,8 @@ impl<G: EngineGrammar, B: Backing<G>> SourceTable for ReadSources<'_, G, B> {
         }
     }
 
-    fn edited_within(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
-        self.seating(at).is_some_and(|seating| seating.edited_within(at))
+    fn renders_through_template(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        self.seating(at).is_some_and(|seating| seating.renders_through_template(at))
     }
 
     fn renders_as_source(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
@@ -4094,7 +4149,7 @@ mod tests {
     }
 
     #[test]
-    fn a_written_side_replaces_the_assigned_one_and_marks_its_ancestors_edited() {
+    fn a_written_side_replaces_the_assigned_one_and_leaves_every_node_rendering_as_its_source() {
         let (mut tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
         let f = index_of_kind(&tree, "function_item", 0);
         let g = index_of_kind(&tree, "function_item", 1);
@@ -4102,19 +4157,21 @@ mod tests {
         let written = vec![TriviaEntry::new(SlotValue::Node(TestTrivia::Text(TriviaText { kind: KindId(1), text: "// w".to_owned(), span: None, before: None, after: None })))];
         tree.write_trivia_side(a, TriviaSide::Leading, written.clone()).expect("a side write");
         assert_eq!(tree.trivia_side(a, TriviaSide::Leading), written);
-        assert!(tree.edited_within(NodeIndex::ROOT, false));
-        assert!(tree.edited_within(f, false));
-        assert!(!tree.edited_within(g, false));
-        assert!(!tree.edited_within(a, false), "a node's own leading is not within it");
-        assert!(tree.edited_within(a, true));
+        let mut lookups = lookups(&tree);
+        for at in [NodeIndex::ROOT, f, g, a] {
+            assert!(lookups.renders_as_source(at), "a leading side is a hole in the bytes of a node above {at:?}");
+        }
     }
 
     #[test]
-    fn a_written_inner_side_is_within_its_own_node() {
+    fn a_written_inner_side_renders_its_node_alone_through_its_template() {
         let (mut tree, _) = parsed("fn f() {}\n");
+        let f = index_of_kind(&tree, "function_item", 0);
         let block = index_of_kind(&tree, "block", 0);
         tree.write_trivia_side(block, TriviaSide::Inner, Vec::new()).expect("a side write");
-        assert!(tree.edited_within(block, false));
+        let mut lookups = lookups(&tree);
+        assert!(lookups.renders_through_template(block));
+        assert!(lookups.renders_as_source(f), "the block is a hole in its function's bytes");
     }
 
     #[test]
@@ -4148,7 +4205,7 @@ mod tests {
     }
 
     #[test]
-    fn an_unedited_tree_s_edit_checks_walk_none_of_the_sides_its_reads_placed() {
+    fn an_unedited_tree_renders_every_node_as_its_source_once_its_reads_placed_its_sides() {
         let (tree, _) = parsed("mod m {\n    // c\n    fn f() { a(); }\n}\nfn g() {}\n");
         let count = crate::read::descendant_count(&tree.tree().root_node());
         for index in (0..count).map(NodeIndex::new) {
@@ -4156,16 +4213,13 @@ mod tests {
                 let _ = tree.trivia_side(index, side);
             }
         }
-        let store = tree.store().clone();
         assert!(tree.trivia.tables().next().is_some(), "the reads placed the source's sides");
         let coordinates: Vec<NodeCoordinate> = (0..count).map(|at| coordinate(&tree, NodeIndex::new(at))).collect();
-        let walked = store.edit_walks();
         let trees = table(tree);
         let sources = ReadSources::new(&trees);
         for at in &coordinates {
             assert!(sources.renders_as_source(at.into()), "nothing was written under {at:?}");
         }
-        assert_eq!(store.edit_walks(), walked, "no check walked an assigned row");
     }
 
     #[test]
@@ -4176,11 +4230,11 @@ mod tests {
         let f = index_of_kind(&first, "function_item", 0);
         first.write_trivia_side(f, TriviaSide::Leading, Vec::new()).expect("a side write");
         second.write_trivia_side(f, TriviaSide::Trailing, Vec::new()).expect("a side write");
-        assert!(first.edited_within(NodeIndex::ROOT, false));
+        assert!(first.replaces_ranges());
         assert_eq!(second.trivia_side(f, TriviaSide::Leading), first.trivia_side(f, TriviaSide::Trailing), "each tree reads its own writes");
         assert_eq!((first.sides.len(), second.sides.len()), (1, 1), "each tree holds its own writes");
         drop(first);
-        assert!(second.edited_within(NodeIndex::ROOT, false));
+        assert!(second.replaces_ranges());
     }
 
     #[test]
@@ -4300,25 +4354,28 @@ mod tests {
         let reading = ReadSources::new(&read);
         let refused = change_trees(&trees).map(|_| ()).expect_err("a write while the trees are being read");
         assert!(refused.contains("being read"), "refused by name: {refused}");
-        assert!(!reading.edited_within((&coordinate(&read[&read.keys().next().copied().expect("a tree")], f)).into()), "the read saw no write");
+        assert!(reading.renders_as_source((&coordinate(&read[&read.keys().next().copied().expect("a tree")], f)).into()), "the read saw no write");
         drop(reading);
         drop(read);
         let mut trees = change_trees(&trees).expect("a write once the read is over");
         let tree = trees.values_mut().next().expect("a tree");
         tree.write_trivia_side(f, TriviaSide::Leading, Vec::new()).expect("a side write");
-        assert!(tree.edited_within(NodeIndex::ROOT, false));
+        assert!(tree.replaces_ranges());
     }
 
     #[test]
-    fn the_tree_table_answers_whether_a_coordinates_range_holds_a_write() {
+    fn the_tree_table_answers_whether_a_coordinate_renders_through_its_template() {
         let (mut tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
         let f = coordinate(&tree, index_of_kind(&tree, "function_item", 0));
         let g = coordinate(&tree, index_of_kind(&tree, "function_item", 1));
+        let block = coordinate(&tree, index_of_kind(&tree, "block", 1));
         tree.write_trivia_side(index_of_kind(&tree, "expression_statement", 0), TriviaSide::Leading, Vec::new()).expect("a side write");
+        tree.write_trivia_side(block.index, TriviaSide::Inner, Vec::new()).expect("a side write");
         let trees = table(tree);
         let sources = ReadSources::new(&trees);
-        assert!(sources.edited_within((&f).into()));
-        assert!(!sources.edited_within((&g).into()));
+        assert!(sources.renders_as_source((&f).into()) && !sources.renders_through_template((&f).into()), "a leading side is a hole in its function's bytes");
+        assert!(sources.renders_as_source((&g).into()), "the block is a hole in its function's bytes");
+        assert!(sources.renders_through_template((&block).into()) && !sources.renders_as_source((&block).into()));
     }
 
     fn at(tree: TreeId, index: NodeIndex) -> NodeCoordinate {

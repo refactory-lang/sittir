@@ -5,19 +5,19 @@ import { decodeIndex, isCoordinate, type TreeHandle } from '../src/read.ts';
 
 const rs = await createEngine(rust, { nodeStorage: 'object' });
 
-type Sides = Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide' | 'editedWithin'>>;
+type Sides = Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide'>>;
 
 /** The descendant indexes of a parsed source file's statements, and its tree's trivia sides. */
 function parsed(source: string): { statements: number[]; sides: Sides } {
 	const { root, tree } = rs.diagnostics.parseAndRead(source);
 	const handle: TreeHandle = tree;
-	const { triviaSide, writeTriviaSide, editedWithin } = handle;
-	if (triviaSide === undefined || writeTriviaSide === undefined || editedWithin === undefined) throw new Error('a parsed tree reads its trivia sides');
+	const { triviaSide, writeTriviaSide } = handle;
+	if (triviaSide === undefined || writeTriviaSide === undefined) throw new Error('a parsed tree reads its trivia sides');
 	const statements = (root as unknown as { _statements: unknown[] })._statements.map((statement) => {
 		if (!isCoordinate(statement)) throw new Error('expected a coordinate');
 		return decodeIndex(statement.$treeHandle);
 	});
-	return { statements, sides: { triviaSide, writeTriviaSide, editedWithin } };
+	return { statements, sides: { triviaSide, writeTriviaSide } };
 }
 
 describe('the trivia table through the tree handle', () => {
@@ -30,16 +30,14 @@ describe('the trivia table through the tree handle', () => {
 		expect(rest).toEqual([]);
 	});
 
-	it('marks the root edited after a write to a statement, and leaves its sibling unedited', () => {
+	it("reads a write to a statement's side back, and leaves its sibling's sides as the parse placed them", () => {
 		const { statements, sides } = parsed('fn f() {}\n// c\nfn g() {}\n');
 		const [f = -1, g = -1] = statements;
-		expect(sides.editedWithin(0, false)).toBe(false);
+		const placed = sides.triviaSide(f, 'trailing');
+		expect(sides.triviaSide(g, 'leading')).not.toEqual([]);
 		sides.writeTriviaSide(g, 'leading', []);
 		expect(sides.triviaSide(g, 'leading')).toEqual([]);
-		expect(sides.editedWithin(0, false)).toBe(true);
-		expect(sides.editedWithin(f, false)).toBe(false);
-		expect(sides.editedWithin(g, false)).toBe(false);
-		expect(sides.editedWithin(g, true)).toBe(true);
+		expect(sides.triviaSide(f, 'trailing')).toEqual(placed);
 	});
 
 	it('refuses a side that is none of the three', () => {

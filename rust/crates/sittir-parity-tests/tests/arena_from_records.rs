@@ -153,15 +153,19 @@ fn typescript() -> Case<sittir_typescript::TypeScriptGrammar, sittir_typescript:
 
 /// The case's root rendered from its read's records untouched; rebuilt
 /// from its read, beside its native render; and again after its edited
-/// node's own inner side is written back, as its source still: the node
-/// renders through its template, and every other byte as it was read.
+/// node's own leading side is written back, as its source still: the side
+/// is a range the same entries fill, and every other byte is as it was
+/// read.
 fn renders_from_records<G: RecordGrammar + Copy, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells>(case: &Case<G, N>) {
     let options = (case.options)();
     let (tree, over) = case.read();
     assert_eq!(over.render_at(over.root, sittir_core::slot::ChangedEdges::default(), &options, false).expect("a record render"), case.source, "{}: untouched", case.name);
     let (rebuilt, native) = case.rebuilt(&tree);
     assert_eq!(rebuilt, native, "{}: rebuilt", case.name);
-    over.edit_in_place(nth_of_kind(&tree, case.edited));
+    let leading = sittir_core::trivia_table::TriviaSide::Leading;
+    let name = over.name(nth_of_kind(&tree, case.edited)).expect("the edited node has a record");
+    let entries = over.engine.read_named(name, |parsed, at| parsed.trivia_side(at, leading)).expect("the records read").expect("a read wrote the record");
+    over.engine.write_read_side(name, leading, &entries).expect("the node's own side writes back");
     assert_eq!(over.render_at(over.root, sittir_core::slot::ChangedEdges::default(), &options, false).expect("a record render"), case.source, "{}: codemod", case.name);
 }
 

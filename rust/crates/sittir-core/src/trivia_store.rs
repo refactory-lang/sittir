@@ -17,14 +17,13 @@
 
 use crate::heap::HeapBytes;
 use std::collections::BTreeMap;
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::sync::Arc;
 #[cfg(feature = "arena")]
-use std::sync::{PoisonError, RwLock};
+use std::sync::atomic::{AtomicU64, Ordering};
+#[cfg(feature = "arena")]
+use std::sync::{Arc, PoisonError, RwLock};
 
 use crate::trivia::TriviaEntry;
 use crate::trivia_table::TriviaSide;
-use crate::types::NodeIndex;
 #[cfg(feature = "arena")]
 use crate::arena::{Address, ArenaError, ArenaRead};
 #[cfg(feature = "arena")]
@@ -217,19 +216,6 @@ impl<K: Ord, E: HeapBytes> SideRows<K, E> {
     }
 }
 
-impl<E> SideRows<NodeIndex, E> {
-    /// Whether a write set a side of a node in rows `[index, end)`: of a
-    /// descendant of the node at `index`, or of that node's own `inner`, and
-    /// of its own leading and trailing too when `own_sides` is set; and the
-    /// rows the check walked, which are written rows alone.
-    #[must_use]
-    pub fn edited_within(&self, index: NodeIndex, end: NodeIndex, own_sides: bool) -> (bool, u64) {
-        let mut walked = 0;
-        let edited = self.rows.range((index, TriviaSide::Leading)..(end, TriviaSide::Leading)).inspect(|_| walked += 1).any(|(&(row, side), _)| row != index || own_sides || side == TriviaSide::Inner);
-        (edited, walked)
-    }
-}
-
 /// `entries` as a parsed tree's rows keep them: a built record among them
 /// is kept with no store, since the engine's store answers it.
 #[must_use]
@@ -353,8 +339,6 @@ pub struct TriviaStore<T> {
     /// roots at (`root_leaf`).
     #[cfg(feature = "arena")]
     root: Option<Box<[Option<Vec<CompactEntry>>; 3]>>,
-    /// The rows the edit checks have walked (`edit_walks`).
-    edit_walks: Arc<AtomicU64>,
     /// How many times a read's list of replaced ranges was read
     /// (`list_reads`).
     #[cfg(feature = "arena")]
@@ -388,7 +372,6 @@ impl<T> Clone for TriviaStore<T> {
         Self {
             #[cfg(feature = "arena")]
             root: self.root.clone(),
-            edit_walks: Arc::clone(&self.edit_walks),
             #[cfg(feature = "arena")]
             list_reads: Arc::clone(&self.list_reads),
             #[cfg(feature = "arena")]
@@ -407,10 +390,17 @@ impl<T> Clone for TriviaStore<T> {
 }
 
 /// Two handles are equal when they share one store: a record's address
-/// names a record only in the store of the arena that wrote it.
+/// names a record only in the store of the arena that wrote it. A store
+/// with no arena holds nothing one handle could tell from another's.
 impl<T> PartialEq for TriviaStore<T> {
+    #[cfg(feature = "arena")]
     fn eq(&self, other: &Self) -> bool {
-        Arc::ptr_eq(&self.edit_walks, &other.edit_walks)
+        Arc::ptr_eq(&self.built, &other.built)
+    }
+
+    #[cfg(not(feature = "arena"))]
+    fn eq(&self, _: &Self) -> bool {
+        true
     }
 }
 
@@ -457,7 +447,6 @@ impl<T> TriviaStore<T> {
         Self {
             #[cfg(feature = "arena")]
             root: None,
-            edit_walks: Arc::default(),
             #[cfg(feature = "arena")]
             list_reads: Arc::default(),
             #[cfg(feature = "arena")]
@@ -481,7 +470,6 @@ impl<T> TriviaStore<T> {
     pub fn for_records(kind_bits: u32, shape: crate::arena::ShapeOf) -> Self {
         Self {
             root: None,
-            edit_walks: Arc::default(),
             list_reads: Arc::default(),
             built: Arc::new(RwLock::new(crate::arena::BuiltChunks::new(kind_bits, shape))),
             kind_bits,
@@ -1443,7 +1431,6 @@ impl<T: Clone> TriviaStore<T> {
         }
         let store = Self {
             root: Some(Box::new(root)),
-            edit_walks: Arc::default(),
             list_reads: Arc::clone(&self.list_reads),
             built: Arc::clone(&self.built),
             kind_bits: self.kind_bits,
@@ -1454,19 +1441,6 @@ impl<T: Clone> TriviaStore<T> {
             trivia: std::marker::PhantomData,
         };
         Ok(RootLeaf { store, made })
-    }
-
-    /// Adds `walked` to the rows the edit checks have walked
-    /// (`ParsedTree::edited_within`).
-    pub fn walked(&self, walked: u64) {
-        self.edit_walks.fetch_add(walked, Ordering::Relaxed);
-    }
-
-    /// The rows the edit checks (`ParsedTree::edited_within`) have walked so
-    /// far, every tree's: a diagnostic a test compares.
-    #[must_use]
-    pub fn edit_walks(&self) -> u64 {
-        self.edit_walks.load(Ordering::Relaxed)
     }
 
     /// Releases the built records the written `rows` of a dropped tree
@@ -1500,7 +1474,7 @@ mod tests {
     use crate::arena::Address;
     use crate::slot::SlotValue;
     use crate::trivia::TriviaText;
-    use crate::types::KindId;
+    use crate::types::{KindId, NodeIndex};
 
     /// The entries `side` of `place` holds, read under the store's own
     /// built arena.
@@ -1528,19 +1502,6 @@ mod tests {
         assert_eq!(rows.bytes(), walked, "the count is what a walk of the rows finds");
         assert_eq!(rows.take().len(), 2);
         assert_eq!((rows.len(), rows.bytes()), (0, 0), "taking the rows empties the table and its count");
-    }
-
-    #[test]
-    fn a_range_holds_a_write_below_its_node_or_on_the_node_s_inner_and_walks_written_rows_alone() {
-        let mut rows = SideRows::<NodeIndex, TriviaEntry<TriviaText>>::default();
-        rows.insert(NodeIndex::new(4), TriviaSide::Leading, Vec::new());
-        let end = NodeIndex::new(9);
-        assert_eq!(rows.edited_within(NodeIndex::new(3), end, false), (true, 1), "a descendant's side");
-        assert_eq!(rows.edited_within(NodeIndex::new(4), end, false), (false, 1), "a node's own leading is not within it");
-        assert!(rows.edited_within(NodeIndex::new(4), end, true).0);
-        assert_eq!(rows.edited_within(NodeIndex::new(5), end, true), (false, 0), "past the write");
-        rows.insert(NodeIndex::new(6), TriviaSide::Inner, Vec::new());
-        assert!(rows.edited_within(NodeIndex::new(6), end, false).0, "a node's own inner is within it");
     }
 
     #[cfg(feature = "arena")]

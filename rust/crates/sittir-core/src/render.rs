@@ -277,17 +277,19 @@ pub trait SourceTable {
         }
     }
 
-    /// Whether a write replaced a side of a node in the range of the node a
-    /// coordinate names, its own `inner` included (`ParsedTree::edited_within`).
-    fn edited_within(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+    /// Whether the parsed node a coordinate names renders through its
+    /// template: its read's list of replaced ranges replaces its own inner
+    /// side. A table that holds no tree answers no.
+    fn renders_through_template(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
         let _ = coord;
         false
     }
 
     /// Whether a read node from the node a coordinate names renders as that
-    /// coordinate, its source bytes: a parsed node with no write in its range
-    /// (`edited_within`). A table that holds no tree, or one a render reads
-    /// templates through on purpose, answers no.
+    /// coordinate, its source bytes, each side its read's list replaces a
+    /// hole in them: a parsed node that does not render through its template
+    /// (`renders_through_template`). A table that holds no tree, or one a
+    /// render reads templates through on purpose, answers no.
     fn renders_as_source(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
         let _ = coord;
         false
@@ -295,9 +297,9 @@ pub trait SourceTable {
 
     /// Whether a render through this table reads each parsed node it meets
     /// that has a record and renders it from its template, as it does a node
-    /// a write lies in (`edited_within`); a leaf or a unit still writes its
-    /// source bytes. Only a table a render reads templates through on purpose
-    /// (`ThroughTemplates`) answers yes.
+    /// whose own inner side a write replaced (`renders_through_template`); a
+    /// leaf or a unit still writes its source bytes. Only a table a render
+    /// reads templates through on purpose (`ThroughTemplates`) answers yes.
     fn reads_templates(&self) -> bool {
         false
     }
@@ -363,7 +365,7 @@ pub trait SourceTable {
     }
 
     /// Writes the parsed node `at` names into `w` as a render writes a node
-    /// a write lies in, under `options` over `table`: through its template,
+    /// whose own inner side a write replaced, under `options` over `table`: through its template,
     /// each node under it as `table` decides, which no side admits as an
     /// entry; as its source bytes when `table` says it renders as them
     /// (`renders_as_source`). A table that reads no node refuses.
@@ -440,8 +442,8 @@ impl SourceTable for ThroughTemplates<'_> {
         self.0.framed_span(coord)
     }
 
-    fn edited_within(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
-        self.0.edited_within(coord)
+    fn renders_through_template(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        self.0.renders_through_template(coord)
     }
 
     fn renders_as_source(&self, _: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
@@ -505,8 +507,8 @@ pub enum CoordinateError {
         handle: crate::types::TreeHandle,
         detail: String,
     },
-    /// A write lies in the node's range, and reading the node to render it
-    /// from its template failed.
+    /// The node renders through its template, and reading the node to
+    /// render it from its template failed.
     Unread {
         handle: crate::types::TreeHandle,
         detail: String,

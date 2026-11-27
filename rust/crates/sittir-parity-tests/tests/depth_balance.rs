@@ -4,15 +4,15 @@
 //! returned to zero, and that assertion only runs in a debug build. An
 //! untouched block renders as its source however deeply it was read
 //! (shared-arena design § Render; trivia-table design § 4, copying source
-//! text); a block with a write in its range renders from its template
-//! (trivia-table design § 4, edited ranges).
+//! text); a block whose own inner side a write replaced renders from its
+//! template, and a write elsewhere in its range is a hole in its source
+//! bytes.
 
 use sittir_core::engine::Backing as _;
 use sittir_core::engine::{claim_tree_id, Engine};
 use sittir_core::prepare::RenderContext;
 use sittir_core::read::{read_at, Depth};
 use sittir_core::types::{KindId, NodeIndex};
-use sittir_parity_tests::edit_in_place;
 use sittir_python::render::kind_ids;
 use sittir_python::render::node::{render_node_parts, AnyNode, TriviaNode};
 use sittir_python::render::options;
@@ -24,19 +24,20 @@ enum Write {
     Nothing,
     /// A `# written` comment line before the `nth` node of the kind.
     Comment(KindId, usize),
-    /// Every node's own inner side back (`edit_in_place`): every node renders
-    /// from its template, with no text changed.
+    /// Nothing, with every node that has a record rendered from its template
+    /// (`ThroughTemplates`), with no text changed.
     EveryNode,
 }
 
 /// `source` parsed, written as `write` says, read `depth` levels down seating
-/// its sides, and rendered.
+/// its sides, and rendered through the table of live trees a render reads
+/// (`ReadSources`).
 fn rendered(source: &str, depth: Depth, write: Write) -> String {
     let mut engine = Engine::new(sittir_python::PythonGrammar, options::defaults()).expect("an engine");
     let mut tree = engine.parse(source, claim_tree_id().expect("a tree id")).expect("a parse");
     let indices = (0..sittir_core::read::descendant_count(&tree.tree().root_node())).map(NodeIndex::new);
     match write {
-        Write::Nothing => {}
+        Write::Nothing | Write::EveryNode => {}
         Write::Comment(kind, nth) => {
             let index = indices
                 .filter(|&index| sittir_core::engine::node_at_index(tree.tree(), index).is_some_and(|node| sittir_core::read::grammar_id(&node) == kind))
@@ -46,12 +47,17 @@ fn rendered(source: &str, depth: Depth, write: Write) -> String {
             let entries = [TriviaNode::Text(comment), TriviaNode::Newline].into_iter().map(|entry| sittir_core::trivia::TriviaEntry::new(sittir_core::SlotValue::Node(entry))).collect();
             tree.write_trivia_side(index, sittir_core::trivia_table::TriviaSide::Leading, entries).expect("a side write");
         }
-        Write::EveryNode => indices.for_each(|index| edit_in_place(&mut tree, index)),
     }
-    let seating = tree.seating();
-    let root: AnyNode = read_at(&mut seating.cursor(NodeIndex::ROOT), &mut seating.ctx(), NodeIndex::ROOT, depth).expect("a root");
+    let root: AnyNode = {
+        let seating = tree.seating();
+        read_at(&mut seating.cursor(NodeIndex::ROOT), &mut seating.ctx(), NodeIndex::ROOT, depth).expect("a root")
+    };
     let options = engine.options().clone();
-    let ctx = RenderContext::new(&options, &seating);
+    let trees = std::collections::HashMap::from([(tree.tree_id(), tree)]);
+    let sources = sittir_core::engine::ReadSources::new(&trees);
+    let through = sittir_core::render::ThroughTemplates(&sources);
+    let table: &dyn sittir_core::render::SourceTable = if matches!(write, Write::EveryNode) { &through } else { &sources };
+    let ctx = RenderContext::new(&options, table);
     render_node_parts(sittir_core::SlotValue::Node(root), &ctx).expect("a render").1
 }
 

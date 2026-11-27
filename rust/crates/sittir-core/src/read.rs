@@ -1276,6 +1276,16 @@ pub fn units_of<T: crate::trivia::FromTriviaText + 'static>(routed: &Routed, ctx
         .collect()
 }
 
+/// The unit child `routed` names at the slot keyed `key`, at its item `item`
+/// there: the child `units_of` reads by that key and item.
+#[must_use]
+pub fn unit_child(routed: &Routed, key: &str, item: ItemIndex) -> Option<NodeIndex> {
+    unit_items(&routed.routes, routed.elided).into_iter().enumerate().find_map(|(at, found)| match (routed.routes[at], found) {
+        (Route::Slot { slot, scalar: true }, Some(found)) if found == item && routed.keys[slot.index()] == key => Some(routed.children[at].index),
+        _ => None,
+    })
+}
+
 impl<T: ReadNode> ReadNode for Box<T> {
     fn admits(grammar: KindId, display: KindId) -> bool {
         T::admits(grammar, display)
