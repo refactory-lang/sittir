@@ -124,7 +124,7 @@ fn the_rust_fixture_tree_reads_to_the_same_words() {
 #[test]
 fn the_typescript_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), &probe_input("create-engine.ts"));
-    assert_eq!(words, ArenaWords { chunks: 2, words: 29202, hash: 12_216_211_177_870_384_515 });
+    assert_eq!(words, ArenaWords { chunks: 2, words: 29202, hash: 14_274_275_952_016_025_153 });
 }
 
 #[test]

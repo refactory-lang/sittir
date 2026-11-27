@@ -591,10 +591,8 @@ export default grammar(enrich(base), wire({
 			{ '0/2': token.immediate('"'), '1/2': token.immediate("'") },
 			{ 0: variant('double'), 1: variant('single') }
 		],
-		template_string: { 2: token.immediate('`') },
-		template_literal_type: { 2: token.immediate('`') },
-		template_type: { 0: token.immediate('${'), 1: field('type') },
-		template_substitution: { 0: token.immediate('${'), 1: field('expression') },
+		template_type: { 1: field('type') },
+		template_substitution: { 1: field('expression') },
 
 		update_expression: {
 			0: variant('postfix', { default: true }),
@@ -764,18 +762,6 @@ export default grammar(enrich(base), wire({
 					)
 				)
 		),
-		// `template_substitution` sits only in string-interior contexts
-		// (template_string / template_literal_type elements), where any
-		// preceding characters are absorbed into a fragment token — no
-		// whitespace can ever precede its `${`, but upstream writes a
-		// plain string. Declaring `token.immediate` matters for
-		// RENDERING: `$` is word-class in typescript, so without the
-		// declared fact the seam check injects a hazard space after a
-		// word-ending fragment or escape (`mid\n ${`), which reparses
-		// as a spurious one-space string_fragment. The stamp makes the
-		// kind left-immediate (its leftmost terminal), so structural
-		// references render seam-free. Parser-neutral by the absorption
-		// argument above.
 		// The signature arm of an arrow function is upstream's hidden
 		// `_call_signature`, whose fields inline into the parent. Upstream
 		// typescript already declares that body as the visible kind

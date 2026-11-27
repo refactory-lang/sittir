@@ -1640,55 +1640,55 @@ export interface IsGuards {
 	thisType<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.ThisType>;
 }
 
-const _supertype_exportStatement_ids = new Set<number>([433, 434, 421, 422]);
+const _supertype_exportStatement_ids = new Set<number>([432, 433, 420, 421]);
 const _supertype_declaration_ids = new Set<number>([
-	249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313
+	248, 250, 245, 207, 206, 208, 302, 313, 314, 315, 324, 321, 319, 317, 312
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([416, 417]);
+const _supertype_importSpecifier_ids = new Set<number>([415, 416]);
 const _supertype_statement_ids = new Set<number>([
-	433, 434, 421, 422, 198, 224, 206, 249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313, 211,
-	213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 225, 226, 227, 228
+	432, 433, 420, 421, 197, 223, 205, 248, 250, 245, 207, 206, 208, 302, 313, 314, 315, 324, 321, 319, 317, 312, 210,
+	212, 213, 214, 215, 217, 218, 219, 220, 221, 222, 224, 225, 226, 227
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([440, 441]);
-const _supertype_forHeader_ids = new Set<number>([444, 445, 446, 447]);
-const _supertype_parenthesizedExpression_ids = new Set<number>([418, 419]);
+const _supertype_variableDeclarator_ids = new Set<number>([439, 440]);
+const _supertype_forHeader_ids = new Set<number>([443, 444, 445, 446]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([417, 418]);
 const _supertype_expression_ids = new Set<number>([
-	306, 307, 308, 305, 260, 259, 418, 419, 110, 1, 279, 280, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151,
-	426, 427, 274, 276, 281, 282, 283, 238, 242, 248, 252, 250, 245, 442, 443, 423, 424, 425, 300, 262, 264, 258, 270,
-	406, 405, 268, 428, 429, 257, 237
+	305, 306, 307, 304, 259, 258, 417, 418, 109, 1, 278, 279, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150,
+	425, 426, 273, 275, 280, 281, 282, 237, 241, 247, 251, 249, 244, 441, 442, 422, 423, 424, 299, 261, 263, 257, 269,
+	405, 404, 267, 427, 428, 256, 236
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	260, 259, 418, 419, 110, 1, 279, 280, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 426, 427, 274, 276,
-	281, 282, 283, 238, 242, 248, 252, 250, 245, 442, 443, 423, 424, 425, 300
+	259, 258, 417, 418, 109, 1, 278, 279, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 425, 426, 273, 275,
+	280, 281, 282, 237, 241, 247, 251, 249, 244, 441, 442, 422, 423, 424, 299
 ]);
-const _supertype_callExpression_ids = new Set<number>([423, 424, 425]);
-const _supertype_binaryExpression_ids = new Set<number>([406, 405]);
-const _supertype_updateExpression_ids = new Set<number>([428, 429]);
-const _supertype_string_ids = new Set<number>([426, 427]);
-const _supertype_comment_ids = new Set<number>([138, 139]);
-const _supertype_number_ids = new Set<number>([140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151]);
-const _supertype_metaProperty_ids = new Set<number>([442, 443]);
-const _supertype_pattern_ids = new Set<number>([261, 292]);
-const _supertype_methodDefinition_ids = new Set<number>([458, 459, 460]);
-const _supertype_publicFieldDefinition_ids = new Set<number>([467, 468]);
-const _supertype_methodSignature_ids = new Set<number>([461, 462, 463]);
-const _supertype_abstractMethodSignature_ids = new Set<number>([464, 465, 466]);
+const _supertype_callExpression_ids = new Set<number>([422, 423, 424]);
+const _supertype_binaryExpression_ids = new Set<number>([405, 404]);
+const _supertype_updateExpression_ids = new Set<number>([427, 428]);
+const _supertype_string_ids = new Set<number>([425, 426]);
+const _supertype_comment_ids = new Set<number>([137, 138]);
+const _supertype_number_ids = new Set<number>([139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150]);
+const _supertype_metaProperty_ids = new Set<number>([441, 442]);
+const _supertype_pattern_ids = new Set<number>([260, 291]);
+const _supertype_methodDefinition_ids = new Set<number>([457, 458, 459]);
+const _supertype_publicFieldDefinition_ids = new Set<number>([466, 467]);
+const _supertype_methodSignature_ids = new Set<number>([460, 461, 462]);
+const _supertype_abstractMethodSignature_ids = new Set<number>([463, 464, 465]);
 const _supertype_type_ids = new Set<number>([
-	510, 244, 509, 366, 40, 41, 42, 43, 44, 125, 78, 126, 127, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
-	350, 348, 382, 381, 68, 383, 380, 345, 349, 335, 336
+	509, 243, 508, 365, 40, 41, 42, 43, 44, 124, 78, 125, 126, 46, 318, 350, 368, 377, 378, 364, 357, 358, 363, 361, 359,
+	349, 347, 381, 380, 68, 382, 379, 344, 348, 334, 335
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	510, 244, 509, 366, 40, 41, 42, 43, 44, 125, 78, 126, 127, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
-	350, 348, 382, 381, 68
+	509, 243, 508, 365, 40, 41, 42, 43, 44, 124, 78, 125, 126, 46, 318, 350, 368, 377, 378, 364, 357, 358, 363, 361, 359,
+	349, 347, 381, 380, 68
 ]);
-const _supertype_indexSignature_ids = new Set<number>([411, 412]);
-const _supertype_classBodyMember_ids = new Set<number>([408, 409, 290, 410, 407]);
-const _supertype_enumBodyElement_ids = new Set<number>([388, 324]);
-const _supertype_forInitializer_ids = new Set<number>([448, 449, 450]);
-const _supertype_numberBigint_ids = new Set<number>([148, 149, 150, 151]);
-const _supertype_exportStatementDefault_ids = new Set<number>([433, 434]);
-const _supertype_layout_ids = new Set<number>([182, 183, 184, 185, 186, 187, 188, 189]);
-const _supertype_methodDefinitionClassBodyMemberMethod_ids = new Set<number>([458, 469, 459, 460]);
+const _supertype_indexSignature_ids = new Set<number>([410, 411]);
+const _supertype_classBodyMember_ids = new Set<number>([407, 408, 289, 409, 406]);
+const _supertype_enumBodyElement_ids = new Set<number>([387, 323]);
+const _supertype_forInitializer_ids = new Set<number>([447, 448, 449]);
+const _supertype_numberBigint_ids = new Set<number>([147, 148, 149, 150]);
+const _supertype_exportStatementDefault_ids = new Set<number>([432, 433]);
+const _supertype_layout_ids = new Set<number>([181, 182, 183, 184, 185, 186, 187, 188]);
+const _supertype_methodDefinitionClassBodyMemberMethod_ids = new Set<number>([457, 468, 458, 459]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.ExportStatement, _supertype_exportStatement_ids],
@@ -1721,7 +1721,7 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.ExportStatementDefault, _supertype_exportStatementDefault_ids],
 	[TSKindId.MethodDefinitionClassBodyMemberMethod, _supertype_methodDefinitionClassBodyMemberMethod_ids],
 	[TSKindId.AccessibilityModifier, new Set<number>([34, 35, 36])],
-	[TSKindId.PredefinedType, new Set<number>([40, 41, 42, 43, 44, 125, 78, 126, 127, 46])]
+	[TSKindId.PredefinedType, new Set<number>([40, 41, 42, 43, 44, 124, 78, 125, 126, 46])]
 ]);
 const _single = new Map<number, ReadonlySet<number>>();
 function _kinds(kind: number): ReadonlySet<number> {
@@ -2135,7 +2135,7 @@ export function guardsWith(test: KindTest): IsGuards {
 			true
 		)
 	});
-	const _supertype_declaration_guard = _vg(_mg(196), {
+	const _supertype_declaration_guard = _vg(_mg(195), {
 		function: _kind_FunctionDeclaration_guard,
 		generatorFunction: _kind_GeneratorFunctionDeclaration_guard,
 		class: _kind_ClassDeclaration_guard,
@@ -2152,99 +2152,99 @@ export function guardsWith(test: KindTest): IsGuards {
 		importAlias: _kind_ImportAlias_guard,
 		ambient: _form_AmbientDeclaration_guard
 	});
-	const _supertype_importSpecifier_guard = _vg(_mg(203), {
+	const _supertype_importSpecifier_guard = _vg(_mg(202), {
 		name: _kind_ImportSpecifierName_guard,
 		as: _kind_ImportSpecifierAs_guard
 	});
-	const _supertype_variableDeclarator_guard = _vg(_mg(210), {
+	const _supertype_variableDeclarator_guard = _vg(_mg(209), {
 		plain: _kind_VariableDeclaratorPlain_guard,
 		definite: _kind_VariableDeclaratorDefinite_guard
 	});
-	const _supertype_forHeader_guard = _vg(_mg(217), {
+	const _supertype_forHeader_guard = _vg(_mg(216), {
 		lhs: _kind_ForHeaderLhs_guard,
 		varKind: _kind_ForHeaderVarKind_guard,
 		letConstKind: _kind_ForHeaderLetConstKind_guard,
 		usingKind: _kind_ForHeaderUsingKind_guard
 	});
-	const _supertype_parenthesizedExpression_guard = _vg(_mg(234), {
+	const _supertype_parenthesizedExpression_guard = _vg(_mg(233), {
 		typed: _kind_ParenthesizedExpressionTyped_guard,
 		sequence: _kind_ParenthesizedExpressionSequence_guard
 	});
-	const _supertype_callExpression_guard = _vg(_mg(256), {
+	const _supertype_callExpression_guard = _vg(_mg(255), {
 		call: _kind_CallExpressionCall_guard,
 		templateCall: _kind_CallExpressionTemplateCall_guard,
 		member: _kind_CallExpressionMember_guard
 	});
-	const _supertype_binaryExpression_guard = _vg(_mg(269), { in: _kind_BinaryExpressionIn_guard });
-	const _supertype_updateExpression_guard = _vg(_mg(271), {
+	const _supertype_binaryExpression_guard = _vg(_mg(268), { in: _kind_BinaryExpressionIn_guard });
+	const _supertype_updateExpression_guard = _vg(_mg(270), {
 		postfix: _kind_UpdateExpressionPostfix_guard,
 		prefix: _kind_UpdateExpressionPrefix_guard
 	});
-	const _supertype_string_guard = _vg(_mg(273), { double: _kind_StringDouble_guard, single: _kind_StringSingle_guard });
+	const _supertype_string_guard = _vg(_mg(272), { double: _kind_StringDouble_guard, single: _kind_StringSingle_guard });
 	const _supertype_comment_guard = _vg(_sg(_supertype_comment_ids), {
 		line: _kind_CommentLine_guard,
 		block: _kind_CommentBlock_guard
 	});
-	const _supertype_metaProperty_guard = _vg(_mg(278), {
+	const _supertype_metaProperty_guard = _vg(_mg(277), {
 		newTarget: _kind_MetaPropertyNewTarget_guard,
 		importMeta: _kind_MetaPropertyImportMeta_guard
 	});
-	const _supertype_pattern_guard = _vg(_mg(291), { lhs: _form_LhsExpression_guard, rest: _kind_RestPattern_guard });
-	const _supertype_methodDefinition_guard = _vg(_mg(293), {
+	const _supertype_pattern_guard = _vg(_mg(290), { lhs: _form_LhsExpression_guard, rest: _kind_RestPattern_guard });
+	const _supertype_methodDefinition_guard = _vg(_mg(292), {
 		plain: _kind_MethodDefinitionPlain_guard,
 		getter: _kind_MethodDefinitionGetter_guard,
 		setter: _kind_MethodDefinitionSetter_guard
 	});
-	const _supertype_publicFieldDefinition_guard = _vg(_mg(298), {
+	const _supertype_publicFieldDefinition_guard = _vg(_mg(297), {
 		plain: _kind_PublicFieldDefinitionPlain_guard,
 		accessor: _kind_PublicFieldDefinitionAccessor_guard
 	});
-	const _supertype_methodSignature_guard = _vg(_mg(301), {
+	const _supertype_methodSignature_guard = _vg(_mg(300), {
 		plain: _kind_MethodSignaturePlain_guard,
 		getter: _kind_MethodSignatureGetter_guard,
 		setter: _kind_MethodSignatureSetter_guard
 	});
-	const _supertype_abstractMethodSignature_guard = _vg(_mg(302), {
+	const _supertype_abstractMethodSignature_guard = _vg(_mg(301), {
 		plain: _kind_AbstractMethodSignaturePlain_guard,
 		getter: _kind_AbstractMethodSignatureGetter_guard,
 		setter: _kind_AbstractMethodSignatureSetter_guard
 	});
-	const _supertype_indexSignature_guard = _vg(_mg(377), {
+	const _supertype_indexSignature_guard = _vg(_mg(376), {
 		colon: _kind_IndexSignatureColon_guard,
 		mappedTypeClause: _kind_IndexSignatureMappedTypeClause_guard
 	});
-	const _supertype_classBodyMember_guard = _vg(_mg(386), {
+	const _supertype_classBodyMember_guard = _vg(_mg(385), {
 		method: _kind_ClassBodyMemberMethod_guard,
 		methodSig: _kind_ClassBodyMemberMethodSig_guard,
 		staticBlock: _kind_ClassStaticBlock_guard,
 		declaration: _kind_ClassBodyMemberDeclaration_guard,
 		empty: _kind_EmptyMember_guard
 	});
-	const _supertype_enumBodyElement_guard = _vg(_mg(389), {
+	const _supertype_enumBodyElement_guard = _vg(_mg(388), {
 		name: _kind_EnumBodyElementName_guard,
 		assignment: _kind_EnumAssignment_guard
 	});
-	const _supertype_forInitializer_guard = _vg(_mg(399), {
+	const _supertype_forInitializer_guard = _vg(_mg(398), {
 		letConstKind: _kind_ForInitializerLetConstKind_guard,
 		varKind: _kind_ForInitializerVarKind_guard,
 		usingKind: _kind_ForInitializerUsingKind_guard
 	});
-	const _supertype_numberBigint_guard = _vg(_mg(404), {
+	const _supertype_numberBigint_guard = _vg(_mg(403), {
 		hex: _kind_NumberBigintHex_guard,
 		binary: _kind_NumberBigintBinary_guard,
 		octal: _kind_NumberBigintOctal_guard,
 		decimal: _kind_NumberBigintDecimal_guard
 	});
-	const _supertype_exportStatementDefault_guard = _vg(_mg(420), {
+	const _supertype_exportStatementDefault_guard = _vg(_mg(419), {
 		from: _form_ExportStatementDefaultFrom_guard,
 		declaration: _form_ExportStatementDefaultDeclaration_guard
 	});
-	const _supertype_exportStatement_guard = _vg(_mg(191), {
+	const _supertype_exportStatement_guard = _vg(_mg(190), {
 		default: _supertype_exportStatementDefault_guard,
 		equalsExport: _kind_ExportStatementEqualsExport_guard,
 		namespaceExport: _kind_ExportStatementNamespaceExport_guard
 	});
-	const _supertype_statement_guard = _vg(_mg(205), {
+	const _supertype_statement_guard = _vg(_mg(204), {
 		export: _supertype_exportStatement_guard,
 		import: _form_ImportStatement_guard,
 		debugger: _kind_DebuggerStatement_guard,
@@ -2266,7 +2266,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		empty: _kind_EmptyStatement_guard,
 		labeled: _kind_LabeledStatement_guard
 	});
-	const _supertype_number_guard = _vg(_mg(277), {
+	const _supertype_number_guard = _vg(_mg(276), {
 		hex: _kind_NumberHex_guard,
 		floatPoint: _kind_NumberFloatPoint_guard,
 		floatLeadingPoint: _kind_NumberFloatLeadingPoint_guard,
@@ -2528,8 +2528,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		variableDeclarator: _supertype_variableDeclarator_guard,
 		forHeader: _supertype_forHeader_guard,
 		parenthesizedExpression: _supertype_parenthesizedExpression_guard,
-		expression: _mg(235),
-		primaryExpression: _mg(236),
+		expression: _mg(234),
+		primaryExpression: _mg(235),
 		callExpression: _supertype_callExpression_guard,
 		binaryExpression: _supertype_binaryExpression_guard,
 		updateExpression: _supertype_updateExpression_guard,
@@ -2542,8 +2542,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		publicFieldDefinition: _supertype_publicFieldDefinition_guard,
 		methodSignature: _supertype_methodSignature_guard,
 		abstractMethodSignature: _supertype_abstractMethodSignature_guard,
-		type: _mg(339),
-		primaryType: _mg(346),
+		type: _mg(338),
+		primaryType: _mg(345),
 		indexSignature: _supertype_indexSignature_guard,
 		classBodyMember: _supertype_classBodyMember_guard,
 		enumBodyElement: _supertype_enumBodyElement_guard,

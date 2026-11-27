@@ -7270,11 +7270,8 @@
           }
         },
         {
-          "type": "IMMEDIATE_TOKEN",
-          "content": {
-            "type": "STRING",
-            "value": "`"
-          }
+          "type": "STRING",
+          "value": "`"
         }
       ]
     },
@@ -7282,11 +7279,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "IMMEDIATE_TOKEN",
-          "content": {
-            "type": "STRING",
-            "value": "${"
-          }
+          "type": "STRING",
+          "value": "${"
         },
         {
           "type": "FIELD",
@@ -10605,11 +10599,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "IMMEDIATE_TOKEN",
-          "content": {
-            "type": "STRING",
-            "value": "${"
-          }
+          "type": "STRING",
+          "value": "${"
         },
         {
           "type": "FIELD",
@@ -10673,11 +10664,8 @@
           }
         },
         {
-          "type": "IMMEDIATE_TOKEN",
-          "content": {
-            "type": "STRING",
-            "value": "`"
-          }
+          "type": "STRING",
+          "value": "`"
         }
       ]
     },

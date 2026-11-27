@@ -6103,24 +6103,24 @@ const table: PortableTable = {
 				path: 'declaration.member.property.signature.abstract.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '465': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '465': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '464': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '464': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.signature.abstract.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '465': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '465': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '464': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '464': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.signature.abstract.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '465': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '465': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '464': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '464': 0 } } }
 				]
 			},
 			{ path: 'declaration.member.property.signature.abstract.getter', within: [], test: [] }
@@ -6130,24 +6130,24 @@ const table: PortableTable = {
 				path: 'declaration.member.method.signature.abstract.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '464': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '464': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '463': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '463': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.method.signature.abstract.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '464': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '464': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '463': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '463': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.method.signature.abstract.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '464': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '464': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '463': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '463': 0 } } }
 				]
 			},
 			{ path: 'declaration.member.method.signature.abstract', within: [], test: [] }
@@ -6157,24 +6157,24 @@ const table: PortableTable = {
 				path: 'declaration.member.property.signature.abstract.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '466': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '466': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '465': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '465': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.signature.abstract.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '466': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '466': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '465': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '465': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.signature.abstract.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '466': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '466': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '465': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '465': 0 } } }
 				]
 			},
 			{ path: 'declaration.member.property.signature.abstract.setter', within: [], test: [] }
@@ -6197,77 +6197,77 @@ const table: PortableTable = {
 			{
 				path: 'expression.assignment.compound.add',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.subtract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.multiply',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.divide',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.modulo',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.exponent',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_xor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_left',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_right',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_right_unsigned',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||=', slots: { '263': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.coalesce',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??=', slots: { '264': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??=', slots: { '263': 1 } } }]
 			},
 			{ path: 'expression.assignment.compound', within: [], test: [] }
 		],
@@ -6276,122 +6276,122 @@ const table: PortableTable = {
 			{
 				path: 'expression.binary.shift.left',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.shift.right',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.shift.right_unsigned',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.add',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.subtract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.multiply',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.divide',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.modulo',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.exponent',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.loose_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.loose_not_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '===', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '===', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.not_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!==', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!==', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.less',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.greater',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.less_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.greater_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.xor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.logical.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.logical.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.coalesce',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??', slots: { '405': 1 } } }]
 			},
 			{
 				path: 'expression.binary.membership.instanceof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'instanceof', slots: { '406': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'instanceof', slots: { '405': 1 } } }]
 			},
 			{ path: 'expression.binary', within: [], test: [] }
 		],
@@ -6408,7 +6408,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.call.member',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [259], slots: { '423': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [258], slots: { '422': 0 } } }]
 			},
 			{ path: 'expression.call', within: [], test: [] }
 		],
@@ -6436,24 +6436,24 @@ const table: PortableTable = {
 				path: 'declaration.member.constructor.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '469': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '469': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '468': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '468': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.constructor.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '469': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '469': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '468': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '468': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.constructor.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '469': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '469': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '468': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '468': 0 } } }
 				]
 			}
 		],
@@ -6478,7 +6478,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.export.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '194': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '193': 0 } } }]
 			},
 			{ path: 'clause.export.specifier', within: [], test: [] }
 		],
@@ -6486,7 +6486,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.export.default',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [438], slots: { '434': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [437], slots: { '433': 1 } } }]
 			},
 			{ path: 'statement.export', within: [], test: [] }
 		],
@@ -6494,7 +6494,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.export.all',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [435], slots: { '433': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [434], slots: { '432': 1 } } }]
 			},
 			{ path: 'statement.export', within: [], test: [] }
 		],
@@ -6510,12 +6510,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.variable.constant',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'const', slots: { '448': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'const', slots: { '447': 0 } } }]
 			},
 			{
 				path: 'declaration.variable.reassignable',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'let', slots: { '448': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'let', slots: { '447': 0 } } }]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
@@ -6543,7 +6543,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '417': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '416': 0 } } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -6551,7 +6551,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '416': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '415': 0 } } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -6560,7 +6560,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.import.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '198': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '197': 0 } } }]
 			}
 		],
 		[TSKindId.IndexSignatureColon]: [{ path: 'declaration.member.signature.index', within: [], test: [] }],
@@ -6576,8 +6576,8 @@ const table: PortableTable = {
 				path: 'declaration.type.interface',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '320': 3 } }], plan: { op: 'eq', text: '{', slots: { '503': 0 } } },
-					{ up: 0, via: [{ slots: { '320': 3 } }], plan: { op: 'eq', text: '}', slots: { '503': 2 } } }
+					{ up: 0, via: [{ slots: { '319': 3 } }], plan: { op: 'eq', text: '{', slots: { '502': 0 } } },
+					{ up: 0, via: [{ slots: { '319': 3 } }], plan: { op: 'eq', text: '}', slots: { '502': 2 } } }
 				]
 			}
 		],
@@ -6591,7 +6591,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [],
-						plan: { op: 'not', of: { op: 'is', types: [219, 216, 215, 211, 218], slots: { '228': 1 } } }
+						plan: { op: 'not', of: { op: 'is', types: [218, 215, 214, 210, 217], slots: { '227': 1 } } }
 					}
 				]
 			}
@@ -6600,12 +6600,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.variable.constant',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'const', slots: { '208': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'const', slots: { '207': 0 } } }]
 			},
 			{
 				path: 'declaration.variable.reassignable',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'let', slots: { '208': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'let', slots: { '207': 0 } } }]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
@@ -6621,24 +6621,24 @@ const table: PortableTable = {
 				path: 'declaration.member.property.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '459': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '459': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '458': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '458': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '459': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '459': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '458': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '458': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '459': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '459': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '458': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '458': 0 } } }
 				]
 			},
 			{ path: 'declaration.member.property.getter', within: [], test: [] }
@@ -6648,24 +6648,24 @@ const table: PortableTable = {
 				path: 'declaration.member.method.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '458': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '458': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '457': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '457': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.method.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '458': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '458': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '457': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '457': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.method.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '458': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '458': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '457': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '457': 0 } } }
 				]
 			},
 			{ path: 'declaration.member.method', within: [], test: [] }
@@ -6675,24 +6675,24 @@ const table: PortableTable = {
 				path: 'declaration.member.property.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '460': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '460': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '459': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '459': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '460': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '460': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '459': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '459': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '460': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '460': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '459': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '459': 0 } } }
 				]
 			},
 			{ path: 'declaration.member.property.setter', within: [], test: [] }
@@ -6702,24 +6702,24 @@ const table: PortableTable = {
 				path: 'declaration.member.property.signature.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '462': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '462': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '461': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '461': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.signature.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '462': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '462': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '461': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '461': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.signature.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '462': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '462': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '461': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '461': 0 } } }
 				]
 			},
 			{ path: 'declaration.member.property.signature.getter', within: [], test: [] }
@@ -6729,24 +6729,24 @@ const table: PortableTable = {
 				path: 'declaration.member.method.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '461': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '461': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '460': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '460': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.method.signature.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '461': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '461': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '460': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '460': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.method.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '461': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '461': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '460': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '460': 0 } } }
 				]
 			},
 			{ path: 'declaration.member.method.signature', within: [], test: [] }
@@ -6756,24 +6756,24 @@ const table: PortableTable = {
 				path: 'declaration.member.property.signature.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '463': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '463': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '462': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '462': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.signature.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '463': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '463': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '462': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '462': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.signature.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '463': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '463': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '462': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '462': 0 } } }
 				]
 			},
 			{ path: 'declaration.member.property.signature.setter', within: [], test: [] }
@@ -6792,7 +6792,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.call.construct.bare',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'not', of: { op: 'present', slots: { '257': 2 } } } }]
+				test: [{ up: 0, via: [], plan: { op: 'not', of: { op: 'present', slots: { '256': 2 } } } }]
 			}
 		],
 		[TSKindId.NonNullExpression]: [{ path: 'expression.cast.non_null', within: [], test: [] }],
@@ -6862,24 +6862,24 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '329': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '329': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '328': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '328': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '329': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '329': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '328': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '328': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '329': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '329': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '328': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '328': 1 } } }
 				]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
@@ -6903,24 +6903,24 @@ const table: PortableTable = {
 				path: 'declaration.member.field.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '371': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '371': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '370': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '370': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.field.signature.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '371': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '371': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '370': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '370': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.member.field.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '371': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '371': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '370': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '370': 0 } } }
 				]
 			},
 			{ path: 'declaration.member.field.signature', within: [], test: [] }
@@ -6934,30 +6934,30 @@ const table: PortableTable = {
 				path: 'declaration.member.property.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '468': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '468': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '467': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '467': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '468': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '468': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '467': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '467': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '468': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '468': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '467': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '467': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.member.property.signature.abstract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'present', slots: { '468': 3 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'present', slots: { '467': 3 } } }]
 			},
 			{ path: 'declaration.member.property', within: [], test: [] }
 		],
@@ -6966,24 +6966,24 @@ const table: PortableTable = {
 				path: 'declaration.member.field.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '467': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '467': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '466': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '466': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.member.field.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '467': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '467': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '466': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '466': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.member.field.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '467': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '467': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '466': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '466': 2 } } }
 				]
 			},
 			{ path: 'declaration.member.field', within: [], test: [] }
@@ -6999,24 +6999,24 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '473': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '473': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '472': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '472': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '473': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '473': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '472': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '472': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '473': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '473': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '472': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '472': 1 } } }
 				]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
@@ -7029,30 +7029,30 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '328': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '328': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '327': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '327': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '328': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '328': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '327': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '327': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '328': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '328': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '327': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '327': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.receiver',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [279], slots: { '328': 4 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [278], slots: { '327': 4 } } }]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
 		],
@@ -7066,24 +7066,24 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '455': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '455': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '454': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '454': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '455': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '455': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '454': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '454': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '455': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '455': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '454': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '454': 1 } } }
 				]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
@@ -7133,8 +7133,8 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '356': 0 } }, { slots: { '284': 0 }, anchor: 'only' }],
-						plan: { op: 'is', types: [426, 427], self: true }
+						via: [{ slots: { '355': 0 } }, { slots: { '283': 0 }, anchor: 'only' }],
+						plan: { op: 'is', types: [425, 426], self: true }
 					}
 				]
 			}
@@ -7144,11 +7144,11 @@ const table: PortableTable = {
 				path: 'type.import',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [197], slots: { '336': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [196], slots: { '335': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '336': 1 } }, { slots: { '284': 0 }, anchor: 'only' }],
-						plan: { op: 'is', types: [426, 427], self: true }
+						via: [{ slots: { '335': 1 } }, { slots: { '283': 0 }, anchor: 'only' }],
+						plan: { op: 'is', types: [425, 426], self: true }
 					}
 				]
 			}
@@ -7157,14 +7157,14 @@ const table: PortableTable = {
 			{
 				path: 'expression.instantiation',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [1, 354, 355], slots: { '357': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [1, 353, 354], slots: { '356': 0 } } }]
 			}
 		],
 		[TSKindId.TypeQueryMemberExpression]: [
 			{
 				path: 'identifier.qualified',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '.', slots: { '354': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '.', slots: { '353': 1 } } }]
 			}
 		],
 		[TSKindId.TypeQueryMemberExpressionInTypeAnnotation]: [{ path: 'identifier.qualified', within: [], test: [] }],
@@ -7173,37 +7173,37 @@ const table: PortableTable = {
 			{
 				path: 'expression.unary.negation',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '270': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '269': 0 } } }]
 			},
 			{
 				path: 'expression.unary.plus',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '270': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '269': 0 } } }]
 			},
 			{
 				path: 'expression.unary.not',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!', slots: { '270': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!', slots: { '269': 0 } } }]
 			},
 			{
 				path: 'expression.unary.bitwise_not',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '~', slots: { '270': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '~', slots: { '269': 0 } } }]
 			},
 			{
 				path: 'expression.unary.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '270': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '269': 0 } } }]
 			},
 			{
 				path: 'expression.unary.void',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'void', slots: { '270': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'void', slots: { '269': 0 } } }]
 			},
 			{
 				path: 'expression.unary.delete',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'delete', slots: { '270': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'delete', slots: { '269': 0 } } }]
 			}
 		],
 		[TSKindId.Undefined]: [{ path: 'literal.null.undefined', within: [], test: [] }],
@@ -7222,12 +7222,12 @@ const table: PortableTable = {
 			{
 				path: 'expression.update.increment',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '428': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '427': 1 } } }]
 			},
 			{
 				path: 'expression.update.decrement',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '428': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '427': 1 } } }]
 			},
 			{ path: 'expression.update', within: [], test: [] }
 		],
@@ -7235,12 +7235,12 @@ const table: PortableTable = {
 			{
 				path: 'expression.update.increment',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '429': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '428': 0 } } }]
 			},
 			{
 				path: 'expression.update.decrement',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '429': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '428': 0 } } }]
 			},
 			{ path: 'expression.update', within: [], test: [] }
 		],
@@ -7252,7 +7252,7 @@ const table: PortableTable = {
 			{
 				path: 'declaration.variable.pattern',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [243, 239], slots: { '440': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [242, 238], slots: { '439': 0 } } }]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
@@ -7267,7 +7267,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.yield.delegate',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [414], slots: { '237': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [413], slots: { '236': 0 } } }]
 			}
 		]
 	},
@@ -7451,137 +7451,137 @@ const table: PortableTable = {
 export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.AbstractClassDeclaration]: { abstract: { op: 'and', of: [] } },
 	[TSKindId.AbstractMethodSignatureGetter]: {
-		override: { op: 'present', slots: { '465': 1 } },
-		privateName: { op: 'is', types: [109], slots: { '465': 2 } },
-		computed: { op: 'is', types: [297], slots: { '465': 2 } }
+		override: { op: 'present', slots: { '464': 1 } },
+		privateName: { op: 'is', types: [108], slots: { '464': 2 } },
+		computed: { op: 'is', types: [296], slots: { '464': 2 } }
 	},
 	[TSKindId.AbstractMethodSignaturePlain]: {
-		override: { op: 'present', slots: { '464': 1 } },
-		optional: { op: 'present', slots: { '464': 4 } },
-		generator: { op: 'present', slots: { '464': 2 } },
-		privateName: { op: 'is', types: [109], slots: { '464': 3 } },
-		computed: { op: 'is', types: [297], slots: { '464': 3 } }
+		override: { op: 'present', slots: { '463': 1 } },
+		optional: { op: 'present', slots: { '463': 4 } },
+		generator: { op: 'present', slots: { '463': 2 } },
+		privateName: { op: 'is', types: [108], slots: { '463': 3 } },
+		computed: { op: 'is', types: [296], slots: { '463': 3 } }
 	},
 	[TSKindId.AbstractMethodSignatureSetter]: {
-		override: { op: 'present', slots: { '466': 1 } },
-		privateName: { op: 'is', types: [109], slots: { '466': 2 } },
-		computed: { op: 'is', types: [297], slots: { '466': 2 } }
+		override: { op: 'present', slots: { '465': 1 } },
+		privateName: { op: 'is', types: [108], slots: { '465': 2 } },
+		computed: { op: 'is', types: [296], slots: { '465': 2 } }
 	},
-	[TSKindId.ArrowFunction]: { async: { op: 'present', slots: { '252': 0 } } },
+	[TSKindId.ArrowFunction]: { async: { op: 'present', slots: { '251': 0 } } },
 	[TSKindId.CallExpressionMember]: { optionalChain: { op: 'and', of: [] } },
-	[TSKindId.ConstructSignature]: { abstract: { op: 'present', slots: { '376': 0 } } },
-	[TSKindId.ConstructorType]: { abstract: { op: 'present', slots: { '345': 0 } } },
-	[TSKindId.EnumDeclaration]: { const: { op: 'present', slots: { '322': 0 } } },
-	[TSKindId.ExportSpecifier]: { typeOnly: { op: 'eq', text: 'type', slots: { '194': 0 } } },
-	[TSKindId.ExportStatementDefaultFrom]: { typeOnly: { op: 'present', slots: { '433': 0 } } },
-	[TSKindId.ForInStatement]: { async: { op: 'present', slots: { '216': 0 } } },
-	[TSKindId.FunctionDeclaration]: { async: { op: 'present', slots: { '249': 0 } } },
-	[TSKindId.FunctionExpression]: { async: { op: 'present', slots: { '248': 0 } } },
-	[TSKindId.FunctionSignature]: { async: { op: 'present', slots: { '303': 0 } } },
-	[TSKindId.GeneratorFunction]: { async: { op: 'present', slots: { '250': 0 } }, generator: { op: 'and', of: [] } },
+	[TSKindId.ConstructSignature]: { abstract: { op: 'present', slots: { '375': 0 } } },
+	[TSKindId.ConstructorType]: { abstract: { op: 'present', slots: { '344': 0 } } },
+	[TSKindId.EnumDeclaration]: { const: { op: 'present', slots: { '321': 0 } } },
+	[TSKindId.ExportSpecifier]: { typeOnly: { op: 'eq', text: 'type', slots: { '193': 0 } } },
+	[TSKindId.ExportStatementDefaultFrom]: { typeOnly: { op: 'present', slots: { '432': 0 } } },
+	[TSKindId.ForInStatement]: { async: { op: 'present', slots: { '215': 0 } } },
+	[TSKindId.FunctionDeclaration]: { async: { op: 'present', slots: { '248': 0 } } },
+	[TSKindId.FunctionExpression]: { async: { op: 'present', slots: { '247': 0 } } },
+	[TSKindId.FunctionSignature]: { async: { op: 'present', slots: { '302': 0 } } },
+	[TSKindId.GeneratorFunction]: { async: { op: 'present', slots: { '249': 0 } }, generator: { op: 'and', of: [] } },
 	[TSKindId.GeneratorFunctionDeclaration]: {
-		async: { op: 'present', slots: { '251': 0 } },
+		async: { op: 'present', slots: { '250': 0 } },
 		generator: { op: 'and', of: [] }
 	},
-	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', slots: { '417': 0 } } },
-	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', slots: { '416': 0 } } },
-	[TSKindId.ImportStatement]: { typeOnly: { op: 'eq', text: 'type', slots: { '198': 0 } } },
-	[TSKindId.IndexSignatureColon]: { readonly: { op: 'present', slots: { '411': 1 } } },
-	[TSKindId.IndexSignatureMappedTypeClause]: { readonly: { op: 'present', slots: { '412': 1 } } },
+	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', slots: { '416': 0 } } },
+	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', slots: { '415': 0 } } },
+	[TSKindId.ImportStatement]: { typeOnly: { op: 'eq', text: 'type', slots: { '197': 0 } } },
+	[TSKindId.IndexSignatureColon]: { readonly: { op: 'present', slots: { '410': 1 } } },
+	[TSKindId.IndexSignatureMappedTypeClause]: { readonly: { op: 'present', slots: { '411': 1 } } },
 	[TSKindId.MemberExpression]: {
-		optionalChain: { op: 'is', types: [255], slots: { '259': 1 } },
-		privateName: { op: 'is', types: [109], slots: { '259': 2 } }
+		optionalChain: { op: 'is', types: [254], slots: { '258': 1 } },
+		privateName: { op: 'is', types: [108], slots: { '258': 2 } }
 	},
 	[TSKindId.MethodDefinitionGetter]: {
-		static: { op: 'present', slots: { '459': 1 } },
-		override: { op: 'present', slots: { '459': 2 } },
-		privateName: { op: 'is', types: [109], slots: { '459': 3 } },
-		computed: { op: 'is', types: [297], slots: { '459': 3 } }
-	},
-	[TSKindId.MethodDefinitionPlain]: {
 		static: { op: 'present', slots: { '458': 1 } },
 		override: { op: 'present', slots: { '458': 2 } },
-		readonly: { op: 'present', slots: { '458': 3 } },
-		async: { op: 'present', slots: { '458': 4 } },
-		optional: { op: 'present', slots: { '458': 7 } },
-		generator: { op: 'present', slots: { '458': 5 } },
-		privateName: { op: 'is', types: [109], slots: { '458': 6 } },
-		computed: { op: 'is', types: [297], slots: { '458': 6 } }
+		privateName: { op: 'is', types: [108], slots: { '458': 3 } },
+		computed: { op: 'is', types: [296], slots: { '458': 3 } }
+	},
+	[TSKindId.MethodDefinitionPlain]: {
+		static: { op: 'present', slots: { '457': 1 } },
+		override: { op: 'present', slots: { '457': 2 } },
+		readonly: { op: 'present', slots: { '457': 3 } },
+		async: { op: 'present', slots: { '457': 4 } },
+		optional: { op: 'present', slots: { '457': 7 } },
+		generator: { op: 'present', slots: { '457': 5 } },
+		privateName: { op: 'is', types: [108], slots: { '457': 6 } },
+		computed: { op: 'is', types: [296], slots: { '457': 6 } }
 	},
 	[TSKindId.MethodDefinitionSetter]: {
-		static: { op: 'present', slots: { '460': 1 } },
-		override: { op: 'present', slots: { '460': 2 } },
-		privateName: { op: 'is', types: [109], slots: { '460': 3 } },
-		computed: { op: 'is', types: [297], slots: { '460': 3 } }
+		static: { op: 'present', slots: { '459': 1 } },
+		override: { op: 'present', slots: { '459': 2 } },
+		privateName: { op: 'is', types: [108], slots: { '459': 3 } },
+		computed: { op: 'is', types: [296], slots: { '459': 3 } }
 	},
 	[TSKindId.MethodSignatureGetter]: {
-		static: { op: 'present', slots: { '462': 1 } },
-		override: { op: 'present', slots: { '462': 2 } },
-		privateName: { op: 'is', types: [109], slots: { '462': 3 } },
-		computed: { op: 'is', types: [297], slots: { '462': 3 } }
-	},
-	[TSKindId.MethodSignaturePlain]: {
 		static: { op: 'present', slots: { '461': 1 } },
 		override: { op: 'present', slots: { '461': 2 } },
-		readonly: { op: 'present', slots: { '461': 3 } },
-		async: { op: 'present', slots: { '461': 4 } },
-		optional: { op: 'present', slots: { '461': 7 } },
-		generator: { op: 'present', slots: { '461': 5 } },
-		privateName: { op: 'is', types: [109], slots: { '461': 6 } },
-		computed: { op: 'is', types: [297], slots: { '461': 6 } }
+		privateName: { op: 'is', types: [108], slots: { '461': 3 } },
+		computed: { op: 'is', types: [296], slots: { '461': 3 } }
+	},
+	[TSKindId.MethodSignaturePlain]: {
+		static: { op: 'present', slots: { '460': 1 } },
+		override: { op: 'present', slots: { '460': 2 } },
+		readonly: { op: 'present', slots: { '460': 3 } },
+		async: { op: 'present', slots: { '460': 4 } },
+		optional: { op: 'present', slots: { '460': 7 } },
+		generator: { op: 'present', slots: { '460': 5 } },
+		privateName: { op: 'is', types: [108], slots: { '460': 6 } },
+		computed: { op: 'is', types: [296], slots: { '460': 6 } }
 	},
 	[TSKindId.MethodSignatureSetter]: {
-		static: { op: 'present', slots: { '463': 1 } },
-		override: { op: 'present', slots: { '463': 2 } },
-		privateName: { op: 'is', types: [109], slots: { '463': 3 } },
-		computed: { op: 'is', types: [297], slots: { '463': 3 } }
+		static: { op: 'present', slots: { '462': 1 } },
+		override: { op: 'present', slots: { '462': 2 } },
+		privateName: { op: 'is', types: [108], slots: { '462': 3 } },
+		computed: { op: 'is', types: [296], slots: { '462': 3 } }
 	},
 	[TSKindId.OptionalParameter]: {
-		override: { op: 'present', slots: { '329': 2 } },
-		readonly: { op: 'present', slots: { '329': 3 } },
+		override: { op: 'present', slots: { '328': 2 } },
+		readonly: { op: 'present', slots: { '328': 3 } },
 		optional: { op: 'and', of: [] }
 	},
-	[TSKindId.Pair]: { computed: { op: 'is', types: [297], slots: { '294': 0 } } },
-	[TSKindId.PairPattern]: { computed: { op: 'is', types: [297], slots: { '295': 0 } } },
+	[TSKindId.Pair]: { computed: { op: 'is', types: [296], slots: { '293': 0 } } },
+	[TSKindId.PairPattern]: { computed: { op: 'is', types: [296], slots: { '294': 0 } } },
 	[TSKindId.PropertySignature]: {
-		static: { op: 'present', slots: { '371': 1 } },
-		override: { op: 'present', slots: { '371': 2 } },
-		readonly: { op: 'present', slots: { '371': 3 } },
-		optional: { op: 'present', slots: { '371': 5 } },
-		privateName: { op: 'is', types: [109], slots: { '371': 4 } },
-		computed: { op: 'is', types: [297], slots: { '371': 4 } }
+		static: { op: 'present', slots: { '370': 1 } },
+		override: { op: 'present', slots: { '370': 2 } },
+		readonly: { op: 'present', slots: { '370': 3 } },
+		optional: { op: 'present', slots: { '370': 5 } },
+		privateName: { op: 'is', types: [108], slots: { '370': 4 } },
+		computed: { op: 'is', types: [296], slots: { '370': 4 } }
 	},
 	[TSKindId.PublicFieldDefinitionAccessor]: {
-		static: { op: 'present', slots: { '468': 2 } },
-		override: { op: 'present', slots: { '468': 4 } },
-		privateName: { op: 'is', types: [109], slots: { '468': 5 } },
-		computed: { op: 'is', types: [297], slots: { '468': 5 } }
+		static: { op: 'present', slots: { '467': 2 } },
+		override: { op: 'present', slots: { '467': 4 } },
+		privateName: { op: 'is', types: [108], slots: { '467': 5 } },
+		computed: { op: 'is', types: [296], slots: { '467': 5 } }
 	},
 	[TSKindId.PublicFieldDefinitionPlain]: {
-		declare: { op: 'present', slots: { '467': 1 } },
-		static: { op: 'present', slots: { '467': 3 } },
-		abstract: { op: 'present', slots: { '467': 4 } },
-		override: { op: 'present', slots: { '467': 5 } },
-		readonly: { op: 'present', slots: { '467': 6 } },
-		optional: { op: 'eq', text: '?', slots: { '467': 8 } },
-		definite: { op: 'eq', text: '!', slots: { '467': 8 } },
-		privateName: { op: 'is', types: [109], slots: { '467': 7 } },
-		computed: { op: 'is', types: [297], slots: { '467': 7 } }
+		declare: { op: 'present', slots: { '466': 1 } },
+		static: { op: 'present', slots: { '466': 3 } },
+		abstract: { op: 'present', slots: { '466': 4 } },
+		override: { op: 'present', slots: { '466': 5 } },
+		readonly: { op: 'present', slots: { '466': 6 } },
+		optional: { op: 'eq', text: '?', slots: { '466': 8 } },
+		definite: { op: 'eq', text: '!', slots: { '466': 8 } },
+		privateName: { op: 'is', types: [108], slots: { '466': 7 } },
+		computed: { op: 'is', types: [296], slots: { '466': 7 } }
 	},
 	[TSKindId.ReceiverParameterDeclaration]: {
-		override: { op: 'present', slots: { '473': 2 } },
-		readonly: { op: 'present', slots: { '473': 3 } }
+		override: { op: 'present', slots: { '472': 2 } },
+		readonly: { op: 'present', slots: { '472': 3 } }
 	},
 	[TSKindId.RequiredParameter]: {
-		override: { op: 'present', slots: { '328': 2 } },
-		readonly: { op: 'present', slots: { '328': 3 } }
+		override: { op: 'present', slots: { '327': 2 } },
+		readonly: { op: 'present', slots: { '327': 3 } }
 	},
 	[TSKindId.SetterParameter]: {
-		override: { op: 'present', slots: { '455': 2 } },
-		readonly: { op: 'present', slots: { '455': 3 } }
+		override: { op: 'present', slots: { '454': 2 } },
+		readonly: { op: 'present', slots: { '454': 3 } }
 	},
-	[TSKindId.SubscriptExpression]: { optionalChain: { op: 'is', types: [255], slots: { '260': 1 } } },
-	[TSKindId.TypeParameter]: { const: { op: 'present', slots: { '373': 0 } } },
+	[TSKindId.SubscriptExpression]: { optionalChain: { op: 'is', types: [254], slots: { '259': 1 } } },
+	[TSKindId.TypeParameter]: { const: { op: 'present', slots: { '372': 0 } } },
 	[TSKindId.Unique]: { unique: { op: 'and', of: [] } },
 	[TSKindId.UpdateExpressionPrefix]: { prefix: { op: 'and', of: [] } },
 	[TSKindId.VariableDeclaratorDefinite]: { definite: { op: 'and', of: [] } }
@@ -7590,794 +7590,794 @@ export const queryFlags: QueryFlags = Object.freeze({
 export const rows: PortableRows = Object.freeze({ table, querySlots, flags: queryFlags });
 
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
-	190: {
+	189: {
 		statements: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [216, 249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 433] }
-		}
-	},
-	206: {
-		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [215, 248, 250, 302] },
+			const: { types: [], kinds: [321] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			typeOnly: { types: [], kinds: [197, 432] }
 		}
 	},
-	207: { declarators: { definite: { types: [441], kinds: [] } } },
-	208: { declarators: { definite: { types: [441], kinds: [] } } },
-	209: { variableDeclarators: { definite: { types: [441], kinds: [] } } },
-	211: {
+	205: {
+		expression: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		}
+	},
+	206: { declarators: { definite: { types: [440], kinds: [] } } },
+	207: { declarators: { definite: { types: [440], kinds: [] } } },
+	208: { variableDeclarators: { definite: { types: [440], kinds: [] } } },
+	210: {
 		statements: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [216, 249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 433] }
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [215, 248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] },
+			typeOnly: { types: [], kinds: [197, 432] }
+		}
+	},
+	211: {
+		body: {
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [215, 248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] },
+			typeOnly: { types: [], kinds: [197, 432] }
 		}
 	},
 	212: {
-		body: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [216, 249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 433] }
+		consequence: {
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [215, 248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] },
+			typeOnly: { types: [], kinds: [197, 432] }
 		}
 	},
-	213: {
-		consequence: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [216, 249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 433] }
+	214: {
+		initializer: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		},
+		condition: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		},
+		increment: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		},
+		body: {
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [215, 248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] },
+			typeOnly: { types: [], kinds: [197, 432] }
 		}
 	},
 	215: {
-		initializer: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		},
-		condition: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		},
-		increment: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		},
 		body: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [216, 249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 433] }
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [215, 248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] },
+			typeOnly: { types: [], kinds: [197, 432] }
 		}
 	},
-	216: {
+	217: {
 		body: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [216, 249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 433] }
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [215, 248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] },
+			typeOnly: { types: [], kinds: [197, 432] }
 		}
 	},
 	218: {
 		body: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [216, 249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 433] }
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [215, 248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] },
+			typeOnly: { types: [], kinds: [197, 432] }
 		}
 	},
-	219: {
+	220: {
 		body: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [216, 249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 433] }
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [215, 248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] },
+			typeOnly: { types: [], kinds: [197, 432] }
 		}
 	},
-	221: {
-		body: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [216, 249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 433] }
+	224: {
+		expression: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	225: {
 		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	226: {
-		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
-	},
-	228: {
+	227: {
 		body: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [216, 249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 433] }
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [215, 248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] },
+			typeOnly: { types: [], kinds: [197, 432] }
+		}
+	},
+	229: {
+		value: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		},
+		statements: {
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [215, 248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] },
+			typeOnly: { types: [], kinds: [197, 432] }
 		}
 	},
 	230: {
-		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		},
 		statements: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [216, 249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 433] }
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [215, 248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] },
+			typeOnly: { types: [], kinds: [197, 432] }
 		}
 	},
-	231: {
-		statements: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [216, 249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 433] }
+	236: {
+		expression: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	237: {
-		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
-	},
-	238: {
 		properties: {
-			async: { types: [], kinds: [458] },
-			computed: { types: [], kinds: [294, 458, 459, 460] },
-			generator: { types: [], kinds: [458] },
-			optional: { types: [], kinds: [458] },
-			override: { types: [], kinds: [458, 459, 460] },
-			privateName: { types: [], kinds: [458, 459, 460] },
-			readonly: { types: [], kinds: [458] },
-			static: { types: [], kinds: [458, 459, 460] }
+			async: { types: [], kinds: [457] },
+			computed: { types: [], kinds: [293, 457, 458, 459] },
+			generator: { types: [], kinds: [457] },
+			optional: { types: [], kinds: [457] },
+			override: { types: [], kinds: [457, 458, 459] },
+			privateName: { types: [], kinds: [457, 458, 459] },
+			readonly: { types: [], kinds: [457] },
+			static: { types: [], kinds: [457, 458, 459] }
 		}
 	},
-	239: { properties: { computed: { types: [], kinds: [295] } } },
+	238: { properties: { computed: { types: [], kinds: [294] } } },
+	239: {
+		right: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		}
+	},
 	240: {
 		right: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	241: {
-		right: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
-	},
-	242: {
 		elements: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	252: {
+	251: {
 		body: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		}
+	},
+	256: {
+		function: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	257: {
-		function: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			privateName: { types: [], kinds: [259] }
+		expression: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	258: {
-		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+		object: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	259: {
 		object: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
-	},
-	260: {
-		object: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		},
 		index: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	261: { content: { optionalChain: { types: [], kinds: [259, 260] }, privateName: { types: [], kinds: [259] } } },
-	262: {
+	260: { content: { optionalChain: { types: [], kinds: [258, 259] }, privateName: { types: [], kinds: [258] } } },
+	261: {
 		right: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	264: {
-		left: { optionalChain: { types: [], kinds: [259, 260] }, privateName: { types: [], kinds: [259] } },
+	263: {
+		left: { optionalChain: { types: [], kinds: [258, 259] }, privateName: { types: [], kinds: [258] } },
 		right: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		}
+	},
+	266: {
+		expression: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	267: {
-		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
-	},
-	268: {
 		condition: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		},
 		consequence: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		},
 		alternative: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	270: {
+	269: {
 		argument: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	272: {
+	271: {
 		expressions: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	275: {
+	274: {
 		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	284: {
+	283: {
 		elements: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	292: { lhsExpression: { optionalChain: { types: [], kinds: [259, 260] }, privateName: { types: [], kinds: [259] } } },
-	294: {
+	291: { lhsExpression: { optionalChain: { types: [], kinds: [258, 259] }, privateName: { types: [], kinds: [258] } } },
+	293: {
 		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	297: {
+	296: {
 		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	300: {
+	299: {
 		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		}
+	},
+	304: {
+		expression: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	305: {
 		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		},
+		type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } }
 	},
 	306: {
 		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		},
-		type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } }
+		type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } }
 	},
 	307: {
-		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		},
-		type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } }
-	},
-	308: {
 		function: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	311: {
+	310: {
 		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	312: { types: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	313: {
+	311: { types: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	312: {
 		content: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] }
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] }
 		}
 	},
-	324: {
+	323: {
 		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	325: { value: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
+	324: { value: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	327: {
+		value: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		}
+	},
 	328: {
 		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	329: {
-		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
+	330: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	331: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	332: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	333: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	341: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	342: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	344: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	346: { type: { unique: { types: [124], kinds: [] } } },
+	348: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	349: {
+		left: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } },
+		right: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } },
+		consequence: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } },
+		alternative: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } }
 	},
-	331: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	332: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	333: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	334: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	342: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	343: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	345: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	347: { type: { unique: { types: [125], kinds: [] } } },
-	349: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	350: {
-		left: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } },
-		right: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } },
-		consequence: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } },
-		alternative: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } }
+	351: {
+		name: { unique: { types: [124], kinds: [] } },
+		type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } }
 	},
-	352: {
-		name: { unique: { types: [125], kinds: [] } },
-		type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } }
+	354: { index: { unique: { types: [124], kinds: [] } } },
+	358: { type: { unique: { types: [124], kinds: [] } } },
+	359: {
+		type: { unique: { types: [124], kinds: [] } },
+		indexType: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } }
 	},
-	355: { index: { unique: { types: [125], kinds: [] } } },
-	359: { type: { unique: { types: [125], kinds: [] } } },
 	360: {
-		type: { unique: { types: [125], kinds: [] } },
-		indexType: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } }
+		type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } },
+		alias: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } }
 	},
-	361: {
-		type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } },
-		alias: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } }
+	364: { type: { unique: { types: [124], kinds: [] } } },
+	365: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	373: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	374: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	377: { type: { unique: { types: [124], kinds: [] } } },
+	379: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	380: {
+		left: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } },
+		right: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } }
 	},
-	365: { type: { unique: { types: [125], kinds: [] } } },
-	366: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	374: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	375: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	378: { type: { unique: { types: [125], kinds: [] } } },
-	380: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
 	381: {
-		left: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } },
-		right: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } }
+		left: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } },
+		right: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } }
 	},
-	382: {
-		left: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } },
-		right: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } }
-	},
-	383: { returnType: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	384: { items: { typeOnly: { types: [], kinds: [194] } } },
-	385: { items: { typeOnly: { types: [], kinds: [416, 417] } } },
-	387: {
+	382: { returnType: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	383: { items: { typeOnly: { types: [], kinds: [193] } } },
+	384: { items: { typeOnly: { types: [], kinds: [415, 416] } } },
+	386: {
 		items: {
-			optional: { types: [329], kinds: [] },
-			override: { types: [], kinds: [328, 329] },
-			readonly: { types: [], kinds: [328, 329] }
+			optional: { types: [328], kinds: [] },
+			override: { types: [], kinds: [327, 328] },
+			readonly: { types: [], kinds: [327, 328] }
 		}
 	},
-	391: { items: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	392: { items: { const: { types: [], kinds: [373] } } },
-	393: { items: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	401: { type: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	402: {
+	390: { items: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	391: { items: { const: { types: [], kinds: [372] } } },
+	392: { items: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	400: { type: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	401: {
 		items: {
-			abstract: { types: [], kinds: [376] },
-			async: { types: [], kinds: [461] },
-			computed: { types: [], kinds: [371, 461, 462, 463] },
-			generator: { types: [], kinds: [461] },
-			optional: { types: [], kinds: [371, 461] },
-			override: { types: [], kinds: [371, 461, 462, 463] },
-			privateName: { types: [], kinds: [371, 461, 462, 463] },
-			readonly: { types: [], kinds: [371, 411, 412, 461] },
-			static: { types: [], kinds: [371, 461, 462, 463] },
-			typeOnly: { types: [], kinds: [433] }
+			abstract: { types: [], kinds: [375] },
+			async: { types: [], kinds: [460] },
+			computed: { types: [], kinds: [370, 460, 461, 462] },
+			generator: { types: [], kinds: [460] },
+			optional: { types: [], kinds: [370, 460] },
+			override: { types: [], kinds: [370, 460, 461, 462] },
+			privateName: { types: [], kinds: [370, 460, 461, 462] },
+			readonly: { types: [], kinds: [370, 410, 411, 460] },
+			static: { types: [], kinds: [370, 460, 461, 462] },
+			typeOnly: { types: [], kinds: [432] }
+		}
+	},
+	404: {
+		left: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		},
+		right: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	405: {
 		left: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		},
 		right: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	406: {
-		left: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		},
-		right: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+	407: {
+		methodDefinition: {
+			async: { types: [], kinds: [457] },
+			computed: { types: [], kinds: [457, 458, 459] },
+			generator: { types: [], kinds: [457] },
+			optional: { types: [], kinds: [457] },
+			override: { types: [], kinds: [457, 458, 459] },
+			privateName: { types: [], kinds: [457, 458, 459] },
+			readonly: { types: [], kinds: [457] },
+			static: { types: [], kinds: [457, 458, 459] }
 		}
 	},
 	408: {
-		methodDefinition: {
-			async: { types: [], kinds: [458] },
-			computed: { types: [], kinds: [458, 459, 460] },
-			generator: { types: [], kinds: [458] },
-			optional: { types: [], kinds: [458] },
-			override: { types: [], kinds: [458, 459, 460] },
-			privateName: { types: [], kinds: [458, 459, 460] },
-			readonly: { types: [], kinds: [458] },
-			static: { types: [], kinds: [458, 459, 460] }
+		methodSignature: {
+			async: { types: [], kinds: [460] },
+			computed: { types: [], kinds: [460, 461, 462] },
+			generator: { types: [], kinds: [460] },
+			optional: { types: [], kinds: [460] },
+			override: { types: [], kinds: [460, 461, 462] },
+			privateName: { types: [], kinds: [460, 461, 462] },
+			readonly: { types: [], kinds: [460] },
+			static: { types: [], kinds: [460, 461, 462] }
 		}
 	},
 	409: {
-		methodSignature: {
-			async: { types: [], kinds: [461] },
-			computed: { types: [], kinds: [461, 462, 463] },
-			generator: { types: [], kinds: [461] },
-			optional: { types: [], kinds: [461] },
-			override: { types: [], kinds: [461, 462, 463] },
-			privateName: { types: [], kinds: [461, 462, 463] },
-			readonly: { types: [], kinds: [461] },
-			static: { types: [], kinds: [461, 462, 463] }
-		}
-	},
-	410: {
 		member: {
-			abstract: { types: [], kinds: [467] },
-			async: { types: [], kinds: [461] },
-			computed: { types: [], kinds: [461, 462, 463, 464, 465, 466, 467, 468] },
-			declare: { types: [], kinds: [467] },
-			definite: { types: [], kinds: [467] },
-			generator: { types: [], kinds: [461, 464] },
-			optional: { types: [], kinds: [461, 464, 467] },
-			override: { types: [], kinds: [461, 462, 463, 464, 465, 466, 467, 468] },
-			privateName: { types: [], kinds: [461, 462, 463, 464, 465, 466, 467, 468] },
-			readonly: { types: [], kinds: [411, 412, 461, 467] },
-			static: { types: [], kinds: [461, 462, 463, 467, 468] }
+			abstract: { types: [], kinds: [466] },
+			async: { types: [], kinds: [460] },
+			computed: { types: [], kinds: [460, 461, 462, 463, 464, 465, 466, 467] },
+			declare: { types: [], kinds: [466] },
+			definite: { types: [], kinds: [466] },
+			generator: { types: [], kinds: [460, 463] },
+			optional: { types: [], kinds: [460, 463, 466] },
+			override: { types: [], kinds: [460, 461, 462, 463, 464, 465, 466, 467] },
+			privateName: { types: [], kinds: [460, 461, 462, 463, 464, 465, 466, 467] },
+			readonly: { types: [], kinds: [410, 411, 460, 466] },
+			static: { types: [], kinds: [460, 461, 462, 466, 467] }
 		}
 	},
-	411: { indexType: { abstract: { types: [], kinds: [345] }, unique: { types: [125], kinds: [] } } },
-	414: {
+	410: { indexType: { abstract: { types: [], kinds: [344] }, unique: { types: [124], kinds: [] } } },
+	413: {
 		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	418: {
+	417: {
 		expression: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	421: {
+	420: {
 		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		}
+	},
+	422: {
+		function: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	423: {
 		function: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	424: {
 		function: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	425: {
-		function: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			privateName: { types: [], kinds: [259] }
+	427: {
+		argument: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	428: {
 		argument: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	429: {
-		argument: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
-	},
-	434: {
+	433: {
 		content: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] }
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] }
+		}
+	},
+	437: {
+		content: {
+			abstract: { types: [313], kinds: [] },
+			async: { types: [], kinds: [248, 250, 302] },
+			const: { types: [], kinds: [321] },
+			generator: { types: [250], kinds: [] }
 		}
 	},
 	438: {
-		content: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] }
+		value: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	439: {
 		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	440: {
-		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+	443: {
+		right: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	444: {
+		value: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
+		},
 		right: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	445: {
-		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		},
 		right: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
 	446: {
 		right: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	447: {
-		right: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+	447: { declarators: { definite: { types: [440], kinds: [] } } },
+	448: { declarators: { definite: { types: [440], kinds: [] } } },
+	449: { declarators: { definite: { types: [440], kinds: [] } } },
+	453: { item: { override: { types: [], kinds: [454] }, readonly: { types: [], kinds: [454] } } },
+	466: {
+		value: {
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	448: { declarators: { definite: { types: [441], kinds: [] } } },
-	449: { declarators: { definite: { types: [441], kinds: [] } } },
-	450: { declarators: { definite: { types: [441], kinds: [] } } },
-	454: { item: { override: { types: [], kinds: [455] }, readonly: { types: [], kinds: [455] } } },
 	467: {
 		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	468: {
+	472: {
 		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+			async: { types: [], kinds: [247, 249, 251] },
+			generator: { types: [249], kinds: [] },
+			optionalChain: { types: [424], kinds: [258, 259] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [258] }
 		}
 	},
-	473: {
-		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [425], kinds: [259, 260] },
-			prefix: { types: [429], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
-	},
-	475: { receiver: { override: { types: [], kinds: [473] }, readonly: { types: [], kinds: [473] } } }
+	474: { receiver: { override: { types: [], kinds: [472] }, readonly: { types: [], kinds: [472] } } }
 } satisfies QuerySlotFlags);
 
 declare module '../types.js' {
