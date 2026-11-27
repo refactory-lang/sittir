@@ -9950,7 +9950,7 @@ function buildForExpression$with$body(this: Received<Held>, ...args: unknown[]):
 }
 
 export function buildConstBlock<V extends Admit<T.Block>>(
-	value: V & RefuseUndeclared<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildConstBlock>;
 export function buildConstBlock<
 	LabelSlot extends T.Block.Config['label'],
@@ -9963,7 +9963,7 @@ export function buildConstBlock<
 	>
 ): ReturnType<typeof _buildConstBlock>;
 export function buildConstBlock(...args: unknown[]) {
-	if (args.length === 0) {
+	if (args.length === 0 || args[0] === undefined) {
 		return _buildConstBlock(buildBlock() as Parameters<typeof _buildConstBlock>[0]);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -9989,7 +9989,7 @@ export function buildConstBlock(...args: unknown[]) {
 		? _buildConstBlock(args[0] as Parameters<typeof _buildConstBlock>[0])
 		: _buildConstBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildConstBlock>[0]);
 }
-function _buildConstBlock(value: Admit<T.Block>): T.ConstBlock.Bound {
+function _buildConstBlock(value?: Admit<T.Block>): T.ConstBlock.Bound {
 	const _body = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'const_block', { body: _body });
@@ -10375,7 +10375,7 @@ function buildFieldExpression$with$property(this: Received<Held>, ...args: unkno
 }
 
 export function buildUnsafeBlock<V extends Admit<T.Block>>(
-	value: V & RefuseUndeclared<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildUnsafeBlock>;
 export function buildUnsafeBlock<
 	LabelSlot extends T.Block.Config['label'],
@@ -10388,7 +10388,7 @@ export function buildUnsafeBlock<
 	>
 ): ReturnType<typeof _buildUnsafeBlock>;
 export function buildUnsafeBlock(...args: unknown[]) {
-	if (args.length === 0) {
+	if (args.length === 0 || args[0] === undefined) {
 		return _buildUnsafeBlock(buildBlock() as Parameters<typeof _buildUnsafeBlock>[0]);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -10416,7 +10416,7 @@ export function buildUnsafeBlock(...args: unknown[]) {
 				(buildBlock as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildUnsafeBlock>[0]
 			);
 }
-function _buildUnsafeBlock(value: Admit<T.Block>): T.UnsafeBlock.Bound {
+function _buildUnsafeBlock(value?: Admit<T.Block>): T.UnsafeBlock.Bound {
 	const _body = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'unsafe_block', { body: _body });
@@ -10561,7 +10561,7 @@ function buildGenBlock$with$body(this: Received<Held>, ...args: unknown[]): unkn
 }
 
 export function buildTryBlock<V extends Admit<T.Block>>(
-	value: V & RefuseUndeclared<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildTryBlock>;
 export function buildTryBlock<
 	LabelSlot extends T.Block.Config['label'],
@@ -10574,7 +10574,7 @@ export function buildTryBlock<
 	>
 ): ReturnType<typeof _buildTryBlock>;
 export function buildTryBlock(...args: unknown[]) {
-	if (args.length === 0) {
+	if (args.length === 0 || args[0] === undefined) {
 		return _buildTryBlock(buildBlock() as Parameters<typeof _buildTryBlock>[0]);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -10600,7 +10600,7 @@ export function buildTryBlock(...args: unknown[]) {
 		? _buildTryBlock(args[0] as Parameters<typeof _buildTryBlock>[0])
 		: _buildTryBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTryBlock>[0]);
 }
-function _buildTryBlock(value: Admit<T.Block>): T.TryBlock.Bound {
+function _buildTryBlock(value?: Admit<T.Block>): T.TryBlock.Bound {
 	const _body = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'try_block', { body: _body });

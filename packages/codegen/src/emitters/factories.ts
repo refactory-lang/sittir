@@ -1706,7 +1706,8 @@ function resolveConfigFactorySurface(
 		const singleShape = numericSlotShape(singleField);
 		const withNumber = (type: string): string => (singleShape === undefined ? type : `${type} | ${numberInputType(singleShape)}`);
 		const elemType = withNumber(baseType);
-		const optional = !isRequired(singleField) || holdsFixedText(singleField);
+		const directOptional = !isRequired(singleField) || holdsFixedText(singleField);
+		const optional = slotFilledWhenOmitted(singleField, nodeMap);
 		const valueParam: FactoryParam = {
 			label: 'value',
 			optional,
@@ -1734,7 +1735,7 @@ function resolveConfigFactorySurface(
 			...renderSurfaceParams(param),
 			args: 'value',
 			directParamType: elemType,
-			directParamOptional: optional,
+			directParamOptional: directOptional,
 			opt: optional ? '?' : ''
 		};
 	}
@@ -2515,7 +2516,7 @@ function fieldCarryingFactoryText(
 			} else if (!directParamOptional && targetTakesNoArgs) {
 				wrapper.push(
 					`  if (args.length === 0 || args[0] === undefined) {`,
-					`    return _${fn}(${targetEmpty} as Parameters<typeof _${fn}>[0], args[0] as never);`,
+					`    return _${fn}(${targetEmpty} as Parameters<typeof _${fn}>[0], args[1] as never);`,
 					`  }`
 				);
 			}
@@ -2544,7 +2545,7 @@ function fieldCarryingFactoryText(
 			);
 		} else {
 			if (!directParamOptional && targetTakesNoArgs) {
-				wrapper.push(`  if (args.length === 0) {`, `    return _${fn}(${targetEmpty} as Parameters<typeof _${fn}>[0]);`, `  }`);
+				wrapper.push(`  if (args.length === 0 || args[0] === undefined) {`, `    return _${fn}(${targetEmpty} as Parameters<typeof _${fn}>[0]);`, `  }`);
 			}
 			wrapper.push(
 				`  if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {`,

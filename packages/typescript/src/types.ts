@@ -20852,7 +20852,7 @@ export namespace FinallyClause {
 	}
 	export type Loose = LooseFor<TSKindId.FinallyClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FinallyClause>;
-	export type BuildArgs = [value: Admit<T.StatementBlock>] | T.StatementBlock.BuildArgs;
+	export type BuildArgs = [value?: Admit<T.StatementBlock>] | T.StatementBlock.BuildArgs;
 	export type LooseArgs = [value?: T.FinallyClause.Loose] | T.StatementBlock.LooseArgs;
 	export type Kind = TSKindId.FinallyClause;
 }
@@ -22025,7 +22025,7 @@ export namespace ClassStaticBlock {
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ClassStaticBlock>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ClassStaticBlock>, 'terminator'>;
-	export type BuildArgs = [value: Admit<T.StatementBlock>, options?: T.ClassStaticBlock.Options];
+	export type BuildArgs = [value?: Admit<T.StatementBlock>, options?: T.ClassStaticBlock.Options];
 	export type LooseArgs = [value?: T.ClassStaticBlock.Loose, options?: T.ClassStaticBlock.Options];
 	export type Kind = TSKindId.ClassStaticBlock;
 }
@@ -23395,7 +23395,7 @@ export namespace TypeQueryCallExpression {
 	}
 	export type Loose = LooseFor<TSKindId.TypeQueryCallExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryCallExpression>;
-	export type BuildArgs = [value: Admit<T.Arguments>] | T.Arguments.BuildArgs;
+	export type BuildArgs = [value?: Admit<T.Arguments>] | T.Arguments.BuildArgs;
 	export type LooseArgs = [value?: T.TypeQueryCallExpression.Loose] | T.Arguments.LooseArgs;
 	export type Kind = TSKindId.TypeQueryCallExpression;
 }
@@ -24579,7 +24579,7 @@ export namespace AmbientDeclarationGlobal {
 	}
 	export type Loose = LooseFor<TSKindId.AmbientDeclarationGlobal>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclarationGlobal>;
-	export type BuildArgs = [value: Admit<T.StatementBlock>] | T.StatementBlock.BuildArgs;
+	export type BuildArgs = [value?: Admit<T.StatementBlock>] | T.StatementBlock.BuildArgs;
 	export type LooseArgs = [value?: T.AmbientDeclarationGlobal.Loose] | T.StatementBlock.LooseArgs;
 	export type Kind = TSKindId.AmbientDeclarationGlobal;
 }

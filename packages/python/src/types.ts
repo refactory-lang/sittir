@@ -17881,7 +17881,7 @@ export namespace SuiteBlock {
 	}
 	export type Loose = LooseFor<TSKindId.SuiteBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SuiteBlock>;
-	export type BuildArgs = [value: Admit<T.Block>] | T.Block.BuildArgs;
+	export type BuildArgs = [value?: Admit<T.Block>] | T.Block.BuildArgs;
 	export type LooseArgs = [value?: T.SuiteBlock.Loose] | T.Block.LooseArgs;
 	export type Kind = TSKindId.SuiteBlock;
 }
@@ -18166,7 +18166,7 @@ export namespace SuiteBlockClassDeclaration {
 	}
 	export type Loose = LooseFor<TSKindId.SuiteBlockClassDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SuiteBlockClassDeclaration>;
-	export type BuildArgs = [value: Admit<T.BlockClassDeclaration>] | T.BlockClassDeclaration.BuildArgs;
+	export type BuildArgs = [value?: Admit<T.BlockClassDeclaration>] | T.BlockClassDeclaration.BuildArgs;
 	export type LooseArgs = [value?: T.SuiteBlockClassDeclaration.Loose] | T.BlockClassDeclaration.LooseArgs;
 	export type Kind = TSKindId.SuiteBlockClassDeclaration;
 }

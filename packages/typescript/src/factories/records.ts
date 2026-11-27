@@ -4116,7 +4116,7 @@ function withCatchClause(node: object, setter: string, args: readonly unknown[])
 }
 
 export function buildFinallyClause<V extends Admit<T.StatementBlock>>(
-	value: V & RefuseUndeclared<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildFinallyClause>;
 export function buildFinallyClause<A extends Admit<T.Statement[]>>(
 	options: ListOptions<T.StatementBlock.Options>,
@@ -4126,7 +4126,7 @@ export function buildFinallyClause<A extends Admit<T.Statement[]>>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildFinallyClause>;
 export function buildFinallyClause(...args: unknown[]) {
-	if (args.length === 0) {
+	if (args.length === 0 || args[0] === undefined) {
 		return _buildFinallyClause(buildStatementBlock() as Parameters<typeof _buildFinallyClause>[0]);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -4154,7 +4154,7 @@ export function buildFinallyClause(...args: unknown[]) {
 				(buildStatementBlock as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildFinallyClause>[0]
 			);
 }
-function _buildFinallyClause(value: Admit<T.StatementBlock>): T.FinallyClause.Bound {
+function _buildFinallyClause(value?: Admit<T.StatementBlock>): T.FinallyClause.Bound {
 	const _body = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'finally_clause', { body: _body });
@@ -4168,7 +4168,7 @@ function _buildFinallyClause(value: Admit<T.StatementBlock>): T.FinallyClause.Bo
 	});
 }
 
-function _buildFinallyClause$patch(source: object, value: Admit<T.StatementBlock>): T.FinallyClause.Bound {
+function _buildFinallyClause$patch(source: object, value?: Admit<T.StatementBlock>): T.FinallyClause.Bound {
 	const _body = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'finally_clause', { body: _body });
@@ -9796,14 +9796,13 @@ function withFormalParameters(node: object, setter: string, args: readonly unkno
 }
 
 export function buildClassStaticBlock<V extends Admit<T.StatementBlock>>(
-	value: V & RefuseUndeclared<V>,
-	options?: T.ClassStaticBlock.Options
+	...value: [value?: V, options?: T.ClassStaticBlock.Options] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildClassStaticBlock>;
 export function buildClassStaticBlock(...args: unknown[]) {
 	if (args.length === 0 || args[0] === undefined) {
 		return _buildClassStaticBlock(
 			buildStatementBlock() as Parameters<typeof _buildClassStaticBlock>[0],
-			args[0] as never
+			args[1] as never
 		);
 	}
 	if (args[0] === undefined) {
@@ -9829,7 +9828,7 @@ export function buildClassStaticBlock(...args: unknown[]) {
 			);
 }
 function _buildClassStaticBlock(
-	value: Admit<T.StatementBlock>,
+	value?: Admit<T.StatementBlock>,
 	options?: T.ClassStaticBlock.Options
 ): T.ClassStaticBlock.Bound {
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassStaticBlock['_terminator']>>(
@@ -9852,7 +9851,7 @@ function _buildClassStaticBlock(
 
 function _buildClassStaticBlock$patch(
 	source: object,
-	value: Admit<T.StatementBlock>,
+	value?: Admit<T.StatementBlock>,
 	options?: T.ClassStaticBlock.Options
 ): T.ClassStaticBlock.Bound {
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassStaticBlock['_terminator']>>(
@@ -16896,13 +16895,13 @@ function withTypeQuerySubscriptExpression(node: object, setter: string, args: re
 }
 
 export function buildTypeQueryCallExpression<V extends Admit<T.Arguments>>(
-	value: V & RefuseUndeclared<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildTypeQueryCallExpression>;
 export function buildTypeQueryCallExpression<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTypeQueryCallExpression>;
 export function buildTypeQueryCallExpression(...args: unknown[]) {
-	if (args.length === 0) {
+	if (args.length === 0 || args[0] === undefined) {
 		return _buildTypeQueryCallExpression(buildArguments() as Parameters<typeof _buildTypeQueryCallExpression>[0]);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -16932,7 +16931,7 @@ export function buildTypeQueryCallExpression(...args: unknown[]) {
 				(buildArguments as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTypeQueryCallExpression>[0]
 			);
 }
-function _buildTypeQueryCallExpression(value: Admit<T.Arguments>): T.TypeQueryCallExpression.Bound {
+function _buildTypeQueryCallExpression(value?: Admit<T.Arguments>): T.TypeQueryCallExpression.Bound {
 	const _arguments = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'type_query_call_expression', { arguments: _arguments });
@@ -16948,7 +16947,7 @@ function _buildTypeQueryCallExpression(value: Admit<T.Arguments>): T.TypeQueryCa
 
 function _buildTypeQueryCallExpression$patch(
 	source: object,
-	value: Admit<T.Arguments>
+	value?: Admit<T.Arguments>
 ): T.TypeQueryCallExpression.Bound {
 	const _arguments = value;
 	const handle = currentHandle();
@@ -21498,7 +21497,7 @@ function withGetAccessorSignature(node: object, setter: string, args: readonly u
 }
 
 export function buildAmbientDeclarationGlobal<V extends Admit<T.StatementBlock>>(
-	value: V & RefuseUndeclared<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildAmbientDeclarationGlobal>;
 export function buildAmbientDeclarationGlobal<A extends Admit<T.Statement[]>>(
 	options: ListOptions<T.StatementBlock.Options>,
@@ -21508,7 +21507,7 @@ export function buildAmbientDeclarationGlobal<A extends Admit<T.Statement[]>>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildAmbientDeclarationGlobal>;
 export function buildAmbientDeclarationGlobal(...args: unknown[]) {
-	if (args.length === 0) {
+	if (args.length === 0 || args[0] === undefined) {
 		return _buildAmbientDeclarationGlobal(
 			buildStatementBlock() as Parameters<typeof _buildAmbientDeclarationGlobal>[0]
 		);
@@ -21542,7 +21541,7 @@ export function buildAmbientDeclarationGlobal(...args: unknown[]) {
 				>[0]
 			);
 }
-function _buildAmbientDeclarationGlobal(value: Admit<T.StatementBlock>): T.AmbientDeclarationGlobal.Bound {
+function _buildAmbientDeclarationGlobal(value?: Admit<T.StatementBlock>): T.AmbientDeclarationGlobal.Bound {
 	const _body = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'ambient_declaration_global', { body: _body });
@@ -21558,7 +21557,7 @@ function _buildAmbientDeclarationGlobal(value: Admit<T.StatementBlock>): T.Ambie
 
 function _buildAmbientDeclarationGlobal$patch(
 	source: object,
-	value: Admit<T.StatementBlock>
+	value?: Admit<T.StatementBlock>
 ): T.AmbientDeclarationGlobal.Bound {
 	const _body = value;
 	const handle = currentHandle();

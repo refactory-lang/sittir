@@ -17471,13 +17471,13 @@ function withSuiteInline(node: object, setter: string, args: readonly unknown[])
 }
 
 export function buildSuiteBlock<V extends Admit<T.Block>>(
-	value: V & RefuseUndeclared<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildSuiteBlock>;
 export function buildSuiteBlock<A extends Admit<T.Statement[]>>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildSuiteBlock>;
 export function buildSuiteBlock(...args: unknown[]) {
-	if (args.length === 0) {
+	if (args.length === 0 || args[0] === undefined) {
 		return _buildSuiteBlock(buildBlock() as Parameters<typeof _buildSuiteBlock>[0]);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -17503,7 +17503,7 @@ export function buildSuiteBlock(...args: unknown[]) {
 		? _buildSuiteBlock(args[0] as Parameters<typeof _buildSuiteBlock>[0])
 		: _buildSuiteBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildSuiteBlock>[0]);
 }
-function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
+function _buildSuiteBlock(value?: Admit<T.Block>): T.SuiteBlock.Bound {
 	const _block = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'suite_block', { block: _block });
@@ -17517,7 +17517,7 @@ function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
 	});
 }
 
-function _buildSuiteBlock$patch(source: object, value: Admit<T.Block>): T.SuiteBlock.Bound {
+function _buildSuiteBlock$patch(source: object, value?: Admit<T.Block>): T.SuiteBlock.Bound {
 	const _block = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'suite_block', { block: _block });
@@ -18669,13 +18669,13 @@ function withBlockClassDeclaration(node: object, setter: string, args: readonly 
 }
 
 export function buildSuiteBlockClassDeclaration<V extends Admit<T.BlockClassDeclaration>>(
-	value: V & RefuseUndeclared<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildSuiteBlockClassDeclaration>;
 export function buildSuiteBlockClassDeclaration<A extends Admit<T.StatementClassDefinition[]>>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildSuiteBlockClassDeclaration>;
 export function buildSuiteBlockClassDeclaration(...args: unknown[]) {
-	if (args.length === 0) {
+	if (args.length === 0 || args[0] === undefined) {
 		return _buildSuiteBlockClassDeclaration(
 			buildBlockClassDeclaration() as Parameters<typeof _buildSuiteBlockClassDeclaration>[0]
 		);
@@ -18709,7 +18709,7 @@ export function buildSuiteBlockClassDeclaration(...args: unknown[]) {
 				>[0]
 			);
 }
-function _buildSuiteBlockClassDeclaration(value: Admit<T.BlockClassDeclaration>): T.SuiteBlockClassDeclaration.Bound {
+function _buildSuiteBlockClassDeclaration(value?: Admit<T.BlockClassDeclaration>): T.SuiteBlockClassDeclaration.Bound {
 	const _block_class_declaration = value;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -18726,7 +18726,7 @@ function _buildSuiteBlockClassDeclaration(value: Admit<T.BlockClassDeclaration>)
 
 function _buildSuiteBlockClassDeclaration$patch(
 	source: object,
-	value: Admit<T.BlockClassDeclaration>
+	value?: Admit<T.BlockClassDeclaration>
 ): T.SuiteBlockClassDeclaration.Bound {
 	const _block_class_declaration = value;
 	const handle = currentHandle();
