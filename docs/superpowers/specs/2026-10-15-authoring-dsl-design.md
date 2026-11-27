@@ -462,7 +462,6 @@ The generated grammar bindings use it: each derived kind rename (§2.4) is a `re
 
     Rust's `block` is reauthored with `accepts-invalid-syntax` to drop the label rustc rejects on a body. `label_block_expression` serves it: the labelled block the reauthoring moves out of `block`. `_block_or_label_block_expression` serves it too, admitting both where an expression ends with a block.
   - A `vocabulary` entry without `serves` is verified when every authored or upstream rule that reaches it is a witness-verified `reauthored` rule or a verified helper. The hand-written rule ratchet counts every other entry and every undeclared rule.
-  - A rule that adds or excludes a form takes a witnessed cause. A redefinition that changes no accepted form is not written: the positions that need a narrower form take named copies of the rule (§4.1).
   - They are layer-1 only, since a generated layer has no `rules:`.
 - **`role(symbol, 'indent' | 'dedent' | 'newline')`,** in the `externals` callback, is unchanged. The pass calls that callback, so it records the roles in the layer record.
 - **`preference(arm)`,** in `options:`, is unchanged. `options:` stays its own key:
