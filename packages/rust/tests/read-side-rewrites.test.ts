@@ -28,3 +28,26 @@ describe.each(['object', 'arena'] as const)('a side a read node is written again
 		expect(String(root.$render())).toBe(`fn f() {\n    // w${writes}\n    let a = 1;\n}\n`);
 	});
 });
+
+describe.each(['object', 'arena'] as const)('a side written again with as many entries takes no more chunk bytes (%s storage)', (nodeStorage) => {
+	const origins = {
+		read: (rs: any) => {
+			const root = rs.parse(SOURCE);
+			return { root, node: root.$query().$descendants.ofType(rust.kinds.LetDeclaration).at(0), rendered: 'fn f() {\n    // w\n    let a = 1;\n}\n' };
+		},
+		built: (rs: any) => {
+			const root = rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: rs.build.block({ statements: [rs.build.expressionStatement(rs.build.identifier('a'))] }) });
+			return { root, node: root, rendered: '// w\nfn f() {\n    a;\n}' };
+		}
+	};
+	it.each(Object.keys(origins) as (keyof typeof origins)[])('a %s node written one comment 5,000 times holds the chunk bytes its first write took', async (origin) => {
+		using rs: any = await createEngine(rust, { nodeStorage });
+		const { root, node, rendered } = origins[origin](rs);
+		using comment = rs.build.lineComment(' w');
+		node.$trivia.leading(comment);
+		const first = rs.diagnostics.builtMemory?.()?.chunks;
+		for (let n = 1; n <= 5000; n++) node.$trivia.leading(comment);
+		expect(rs.diagnostics.builtMemory?.()?.chunks).toBe(first);
+		expect(String(root.$render())).toBe(rendered);
+	});
+});

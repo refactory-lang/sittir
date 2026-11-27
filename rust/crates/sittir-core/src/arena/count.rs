@@ -598,6 +598,35 @@ impl BuiltChunks {
         }
     }
 
+    /// Gives back the count each item of the run at `at` holds, the run
+    /// itself kept: a run about to be written over.
+    ///
+    /// # Errors
+    ///
+    /// As `release`.
+    pub fn release_items(&mut self, at: Address) -> Result<(), ArenaError> {
+        if self.released {
+            return Err(ARENA_RELEASED);
+        }
+        let mut walk = Releasing::default();
+        self.drop_items(at, &mut walk)?;
+        while let Some(dead) = walk.stack.pop() {
+            self.release_held(dead, &mut walk)?;
+        }
+        Ok(())
+    }
+
+    fn drop_items(&mut self, at: Address, walk: &mut Releasing) -> Result<(), ArenaError> {
+        let mut items = std::mem::take(&mut walk.items);
+        items.clear();
+        items.extend(ListCell::of_run(at, self)?.items(self, 1)?.map(|item| CellWord(item[0])));
+        for &item in &items {
+            self.drop_cell(item.address(), walk)?;
+        }
+        walk.items = items;
+        Ok(())
+    }
+
     fn release_held(&mut self, held: Held, walk: &mut Releasing) -> Result<(), ArenaError> {
         match held {
             Held::Record(at) => {
@@ -612,15 +641,7 @@ impl BuiltChunks {
                     (_, flags) => return Err(malformed("record flags", flags)),
                 }
             }
-            Held::Run(at) => {
-                let mut items = std::mem::take(&mut walk.items);
-                items.clear();
-                items.extend(ListCell::of_run(at, self)?.items(self, 1)?.map(|item| CellWord(item[0])));
-                for &item in &items {
-                    self.drop_cell(item.address(), walk)?;
-                }
-                walk.items = items;
-            }
+            Held::Run(at) => self.drop_items(at, walk)?,
             Held::Side(at) => {
                 if let Some(rows) = RowFields::read(self, at)? {
                     for cell in rows.cells().filter(|cell| cell.0 != 0) {

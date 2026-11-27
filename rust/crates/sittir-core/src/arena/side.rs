@@ -224,6 +224,32 @@ impl RowFields {
         super::ListCell::word(space.push(&words)?)
     }
 
+    /// The row of `cells`, as `place_row` places it, written over the run
+    /// `old` instead when one count holds `old`, its holder is the only one
+    /// to name it, and its length is no less than `cells`': `old`'s items'
+    /// counts given back and its length now `cells`'. A later longer row is
+    /// placed anew.
+    ///
+    /// # Errors
+    ///
+    /// What reading or releasing the run refuses, and what `place_row`
+    /// refuses.
+    pub fn place_row_over(writer: &mut super::ReadWriter<'_>, old: Option<CellWord>, cells: &[CellWord]) -> Result<CellWord, ArenaError> {
+        let Some(run) = old.filter(|run| run.0 != 0 && !cells.is_empty()) else { return Self::place_row(writer, cells) };
+        let at = run.address();
+        let len = u32::try_from(cells.len()).map_err(|_| ArenaError::Full)?;
+        if writer.chunks_mut().count_of(at)? != 1 || ArenaRead::word(writer, at)? < len {
+            return Self::place_row(writer, cells);
+        }
+        writer.chunks_mut().release_items(at)?;
+        let words = writer.words_mut(at, len + 1)?;
+        words[0] = len;
+        for (word, cell) in words[1..].iter_mut().zip(cells) {
+            *word = cell.0;
+        }
+        Ok(run)
+    }
+
     /// The record at `at`, whose header names the side record `side` with
     /// the rows `old` (`of_record`), holds the rows `rows` in their place,
     /// each row new to it already placed and held once. A side record of
@@ -634,11 +660,32 @@ impl Replaced {
         if entries.is_empty() {
             return Ok(CellWord(0));
         }
+        super::ListCell::word(space.push(&Self::list_words(entries)?)?)
+    }
+
+    /// `entries` written over the list `list`, which holds `held` entries,
+    /// no fewer than `entries`, its length now `entries`' and in the order
+    /// `place` gives.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for more entries than `held`, and what
+    /// `words_mut` refuses.
+    pub fn write_over(space: &mut dyn RecordSpace, list: CellWord, held: usize, entries: &mut [Self]) -> Result<(), ArenaError> {
+        if entries.len() > held {
+            return Err(malformed("replaced ranges past their list", list.0));
+        }
+        let words = Self::list_words(entries)?;
+        space.words_mut(list.address(), u32::try_from(words.len()).map_err(|_| ArenaError::Full)?)?.copy_from_slice(&words);
+        Ok(())
+    }
+
+    fn list_words(entries: &mut [Self]) -> Result<Vec<u32>, ArenaError> {
         entries.sort_by_key(|entry| (entry.offset, entry.node, entry.side.code()));
         let mut words = Vec::with_capacity(1 + entries.len() * field::REPLACED_WORDS as usize);
         words.push(u32::try_from(entries.len()).map_err(|_| ArenaError::Full)?);
         words.extend(entries.iter().flat_map(|entry| entry.words()));
-        super::ListCell::word(space.push(&words)?)
+        Ok(words)
     }
 
     /// The entry `words` hold (`words`).
