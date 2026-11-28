@@ -476,7 +476,7 @@ fn a_read_s_record_answers_its_sides_by_its_address_as_a_built_record_does() {
     };
     assert!(assigned.iter().all(Option::is_some), "the side holds the comment by its record, as its source: {assigned:?}");
     assert_eq!(entry_sources(&side_of(at, side)), assigned);
-    engine.write_built_trivia_side(at, side, &[]).expect("a write");
+    engine.write_read_side(sittir_core::types::NodeId::record(at.0), side, &[]).expect("a write");
     assert_eq!(side_of(at, side).len(), 0, "the written side is the one read");
 }
 
