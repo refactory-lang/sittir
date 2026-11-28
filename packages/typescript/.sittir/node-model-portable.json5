@@ -1,16 +1,6 @@
 {
   "grammar": "typescript",
   "kinds": {
-    "_formal_parameters_elements_set_accessor_signature": {
-      "container": {
-        "slot": "item",
-        "kinds": [
-          "setter_parameter"
-        ],
-        "terminals": [],
-        "list": false
-      }
-    },
     "_formal_parameters_set_accessor_signature": {
       "container": {
         "slot": "elements",

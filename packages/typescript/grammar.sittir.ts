@@ -165,6 +165,7 @@ export default grammar(enrich(base), wire({
 		abstract_method_signature_plain: { 'optional:/before': preference('tight') },
 		method_definition_plain: { 'optional:/before': preference('tight') },
 		public_field_definition_plain: { 'optionality:/before': preference('tight') },
+		_formal_parameters_elements_set_accessor_signature: { 'trailing_comma:': preference('blank') },
 		variable_declarator_definite: { '"!"/before': preference('tight') },
 		optional_tuple_parameter: { '"?"/before': preference('tight') },
 		optional_type: { '"?"/before': preference('tight') },
@@ -686,7 +687,7 @@ export default grammar(enrich(base), wire({
 						'elements',
 						edit(copy('formal_parameters_elements'), {
 							1: blank(),
-							2: blank(),
+							'2/0': field('trailing_comma'),
 							'item:': alias(
 								edit(copy('required_parameter'), { 0: replace(copy('_parameter_name'), 'pattern:/0', copy('pattern', '0')), 2: blank() }),
 								$.setter_parameter

@@ -43,6 +43,7 @@ const CHOSE_NONE: Readonly<Record<string, Readonly<Record<string, string>>>> = {
 		'DoStatement.terminator': 'do {} while (a) x',
 		'ForHeaderLetConstKind.terminator': 'for (let x of y) {}',
 		'ForHeaderUsingKind.terminator': 'for (using x of y) {}',
+		'FormalParametersElementsSetAccessorSignature.trailing_comma': 'class C { set x(v) {} }',
 		'FunctionDeclaration.terminator': 'function f() {} x',
 		'GeneratorFunctionDeclaration.terminator': 'function* g() {} x',
 		'StatementBlock.terminator': '{} x'

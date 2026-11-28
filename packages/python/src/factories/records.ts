@@ -189,12 +189,23 @@ export function buildSimpleStatements(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSimpleStatements(args[0] as Parameters<typeof _buildSimpleStatements>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.SimpleStatementsElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.SimpleStatements as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('SimpleStatements: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildSimpleStatements(args[0] as Parameters<typeof _buildSimpleStatements>[0])
 		: _buildSimpleStatements(
 				(buildSimpleStatementsElements as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -267,12 +278,23 @@ export function buildImportStatement(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildImportStatement(args[0] as Parameters<typeof _buildImportStatement>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Names as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportStatement as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('ImportStatement: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildImportStatement(args[0] as Parameters<typeof _buildImportStatement>[0])
 		: _buildImportStatement(
 				(buildNames as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildImportStatement>[0]
@@ -3207,12 +3229,23 @@ export function buildParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildParameters(args[0] as Parameters<typeof _buildParameters>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ParametersElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Parameters as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('Parameters: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildParameters(args[0] as Parameters<typeof _buildParameters>[0])
 		: _buildParameters(
 				(buildParametersElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildParameters>[0]
@@ -3299,12 +3332,23 @@ export function buildLambdaParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildLambdaParameters(args[0] as Parameters<typeof _buildLambdaParameters>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ParametersElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.LambdaParameters as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('LambdaParameters: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildLambdaParameters(args[0] as Parameters<typeof _buildLambdaParameters>[0])
 		: _buildLambdaParameters(
 				(buildParametersElements as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -4062,12 +4106,23 @@ export function buildTypeParameter(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypeParameter(args[0] as Parameters<typeof _buildTypeParameter>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Types as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeParameter as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('TypeParameter: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildTypeParameter(args[0] as Parameters<typeof _buildTypeParameter>[0])
 		: _buildTypeParameter(
 				(buildTypes as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTypeParameter>[0]
@@ -4201,12 +4256,23 @@ export function buildArgumentList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildArgumentList(args[0] as Parameters<typeof _buildArgumentList>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ArgumentListElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ArgumentList as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('ArgumentList: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildArgumentList(args[0] as Parameters<typeof _buildArgumentList>[0])
 		: _buildArgumentList(
 				(buildArgumentListElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildArgumentList>[0]
@@ -5099,12 +5165,23 @@ export function buildDictPattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildDictPattern(args[0] as Parameters<typeof _buildDictPattern>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.DictPatternElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.DictPattern as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('DictPattern: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildDictPattern(args[0] as Parameters<typeof _buildDictPattern>[0])
 		: _buildDictPattern(
 				(buildDictPatternElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildDictPattern>[0]
@@ -5954,12 +6031,23 @@ export function buildTuplePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTuplePattern(args[0] as Parameters<typeof _buildTuplePattern>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TuplePatternElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TuplePattern as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('TuplePattern: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildTuplePattern(args[0] as Parameters<typeof _buildTuplePattern>[0])
 		: _buildTuplePattern(
 				(buildTuplePatternElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTuplePattern>[0]
@@ -6047,12 +6135,23 @@ export function buildListPattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildListPattern(args[0] as Parameters<typeof _buildListPattern>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Patterns as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ListPattern as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('ListPattern: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildListPattern(args[0] as Parameters<typeof _buildListPattern>[0])
 		: _buildListPattern(
 				(buildPatterns as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildListPattern>[0]
@@ -8789,12 +8888,23 @@ export function buildList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildList(args[0] as Parameters<typeof _buildList>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.CollectionElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.List as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('List: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildList(args[0] as Parameters<typeof _buildList>[0])
 		: _buildList(
 				(buildCollectionElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildList>[0]
@@ -8883,12 +8993,23 @@ export function buildSet(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSet(args[0] as Parameters<typeof _buildSet>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.CollectionElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Set as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('Set: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildSet(args[0] as Parameters<typeof _buildSet>[0])
 		: _buildSet((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildSet>[0]);
 }
@@ -8974,12 +9095,23 @@ export function buildTuple(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTuple(args[0] as Parameters<typeof _buildTuple>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TupleElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Tuple as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('Tuple: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildTuple(args[0] as Parameters<typeof _buildTuple>[0])
 		: _buildTuple((buildTupleElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTuple>[0]);
 }
@@ -9065,12 +9197,23 @@ export function buildDictionary(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildDictionary(args[0] as Parameters<typeof _buildDictionary>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.DictionaryElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Dictionary as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('Dictionary: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildDictionary(args[0] as Parameters<typeof _buildDictionary>[0])
 		: _buildDictionary(
 				(buildDictionaryElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildDictionary>[0]
@@ -12144,12 +12287,23 @@ export function buildTypeParams(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypeParams(args[0] as Parameters<typeof _buildTypeParams>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeParamsItems as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeParams as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('TypeParams: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildTypeParams(args[0] as Parameters<typeof _buildTypeParams>[0])
 		: _buildTypeParams(
 				(buildTypeParamsItems as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTypeParams>[0]
@@ -12773,12 +12927,23 @@ export function buildCaseTuplePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildCaseTuplePattern(args[0] as Parameters<typeof _buildCaseTuplePattern>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ListPatternCasePatterns as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.CaseTuplePattern as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('CaseTuplePattern: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildCaseTuplePattern(args[0] as Parameters<typeof _buildCaseTuplePattern>[0])
 		: _buildCaseTuplePattern(
 				(buildListPatternCasePatterns as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -12867,12 +13032,23 @@ export function buildCaseListPattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildCaseListPattern(args[0] as Parameters<typeof _buildCaseListPattern>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ListPatternCasePatterns as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.CaseListPattern as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('CaseListPattern: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildCaseListPattern(args[0] as Parameters<typeof _buildCaseListPattern>[0])
 		: _buildCaseListPattern(
 				(buildListPatternCasePatterns as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -13374,12 +13550,23 @@ export function buildPrintStatementPlain(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildPrintStatementPlain(args[0] as Parameters<typeof _buildPrintStatementPlain>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.PrintArguments as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.PrintStatementPlain as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('PrintStatementPlain: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildPrintStatementPlain(args[0] as Parameters<typeof _buildPrintStatementPlain>[0])
 		: _buildPrintStatementPlain(
 				(buildPrintArguments as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -16263,12 +16450,25 @@ export function buildParenthesizedImportList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildParenthesizedImportList(args[0] as Parameters<typeof _buildParenthesizedImportList>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ParenthesizedImportList as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError(
+			'ParenthesizedImportList: a built node carries its own options; pass them when the node is built'
+		);
+	}
+	return built && args[1] === undefined
 		? _buildParenthesizedImportList(args[0] as Parameters<typeof _buildParenthesizedImportList>[0])
 		: _buildParenthesizedImportList(
 				(buildImportList as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -17061,12 +17261,23 @@ export function buildWithClauseParen(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildWithClauseParen(args[0] as Parameters<typeof _buildWithClauseParen>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.WithClauseWithItems as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.WithClauseParen as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('WithClauseParen: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildWithClauseParen(args[0] as Parameters<typeof _buildWithClauseParen>[0])
 		: _buildWithClauseParen(
 				(buildWithClauseWithItems as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -17149,13 +17360,24 @@ export function buildSuiteInline(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSuiteInline(args[0] as Parameters<typeof _buildSuiteInline>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		((args[0] as { $type?: unknown }).$type === (TSKindId.SimpleStatementsElements as const) ||
 			(args[0] as { $type?: unknown }).$type === (TSKindId.SimpleStatements as const));
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.SuiteInline as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('SuiteInline: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildSuiteInline(args[0] as Parameters<typeof _buildSuiteInline>[0])
 		: _buildSuiteInline(
 				(buildSimpleStatementsElements as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -17249,28 +17471,41 @@ function withSuiteInline(node: object, setter: string, args: readonly unknown[])
 }
 
 export function buildSuiteBlock<V extends Admit<T.Block>>(
-	value: V & RefuseUndeclared<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildSuiteBlock>;
 export function buildSuiteBlock<A extends Admit<T.Statement[]>>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildSuiteBlock>;
 export function buildSuiteBlock(...args: unknown[]) {
-	if (args.length === 0) {
-		return _buildSuiteBlock(buildBlock() as Parameters<typeof _buildSuiteBlock>[0]);
+	if (args.length === 0 || args[0] === undefined) {
+		return _buildSuiteBlock(
+			(buildBlock as (...a: unknown[]) => unknown)(...args.slice(1)) as Parameters<typeof _buildSuiteBlock>[0]
+		);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSuiteBlock(args[0] as Parameters<typeof _buildSuiteBlock>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Block as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.SuiteBlock as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('SuiteBlock: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildSuiteBlock(args[0] as Parameters<typeof _buildSuiteBlock>[0])
 		: _buildSuiteBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildSuiteBlock>[0]);
 }
-function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
+function _buildSuiteBlock(value?: Admit<T.Block>): T.SuiteBlock.Bound {
 	const _block = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'suite_block', { block: _block });
@@ -17284,7 +17519,7 @@ function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
 	});
 }
 
-function _buildSuiteBlock$patch(source: object, value: Admit<T.Block>): T.SuiteBlock.Bound {
+function _buildSuiteBlock$patch(source: object, value?: Admit<T.Block>): T.SuiteBlock.Bound {
 	const _block = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'suite_block', { block: _block });
@@ -17335,12 +17570,23 @@ export function buildSuiteEmpty(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSuiteEmpty(args[0] as Parameters<typeof _buildSuiteEmpty>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Newline as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.SuiteEmpty as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('SuiteEmpty: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildSuiteEmpty(args[0] as Parameters<typeof _buildSuiteEmpty>[0])
 		: _buildSuiteEmpty(buildNewline as Parameters<typeof _buildSuiteEmpty>[0]);
 }
@@ -18425,26 +18671,41 @@ function withBlockClassDeclaration(node: object, setter: string, args: readonly 
 }
 
 export function buildSuiteBlockClassDeclaration<V extends Admit<T.BlockClassDeclaration>>(
-	value: V & RefuseUndeclared<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildSuiteBlockClassDeclaration>;
 export function buildSuiteBlockClassDeclaration<A extends Admit<T.StatementClassDefinition[]>>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildSuiteBlockClassDeclaration>;
 export function buildSuiteBlockClassDeclaration(...args: unknown[]) {
-	if (args.length === 0) {
+	if (args.length === 0 || args[0] === undefined) {
 		return _buildSuiteBlockClassDeclaration(
-			buildBlockClassDeclaration() as Parameters<typeof _buildSuiteBlockClassDeclaration>[0]
+			(buildBlockClassDeclaration as (...a: unknown[]) => unknown)(...args.slice(1)) as Parameters<
+				typeof _buildSuiteBlockClassDeclaration
+			>[0]
 		);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSuiteBlockClassDeclaration(args[0] as Parameters<typeof _buildSuiteBlockClassDeclaration>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockClassDeclaration as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.SuiteBlockClassDeclaration as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError(
+			'SuiteBlockClassDeclaration: a built node carries its own options; pass them when the node is built'
+		);
+	}
+	return built && args[1] === undefined
 		? _buildSuiteBlockClassDeclaration(args[0] as Parameters<typeof _buildSuiteBlockClassDeclaration>[0])
 		: _buildSuiteBlockClassDeclaration(
 				(buildBlockClassDeclaration as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -18452,7 +18713,7 @@ export function buildSuiteBlockClassDeclaration(...args: unknown[]) {
 				>[0]
 			);
 }
-function _buildSuiteBlockClassDeclaration(value: Admit<T.BlockClassDeclaration>): T.SuiteBlockClassDeclaration.Bound {
+function _buildSuiteBlockClassDeclaration(value?: Admit<T.BlockClassDeclaration>): T.SuiteBlockClassDeclaration.Bound {
 	const _block_class_declaration = value;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -18469,7 +18730,7 @@ function _buildSuiteBlockClassDeclaration(value: Admit<T.BlockClassDeclaration>)
 
 function _buildSuiteBlockClassDeclaration$patch(
 	source: object,
-	value: Admit<T.BlockClassDeclaration>
+	value?: Admit<T.BlockClassDeclaration>
 ): T.SuiteBlockClassDeclaration.Bound {
 	const _block_class_declaration = value;
 	const handle = currentHandle();

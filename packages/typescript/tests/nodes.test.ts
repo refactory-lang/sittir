@@ -3806,7 +3806,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('setter builds the parent', () => {
 			const node = ir.classBodyMemberMethod.setter({
 				name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
-				parameters: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never,
+				parameters: {
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
+					item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				} as never,
 				body: { $type: TSKindId.StatementBlock, statements: [] } as never
 			});
 			expect(node.$type).toBe(TSKindId.ClassBodyMemberMethod);
@@ -3904,7 +3907,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.classBodyMemberMethodSig
 				.setter({
 					name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
-					parameters: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+					parameters: {
+						$type: TSKindId.FormalParametersElementsSetAccessorSignature,
+						item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+					} as never
 				})
 				.$with.terminator(TSKindId.FunctionSignatureAutomaticSemicolon);
 			expect(node.$type).toBe(TSKindId.ClassBodyMemberMethodSig);
@@ -5552,7 +5558,8 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.formalParametersSetAccessorSignature({
 				$type: TSKindId.FormalParametersElementsSetAccessorSignature,
-				item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never,
+				trailingComma: TSKindId.Comma
 			} as never);
 			expect(node.$type).toBe(TSKindId.FormalParametersSetAccessorSignature);
 			expectBuiltNode(node);
@@ -5560,7 +5567,8 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.formalParametersSetAccessorSignature({
 				$type: TSKindId.FormalParametersElementsSetAccessorSignature,
-				item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never,
+				trailingComma: TSKindId.Comma
 			} as never);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -5646,7 +5654,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.methodDefinitionSetter({
 				name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
-				parameters: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never,
+				parameters: {
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
+					item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				} as never,
 				body: { $type: TSKindId.StatementBlock, statements: [] } as never
 			});
 			expect(node.$type).toBe(TSKindId.MethodDefinitionSetter);
@@ -5655,7 +5666,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.methodDefinitionSetter({
 				name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
-				parameters: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never,
+				parameters: {
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
+					item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				} as never,
 				body: { $type: TSKindId.StatementBlock, statements: [] } as never
 			});
 			const rendered = node.$render!();
@@ -5707,7 +5721,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.methodSignatureSetter({
 				name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
-				parameters: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				parameters: {
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
+					item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				} as never
 			});
 			expect(node.$type).toBe(TSKindId.MethodSignatureSetter);
 			expectBuiltNode(node);
@@ -5715,7 +5732,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.methodSignatureSetter({
 				name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
-				parameters: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				parameters: {
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
+					item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				} as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -5766,7 +5786,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.abstractMethodSignatureSetter({
 				name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
-				parameters: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				parameters: {
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
+					item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				} as never
 			});
 			expect(node.$type).toBe(TSKindId.AbstractMethodSignatureSetter);
 			expectBuiltNode(node);
@@ -5774,7 +5797,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.abstractMethodSignatureSetter({
 				name: { $type: TSKindId.NumberDecimal, text: '1' } as never,
-				parameters: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				parameters: {
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
+					item: { $type: TSKindId.SetterParameter, decorators: [], pattern: TSKindId.This as never } as never
+				} as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);

@@ -259,12 +259,23 @@ export function buildString(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildString(args[0] as Parameters<typeof _buildString>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.StringContent as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.String as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('String: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildString(args[0] as Parameters<typeof _buildString>[0])
 		: _buildString((buildStringContent as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildString>[0]);
 }
@@ -335,12 +346,23 @@ export function buildImmediateString(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildImmediateString(args[0] as Parameters<typeof _buildImmediateString>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.StringContent as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ImmediateString as const);
+	if (
+		(built || builtSelf) &&
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
+	) {
+		throw new TypeError('ImmediateString: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildImmediateString(args[0] as Parameters<typeof _buildImmediateString>[0])
 		: _buildImmediateString(
 				(buildStringContent as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildImmediateString>[0]

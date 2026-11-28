@@ -3,6 +3,20 @@
 		{
 			"kind": "slot",
 			"name": "item"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "trailing_comma",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "trailing_comma"
+						}
+					]
+				}
+			]
 		}
 	],
 	"_formal_parameters_set_accessor_signature": [

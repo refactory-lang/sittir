@@ -1071,9 +1071,10 @@ export const records = {
 		elements: { word: 2, width: 3, forms: 1, built: 2 }
 	},
 	FormalParametersElementsSetAccessorSignatureNode: {
-		words: 5,
-		builtWords: 3,
-		item: { word: 2, width: 3, forms: 1, built: 2 }
+		words: 6,
+		builtWords: 4,
+		item: { word: 2, width: 3, forms: 1, built: 2 },
+		trailing_comma: { word: 5, width: 1, forms: 18, built: 3 }
 	},
 	SetterParameterNode: {
 		words: 12,

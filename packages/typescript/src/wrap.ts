@@ -18751,6 +18751,9 @@ export function wrapFormalParametersElementsSetAccessorSignature(
 		item() {
 			return hydrateSlot<T.SetterParameter>(this, '_item', tree);
 		},
+		trailingComma() {
+			return blankArmRead(this._trailing_comma);
+		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -18766,7 +18769,11 @@ export function wrapFormalParametersElementsSetAccessorSignature(
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { item: wrapFormalParametersElementsSetAccessorSignature$with$item, [RECEIVER]: node };
+	node.$with = {
+		item: wrapFormalParametersElementsSetAccessorSignature$with$item,
+		trailingComma: wrapFormalParametersElementsSetAccessorSignature$with$trailingComma,
+		[RECEIVER]: node
+	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FormalParametersElementsSetAccessorSignature.Parsed;
 }
@@ -18791,11 +18798,40 @@ function wrapFormalParametersElementsSetAccessorSignature$with(
 					)
 				)
 			);
+		case 'trailingComma':
+			return applySetter(
+				args,
+				(v: NonNullable<T.FormalParametersElementsSetAccessorSignature['_trailing_comma']> | null) =>
+					rebuilt(node, handle, () =>
+						wrapFormalParametersElementsSetAccessorSignature(
+							{
+								...$edited(data),
+								_trailing_comma: admitSlot(
+									handle,
+									'_formal_parameters_elements_set_accessor_signature',
+									'trailingComma',
+									blankArmStored(v)
+								)
+							},
+							tree
+						)
+					)
+			);
 	}
 	throw new Error(`_formal_parameters_elements_set_accessor_signature has no $with.${setter}`);
 }
 function wrapFormalParametersElementsSetAccessorSignature$with$item(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFormalParametersElementsSetAccessorSignature$with(receiverOf(this, '$with.item'), 'item', args);
+}
+function wrapFormalParametersElementsSetAccessorSignature$with$trailingComma(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return wrapFormalParametersElementsSetAccessorSignature$with(
+		receiverOf(this, '$with.trailingComma'),
+		'trailingComma',
+		args
+	);
 }
 
 export function wrapSetterParameter(data: T.SetterParameter, tree: TreeHandle): T.SetterParameter.Parsed {
@@ -19501,9 +19537,6 @@ export function wrapMethodDefinitionSetter(
 				[
 					function (this: object) {
 						return hydrateSlot<T.FormalParametersElementsSetAccessorSignature>(this, '_elements', tree);
-					},
-					function (this: object) {
-						return hydrateSlot<T.SetterParameter>(this, '_item', tree);
 					}
 				],
 				false
@@ -19607,20 +19640,11 @@ function wrapMethodDefinitionSetter$with(node: Held, setter: string, args: reado
 					args.map((v) =>
 						wrapHoisted(
 							v,
-							(v: never) =>
-								RAW.buildFormalParametersSetAccessorSignature(RAW.buildFormalParametersElementsSetAccessorSignature(v)),
+							(v: never) => RAW.buildFormalParametersSetAccessorSignature(v),
 							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature,
-				(args: readonly never[]) =>
-					args.map((v) =>
-						wrapHoisted(
-							v,
-							(v: never) => RAW.buildFormalParametersElementsSetAccessorSignature(v),
-							TSKindId.FormalParametersElementsSetAccessorSignature
-						)
-					)
+				TSKindId.FormalParametersSetAccessorSignature
 			);
 		case 'body':
 			return applySetter(args, (v: NonNullable<T.MethodDefinitionSetter['_body']>) =>
@@ -20137,9 +20161,6 @@ export function wrapMethodSignatureSetter(
 				[
 					function (this: object) {
 						return hydrateSlot<T.FormalParametersElementsSetAccessorSignature>(this, '_elements', tree);
-					},
-					function (this: object) {
-						return hydrateSlot<T.SetterParameter>(this, '_item', tree);
 					}
 				],
 				false
@@ -20239,20 +20260,11 @@ function wrapMethodSignatureSetter$with(node: Held, setter: string, args: readon
 					args.map((v) =>
 						wrapHoisted(
 							v,
-							(v: never) =>
-								RAW.buildFormalParametersSetAccessorSignature(RAW.buildFormalParametersElementsSetAccessorSignature(v)),
+							(v: never) => RAW.buildFormalParametersSetAccessorSignature(v),
 							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature,
-				(args: readonly never[]) =>
-					args.map((v) =>
-						wrapHoisted(
-							v,
-							(v: never) => RAW.buildFormalParametersElementsSetAccessorSignature(v),
-							TSKindId.FormalParametersElementsSetAccessorSignature
-						)
-					)
+				TSKindId.FormalParametersSetAccessorSignature
 			);
 	}
 	throw new Error(`method_signature_setter has no $with.${setter}`);
@@ -20709,9 +20721,6 @@ export function wrapAbstractMethodSignatureSetter(
 				[
 					function (this: object) {
 						return hydrateSlot<T.FormalParametersElementsSetAccessorSignature>(this, '_elements', tree);
-					},
-					function (this: object) {
-						return hydrateSlot<T.SetterParameter>(this, '_item', tree);
 					}
 				],
 				false
@@ -20804,20 +20813,11 @@ function wrapAbstractMethodSignatureSetter$with(node: Held, setter: string, args
 					args.map((v) =>
 						wrapHoisted(
 							v,
-							(v: never) =>
-								RAW.buildFormalParametersSetAccessorSignature(RAW.buildFormalParametersElementsSetAccessorSignature(v)),
+							(v: never) => RAW.buildFormalParametersSetAccessorSignature(v),
 							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature,
-				(args: readonly never[]) =>
-					args.map((v) =>
-						wrapHoisted(
-							v,
-							(v: never) => RAW.buildFormalParametersElementsSetAccessorSignature(v),
-							TSKindId.FormalParametersElementsSetAccessorSignature
-						)
-					)
+				TSKindId.FormalParametersSetAccessorSignature
 			);
 	}
 	throw new Error(`abstract_method_signature_setter has no $with.${setter}`);
@@ -31027,6 +31027,9 @@ function viewFormalParametersSetAccessorSignature(
 function viewFormalParametersElementsSetAccessorSignature$item(this: RecordHandle) {
 	return viewSlot<T.SetterParameter>(this, 2, 3, 1, 2);
 }
+function viewFormalParametersElementsSetAccessorSignature$trailingComma(this: RecordHandle) {
+	return blankArmRead(childSlot(this, 5, 1, 18, 3));
+}
 function viewFormalParametersElementsSetAccessorSignature(
 	data: RecordPosition,
 	tree: TreeHandle
@@ -31039,6 +31042,7 @@ function viewFormalParametersElementsSetAccessorSignature(
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		item: viewFormalParametersElementsSetAccessorSignature$item,
+		trailingComma: viewFormalParametersElementsSetAccessorSignature$trailingComma,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -31049,7 +31053,7 @@ function viewFormalParametersElementsSetAccessorSignature(
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { item: $with$item, [RECEIVER]: node };
+	node.$with = { item: $with$item, trailingComma: $with$trailingComma, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.FormalParametersElementsSetAccessorSignature.Parsed;
 }
@@ -31327,9 +31331,6 @@ function viewMethodDefinitionSetter$parameters(this: RecordHandle) {
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.FormalParametersElementsSetAccessorSignature>(this, 2, 3, 1, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlot<T.SetterParameter>(this, 2, 3, 1, 2);
 			}
 		],
 		false
@@ -31562,9 +31563,6 @@ function viewMethodSignatureSetter$parameters(this: RecordHandle) {
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.FormalParametersElementsSetAccessorSignature>(this, 2, 3, 1, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlot<T.SetterParameter>(this, 2, 3, 1, 2);
 			}
 		],
 		false
@@ -31775,9 +31773,6 @@ function viewAbstractMethodSignatureSetter$parameters(this: RecordHandle) {
 		[
 			function (this: RecordHandle) {
 				return viewSlot<T.FormalParametersElementsSetAccessorSignature>(this, 2, 3, 1, 2);
-			},
-			function (this: RecordHandle) {
-				return viewSlot<T.SetterParameter>(this, 2, 3, 1, 2);
 			}
 		],
 		false
@@ -32754,6 +32749,9 @@ function $with$static(this: Received<RecordPosition>, ...args: unknown[]): unkno
 }
 function $with$terminator(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.terminator'), _wrap, 'terminator', args);
+}
+function $with$trailingComma(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(receiverOf(this, '$with.trailingComma'), _wrap, 'trailingComma', args);
 }
 function $with$tupleTypeMembers(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.tupleTypeMembers'), _wrap, 'tupleTypeMembers', args);

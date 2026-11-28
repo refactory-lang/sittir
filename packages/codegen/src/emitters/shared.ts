@@ -822,6 +822,14 @@ export function forwardsTargetArguments(node: AssembledNode, nodeMap: NodeMap): 
 	return forwardedTargetKind(node, nodeMap) !== null && registeredSlots(node).length === 0;
 }
 
+export function forwardedOptionsTarget(node: AssembledNode, nodeMap: NodeMap): AssembledNode | undefined {
+	if (!forwardsTargetArguments(node, nodeMap)) return undefined;
+	const target = nodeMap.nodes.get(forwardedTargetKind(node, nodeMap)!)!;
+	if (registeredSlots(target).length === 0) return undefined;
+	const shape = classifyFactoryShape(target, nodeMap);
+	return shape === 'spread' || shape === 'elements' ? undefined : target;
+}
+
 export function resolveFactoryFieldNames(node: AssembledNode): readonly string[] | undefined {
 	if (node instanceof AbstractAssembledCompound) {
 		if (node.slots.length === 0) return undefined;
@@ -1434,11 +1442,15 @@ export function refusingParam(
 const OPTIONAL_REFUSING = /^\.\.\.(\w+): \[(.*)\] & (RefuseUndeclared<\w+(?:, .+)?>)$/;
 const REQUIRED_REFUSING = /^(\w+): (\w+) & (RefuseUndeclared<\w+(?:, [^,]+(?:, true)?)?>)((?:, .*)?)$/;
 
+export function appendParam(params: string, param: string): string {
+	return params === '' ? param : `${params}, ${param}`;
+}
+
 export function withTrailingParam(refusing: RefusingParams, trailing: string): RefusingParams {
 	const optional = OPTIONAL_REFUSING.exec(refusing.params);
 	return {
 		typeParams: refusing.typeParams,
-		params: optional === null ? `${refusing.params}, ${trailing}` : `...${optional[1]}: [${optional[2]}, ${trailing}] & ${optional[3]}`
+		params: optional === null ? appendParam(refusing.params, trailing) : `...${optional[1]}: [${optional[2]}, ${trailing}] & ${optional[3]}`
 	};
 }
 

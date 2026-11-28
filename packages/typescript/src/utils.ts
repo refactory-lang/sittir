@@ -778,7 +778,10 @@ export const querySlots: QuerySlots = Object.freeze({
 		['declarators', 1, undefined, '_declarators']
 	],
 	453: [['elements', 0, undefined, '_elements']],
-	454: [['item', 0, undefined, '_item']],
+	454: [
+		['item', 0, undefined, '_item'],
+		['trailingComma', 1, undefined, '_trailing_comma', undefined, true]
+	],
 	455: [
 		['decorators', 0, undefined, '_decorator'],
 		['accessibilityModifier', 1, undefined, '_accessibility_modifier'],
@@ -3824,7 +3827,9 @@ export const structure: StructureTable = Object.freeze({
 		kind: '_formal_parameters_elements_set_accessor_signature',
 		required: [['_item', 'item']],
 		single: [['_item', 'FormalParametersElementsSetAccessorSignature.item']],
-		nodeOnly: [['_item', 'FormalParametersElementsSetAccessorSignature.item', 'a built SetterParameter', [455]]]
+		nodeOnly: [['_item', 'FormalParametersElementsSetAccessorSignature.item', 'a built SetterParameter', [455]]],
+		kindIds: [['_trailing_comma', 'FormalParametersElementsSetAccessorSignature.trailingComma', [0, 15]]],
+		options: ['trailingComma']
 	},
 	455: {
 		kind: 'setter_parameter',

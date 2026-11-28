@@ -77,6 +77,7 @@ import {
 	isSlotBearingCompound,
 	classifyFactoryEmission,
 	forwardedTargetKind,
+	forwardedOptionsTarget,
 	forwardsTargetArguments,
 	ownTextLeaf,
 	type OwnTextLeaf,
@@ -119,6 +120,7 @@ import {
 	quoteKey,
 	refuseUndeclared,
 	refusingParam,
+	appendParam,
 	withTrailingParam,
 	type RefusingParams,
 	spelledReadImports
@@ -1610,20 +1612,26 @@ function resolveFactorySurface(
 	const surface = resolveConfigFactorySurface(node, nodeMap, kindEntries);
 	if (surface.nullary === true) return surface;
 	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
-	if (spellingType === undefined) return surface;
+	if (spellingType === undefined) {
+		const forwarded = forwardedOptionsTarget(node, nodeMap);
+		return forwarded === undefined ? surface : withTrailingOptions(surface, `T.${forwarded.typeName}.Options`);
+	}
 	const leadingOptions = leadingOptionsOf(node, nodeMap);
 	if (leadingOptions !== undefined) return { ...surface, spellingType, leadingOptions };
-	const trailing = `options?: T.${node.typeName}.Options`;
+	return { ...withTrailingOptions(surface, `T.${node.typeName}.Options`), spellingType };
+}
+
+function withTrailingOptions(surface: FactorySurface, optionsType: string): FactorySurface {
+	const trailing = `options?: ${optionsType}`;
 	return {
 		...surface,
-		params: `${surface.params}, ${trailing}`,
+		params: appendParam(surface.params, trailing),
 		...(surface.generic === undefined ? {} : { generic: withTrailingParam(surface.generic, trailing) }),
-		looseParams: `${surface.looseParams}, ${trailing}`,
-		rowParams: `${surface.rowParams}, ${trailing}`,
-		rowLooseParams: `${surface.rowLooseParams}, ${trailing}`,
+		looseParams: appendParam(surface.looseParams, trailing),
+		rowParams: appendParam(surface.rowParams, trailing),
+		rowLooseParams: appendParam(surface.rowLooseParams, trailing),
 		arity: surface.arity === undefined ? undefined : surface.arity + 1,
-		args: `${surface.args}, options`,
-		spellingType
+		args: appendParam(surface.args, 'options')
 	};
 }
 
@@ -1698,7 +1706,8 @@ function resolveConfigFactorySurface(
 		const singleShape = numericSlotShape(singleField);
 		const withNumber = (type: string): string => (singleShape === undefined ? type : `${type} | ${numberInputType(singleShape)}`);
 		const elemType = withNumber(baseType);
-		const optional = !isRequired(singleField) || holdsFixedText(singleField);
+		const directOptional = !isRequired(singleField) || holdsFixedText(singleField);
+		const optional = slotFilledWhenOmitted(singleField, nodeMap);
 		const valueParam: FactoryParam = {
 			label: 'value',
 			optional,
@@ -1726,7 +1735,7 @@ function resolveConfigFactorySurface(
 			...renderSurfaceParams(param),
 			args: 'value',
 			directParamType: elemType,
-			directParamOptional: optional,
+			directParamOptional: directOptional,
 			opt: optional ? '?' : ''
 		};
 	}
@@ -1783,6 +1792,10 @@ export function forwardedConstructorTarget(
 	kindEntries: readonly KindEnumEntry[]
 ): string | null {
 	if (resolveFactorySurface(node, nodeMap, kindEntries).directParamType === undefined) return null;
+	return forwardedChildTarget(node, nodeMap, kindEntries);
+}
+
+function forwardedChildTarget(node: FieldCarryingNode, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string | null {
 	const target = forwardedTargetKind(node, nodeMap);
 	if (target === null) return null;
 	if (!hasCatalogEntry(kindEntries, target)) return null;
@@ -1799,7 +1812,57 @@ interface ForwardedConstruction {
 	readonly target: string;
 	readonly targetParams: string | undefined;
 	readonly overloads: readonly RefusingParams[];
+	readonly rowParams: readonly string[];
 	readonly rows: readonly string[];
+	readonly hasOwnOptions: boolean;
+	readonly optionsOnly: boolean;
+}
+
+const OPTION_CHAIN_MAX_HOPS = 8;
+
+function refuseOptionDepth(node: FieldCarryingNode, nodeMap: NodeMap): void {
+	const owns = (n: AssembledNode): boolean => registeredSlots(n).length > 0;
+	const next = (n: AssembledNode): AssembledNode | undefined => {
+		const kind = forwardedTargetKind(n, nodeMap);
+		const child = kind === null ? undefined : nodeMap.nodes.get(kind);
+		return child === undefined || classifyFactoryShape(child, nodeMap) === 'spread' ? undefined : child;
+	};
+	const refuse = (message: string, details: Readonly<Record<string, string>>): never => {
+		throw emitShapeFailure({ code: 'option-chain-depth', ownerKind: node.kind, message, details: { ...details } });
+	};
+	if (owns(node)) {
+		let hop = next(node);
+		for (let hops = 1; hop !== undefined && hops < OPTION_CHAIN_MAX_HOPS; hops++) {
+			if (owns(hop)) {
+				refuse(
+					`${node.kind} carries its own options and forwards to ${hop.kind}, which takes options too; two option bags on one chain are not supported`,
+					{ owner: hop.kind }
+				);
+			}
+			hop = next(hop);
+		}
+		return;
+	}
+	let hop = next(node);
+	for (let hops = 1; hop !== undefined && hops < OPTION_CHAIN_MAX_HOPS; hops++) {
+		if (owns(hop)) {
+			if (hops >= 2) {
+				refuse(
+					`${node.kind} forwards its options ${hops} hops to ${hop.kind}, which takes them; options are supported one hop from the forwarder`,
+					{ owner: hop.kind, hops: String(hops) }
+				);
+			}
+			const after = next(hop);
+			if (after !== undefined && after.modelType === 'pattern') {
+				refuse(
+					`${node.kind} forwards its options to ${hop.kind}, which forwards into the pattern ${after.kind}; the pattern cannot take the options`,
+					{ owner: hop.kind, pattern: after.kind }
+				);
+			}
+			return;
+		}
+		hop = next(hop);
+	}
 }
 
 function forwardedConstruction(
@@ -1808,28 +1871,73 @@ function forwardedConstruction(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): ForwardedConstruction | null {
+	refuseOptionDepth(node, nodeMap);
 	const target = forwardedConstructorTarget(node, nodeMap, kindEntries);
 	if (target === null) return null;
 	const targetNode = nodeMap.nodes.get(target)!;
 	const withheld = registeredSlots(node).length > 0 && restForwardTarget(node, nodeMap, kindEntries) !== null;
-	const targetSurface = constructorSurface(target, nodeMap, kindEntries);
+	const forwardedOptions = forwardedOptionsTarget(node, nodeMap);
+	const trailingOptions =
+		forwardedOptions !== undefined
+			? `options?: T.${forwardedOptions.typeName}.Options`
+			: spellingTypeOf(node, nodeMap, kindEntries) === undefined
+				? undefined
+				: `options?: T.${node.typeName}.Options`;
+	const targetSurface = constructorSurface(target, nodeMap, kindEntries, { immediate: true });
+	const chainedSurface = constructorSurface(target, nodeMap, kindEntries);
 	const targetParams = targetSurface?.params;
-	const targetOverloads = withheld ? [] : (targetSurface?.paramsOverloads ?? (targetParams === undefined ? undefined : [targetParams]));
-	const targetDeclarations = withheld ? [] : targetSurface?.declarations;
+	const takesOptions = (params: string): boolean => /(^|[\s,([])options\??:/.test(params);
+	const trailingFor = (params: string): string | undefined =>
+		trailingOptions === undefined || takesOptions(params) || (forwardedOptions !== undefined && params.startsWith('value: '))
+			? undefined
+			: trailingOptions;
+	const surfaceOverloads = (surfaceOf: typeof targetSurface, trailing?: (params: string) => string | undefined): readonly string[] | undefined =>
+		(surfaceOf?.paramsOverloads ?? (surfaceOf?.params === undefined ? [] : [surfaceOf.params])).map((params) => {
+			const extra = trailing?.(params);
+			return extra === undefined ? params : appendParam(params, extra);
+		});
+	const targetOverloads = withheld
+		? []
+		: targetSurface === undefined
+			? undefined
+			: [...new Set([...(surfaceOverloads(targetSurface) ?? []), ...(surfaceOverloads(chainedSurface, trailingFor) ?? [])])];
+	const chainedDeclarations = (chainedSurface?.declarations ?? []).map((entry) => {
+		const extra = trailingFor(entry.params);
+		return extra === undefined ? entry : withTrailingParam(entry, extra);
+	});
+	const publicTargetDeclarations = isAuthoredCompound(targetNode)
+		? forwardedConstruction(targetNode, resolveFactorySurface(targetNode, nodeMap, kindEntries), nodeMap, kindEntries)?.overloads
+		: undefined;
+	const forwardingTargetDeclarations = publicTargetDeclarations?.map((entry) => {
+		const extra = trailingFor(entry.params);
+		return extra === undefined ? entry : withTrailingParam(entry, extra);
+	});
+	const uniqueForwardingDeclarations = forwardingTargetDeclarations && [
+		...new Map(forwardingTargetDeclarations.map((entry) => [JSON.stringify(entry), entry])).values()
+	];
+	const targetDeclarations = withheld
+		? []
+		: targetSurface === undefined
+			? undefined
+			: (uniqueForwardingDeclarations ??
+				[...new Map([...targetSurface.declarations, ...chainedDeclarations].map((entry) => [JSON.stringify(entry), entry])).values()]);
+	const ownSurface = forwardedOptionsTarget(node, nodeMap) === undefined ? surface : resolveConfigFactorySurface(node, nodeMap, kindEntries);
 	const ordered = <E>(all: readonly E[], paramsOf: (entry: E) => string): E[] => [
 		...all.filter((entry) => paramsOf(entry) === ''),
 		...all.filter((entry) => paramsOf(entry) !== '')
 	];
+	const rowParams = ordered([ownSurface.rowParams, ...(targetOverloads ?? [`...args: T.${targetNode.typeName}.BuildArgs`])].map(declarationParams), (params) => params);
 	return {
 		target,
 		targetParams,
+		hasOwnOptions: spellingTypeOf(node, nodeMap, kindEntries) !== undefined,
+		optionsOnly: trailingOptions !== undefined && (targetDeclarations ?? []).some((entry) => entry.params === trailingOptions),
 		overloads: ordered(
-			[publicParams(surface), ...(targetDeclarations ?? [plainParams(`...args: Parameters<typeof ${targetNode.rawFactoryName!}>`)])].map(declarationOf),
+			[publicParams(ownSurface), ...(targetDeclarations ?? [plainParams(`...args: Parameters<typeof ${targetNode.rawFactoryName!}>`)])].map(declarationOf),
 			(declared) => declared.params
 		),
-		rows: ordered([surface.rowParams, ...(targetOverloads ?? [`...args: T.${targetNode.typeName}.BuildArgs`])].map(declarationParams), (params) => params).map(
-			(params) => `[${params}]`
-		)
+		rowParams,
+		rows: rowParams.map((params) => `[${params}]`)
 	};
 }
 
@@ -1874,7 +1982,8 @@ function chainParamOptional(kind: string, nodeMap: NodeMap, kindEntries: readonl
 export function constructorSurface(
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[],
+	options?: { readonly immediate?: boolean }
 ):
 	| {
 			params: string;
@@ -1885,7 +1994,7 @@ export function constructorSurface(
 			argOptional?: boolean;
 	  }
 	| undefined {
-	const target = nodeMap.nodes.get(constructorTargetKind(kind, nodeMap, kindEntries));
+	const target = nodeMap.nodes.get(options?.immediate ? kind : constructorTargetKind(kind, nodeMap, kindEntries));
 	if (target === undefined) return undefined;
 	const plain = (params: string): readonly RefusingParams[] => [plainParams(params)];
 	switch (target.modelType) {
@@ -2126,9 +2235,10 @@ function fieldCarryingFactoryText(
 	const builtName = `T.${node.typeName}.Bound`;
 	const configType = surface.configType ?? `T.${node.typeName}.Config`;
 	const leadingOptions = surface.leadingOptions;
+	const recordParams = forwardedOptionsTarget(node, nodeMap) === undefined ? surface.params : resolveConfigFactorySurface(node, nodeMap, kindEntries).params;
 	const signature =
 		leadingOptions === undefined
-			? `${exportKw}function ${fn}(${surface.params}): ${builtName} {`
+			? `${exportKw}function ${fn}(${recordParams}): ${builtName} {`
 			: `${exportKw}function ${fn}(...args: unknown[]): ${builtName} {`;
 	let valueSourceFor: (f: AssembledNonterminal) => string;
 	const registered = registeredSlots(node);
@@ -2184,7 +2294,7 @@ function fieldCarryingFactoryText(
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
 		valueSourceFor = (f) =>
-			slotStorageFromValueExpr(f, holdsFixedText(f) ? defaultedValueExpr(f, 'value', nodeMap, kindEntries) : 'value', nodeMap, kindEntries, node.typeName);
+			slotStorageFromValueExpr(f, holdsFixedText(f) || (isRequired(f) && forwardedChildTarget(node, nodeMap, kindEntries) === null) ? defaultedValueExpr(f, 'value', nodeMap, kindEntries) : 'value', nodeMap, kindEntries, node.typeName);
 		const setterType = setterElemType(singleField, elemType, elemType, nodeMap, true);
 		const setterSig = setterValueSignature(singleField, setterType);
 		valueType = isRequired(singleField) ? admitNodes(setterType) : `${admitNodes(setterType)} | undefined`;
@@ -2372,30 +2482,47 @@ function fieldCarryingFactoryText(
 		const targetEmpty = targetIsConstant ? targetFn : `${targetFn}()`;
 		const targetTakesNoArgs =
 			targetSurfaceParams !== undefined && targetNode !== undefined && targetNode.argumentOptional(nodeMap);
-		const splicedEnvelope = surface.singleField === undefined ? undefined : splicedEnvelopeOf(surface.singleField, nodeMap);
+		const omittedInputArgs = targetNode !== undefined && classifyFactoryShape(targetNode, nodeMap) === 'spread' ? '...args.slice(1)' : '...args';
+			const splicedEnvelope = surface.singleField === undefined ? undefined : splicedEnvelopeOf(surface.singleField, nodeMap);
 		const prebuiltTest = [forwardTarget, ...(splicedEnvelope === undefined ? [] : [splicedEnvelope.kind])]
 			.map((kind) => `(args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(kind, nodeMap, kindEntries)})`)
 			.join(' || ');
-		const prebuiltCheck = splicedEnvelope === undefined ? prebuiltTest : `(${prebuiltTest})`;
+		const prebuiltCheck = `(${prebuiltTest})`;
 		const wrapper = withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, [
 			...forwarded.overloads.map((declared) => declaredOverload(`${exportKw}function ${fn}`, declared, `ReturnType<typeof _${fn}>`)),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		]);
 		if (!forwardsTargetArguments(node, nodeMap)) {
+			if (optionsOnlyRoutes(node, forwarded, nodeMap)) {
+				wrapper.push(
+					`  if (typeof args[0] === 'object' && args[0] !== null && !isNodeValue(args[0])) {`,
+					`    return _${fn}(${targetEmpty} as Parameters<typeof _${fn}>[0], args[0] as never);`,
+					`  }`
+				);
+			}
 			if (!directParamOptional && targetTakesNoArgs) {
 				wrapper.push(
 					`  if (args.length === 0 || args[0] === undefined) {`,
-					`    return _${fn}(${targetEmpty} as Parameters<typeof _${fn}>[0], args[0] as never);`,
+					`    return _${fn}(${targetEmpty} as Parameters<typeof _${fn}>[0], args[1] as never);`,
 					`  }`
 				);
 			}
 			wrapper.push(
 				`  if (args[0] === undefined) {`,
 				`    return _${fn}(args[0] as unknown as Parameters<typeof _${fn}>[0], args[1] as never);`,
-				`  }`,
+				`  }`
+			);
+			wrapper.push(
 				`  const prebuilt =`,
 				`    typeof args[0] === 'object' && args[0] !== null &&`,
 				`    ${prebuiltCheck};`,
+				...(forwarded.hasOwnOptions
+					? [
+							`  if (args.slice(1).some((arg) => arg !== undefined) && typeof args[0] === 'object' && args[0] !== null && (args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)})) {`,
+							`    throw new TypeError('${node.typeName}: a built node carries its own options; pass them when the node is built');`,
+							`  }`
+						]
+					: []),
 				`  return prebuilt`,
 				`    ? _${fn}(args[0] as Parameters<typeof _${fn}>[0], args[1] as never)`,
 				`    : _${fn}(${targetBuilt('args[0]')} as Parameters<typeof _${fn}>[0], args[1] as never);`,
@@ -2403,16 +2530,22 @@ function fieldCarryingFactoryText(
 			);
 		} else {
 			if (!directParamOptional && targetTakesNoArgs) {
-				wrapper.push(`  if (args.length === 0) {`, `    return _${fn}(${targetEmpty} as Parameters<typeof _${fn}>[0]);`, `  }`);
+				wrapper.push(`  if (args.length === 0 || args[0] === undefined) {`, `    return _${fn}(${targetBuilt(omittedInputArgs)} as Parameters<typeof _${fn}>[0]);`, `  }`);
 			}
 			wrapper.push(
 				`  if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {`,
 				`    return _${fn}(args[0] as Parameters<typeof _${fn}>[0]);`,
 				`  }`,
-				`  const prebuilt =`,
-				`    args.length === 1 && typeof args[0] === 'object' && args[0] !== null &&`,
+				`  const built =`,
+				`    typeof args[0] === 'object' && args[0] !== null &&`,
 				`    ${prebuiltCheck};`,
-				`  return prebuilt`,
+				`  const builtSelf =`,
+				`    typeof args[0] === 'object' && args[0] !== null &&`,
+				`    (args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)});`,
+				`  if ((built || builtSelf) && typeof args[1] === 'object' && args[1] !== null && (args[1] as { $type?: unknown }).$type === undefined) {`,
+				`    throw new TypeError('${node.typeName}: a built node carries its own options; pass them when the node is built');`,
+				`  }`,
+				`  return built && args[1] === undefined`,
 				`    ? _${fn}(args[0] as Parameters<typeof _${fn}>[0])`,
 				`    : _${fn}(${targetBuilt('...args')} as Parameters<typeof _${fn}>[0]);`,
 				'}'
@@ -2807,6 +2940,20 @@ export function hasShapes(node: AssembledNode, nodeMap: NodeMap, kindEntries: re
 
 export function anyShapes(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): boolean {
 	return [...nodeMap.nodes.values()].some((node) => hasShapes(node, nodeMap, kindEntries));
+}
+
+function optionsOnlyRoutes(node: FieldCarryingNode, forwarded: ForwardedConstruction, nodeMap: NodeMap): boolean {
+	if (!forwarded.optionsOnly || forwardsTargetArguments(node, nodeMap)) return false;
+	const targetNode = nodeMap.nodes.get(forwarded.target);
+	return forwarded.targetParams !== undefined && targetNode !== undefined && targetNode.argumentOptional(nodeMap);
+}
+
+function anyOptionsOnlyRoutes(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): boolean {
+	return [...nodeMap.nodes.values()].some((node) => {
+		if (!isAuthoredCompound(node)) return false;
+		const forwarded = forwardedConstruction(node, resolveFactorySurface(node, nodeMap, kindEntries), nodeMap, kindEntries);
+		return forwarded !== null && optionsOnlyRoutes(node, forwarded, nodeMap);
+	});
 }
 
 export function groupSeatHints(
@@ -3563,7 +3710,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
 		lines.push(`import type { ${OBJECT_MEMBER_TYPES.join(', ')} } from '@sittir/common/utils';`);
-		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...(anyShapes(nodeMap, kindEntries) ? ['hasSlot'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', ...OBJECT_MEMBER_VALUES, ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...spelledReadImports(nodeMap), ...(usesElementWrap ? ['toElement'] : []), ...storageCoercionImports];
+		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...(anyShapes(nodeMap, kindEntries) ? ['hasSlot'] : []), ...(anyOptionsOnlyRoutes(nodeMap, kindEntries) ? ['isNodeValue'] : []),...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', ...OBJECT_MEMBER_VALUES, ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...spelledReadImports(nodeMap), ...(usesElementWrap ? ['toElement'] : []), ...storageCoercionImports];
 		const utilsImportAt = lines.length;
 		lines.push(utilsImportLine(utilsImports));
 		lines.push('');
