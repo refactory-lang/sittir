@@ -1245,6 +1245,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly stringFragment: typeof F.buildStringFragment;
 	readonly multilineStringFragment: typeof F.buildMultilineStringFragment;
 	readonly identifier: typeof F.buildIdentifier;
+	readonly textBlockWhiteSpace: typeof F.buildTextBlockWhiteSpace;
 	readonly type: { readonly annotated: Table['buildAnnotatedType'] };
 	readonly unannotatedType: {
 		readonly void: typeof F.buildVoidType;
@@ -2113,6 +2114,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		stringFragment: F.buildStringFragment,
 		multilineStringFragment: F.buildMultilineStringFragment,
 		identifier: F.buildIdentifier,
+		textBlockWhiteSpace: F.buildTextBlockWhiteSpace,
 		type: Object.freeze({ annotated: $at('buildAnnotatedType') } as const),
 		unannotatedType: Object.freeze({
 			void: F.buildVoidType,

@@ -570,6 +570,62 @@
           "value": "\"\"\""
         },
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "white_space",
+              "content": {
+                "type": "SYMBOL",
+                "name": "text_block_white_space"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "line_terminator",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "STRING",
+                  "value": "\n"
+                }
+              },
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "PREC",
+                  "value": 1,
+                  "content": {
+                    "type": "STRING",
+                    "value": "\r\n"
+                  }
+                }
+              },
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "STRING",
+                  "value": "\r"
+                }
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
           "type": "FIELD",
           "name": "elements",
           "content": {
@@ -10395,6 +10451,13 @@
     "_kw_semi": {
       "type": "STRING",
       "value": ";"
+    },
+    "text_block_white_space": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[ \\t\\f]+"
+      }
     },
     "formal_parameters_receiver": {
       "type": "SEQ",

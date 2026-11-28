@@ -735,7 +735,7 @@ The offsets of the lines that begin inside a token spanning lines (a multi-line 
 
 ### `packages/common/src/delimited-check.ts::checkDelimited`
 
-Refuses a delimited composite whose content would not read back inside its own delimiters. Content free of the spec's excluded characters passes on its own. A delimiter pair a parse has not confirmed is confirmed by parsing the empty composite through the engine in scope, memoized per kind and pair. Anything else is parsed back in its host and must parse with no error, show a node of the kind starting where it was rendered and ending where the text ends, and show the same node arms among its children. Extras are found among the root's inner trivia. With no engine in scope, a varying pair that has not been confirmed, or content that needs the parse, is refused ("needs an engine").
+Refuses a delimited composite whose content would not read back inside its own delimiters. Content free of the spec's excluded characters passes on its own. A delimiter pair a parse has not confirmed is confirmed by parsing the empty composite through the engine in scope, memoized per kind and pair. Anything else is rendered through the engine, so content holding an option's fixed token (Java's text block line terminator) is written as the render writes it, and parsed back in its host. It must parse with no error, show a node of the kind starting where it was rendered and ending where the text ends, and show the same node arms among its children. Extras are found among the root's inner trivia. With no engine in scope, a varying pair that has not been confirmed, or content that needs the parse, is refused ("needs an engine").
 
 ### `packages/common/src/query.ts::entryOfCoordinate`
 

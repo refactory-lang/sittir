@@ -45,6 +45,7 @@ export default grammar(enrich(base), wire({
 			'3/0/0': field('integer')
 		},
 		argument: { 1: field('modifier') },
+		character_literal: { 2: token.immediate("'") },
 		preproc_nullable: { 1: field('setting'), 2: field('target') },
 		preproc_line: { '1/3/1': field('start_line'), '1/3/3': field('start_character'), '1/3/7': field('end_line'), '1/3/9': field('end_character'), '1/3/11/0': field('character_offset') },
 		preproc_pragma: { '1/1/1': field('file_name'), '1/1/2': field('guid'), '1/1/3': field('checksum') },

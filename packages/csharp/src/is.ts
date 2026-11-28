@@ -1689,43 +1689,43 @@ export interface IsGuards {
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringContent };
 }
 
-const _supertype_typeDeclaration_ids = new Set<number>([266, 268, 551, 552, 274, 276, 278]);
-const _supertype_enumDeclaration_ids = new Set<number>([551, 552]);
-const _supertype_recordBase_ids = new Set<number>([557, 558]);
-const _supertype_declarationListBody_ids = new Set<number>([553, 554]);
-const _supertype_typeParameterConstraint_ids = new Set<number>([546, 547, 548, 549, 550]);
+const _supertype_typeDeclaration_ids = new Set<number>([267, 269, 552, 553, 275, 277, 279]);
+const _supertype_enumDeclaration_ids = new Set<number>([552, 553]);
+const _supertype_recordBase_ids = new Set<number>([558, 559]);
+const _supertype_declarationListBody_ids = new Set<number>([554, 555]);
+const _supertype_typeParameterConstraint_ids = new Set<number>([547, 548, 549, 550, 551]);
 const _supertype_declaration_ids = new Set<number>([
-	266, 268, 551, 552, 276, 294, 298, 299, 300, 278, 295, 297, 303, 274, 263, 290, 291, 305, 255, 488
+	267, 269, 552, 553, 277, 295, 299, 300, 301, 279, 296, 298, 304, 275, 264, 291, 292, 306, 256, 489
 ]);
-const _supertype_typeArgumentList_ids = new Set<number>([555, 556]);
+const _supertype_typeArgumentList_ids = new Set<number>([556, 557]);
 const _supertype_type_ids = new Set<number>([
-	329, 330, 323, 325, 486, 326, 333, 334, 336, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93,
-	344, 340, 342
+	330, 331, 324, 326, 487, 327, 334, 335, 337, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93,
+	345, 341, 343
 ]);
 const _supertype_statement_ids = new Set<number>([
-	314, 347, 348, 349, 350, 351, 352, 353, 354, 356, 357, 358, 544, 545, 362, 363, 368, 369, 370, 372, 373, 374, 375,
-	376, 377, 491
+	315, 348, 349, 350, 351, 352, 353, 354, 355, 357, 358, 359, 545, 546, 363, 364, 369, 370, 371, 373, 374, 375, 376,
+	377, 378, 492
 ]);
-const _supertype_switchStatement_ids = new Set<number>([544, 545]);
-const _supertype_pattern_ids = new Set<number>([381, 396, 113, 388, 385, 393, 380, 384, 392, 395, 394, 387, 386]);
+const _supertype_switchStatement_ids = new Set<number>([545, 546]);
+const _supertype_pattern_ids = new Set<number>([382, 397, 113, 389, 386, 394, 381, 385, 393, 396, 395, 388, 387]);
 const _supertype_expression_ids = new Set<number>([
-	69, 404, 437, 422, 423, 162, 479, 199, 200, 201, 202, 203, 204, 205, 170, 171, 482, 168, 484, 403, 429, 405, 406, 434,
-	446, 447, 425, 426, 424, 427, 428, 459, 430, 435, 465, 449, 466, 469, 470, 471, 472, 473, 474, 475, 476, 452, 453,
-	454, 456, 457, 458, 463, 408, 494, 611, 64, 444, 477, 486, 326, 436, 407, 448
+	69, 405, 438, 423, 424, 162, 480, 200, 201, 202, 203, 204, 205, 206, 171, 172, 483, 169, 485, 404, 430, 406, 407, 435,
+	447, 448, 426, 427, 425, 428, 429, 460, 431, 436, 466, 450, 467, 470, 471, 472, 473, 474, 475, 476, 477, 453, 454,
+	455, 457, 458, 459, 464, 409, 495, 612, 64, 445, 478, 487, 327, 437, 408, 449
 ]);
 const _supertype_nonLvalueExpression_ids = new Set<number>([
-	69, 404, 437, 422, 423, 162, 479, 199, 200, 201, 202, 203, 204, 205, 170, 171, 482, 168, 484, 403, 429, 405, 406, 434,
-	446, 447, 425, 426, 424, 427, 428, 459, 430, 435, 465, 449, 466, 469, 470, 471, 472, 473, 474, 475, 476, 452, 453,
-	454, 456, 457, 458, 463, 408, 494
+	69, 405, 438, 423, 424, 162, 480, 200, 201, 202, 203, 204, 205, 206, 171, 172, 483, 169, 485, 404, 430, 406, 407, 435,
+	447, 448, 426, 427, 425, 428, 429, 460, 431, 436, 466, 450, 467, 470, 471, 472, 473, 474, 475, 476, 477, 453, 454,
+	455, 457, 458, 459, 464, 409, 495
 ]);
-const _supertype_lvalueExpression_ids = new Set<number>([611, 64, 444, 477, 486, 326, 436, 407, 448]);
-const _supertype_literal_ids = new Set<number>([162, 479, 199, 200, 201, 202, 203, 204, 205, 170, 171, 482, 168, 484]);
-const _supertype_integerLiteral_ids = new Set<number>([199, 200, 201]);
-const _supertype_realLiteral_ids = new Set<number>([202, 203, 204, 205]);
-const _supertype_escapeSequence_ids = new Set<number>([206, 207, 208, 209]);
-const _supertype_comment_ids = new Set<number>([210, 211]);
-const _supertype_tuplePatternElement_ids = new Set<number>([518, 113, 312]);
-const _supertype_layout_ids = new Set<number>([243, 244, 245, 246, 247, 248, 249, 250]);
+const _supertype_lvalueExpression_ids = new Set<number>([612, 64, 445, 478, 487, 327, 437, 408, 449]);
+const _supertype_literal_ids = new Set<number>([162, 480, 200, 201, 202, 203, 204, 205, 206, 171, 172, 483, 169, 485]);
+const _supertype_integerLiteral_ids = new Set<number>([200, 201, 202]);
+const _supertype_realLiteral_ids = new Set<number>([203, 204, 205, 206]);
+const _supertype_escapeSequence_ids = new Set<number>([207, 208, 209, 210]);
+const _supertype_comment_ids = new Set<number>([211, 212]);
+const _supertype_tuplePatternElement_ids = new Set<number>([519, 113, 313]);
+const _supertype_layout_ids = new Set<number>([244, 245, 246, 247, 248, 249, 250, 251]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.TypeDeclaration, _supertype_typeDeclaration_ids],
@@ -1749,11 +1749,11 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.TuplePatternElement, _supertype_tuplePatternElement_ids],
 	[TSKindId.Modifier, new Set<number>([30, 31, 32, 2, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48])],
 	[TSKindId.PredefinedType, new Set<number>([76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93])],
-	[TSKindId.BooleanLiteral, new Set<number>([170, 171])],
+	[TSKindId.BooleanLiteral, new Set<number>([171, 172])],
 	[
 		TSKindId.ReservedIdentifier,
 		new Set<number>([
-			3, 172, 146, 173, 140, 33, 137, 174, 145, 141, 138, 142, 175, 139, 144, 66, 147, 176, 72, 107, 54, 102
+			3, 173, 146, 174, 140, 33, 137, 175, 145, 141, 138, 142, 176, 139, 144, 66, 147, 177, 72, 107, 54, 102
 		])
 	]
 ]);
@@ -2195,25 +2195,25 @@ export function guardsWith(test: KindTest): IsGuards {
 		arm1: _at(_kind_PreprocPragma_guard, 'content', _kind_PreprocPragmaArm1_guard),
 		arm2: _at(_kind_PreprocPragma_guard, 'content', _kind_PreprocPragmaArm2_guard)
 	});
-	const _supertype_enumDeclaration_guard = _vg(_mg(270), {
+	const _supertype_enumDeclaration_guard = _vg(_mg(271), {
 		withBody: _kind_EnumDeclarationWithBody_guard,
 		withoutBody: _kind_EnumDeclarationWithoutBody_guard
 	});
-	const _supertype_recordBase_guard = _vg(_mg(280), {
+	const _supertype_recordBase_guard = _vg(_mg(281), {
 		names: _kind_RecordBaseNames_guard,
 		primaryConstructor: _kind_RecordBasePrimaryConstructor_guard
 	});
-	const _supertype_declarationListBody_guard = _vg(_mg(281), {
+	const _supertype_declarationListBody_guard = _vg(_mg(282), {
 		withBody: _kind_DeclarationListBodyWithBody_guard,
 		withoutBody: _kind_DeclarationListBodyWithoutBody_guard
 	});
-	const _supertype_typeParameterConstraint_guard = _vg(_mg(288), {
+	const _supertype_typeParameterConstraint_guard = _vg(_mg(289), {
 		class: _kind_TypeParameterConstraintClass_guard,
 		struct: _kind_TypeParameterConstraintStruct_guard,
 		notnull: _kind_TypeParameterConstraintNotnull_guard,
 		unmanaged: _kind_TypeParameterConstraintUnmanaged_guard
 	});
-	const _supertype_declaration_guard = _vg(_mg(293), {
+	const _supertype_declaration_guard = _vg(_mg(294), {
 		class: _kind_ClassDeclaration_guard,
 		struct: _kind_StructDeclaration_guard,
 		enum: _supertype_enumDeclaration_guard,
@@ -2234,15 +2234,15 @@ export function guardsWith(test: KindTest): IsGuards {
 		usingDirective: _form_UsingDirective_guard,
 		preprocIf: _kind_PreprocIf_guard
 	});
-	const _supertype_typeArgumentList_guard = _vg(_mg(327), {
+	const _supertype_typeArgumentList_guard = _vg(_mg(328), {
 		unbound: _kind_TypeArgumentListUnbound_guard,
 		bound: _kind_TypeArgumentListBound_guard
 	});
-	const _supertype_switchStatement_guard = _vg(_mg(359), {
+	const _supertype_switchStatement_guard = _vg(_mg(360), {
 		parenthesized: _kind_SwitchStatementParenthesized_guard,
 		tuple: _kind_SwitchStatementTuple_guard
 	});
-	const _supertype_pattern_guard = _vg(_mg(379), {
+	const _supertype_pattern_guard = _vg(_mg(380), {
 		constant: _form_ConstantPattern_guard,
 		declaration: _kind_DeclarationPattern_guard,
 		discard: _kind_Discard_guard,
@@ -2257,18 +2257,18 @@ export function guardsWith(test: KindTest): IsGuards {
 		list: _kind_ListPattern_guard,
 		type: _kind_TypePattern_guard
 	});
-	const _supertype_integerLiteral_guard = _vg(_mg(480), {
+	const _supertype_integerLiteral_guard = _vg(_mg(481), {
 		arm1: _kind_IntegerLiteralArm1_guard,
 		arm2: _kind_IntegerLiteralArm2_guard,
 		arm3: _kind_IntegerLiteralArm3_guard
 	});
-	const _supertype_realLiteral_guard = _vg(_mg(481), {
+	const _supertype_realLiteral_guard = _vg(_mg(482), {
 		arm1: _kind_RealLiteralArm1_guard,
 		arm2: _kind_RealLiteralArm2_guard,
 		arm3: _kind_RealLiteralArm3_guard,
 		arm4: _kind_RealLiteralArm4_guard
 	});
-	const _supertype_escapeSequence_guard = _vg(_mg(483), {
+	const _supertype_escapeSequence_guard = _vg(_mg(484), {
 		arm1: _kind_EscapeSequenceArm1_guard,
 		arm2: _kind_EscapeSequenceArm2_guard,
 		arm3: _kind_EscapeSequenceArm3_guard,
@@ -2278,12 +2278,12 @@ export function guardsWith(test: KindTest): IsGuards {
 		arm1: _kind_CommentArm1_guard,
 		arm2: _kind_CommentArm2_guard
 	});
-	const _supertype_tuplePatternElement_guard = _vg(_mg(519), {
+	const _supertype_tuplePatternElement_guard = _vg(_mg(520), {
 		name: _kind_TuplePatternElementName_guard,
 		discard: _kind_Discard_guard,
 		tuplePattern: _kind_TuplePattern_guard
 	});
-	const _supertype_typeDeclaration_guard = _vg(_mg(265), {
+	const _supertype_typeDeclaration_guard = _vg(_mg(266), {
 		class: _kind_ClassDeclaration_guard,
 		struct: _kind_StructDeclaration_guard,
 		enum: _supertype_enumDeclaration_guard,
@@ -2291,7 +2291,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		delegate: _kind_DelegateDeclaration_guard,
 		record: _kind_RecordDeclaration_guard
 	});
-	const _supertype_statement_guard = _vg(_mg(346), {
+	const _supertype_statement_guard = _vg(_mg(347), {
 		block: _kind_Block_guard,
 		break: _kind_BreakStatement_guard,
 		checked: _kind_CheckedStatement_guard,
@@ -2575,14 +2575,14 @@ export function guardsWith(test: KindTest): IsGuards {
 		typeParameterConstraint: _supertype_typeParameterConstraint_guard,
 		declaration: _supertype_declaration_guard,
 		typeArgumentList: _supertype_typeArgumentList_guard,
-		type: _mg(328),
+		type: _mg(329),
 		statement: _supertype_statement_guard,
 		switchStatement: _supertype_switchStatement_guard,
 		pattern: _supertype_pattern_guard,
-		expression: _mg(399),
-		nonLvalueExpression: _mg(400),
-		lvalueExpression: _mg(401),
-		literal: _mg(478),
+		expression: _mg(400),
+		nonLvalueExpression: _mg(401),
+		lvalueExpression: _mg(402),
+		literal: _mg(479),
 		integerLiteral: _supertype_integerLiteral_guard,
 		realLiteral: _supertype_realLiteral_guard,
 		escapeSequence: _supertype_escapeSequence_guard,

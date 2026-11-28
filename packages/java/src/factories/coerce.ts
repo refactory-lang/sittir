@@ -147,6 +147,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	escape_sequence_arm3: { factory: (content: string) => _resolveByKind('escape_sequence_arm3', content) },
 	escape_sequence_arm4: { factory: (content: string) => _resolveByKind('escape_sequence_arm4', content) },
 	escape_sequence_arm5: { factory: (content: string) => _resolveByKind('escape_sequence_arm5', content) },
+	text_block_white_space: { pattern: F._leafRe_buildTextBlockWhiteSpace, factory: F.buildTextBlockWhiteSpace },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_space: { values: [' '], factory: () => F.buildSpace },
 	_tab: { values: ['\t'], factory: () => F.buildTab },
@@ -191,6 +192,7 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'decimal_floating_point_literal_arm4_arm1',
 	'decimal_floating_point_literal_arm4_arm2',
 	'hex_floating_point_literal_arm1',
+	'text_block_white_space',
 	'_tight',
 	'_space',
 	'_tab',
@@ -242,7 +244,8 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'hex_floating_point_literal_arm2',
 	'multiline_string_fragment',
 	'identifier',
-	'type_identifier'
+	'type_identifier',
+	'text_block_white_space'
 ];
 
 const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {
@@ -369,110 +372,110 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'type_identifier'
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	5, 6, 8, 9, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-	40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68,
-	69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
-	98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 119, 135, 136, 137, 138,
-	139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 244, 251, 292, 293
+	5, 6, 8, 9, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
+	43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71,
+	72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+	101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 122, 138, 139, 140,
+	141, 142, 143, 144, 145, 146, 147, 148, 149, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 248, 255, 296, 297
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
-	decimal_floating_point_literal: new Set([122, 123, 124, 125, 126, 127]),
-	hex_floating_point_literal: new Set([128, 129]),
+	decimal_floating_point_literal: new Set([125, 126, 127, 128, 129, 130]),
+	hex_floating_point_literal: new Set([131, 132]),
 	string_interpolation: new Set([
-		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
-		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
-		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
+		1, 2, 3, 4, 5, 6, 7, 19, 105, 106, 107, 108, 109, 110, 111, 112, 113, 118, 123, 124, 125, 126, 127, 128, 129, 130,
+		131, 132, 165, 166, 175, 176, 177, 178, 179, 181, 182, 185, 187, 188, 189, 190, 191, 192, 193, 194, 196, 201, 293,
+		294, 295, 296, 297, 321, 331, 332, 335, 336, 374
 	]),
-	multiline_string_literal_arm1: new Set([15, 130, 131, 132, 133, 134]),
+	multiline_string_literal_arm1: new Set([18, 133, 134, 135, 136, 137]),
 	parenthesized_expression: new Set([
-		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
-		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
-		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
+		1, 2, 3, 4, 5, 6, 7, 19, 105, 106, 107, 108, 109, 110, 111, 112, 113, 118, 123, 124, 125, 126, 127, 128, 129, 130,
+		131, 132, 165, 166, 175, 176, 177, 178, 179, 181, 182, 185, 187, 188, 189, 190, 191, 192, 193, 194, 196, 201, 293,
+		294, 295, 296, 297, 321, 331, 332, 335, 336, 374
 	]),
-	class_literal: new Set([1, 102, 103, 104, 105, 106, 107, 108, 109, 110, 289, 290, 291, 292, 293, 370]),
-	object_creation_expression: new Set([186, 317]),
-	wildcard_bounds: new Set([1, 102, 103, 104, 105, 106, 107, 108, 109, 110, 288, 289, 290, 291, 292, 293, 319, 370]),
-	switch_label: new Set([320]),
-	pattern: new Set([203, 204]),
-	record_pattern_component: new Set([67, 321]),
+	class_literal: new Set([1, 105, 106, 107, 108, 109, 110, 111, 112, 113, 293, 294, 295, 296, 297, 374]),
+	object_creation_expression: new Set([190, 321]),
+	wildcard_bounds: new Set([1, 105, 106, 107, 108, 109, 110, 111, 112, 113, 292, 293, 294, 295, 296, 297, 323, 374]),
+	switch_label: new Set([324]),
+	pattern: new Set([207, 208]),
+	record_pattern_component: new Set([70, 325]),
 	guard: new Set([
-		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
-		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
-		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
+		1, 2, 3, 4, 5, 6, 7, 19, 105, 106, 107, 108, 109, 110, 111, 112, 113, 118, 123, 124, 125, 126, 127, 128, 129, 130,
+		131, 132, 165, 166, 175, 176, 177, 178, 179, 181, 182, 185, 187, 188, 189, 190, 191, 192, 193, 194, 196, 201, 293,
+		294, 295, 296, 297, 321, 331, 332, 335, 336, 374
 	]),
 	expression_statement: new Set([
-		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
-		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
-		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
+		1, 2, 3, 4, 5, 6, 7, 19, 105, 106, 107, 108, 109, 110, 111, 112, 113, 118, 123, 124, 125, 126, 127, 128, 129, 130,
+		131, 132, 165, 166, 175, 176, 177, 178, 179, 181, 182, 185, 187, 188, 189, 190, 191, 192, 193, 194, 196, 201, 293,
+		294, 295, 296, 297, 321, 331, 332, 335, 336, 374
 	]),
 	assert_statement: new Set([
-		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
-		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
-		290, 291, 292, 293, 317, 322, 327, 328, 331, 332, 370
+		1, 2, 3, 4, 5, 6, 7, 19, 105, 106, 107, 108, 109, 110, 111, 112, 113, 118, 123, 124, 125, 126, 127, 128, 129, 130,
+		131, 132, 165, 166, 175, 176, 177, 178, 179, 181, 182, 185, 187, 188, 189, 190, 191, 192, 193, 194, 196, 201, 293,
+		294, 295, 296, 297, 321, 326, 331, 332, 335, 336, 374
 	]),
 	break_statement: new Set([1]),
 	continue_statement: new Set([1]),
 	return_statement: new Set([
-		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
-		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
-		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
+		1, 2, 3, 4, 5, 6, 7, 19, 105, 106, 107, 108, 109, 110, 111, 112, 113, 118, 123, 124, 125, 126, 127, 128, 129, 130,
+		131, 132, 165, 166, 175, 176, 177, 178, 179, 181, 182, 185, 187, 188, 189, 190, 191, 192, 193, 194, 196, 201, 293,
+		294, 295, 296, 297, 321, 331, 332, 335, 336, 374
 	]),
 	yield_statement: new Set([
-		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
-		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
-		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
+		1, 2, 3, 4, 5, 6, 7, 19, 105, 106, 107, 108, 109, 110, 111, 112, 113, 118, 123, 124, 125, 126, 127, 128, 129, 130,
+		131, 132, 165, 166, 175, 176, 177, 178, 179, 181, 182, 185, 187, 188, 189, 190, 191, 192, 193, 194, 196, 201, 293,
+		294, 295, 296, 297, 321, 331, 332, 335, 336, 374
 	]),
 	throw_statement: new Set([
-		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
-		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
-		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
+		1, 2, 3, 4, 5, 6, 7, 19, 105, 106, 107, 108, 109, 110, 111, 112, 113, 118, 123, 124, 125, 126, 127, 128, 129, 130,
+		131, 132, 165, 166, 175, 176, 177, 178, 179, 181, 182, 185, 187, 188, 189, 190, 191, 192, 193, 194, 196, 201, 293,
+		294, 295, 296, 297, 321, 331, 332, 335, 336, 374
 	]),
-	finally_clause: new Set([209]),
-	resource_specification: new Set([1, 187, 227, 309, 323]),
-	resource: new Set([1, 187, 323]),
-	marker_annotation: new Set([1, 271]),
+	finally_clause: new Set([213]),
+	resource_specification: new Set([1, 191, 231, 313, 327]),
+	resource: new Set([1, 191, 327]),
+	marker_annotation: new Set([1, 275]),
 	element_value_array_initializer: new Set([
-		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
-		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 233,
-		234, 238, 271, 289, 290, 291, 292, 293, 310, 317, 327, 328, 331, 332, 370
+		1, 2, 3, 4, 5, 6, 7, 19, 105, 106, 107, 108, 109, 110, 111, 112, 113, 118, 123, 124, 125, 126, 127, 128, 129, 130,
+		131, 132, 165, 166, 175, 176, 177, 178, 179, 181, 182, 185, 187, 188, 189, 190, 191, 192, 193, 194, 196, 201, 237,
+		238, 242, 275, 293, 294, 295, 296, 297, 314, 321, 331, 332, 335, 336, 374
 	]),
-	uses_module_directive: new Set([1, 271]),
-	superclass: new Set([1, 102, 103, 104, 105, 106, 107, 108, 109, 110, 288, 289, 290, 291, 292, 293, 370]),
-	super_interfaces: new Set([263]),
-	permits: new Set([263]),
-	static_initializer: new Set([209]),
-	extends_interfaces: new Set([263]),
+	uses_module_directive: new Set([1, 275]),
+	superclass: new Set([1, 105, 106, 107, 108, 109, 110, 111, 112, 113, 292, 293, 294, 295, 296, 297, 374]),
+	super_interfaces: new Set([267]),
+	permits: new Set([267]),
+	static_initializer: new Set([213]),
+	extends_interfaces: new Set([267]),
 	array_initializer: new Set([
-		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
-		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 285,
-		289, 290, 291, 292, 293, 314, 317, 327, 328, 331, 332, 370
+		1, 2, 3, 4, 5, 6, 7, 19, 105, 106, 107, 108, 109, 110, 111, 112, 113, 118, 123, 124, 125, 126, 127, 128, 129, 130,
+		131, 132, 165, 166, 175, 176, 177, 178, 179, 181, 182, 185, 187, 188, 189, 190, 191, 192, 193, 194, 196, 201, 289,
+		293, 294, 295, 296, 297, 318, 321, 331, 332, 335, 336, 374
 	]),
-	resources: new Set([1, 187, 227, 323]),
+	resources: new Set([1, 191, 231, 327]),
 	element_values: new Set([
-		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
-		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 233,
-		234, 238, 271, 289, 290, 291, 292, 293, 310, 317, 327, 328, 331, 332, 370
+		1, 2, 3, 4, 5, 6, 7, 19, 105, 106, 107, 108, 109, 110, 111, 112, 113, 118, 123, 124, 125, 126, 127, 128, 129, 130,
+		131, 132, 165, 166, 175, 176, 177, 178, 179, 181, 182, 185, 187, 188, 189, 190, 191, 192, 193, 194, 196, 201, 237,
+		238, 242, 275, 293, 294, 295, 296, 297, 314, 321, 331, 332, 335, 336, 374
 	]),
-	enum_constants: new Set([1, 255]),
+	enum_constants: new Set([1, 259]),
 	variable_initializers: new Set([
-		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
-		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 285,
-		289, 290, 291, 292, 293, 314, 317, 327, 328, 331, 332, 370
+		1, 2, 3, 4, 5, 6, 7, 19, 105, 106, 107, 108, 109, 110, 111, 112, 113, 118, 123, 124, 125, 126, 127, 128, 129, 130,
+		131, 132, 165, 166, 175, 176, 177, 178, 179, 181, 182, 185, 187, 188, 189, 190, 191, 192, 193, 194, 196, 201, 289,
+		293, 294, 295, 296, 297, 318, 321, 331, 332, 335, 336, 374
 	]),
-	wildcard_bounds_arm: new Set([1, 102, 103, 104, 105, 106, 107, 108, 109, 110, 288, 289, 290, 291, 292, 293, 370]),
-	formal_parameters_receiver: new Set([298]),
+	wildcard_bounds_arm: new Set([1, 105, 106, 107, 108, 109, 110, 111, 112, 113, 292, 293, 294, 295, 296, 297, 374]),
+	formal_parameters_receiver: new Set([302]),
 	type_identifier: new Set([1])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
-	87: ['requires_modifier'],
-	88: ['requires_modifier'],
-	102: ['integral_type'],
-	103: ['integral_type'],
-	104: ['integral_type'],
+	90: ['requires_modifier'],
+	91: ['requires_modifier'],
 	105: ['integral_type'],
 	106: ['integral_type'],
-	107: ['floating_point_type'],
-	108: ['floating_point_type']
+	107: ['integral_type'],
+	108: ['integral_type'],
+	109: ['integral_type'],
+	110: ['floating_point_type'],
+	111: ['floating_point_type']
 };
 
 function _resolveOne<T>(
@@ -683,7 +686,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	for_statement_arm: TSKindId.ForStatementArm,
 	formal_parameters_receiver: TSKindId.FormalParametersReceiver,
 	string_literal_line: TSKindId.StringLiteralLine,
-	string_literal_text_block: TSKindId.StringLiteralTextBlock,
 	type_identifier: TSKindId.TypeIdentifier
 };
 
@@ -897,8 +899,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildFormalParametersReceiver(children[0] as Parameters<typeof F.buildFormalParametersReceiver>[0]);
 		case 'string_literal_line':
 			return (coerceToStringLiteralLine as (...args: unknown[]) => unknown)(...children);
-		case 'string_literal_text_block':
-			return (coerceToStringLiteralTextBlock as (...args: unknown[]) => unknown)(...children);
 		case 'type_identifier':
 			return F.buildTypeIdentifier(children[0] as Parameters<typeof F.buildTypeIdentifier>[0]);
 		default:
@@ -6922,6 +6922,16 @@ export function coerceToForStatementArm(
 	);
 }
 
+export function coerceToTextBlockWhiteSpace<const I extends T.TextBlockWhiteSpace.Loose>(
+	input: RefusingInput<I, T.TextBlockWhiteSpace.Loose>
+): ReturnType<typeof F.buildTextBlockWhiteSpace>;
+export function coerceToTextBlockWhiteSpace(
+	input: T.TextBlockWhiteSpace.Loose
+): ReturnType<typeof F.buildTextBlockWhiteSpace> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildTextBlockWhiteSpace>;
+	return F.buildTextBlockWhiteSpace(input as Parameters<typeof F.buildTextBlockWhiteSpace>[0]);
+}
+
 export function resolveFormalParametersReceiver_receiverParameter(
 	value: T.FormalParametersReceiver.LooseConfig['receiverParameter']
 ): Admit<T.FormalParametersReceiver['_receiver_parameter']> {
@@ -6999,29 +7009,39 @@ export function coerceToStringLiteralLine(
 	);
 }
 
-export function coerceToStringLiteralTextBlock<const A extends T.StringLiteralTextBlock.LooseArgs>(
-	...args: RefusingInput<A, T.StringLiteralTextBlock.LooseArgs>
+export function resolveStringLiteralTextBlock_whiteSpace(
+	value: T.StringLiteralTextBlock.LooseConfig['whiteSpace']
+): Admit<T.StringLiteralTextBlock['_white_space']> {
+	return _resolveOneLeaf<T.TextBlockWhiteSpace>(value, 'text_block_white_space');
+}
+
+export function resolveStringLiteralTextBlock_elements(
+	value: T.StringLiteralTextBlock.LooseConfig['elements']
+): Admit<T.StringLiteralTextBlock['_elements']> {
+	return _resolveMany<T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation>(
+		value,
+		_K55,
+		_K56
+	);
+}
+
+export function coerceToStringLiteralTextBlock<const I extends T.StringLiteralTextBlock.Loose>(
+	...input: [input?: I, options?: T.StringLiteralTextBlock.Options] &
+		RefuseUndeclared<I, T.StringLiteralTextBlock.Loose>
 ): ReturnType<typeof F.buildStringLiteralTextBlock>;
 export function coerceToStringLiteralTextBlock(
-	...input: T.StringLiteralTextBlock.LooseArgs
+	input?: T.StringLiteralTextBlock.Loose,
+	options?: T.StringLiteralTextBlock.Options
 ): ReturnType<typeof F.buildStringLiteralTextBlock> {
-	currentHandle()?.admit(TSKindId.StringLiteralTextBlock, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringLiteralTextBlock))
-		return input[0] as unknown as ReturnType<typeof F.buildStringLiteralTextBlock>;
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('elements' in head)) return input;
-		const v = (head as Record<string, unknown>)['elements'];
-		return Array.isArray(v) ? v : [v];
-	})();
+	if (!_isLooseConfig<T.StringLiteralTextBlock.LooseConfig | undefined>(input))
+		return input as unknown as ReturnType<typeof F.buildStringLiteralTextBlock>;
+	currentHandle()?.admit(TSKindId.StringLiteralTextBlock, [input]);
 	return F.buildStringLiteralTextBlock(
-		...(_resolveMany<T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation>(
-			_elems,
-			_K55,
-			_K56
-		) as unknown as Parameters<typeof F.buildStringLiteralTextBlock>)
+		{
+			whiteSpace: resolveStringLiteralTextBlock_whiteSpace(input?.whiteSpace),
+			elements: resolveStringLiteralTextBlock_elements(input?.elements)
+		},
+		options
 	);
 }
 
@@ -7377,6 +7397,7 @@ export interface _FromMap {
 	readonly assert_statement_arm: typeof coerceToAssertStatementArm;
 	readonly resource_arm: typeof coerceToResourceArm;
 	readonly for_statement_arm: typeof coerceToForStatementArm;
+	readonly text_block_white_space: typeof coerceToTextBlockWhiteSpace;
 	readonly formal_parameters_receiver: typeof coerceToFormalParametersReceiver;
 	readonly formal_parameters_list: typeof coerceToFormalParametersList;
 	readonly string_literal_line: typeof coerceToStringLiteralLine;
@@ -7565,6 +7586,7 @@ export const _fromMap: _FromMap = {
 	assert_statement_arm: coerceToAssertStatementArm,
 	resource_arm: coerceToResourceArm,
 	for_statement_arm: coerceToForStatementArm,
+	text_block_white_space: coerceToTextBlockWhiteSpace,
 	formal_parameters_receiver: coerceToFormalParametersReceiver,
 	formal_parameters_list: coerceToFormalParametersList,
 	string_literal_line: coerceToStringLiteralLine,

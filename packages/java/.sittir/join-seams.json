@@ -1,9 +1,9 @@
 {
 	"parser": {
-		"source": "d521da341f3dff554a97a2750b5bb71311e10e6d963aa1c577d6250eeaf55592",
-		"wasm": "5570f88f7daf784a891e01685f226d06b76e480d0dd7f78a2a515fbc9613531c"
+		"source": "df2abf1678c06aafeee67b62c26ee1d72b64ef1ff71e08fbfd502f0d6a7756fa",
+		"wasm": "e72c13b8c82d405ff63260028ac683732c6c78cf5521d56c52d07b37ee07d18c"
 	},
-	"inputs": "87b2105bcfc63a35f7577a9fb610ef53a32275094a12627bbfc63fd1461d4150",
+	"inputs": "268f6f30acb6edfbc74976438c1fcfbc1bc285fe0949a82056e36073997728de",
 	"seams": [
 		{"seam":"_argument_list_optional1:members.0","next":"proven"},
 		{"seam":"_argument_list_optional1:members.1/content/members.1","next":"proven"},
@@ -111,9 +111,12 @@
 	],
 	"blocked": [],
 	"tight": [
-		{"seam":"_multiline_string_literal:members.1/content","previous":"\"\"\"","next":"\n        StringTemplate result = RAW.","witness":"corpus","reason":"the space lexes into the next token"},
-		{"seam":"_multiline_string_literal:members.1","previous":"\"\"\"","next":"\n        StringTemplate result = RAW.","witness":"corpus","reason":"the space lexes into the next token"},
-		{"seam":"_multiline_string_literal:members.2","previous":"\"\"\"","next":"\"\"\"","witness":"built","reason":"the space lexes into the next token"},
+		{"seam":"_multiline_string_literal:members.1/members.0","previous":"\"\"\"","next":"   ","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"_multiline_string_literal:members.1","previous":"\"\"\"","next":"   ","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"_multiline_string_literal:members.2/members.0","previous":"\"\"\"","next":"\n","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"_multiline_string_literal:members.2","previous":"\"\"\"","next":"\n","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"_multiline_string_literal:members.3/content","previous":"        StringTemplate result = RAW.","next":"\\\"","witness":"corpus","reason":"the space lexes into the previous token"},
+		{"seam":"_multiline_string_literal:members.4","previous":"}","next":"\"\"\"","witness":"built","reason":"the space lexes into the next token"},
 		{"seam":"_string_literal:members.1/content","previous":"\"","next":"Provide time-travel functionality","witness":"corpus","reason":"the space lexes into the next token"},
 		{"seam":"_string_literal:members.1","previous":"\"","next":"Provide time-travel functionality","witness":"corpus","reason":"the space lexes into the next token"},
 		{"seam":"_string_literal:members.2","previous":"\"","next":"\"","witness":"built","reason":"the space lexes into the next token"}

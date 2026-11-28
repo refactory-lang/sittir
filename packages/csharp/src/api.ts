@@ -46,7 +46,7 @@ export const hooks: LanguageHooks<CsharpAPI> = Object.freeze<LanguageHooks<Cshar
 			{ open: '/*', close: '/', build: (text: string) => buildCommentArm2(text as `/*${string}/`, false) }
 		])
 	}),
-	rootKinds: Object.freeze([251]),
+	rootKinds: Object.freeze([252]),
 	querySlots,
 	nativeSlots,
 	structure,

@@ -31,7 +31,8 @@ for (const grammar of await invoke('grammars', 'allGrammars')) {
 const SENTINELS: Readonly<Record<string, readonly [string, string]>> = {
 	typescript: ['let sittirBefore = 0;\n', 'let sittirAfter = 0;\n'],
 	python: ['sittir_before = 0\n', 'sittir_after = 0\n'],
-	rust: ['fn sittir_before() {}\n', 'fn sittir_after() {}\n']
+	rust: ['fn sittir_before() {}\n', 'fn sittir_after() {}\n'],
+	java: ['class SittirBefore {}\n', 'class SittirAfter {}\n']
 };
 
 function nodesOf(root: TSNode): TSNode[] {

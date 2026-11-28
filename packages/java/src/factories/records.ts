@@ -32,6 +32,7 @@ import {
 	restItems,
 	toElement,
 	admitAliasContent,
+	coerceKindEnumStorage,
 	kindIdStorage,
 	listStorage,
 	numberText,
@@ -75,6 +76,7 @@ import {
 	_leafRe_buildDecimalFloatingPointLiteralArm4Arm1,
 	_leafRe_buildDecimalFloatingPointLiteralArm4Arm2,
 	_leafRe_buildHexFloatingPointLiteralArm1,
+	_leafRe_buildTextBlockWhiteSpace,
 	_slotRe_buildOctalIntegerLiteral_prefix,
 	_slotRe_buildOctalIntegerLiteral_content,
 	_slotRe_buildOctalIntegerLiteral_suffix,
@@ -17799,6 +17801,36 @@ function withForStatementArm(node: object, setter: string, args: readonly unknow
 	throw new Error(`for_statement_arm has no $with.${setter}`);
 }
 
+export function buildTextBlockWhiteSpace(text: string): T.TextBlockWhiteSpace.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`text_block_white_space: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`text_block_white_space: text must be non-empty`);
+	if (!_leafRe_buildTextBlockWhiteSpace.test(text))
+		throw new Error(`text_block_white_space: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	return builtArenaOf(handle).leaf(leafTextBlockWhiteSpace, text) as unknown as T.TextBlockWhiteSpace.Bound;
+}
+
+function leafTextBlockWhiteSpace(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
+	const node = {
+		$type: TSKindId.TextBlockWhiteSpace as const,
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$_layout: undefined,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[LEAF_SITES]: null,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
+	return node;
+}
+
 export function buildFormalParametersReceiver<V extends Admit<T.ReceiverParameter>>(
 	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildFormalParametersReceiver>;
@@ -18034,53 +18066,110 @@ function withStringLiteralLine(node: object, setter: string, args: readonly unkn
 }
 
 export function buildStringLiteralTextBlock<
-	A extends Admit<(T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation)[]>
->(...children: A & RefuseUndeclared<A>): T.StringLiteralTextBlock.Bound;
+	WhiteSpaceSlot extends T.StringLiteralTextBlock.Config['whiteSpace'],
+	ElementsSlot extends T.StringLiteralTextBlock.Config['elements']
+>(
+	config?: RefusingConfig<
+		Partial<T.StringLiteralTextBlock.Config>,
+		{ whiteSpace: WhiteSpaceSlot; elements: ElementsSlot }
+	>,
+	options?: T.StringLiteralTextBlock.Options
+): T.StringLiteralTextBlock.Bound;
 export function buildStringLiteralTextBlock(
-	...children: Admit<(T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation)[]>
+	config: Partial<T.StringLiteralTextBlock.Config> = {},
+	options?: T.StringLiteralTextBlock.Options
 ): T.StringLiteralTextBlock.Bound {
-	currentHandle()?.admit(TSKindId.StringLiteralTextBlock, children);
-	const _elements = children;
+	currentHandle()?.admit(TSKindId.StringLiteralTextBlock, [config]);
+	const _white_space = config.whiteSpace;
+	const _line_terminator = coerceKindEnumStorage<NonNullable<T.StringLiteralTextBlock['_line_terminator']>>(
+		options?.lineTerminator,
+		[['\n', TSKindId.Lf] as const, ['\r\n', TSKindId.CrLf] as const, ['\r', TSKindId.Cr] as const]
+	);
+	const _elements = listStorage<NonNullable<T.StringLiteralTextBlock['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'string_literal_text_block', { elements: _elements });
+	if (handle !== undefined)
+		admitChildren(handle, 'string_literal_text_block', {
+			whiteSpace: _white_space,
+			lineTerminator: _line_terminator,
+			elements: _elements
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.StringLiteralTextBlock as const, { _elements });
+	handle?.verifyStored?.(TSKindId.StringLiteralTextBlock as const, { _white_space, _line_terminator, _elements });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.StringLiteralTextBlock as const);
-		storeList(arena, record, 2, 2, _elements);
+		storeCell(arena, record, 2, 2, _white_space);
+		storeCell(arena, record, 3, 5, _line_terminator);
+		storeList(arena, record, 4, 6, _elements);
 		const node = arena.view(record);
-		checkDelimited(handle, node, _delimited_buildStringLiteralTextBlock, [_elements]);
+		checkDelimited(handle, node, _delimited_buildStringLiteralTextBlock, [_white_space, _line_terminator, _elements]);
 		return node as unknown as T.StringLiteralTextBlock.Bound;
 	});
 }
 
 function buildStringLiteralTextBlock$patch(
 	source: object,
-	...children: Admit<(T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation)[]>
+	config: Partial<T.StringLiteralTextBlock.Config> = {},
+	options?: T.StringLiteralTextBlock.Options
 ): T.StringLiteralTextBlock.Bound {
-	currentHandle()?.admit(TSKindId.StringLiteralTextBlock, children);
-	const _elements = children;
+	currentHandle()?.admit(TSKindId.StringLiteralTextBlock, [config]);
+	const _white_space = config.whiteSpace;
+	const _line_terminator = coerceKindEnumStorage<NonNullable<T.StringLiteralTextBlock['_line_terminator']>>(
+		options?.lineTerminator,
+		[['\n', TSKindId.Lf] as const, ['\r\n', TSKindId.CrLf] as const, ['\r', TSKindId.Cr] as const]
+	);
+	const _elements = listStorage<NonNullable<T.StringLiteralTextBlock['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'string_literal_text_block', { elements: _elements });
+	if (handle !== undefined)
+		admitChildren(handle, 'string_literal_text_block', {
+			whiteSpace: _white_space,
+			lineTerminator: _line_terminator,
+			elements: _elements
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.StringLiteralTextBlock as const, { _elements });
+	handle?.verifyStored?.(TSKindId.StringLiteralTextBlock as const, { _white_space, _line_terminator, _elements });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.StringLiteralTextBlock as const);
-		patchList(arena, record, 2, 2, _elements);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'whiteSpace', _white_space));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'lineTerminator', _line_terminator));
+		patchList(arena, record, 4, 6, _elements);
 		const node = arena.view(record);
-		checkDelimited(handle, node, _delimited_buildStringLiteralTextBlock, [_elements]);
+		checkDelimited(handle, node, _delimited_buildStringLiteralTextBlock, [_white_space, _line_terminator, _elements]);
 		return node as unknown as T.StringLiteralTextBlock.Bound;
 	});
 }
 function withStringLiteralTextBlock(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'elements':
+		case 'whiteSpace': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.StringLiteralTextBlock.Config;
+			const options = inputs.options as T.StringLiteralTextBlock.Options;
+			return applySetter(args, (value?: Admit<T.TextBlockWhiteSpace>) =>
+				rebuilt(node, handle, () => buildStringLiteralTextBlock$patch(node, { ...config, whiteSpace: value }, options))
+			);
+		}
+		case 'lineTerminator': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.StringLiteralTextBlock.Config;
+			const options = inputs.options as T.StringLiteralTextBlock.Options;
+			return applySetter(args, (spelling: TSKindId.Lf | TSKindId.CrLf | TSKindId.Cr) =>
+				rebuilt(node, handle, () =>
+					buildStringLiteralTextBlock$patch(node, config, { ...options, lineTerminator: spelling })
+				)
+			);
+		}
+		case 'elements': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.StringLiteralTextBlock.Config;
+			const options = inputs.options as T.StringLiteralTextBlock.Options;
 			return applySetter(
 				args,
-				(...vs: Admit<T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation>[]) =>
-					rebuilt(node, handle, () => buildStringLiteralTextBlock$patch(node, ...restItems('elements', vs)))
+				(...values: Admit<(T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation)[]>) =>
+					rebuilt(node, handle, () =>
+						buildStringLiteralTextBlock$patch(node, { ...config, elements: restItems('elements', values) }, options)
+					)
 			);
+		}
 	}
 	throw new Error(`string_literal_text_block has no $with.${setter}`);
 }
@@ -18889,6 +18978,7 @@ export type FluentKindMap = {
 	assert_statement_arm: T.AssertStatementArm.Bound;
 	resource_arm: T.ResourceArm.Bound;
 	for_statement_arm: T.ForStatementArm.Bound;
+	text_block_white_space: T.TextBlockWhiteSpace;
 	formal_parameters_receiver: T.FormalParametersReceiver.Bound;
 	formal_parameters_list: T.FormalParametersList.Bound;
 	string_literal_line: T.StringLiteralLine.Bound;
@@ -19078,6 +19168,7 @@ export const _factoryMap = {
 	assert_statement_arm: buildAssertStatementArm,
 	resource_arm: buildResourceArm,
 	for_statement_arm: buildForStatementArm,
+	text_block_white_space: buildTextBlockWhiteSpace,
 	formal_parameters_receiver: buildFormalParametersReceiver,
 	formal_parameters_list: buildFormalParametersList,
 	string_literal_line: buildStringLiteralLine,
@@ -19103,367 +19194,363 @@ export const builtViews: BuiltViews = Object.freeze({
 		3: withOctalIntegerLiteral,
 		4: withBinaryIntegerLiteral,
 		7: withCharacterLiteral,
-		15: withEscapeSequenceText,
-		117: withLineComment,
-		118: withBlockComment,
-		122: withDecimalFloatingPointLiteralArm1,
-		123: withDecimalFloatingPointLiteralArm2,
-		124: withDecimalFloatingPointLiteralArm3Arm1,
-		125: withDecimalFloatingPointLiteralArm3Arm2,
-		129: withHexFloatingPointLiteralArm2,
-		130: withEscapeSequenceArm1,
-		131: withEscapeSequenceArm2,
-		132: withEscapeSequenceArm3,
-		133: withEscapeSequenceArm4,
-		134: withEscapeSequenceArm5,
-		157: withProgram,
-		161: withDecimalFloatingPointLiteral,
-		162: withHexFloatingPointLiteral,
-		167: withStringInterpolation,
-		168: withMultilineStringLiteralArm1,
-		171: withCastExpression,
-		172: withAssignmentExpression,
-		173: withBinaryExpression,
-		174: withInstanceofExpression,
-		175: withLambdaExpression,
-		176: withInferredParameters,
-		177: withTernaryExpression,
-		178: withUnaryExpression,
-		181: withArrayCreationExpression,
-		182: withDimensionsExpr,
-		183: withParenthesizedExpression,
-		184: withClassLiteral,
-		185: withObjectCreationExpression,
-		186: withUnqualifiedObjectCreationExpression,
-		187: withFieldAccess,
-		188: withTemplateExpression,
-		189: withArrayAccess,
-		190: withMethodInvocation,
-		191: withArgumentList,
-		192: withMethodReference,
-		193: withTypeArguments,
-		194: withWildcard,
-		195: withWildcardBounds,
-		196: withDimensions,
-		197: withSwitchExpression,
-		198: withSwitchBlock,
-		199: withSwitchBlockStatementGroup,
-		200: withSwitchRule,
-		201: withSwitchLabel,
-		202: withPattern,
-		203: withTypePattern,
-		204: withRecordPattern,
-		205: withRecordPatternBody,
-		206: withRecordPatternComponent,
-		207: withGuard,
-		209: withBlock,
-		210: withExpressionStatement,
-		211: withLabeledStatement,
-		212: withAssertStatement,
-		213: withDoStatement,
-		214: withBreakStatement,
-		215: withContinueStatement,
-		216: withReturnStatement,
-		217: withYieldStatement,
-		218: withSynchronizedStatement,
-		219: withThrowStatement,
-		221: withCatchClause,
-		222: withCatchFormalParameter,
-		223: withCatchType,
-		224: withFinallyClause,
-		225: withTryWithResourcesStatement,
-		226: withResourceSpecification,
-		227: withResource,
-		228: withIfStatement,
-		229: withWhileStatement,
-		230: withForStatement,
-		231: withEnhancedForStatement,
-		233: withMarkerAnnotation,
-		234: withAnnotation,
-		235: withAnnotationArgumentList,
-		236: withElementValuePair,
-		238: withElementValueArrayInitializer,
-		240: withModuleDeclaration,
-		241: withModuleBody,
-		243: withRequiresModuleDirective,
-		245: withExportsModuleDirective,
-		246: withOpensModuleDirective,
-		247: withUsesModuleDirective,
-		248: withProvidesModuleDirective,
-		249: withPackageDeclaration,
-		250: withImportDeclaration,
-		252: withEnumDeclaration,
-		253: withEnumBody,
-		254: withEnumBodyDeclarations,
-		255: withEnumConstant,
-		256: withClassDeclaration,
-		257: withModifiers,
-		258: withTypeParameters,
-		259: withTypeParameter,
-		260: withTypeBound,
-		261: withSuperclass,
-		262: withSuperInterfaces,
-		263: withTypeList,
-		264: withPermits,
-		265: withClassBody,
-		266: withStaticInitializer,
-		267: withConstructorDeclaration,
-		269: withConstructorBody,
-		270: withExplicitConstructorInvocation,
-		271: withScopedIdentifier,
-		272: withFieldDeclaration,
-		273: withRecordDeclaration,
-		274: withAnnotationTypeDeclaration,
-		275: withAnnotationTypeBody,
-		276: withAnnotationTypeElementDeclaration,
-		278: withInterfaceDeclaration,
-		279: withExtendsInterfaces,
-		280: withInterfaceBody,
-		281: withConstantDeclaration,
-		283: withVariableDeclarator,
-		285: withArrayInitializer,
-		288: withAnnotatedType,
-		289: withScopedTypeIdentifier,
-		290: withGenericType,
-		291: withArrayType,
-		297: withFormalParameter,
-		298: withReceiverParameter,
-		299: withSpreadParameter,
-		300: withThrows,
-		301: withLocalVariableDeclaration,
-		302: withMethodDeclaration,
-		303: withCompactConstructorDeclaration,
-		307: withArrayCreationExpressionArm1,
-		308: withArrayCreationExpressionArm2,
-		309: withResources,
-		310: withElementValues,
-		311: withEnumConstants,
-		312: withExplicitConstructorInvocationArm1,
-		313: withExplicitConstructorInvocationArm2,
-		314: withVariableInitializers,
-		315: withCastExpressionArm,
-		316: withInstanceofExpressionArm,
-		317: withObjectCreationExpressionArm,
-		318: withMethodInvocationArm,
-		319: withWildcardBoundsArm,
-		320: withSwitchLabelArm,
-		321: withRecordPatternComponentArm,
-		322: withAssertStatementArm,
-		323: withResourceArm,
-		324: withForStatementArm,
-		325: withFormalParametersReceiver,
-		326: withFormalParametersList,
-		327: withStringLiteralLine,
-		328: withStringLiteralTextBlock,
-		329: withTryStatementCatches,
-		330: withTryStatementFinally,
-		331: withUpdateExpressionPostfix,
-		332: withUpdateExpressionPrefix,
-		370: withTypeIdentifier
+		18: withEscapeSequenceText,
+		120: withLineComment,
+		121: withBlockComment,
+		125: withDecimalFloatingPointLiteralArm1,
+		126: withDecimalFloatingPointLiteralArm2,
+		127: withDecimalFloatingPointLiteralArm3Arm1,
+		128: withDecimalFloatingPointLiteralArm3Arm2,
+		132: withHexFloatingPointLiteralArm2,
+		133: withEscapeSequenceArm1,
+		134: withEscapeSequenceArm2,
+		135: withEscapeSequenceArm3,
+		136: withEscapeSequenceArm4,
+		137: withEscapeSequenceArm5,
+		161: withProgram,
+		165: withDecimalFloatingPointLiteral,
+		166: withHexFloatingPointLiteral,
+		171: withStringInterpolation,
+		172: withMultilineStringLiteralArm1,
+		175: withCastExpression,
+		176: withAssignmentExpression,
+		177: withBinaryExpression,
+		178: withInstanceofExpression,
+		179: withLambdaExpression,
+		180: withInferredParameters,
+		181: withTernaryExpression,
+		182: withUnaryExpression,
+		185: withArrayCreationExpression,
+		186: withDimensionsExpr,
+		187: withParenthesizedExpression,
+		188: withClassLiteral,
+		189: withObjectCreationExpression,
+		190: withUnqualifiedObjectCreationExpression,
+		191: withFieldAccess,
+		192: withTemplateExpression,
+		193: withArrayAccess,
+		194: withMethodInvocation,
+		195: withArgumentList,
+		196: withMethodReference,
+		197: withTypeArguments,
+		198: withWildcard,
+		199: withWildcardBounds,
+		200: withDimensions,
+		201: withSwitchExpression,
+		202: withSwitchBlock,
+		203: withSwitchBlockStatementGroup,
+		204: withSwitchRule,
+		205: withSwitchLabel,
+		206: withPattern,
+		207: withTypePattern,
+		208: withRecordPattern,
+		209: withRecordPatternBody,
+		210: withRecordPatternComponent,
+		211: withGuard,
+		213: withBlock,
+		214: withExpressionStatement,
+		215: withLabeledStatement,
+		216: withAssertStatement,
+		217: withDoStatement,
+		218: withBreakStatement,
+		219: withContinueStatement,
+		220: withReturnStatement,
+		221: withYieldStatement,
+		222: withSynchronizedStatement,
+		223: withThrowStatement,
+		225: withCatchClause,
+		226: withCatchFormalParameter,
+		227: withCatchType,
+		228: withFinallyClause,
+		229: withTryWithResourcesStatement,
+		230: withResourceSpecification,
+		231: withResource,
+		232: withIfStatement,
+		233: withWhileStatement,
+		234: withForStatement,
+		235: withEnhancedForStatement,
+		237: withMarkerAnnotation,
+		238: withAnnotation,
+		239: withAnnotationArgumentList,
+		240: withElementValuePair,
+		242: withElementValueArrayInitializer,
+		244: withModuleDeclaration,
+		245: withModuleBody,
+		247: withRequiresModuleDirective,
+		249: withExportsModuleDirective,
+		250: withOpensModuleDirective,
+		251: withUsesModuleDirective,
+		252: withProvidesModuleDirective,
+		253: withPackageDeclaration,
+		254: withImportDeclaration,
+		256: withEnumDeclaration,
+		257: withEnumBody,
+		258: withEnumBodyDeclarations,
+		259: withEnumConstant,
+		260: withClassDeclaration,
+		261: withModifiers,
+		262: withTypeParameters,
+		263: withTypeParameter,
+		264: withTypeBound,
+		265: withSuperclass,
+		266: withSuperInterfaces,
+		267: withTypeList,
+		268: withPermits,
+		269: withClassBody,
+		270: withStaticInitializer,
+		271: withConstructorDeclaration,
+		273: withConstructorBody,
+		274: withExplicitConstructorInvocation,
+		275: withScopedIdentifier,
+		276: withFieldDeclaration,
+		277: withRecordDeclaration,
+		278: withAnnotationTypeDeclaration,
+		279: withAnnotationTypeBody,
+		280: withAnnotationTypeElementDeclaration,
+		282: withInterfaceDeclaration,
+		283: withExtendsInterfaces,
+		284: withInterfaceBody,
+		285: withConstantDeclaration,
+		287: withVariableDeclarator,
+		289: withArrayInitializer,
+		292: withAnnotatedType,
+		293: withScopedTypeIdentifier,
+		294: withGenericType,
+		295: withArrayType,
+		301: withFormalParameter,
+		302: withReceiverParameter,
+		303: withSpreadParameter,
+		304: withThrows,
+		305: withLocalVariableDeclaration,
+		306: withMethodDeclaration,
+		307: withCompactConstructorDeclaration,
+		311: withArrayCreationExpressionArm1,
+		312: withArrayCreationExpressionArm2,
+		313: withResources,
+		314: withElementValues,
+		315: withEnumConstants,
+		316: withExplicitConstructorInvocationArm1,
+		317: withExplicitConstructorInvocationArm2,
+		318: withVariableInitializers,
+		319: withCastExpressionArm,
+		320: withInstanceofExpressionArm,
+		321: withObjectCreationExpressionArm,
+		322: withMethodInvocationArm,
+		323: withWildcardBoundsArm,
+		324: withSwitchLabelArm,
+		325: withRecordPatternComponentArm,
+		326: withAssertStatementArm,
+		327: withResourceArm,
+		328: withForStatementArm,
+		329: withFormalParametersReceiver,
+		330: withFormalParametersList,
+		331: withStringLiteralLine,
+		332: withStringLiteralTextBlock,
+		333: withTryStatementCatches,
+		334: withTryStatementFinally,
+		335: withUpdateExpressionPostfix,
+		336: withUpdateExpressionPrefix,
+		374: withTypeIdentifier
 	}),
 	words: Object.freeze({
 		3: 6,
 		4: 6,
 		7: 4,
-		15: 4,
-		117: 4,
-		118: 4,
-		122: 5,
-		123: 4,
-		124: 6,
-		125: 6,
-		129: 6,
-		130: 4,
-		131: 4,
-		132: 4,
+		18: 4,
+		120: 4,
+		121: 4,
+		125: 5,
+		126: 4,
+		127: 6,
+		128: 6,
+		132: 6,
 		133: 4,
 		134: 4,
-		157: 3,
+		135: 4,
+		136: 4,
+		137: 4,
 		161: 3,
-		162: 3,
-		167: 3,
-		168: 3,
-		171: 5,
-		172: 5,
-		173: 5,
-		174: 5,
-		175: 4,
-		176: 3,
+		165: 3,
+		166: 3,
+		171: 3,
+		172: 3,
+		175: 5,
+		176: 5,
 		177: 5,
-		178: 4,
+		178: 5,
+		179: 4,
+		180: 3,
 		181: 5,
 		182: 4,
-		183: 3,
-		184: 3,
-		185: 3,
-		186: 7,
-		187: 5,
-		188: 4,
-		189: 4,
-		190: 4,
-		191: 3,
-		192: 5,
-		193: 3,
+		185: 5,
+		186: 4,
+		187: 3,
+		188: 3,
+		189: 3,
+		190: 7,
+		191: 5,
+		192: 4,
+		193: 4,
 		194: 4,
 		195: 3,
-		196: 3,
-		197: 4,
-		198: 3,
-		199: 4,
-		200: 4,
-		201: 3,
+		196: 5,
+		197: 3,
+		198: 4,
+		199: 3,
+		200: 3,
+		201: 4,
 		202: 3,
 		203: 4,
 		204: 4,
 		205: 3,
 		206: 3,
-		207: 3,
+		207: 4,
+		208: 4,
 		209: 3,
 		210: 3,
-		211: 4,
-		212: 3,
-		213: 4,
+		211: 3,
+		213: 3,
 		214: 3,
-		215: 3,
+		215: 4,
 		216: 3,
-		217: 3,
-		218: 4,
+		217: 4,
+		218: 3,
 		219: 3,
-		221: 4,
-		222: 6,
+		220: 3,
+		221: 3,
+		222: 4,
 		223: 3,
-		224: 3,
-		225: 6,
-		226: 3,
+		225: 4,
+		226: 6,
 		227: 3,
-		228: 5,
-		229: 4,
-		230: 6,
-		231: 8,
-		233: 3,
-		234: 4,
-		235: 3,
-		236: 4,
-		238: 3,
-		240: 6,
-		241: 3,
-		243: 4,
-		245: 4,
-		246: 4,
-		247: 3,
-		248: 4,
+		228: 3,
+		229: 6,
+		230: 3,
+		231: 3,
+		232: 5,
+		233: 4,
+		234: 6,
+		235: 8,
+		237: 3,
+		238: 4,
+		239: 3,
+		240: 4,
+		242: 3,
+		244: 6,
+		245: 3,
+		247: 4,
 		249: 4,
 		250: 4,
-		252: 6,
+		251: 3,
+		252: 4,
 		253: 4,
-		254: 3,
-		255: 6,
-		256: 9,
-		257: 3,
+		254: 4,
+		256: 6,
+		257: 4,
 		258: 3,
-		259: 5,
-		260: 3,
+		259: 6,
+		260: 9,
 		261: 3,
 		262: 3,
-		263: 3,
+		263: 5,
 		264: 3,
 		265: 3,
 		266: 3,
-		267: 8,
-		269: 4,
-		270: 4,
-		271: 4,
-		272: 5,
-		273: 8,
-		274: 5,
-		275: 3,
-		276: 7,
-		278: 8,
+		267: 3,
+		268: 3,
+		269: 3,
+		270: 3,
+		271: 8,
+		273: 4,
+		274: 4,
+		275: 4,
+		276: 5,
+		277: 8,
+		278: 5,
 		279: 3,
-		280: 3,
-		281: 5,
-		283: 5,
-		285: 3,
-		288: 4,
-		289: 5,
-		290: 4,
-		291: 4,
-		297: 6,
-		298: 5,
-		299: 6,
-		300: 3,
-		301: 5,
-		302: 11,
-		303: 5,
-		307: 3,
-		308: 4,
-		309: 3,
-		310: 3,
+		280: 7,
+		282: 8,
+		283: 3,
+		284: 3,
+		285: 5,
+		287: 5,
+		289: 3,
+		292: 4,
+		293: 5,
+		294: 4,
+		295: 4,
+		301: 6,
+		302: 5,
+		303: 6,
+		304: 3,
+		305: 5,
+		306: 11,
+		307: 5,
 		311: 3,
 		312: 4,
-		313: 4,
+		313: 3,
 		314: 3,
-		315: 4,
+		315: 3,
 		316: 4,
-		317: 8,
-		318: 6,
-		319: 3,
+		317: 4,
+		318: 3,
+		319: 4,
 		320: 4,
-		321: 4,
-		322: 4,
-		323: 7,
-		324: 3,
-		325: 3,
+		321: 8,
+		322: 6,
+		323: 3,
+		324: 4,
+		325: 4,
 		326: 4,
-		327: 3,
+		327: 7,
 		328: 3,
-		329: 4,
-		330: 5,
-		331: 4,
-		332: 4,
-		370: 3
+		329: 3,
+		330: 4,
+		331: 3,
+		332: 5,
+		333: 4,
+		334: 5,
+		335: 4,
+		336: 4,
+		374: 3
 	}),
 	cells: Object.freeze({
 		3: 2,
 		4: 2,
 		7: 2,
-		15: 2,
-		117: 2,
-		118: 2,
-		122: 2,
-		123: 2,
-		124: 2,
+		18: 2,
+		120: 2,
+		121: 2,
 		125: 2,
-		129: 2,
-		130: 2,
-		131: 2,
+		126: 2,
+		127: 2,
+		128: 2,
 		132: 2,
 		133: 2,
 		134: 2,
-		157: 2,
+		135: 2,
+		136: 2,
+		137: 2,
 		161: 2,
-		162: 2,
-		167: 2,
-		168: 2,
+		165: 2,
+		166: 2,
 		171: 2,
 		172: 2,
-		173: 2,
-		174: 3,
 		175: 2,
 		176: 2,
 		177: 2,
-		178: 2,
+		178: 3,
+		179: 2,
+		180: 2,
 		181: 2,
 		182: 2,
-		183: 2,
-		184: 2,
 		185: 2,
 		186: 2,
-		187: 3,
+		187: 2,
 		188: 2,
 		189: 2,
 		190: 2,
-		191: 2,
+		191: 3,
 		192: 2,
 		193: 2,
 		194: 2,
@@ -19480,10 +19567,10 @@ export const builtViews: BuiltViews = Object.freeze({
 		205: 2,
 		206: 2,
 		207: 2,
+		208: 2,
 		209: 2,
 		210: 2,
 		211: 2,
-		212: 2,
 		213: 2,
 		214: 2,
 		215: 2,
@@ -19491,10 +19578,10 @@ export const builtViews: BuiltViews = Object.freeze({
 		217: 2,
 		218: 2,
 		219: 2,
+		220: 2,
 		221: 2,
 		222: 2,
 		223: 2,
-		224: 2,
 		225: 2,
 		226: 2,
 		227: 2,
@@ -19502,24 +19589,24 @@ export const builtViews: BuiltViews = Object.freeze({
 		229: 2,
 		230: 2,
 		231: 2,
+		232: 2,
 		233: 2,
 		234: 2,
 		235: 2,
-		236: 2,
+		237: 2,
 		238: 2,
-		240: 3,
-		241: 2,
-		243: 2,
+		239: 2,
+		240: 2,
+		242: 2,
+		244: 3,
 		245: 2,
-		246: 2,
 		247: 2,
-		248: 2,
 		249: 2,
-		250: 3,
+		250: 2,
+		251: 2,
 		252: 2,
 		253: 2,
-		254: 2,
-		255: 2,
+		254: 3,
 		256: 2,
 		257: 2,
 		258: 2,
@@ -19532,35 +19619,35 @@ export const builtViews: BuiltViews = Object.freeze({
 		265: 2,
 		266: 2,
 		267: 2,
+		268: 2,
 		269: 2,
 		270: 2,
 		271: 2,
-		272: 2,
 		273: 2,
 		274: 2,
 		275: 2,
 		276: 2,
+		277: 2,
 		278: 2,
 		279: 2,
 		280: 2,
-		281: 2,
+		282: 2,
 		283: 2,
+		284: 2,
 		285: 2,
-		288: 2,
+		287: 2,
 		289: 2,
-		290: 2,
-		291: 2,
-		297: 2,
-		298: 2,
-		299: 2,
-		300: 2,
+		292: 2,
+		293: 2,
+		294: 2,
+		295: 2,
 		301: 2,
 		302: 2,
 		303: 2,
+		304: 2,
+		305: 2,
+		306: 2,
 		307: 2,
-		308: 2,
-		309: 2,
-		310: 2,
 		311: 2,
 		312: 2,
 		313: 2,
@@ -19568,11 +19655,11 @@ export const builtViews: BuiltViews = Object.freeze({
 		315: 2,
 		316: 2,
 		317: 2,
-		318: 3,
+		318: 2,
 		319: 2,
 		320: 2,
 		321: 2,
-		322: 2,
+		322: 3,
 		323: 2,
 		324: 2,
 		325: 2,
@@ -19583,7 +19670,11 @@ export const builtViews: BuiltViews = Object.freeze({
 		330: 2,
 		331: 2,
 		332: 2,
-		370: 2
+		333: 2,
+		334: 2,
+		335: 2,
+		336: 2,
+		374: 2
 	}),
 	places: Object.freeze({
 		3: [
@@ -19597,204 +19688,204 @@ export const builtViews: BuiltViews = Object.freeze({
 			[6, 4, 2, 4, 0]
 		],
 		7: [[2, 2, 2, 4, 0]],
-		15: [[2, 2, 2, 4, 0]],
-		117: [[2, 2, 2, 4, 0]],
-		118: [[2, 2, 2, 4, 0]],
-		122: [
+		18: [[2, 2, 2, 4, 0]],
+		120: [[2, 2, 2, 4, 0]],
+		121: [[2, 2, 2, 4, 0]],
+		125: [
 			[2, 2, 2, 4, 0],
 			[4, 3, 2, 4, 0]
 		],
-		123: [[2, 2, 2, 4, 0]],
-		124: [
+		126: [[2, 2, 2, 4, 0]],
+		127: [
 			[2, 2, 2, 4, 0],
 			[4, 3, 2, 4, 0],
 			[6, 4, 2, 4, 0]
 		],
-		125: [
+		128: [
 			[2, 2, 2, 4, 0],
 			[4, 3, 2, 4, 0],
 			[6, 4, 2, 4, 0]
 		],
-		129: [
+		132: [
 			[2, 2, 2, 4, 0],
 			[4, 3, 2, 4, 0],
 			[6, 4, 2, 4, 0]
 		],
-		130: [[2, 2, 2, 4, 0]],
-		131: [[2, 2, 2, 4, 0]],
-		132: [[2, 2, 2, 4, 0]],
 		133: [[2, 2, 2, 4, 0]],
 		134: [[2, 2, 2, 4, 0]],
-		157: [[2, 2, 1, 3, 4]],
-		161: [[2, 2, 3, 1, 0]],
-		162: [[2, 2, 3, 1, 0]],
-		167: [[2, 2, 4, 3, 0]],
-		168: [[2, 2, 3, 1, 0]],
-		171: [
+		135: [[2, 2, 2, 4, 0]],
+		136: [[2, 2, 2, 4, 0]],
+		137: [[2, 2, 2, 4, 0]],
+		161: [[2, 2, 1, 3, 4]],
+		165: [[2, 2, 3, 1, 0]],
+		166: [[2, 2, 3, 1, 0]],
+		171: [[2, 2, 4, 3, 0]],
+		172: [[2, 2, 3, 1, 0]],
+		175: [
 			[2, 2, 1, 3, 4],
 			[3, 3, 4, 3, 0],
 			[7, 4, 3, 1, 0]
 		],
-		172: [
+		176: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 2, 0],
 			[6, 4, 4, 3, 0]
 		],
-		173: [
+		177: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 1, 2, 0],
 			[7, 4, 4, 3, 0]
 		],
-		174: [
+		178: [
 			[3, 3, 4, 3, 0],
 			[2, 0],
 			[7, 4, 3, 1, 0]
 		],
-		175: [
+		179: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0]
 		],
-		176: [[2, 2, 1, 1, 3]],
-		177: [
+		180: [[2, 2, 1, 1, 3]],
+		181: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0],
 			[10, 4, 4, 3, 0]
 		],
-		178: [
+		182: [
 			[2, 2, 1, 2, 0],
 			[3, 3, 4, 3, 0]
 		],
-		181: [
+		185: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 4, 3, 0],
 			[7, 4, 3, 1, 0]
 		],
-		182: [
+		186: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 4, 3, 0]
 		],
-		183: [[2, 2, 4, 3, 0]],
-		184: [[2, 2, 4, 3, 0]],
-		185: [[2, 2, 3, 1, 0]],
-		186: [
+		187: [[2, 2, 4, 3, 0]],
+		188: [[2, 2, 4, 3, 0]],
+		189: [[2, 2, 3, 1, 0]],
+		190: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0],
 			[6, 4, 4, 3, 0],
 			[10, 5, 3, 1, 0],
 			[13, 6, 3, 1, 0]
 		],
-		187: [
+		191: [
 			[3, 3, 4, 3, 0],
 			[2, 0],
 			[7, 4, 4, 3, 0]
 		],
-		188: [
+		192: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		189: [
+		193: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0]
 		],
-		190: [
+		194: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		191: [[2, 2, 1, 3, 4]],
-		192: [
+		195: [[2, 2, 1, 3, 4]],
+		196: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0],
 			[9, 4, 4, 3, 0]
 		],
-		193: [[2, 2, 1, 3, 4]],
-		194: [
+		197: [[2, 2, 1, 3, 4]],
+		198: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0]
 		],
-		195: [[2, 2, 4, 3, 0]],
-		196: [[2, 2, 1, 1, 3]],
-		197: [
+		199: [[2, 2, 4, 3, 0]],
+		200: [[2, 2, 1, 1, 3]],
+		201: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		198: [[2, 2, 1, 1, 3]],
-		199: [
+		202: [[2, 2, 1, 1, 3]],
+		203: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 1, 3, 4]
-		],
-		200: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0]
-		],
-		201: [[2, 2, 4, 3, 0]],
-		202: [[2, 2, 3, 1, 0]],
-		203: [
-			[2, 2, 4, 3, 0],
-			[6, 3, 3, 1, 0]
 		],
 		204: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		205: [[2, 2, 1, 1, 3]],
-		206: [[2, 2, 4, 3, 0]],
-		207: [[2, 2, 4, 3, 0]],
-		209: [[2, 2, 1, 3, 4]],
-		210: [[2, 2, 4, 3, 0]],
-		211: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 4, 3, 0]
-		],
-		212: [[2, 2, 4, 3, 0]],
-		213: [
+		205: [[2, 2, 4, 3, 0]],
+		206: [[2, 2, 3, 1, 0]],
+		207: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		214: [[2, 2, 3, 1, 0]],
-		215: [[2, 2, 3, 1, 0]],
+		208: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
+		],
+		209: [[2, 2, 1, 1, 3]],
+		210: [[2, 2, 4, 3, 0]],
+		211: [[2, 2, 4, 3, 0]],
+		213: [[2, 2, 1, 3, 4]],
+		214: [[2, 2, 4, 3, 0]],
+		215: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 4, 3, 0]
+		],
 		216: [[2, 2, 4, 3, 0]],
-		217: [[2, 2, 4, 3, 0]],
-		218: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0]
+		217: [
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
-		219: [[2, 2, 4, 3, 0]],
-		221: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0]
-		],
+		218: [[2, 2, 3, 1, 0]],
+		219: [[2, 2, 3, 1, 0]],
+		220: [[2, 2, 4, 3, 0]],
+		221: [[2, 2, 4, 3, 0]],
 		222: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
+		],
+		223: [[2, 2, 4, 3, 0]],
+		225: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
+		],
+		226: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 4, 3, 0],
 			[12, 5, 3, 1, 0]
 		],
-		223: [[2, 2, 1, 3, 4]],
-		224: [[2, 2, 3, 1, 0]],
-		225: [
+		227: [[2, 2, 1, 3, 4]],
+		228: [[2, 2, 3, 1, 0]],
+		229: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 1, 1, 3],
 			[9, 5, 3, 1, 0]
 		],
-		226: [[2, 2, 3, 1, 0]],
-		227: [[2, 2, 3, 1, 0]],
-		228: [
+		230: [[2, 2, 3, 1, 0]],
+		231: [[2, 2, 3, 1, 0]],
+		232: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 4, 3, 0]
 		],
-		229: [
+		233: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0]
 		],
-		230: [
+		234: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 3, 4],
 			[10, 5, 4, 3, 0]
 		],
-		231: [
+		235: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 4, 3, 0],
@@ -19802,68 +19893,68 @@ export const builtViews: BuiltViews = Object.freeze({
 			[16, 6, 4, 3, 0],
 			[20, 7, 4, 3, 0]
 		],
-		233: [[2, 2, 3, 1, 0]],
-		234: [
+		237: [[2, 2, 3, 1, 0]],
+		238: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		235: [[2, 2, 1, 3, 4]],
-		236: [
+		239: [[2, 2, 1, 3, 4]],
+		240: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0]
 		],
-		238: [[2, 2, 3, 1, 0]],
-		240: [
+		242: [[2, 2, 3, 1, 0]],
+		244: [
 			[3, 3, 1, 1, 3],
 			[2, 0],
 			[4, 4, 3, 1, 0],
 			[7, 5, 3, 1, 0]
 		],
-		241: [[2, 2, 1, 1, 3]],
-		243: [
+		245: [[2, 2, 1, 1, 3]],
+		247: [
 			[2, 2, 1, 2, 1],
 			[3, 3, 3, 1, 0]
 		],
-		245: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 1, 1, 3]
-		],
-		246: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 1, 1, 3]
-		],
-		247: [[2, 2, 3, 1, 0]],
-		248: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 1, 1, 3]
-		],
 		249: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3]
+		],
+		250: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3]
+		],
+		251: [[2, 2, 3, 1, 0]],
+		252: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3]
+		],
+		253: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0]
 		],
-		250: [
+		254: [
 			[2, 0],
 			[3, 3, 3, 1, 0],
 			[2, 1]
 		],
-		252: [
+		256: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
 			[11, 5, 3, 1, 0]
 		],
-		253: [
+		257: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		254: [[2, 2, 1, 3, 4]],
-		255: [
+		258: [[2, 2, 1, 3, 4]],
+		259: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
 			[11, 5, 3, 1, 0]
 		],
-		256: [
+		260: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
@@ -19872,21 +19963,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[17, 7, 3, 1, 0],
 			[20, 8, 3, 1, 0]
 		],
-		257: [[2, 2, 1, 3, 4]],
-		258: [[2, 2, 1, 1, 3]],
-		259: [
+		261: [[2, 2, 1, 3, 4]],
+		262: [[2, 2, 1, 1, 3]],
+		263: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0],
 			[6, 4, 3, 1, 0]
 		],
-		260: [[2, 2, 1, 3, 4]],
-		261: [[2, 2, 4, 3, 0]],
-		262: [[2, 2, 3, 1, 0]],
-		263: [[2, 2, 1, 3, 4]],
-		264: [[2, 2, 3, 1, 0]],
-		265: [[2, 2, 1, 3, 4]],
+		264: [[2, 2, 1, 3, 4]],
+		265: [[2, 2, 4, 3, 0]],
 		266: [[2, 2, 3, 1, 0]],
-		267: [
+		267: [[2, 2, 1, 3, 4]],
+		268: [[2, 2, 3, 1, 0]],
+		269: [[2, 2, 1, 3, 4]],
+		270: [[2, 2, 3, 1, 0]],
+		271: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
@@ -19894,24 +19985,24 @@ export const builtViews: BuiltViews = Object.freeze({
 			[14, 6, 3, 1, 0],
 			[17, 7, 3, 1, 0]
 		],
-		269: [
+		273: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 3, 4]
 		],
-		270: [
+		274: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		271: [
+		275: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		272: [
+		276: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 1, 3]
 		],
-		273: [
+		277: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
@@ -19919,20 +20010,20 @@ export const builtViews: BuiltViews = Object.freeze({
 			[14, 6, 3, 1, 0],
 			[17, 7, 3, 1, 0]
 		],
-		274: [
+		278: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0]
 		],
-		275: [[2, 2, 1, 3, 4]],
-		276: [
+		279: [[2, 2, 1, 3, 4]],
+		280: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 3, 1, 0],
 			[12, 5, 3, 1, 0],
 			[15, 6, 4, 3, 0]
 		],
-		278: [
+		282: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
@@ -19940,60 +20031,60 @@ export const builtViews: BuiltViews = Object.freeze({
 			[14, 6, 3, 1, 0],
 			[17, 7, 3, 1, 0]
 		],
-		279: [[2, 2, 3, 1, 0]],
-		280: [[2, 2, 1, 3, 4]],
-		281: [
+		283: [[2, 2, 3, 1, 0]],
+		284: [[2, 2, 1, 3, 4]],
+		285: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 1, 3]
 		],
-		283: [
+		287: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0],
 			[9, 4, 4, 3, 0]
 		],
-		285: [[2, 2, 3, 1, 0]],
-		288: [
+		289: [[2, 2, 3, 1, 0]],
+		292: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 4, 3, 0]
 		],
-		289: [
+		293: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 1, 3],
 			[6, 4, 3, 1, 0]
 		],
-		290: [
+		294: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		291: [
+		295: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		297: [
+		301: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 4, 3, 0],
 			[13, 5, 3, 1, 0]
 		],
-		298: [
+		302: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 4, 3, 0],
 			[7, 4, 1, 1, 3]
 		],
-		299: [
+		303: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 1, 3],
 			[10, 5, 3, 1, 0]
 		],
-		300: [[2, 2, 1, 3, 4]],
-		301: [
+		304: [[2, 2, 1, 3, 4]],
+		305: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 1, 3]
 		],
-		302: [
+		306: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 1, 1, 3],
@@ -20004,49 +20095,49 @@ export const builtViews: BuiltViews = Object.freeze({
 			[22, 9, 3, 1, 0],
 			[25, 10, 3, 1, 0]
 		],
-		303: [
+		307: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0]
 		],
-		307: [[2, 2, 1, 1, 3]],
-		308: [
+		311: [[2, 2, 1, 1, 3]],
+		312: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		309: [
-			[2, 2, 1, 1, 3],
-			['side', true, false]
-		],
-		310: [
-			[2, 2, 1, 3, 4],
-			['side', true, false]
-		],
-		311: [
-			[2, 2, 1, 1, 3],
-			['side', true, false]
-		],
-		312: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 1, 2, 0]
-		],
 		313: [
-			[2, 2, 4, 3, 0],
-			[6, 3, 3, 1, 0]
+			[2, 2, 1, 1, 3],
+			['side', true, false]
 		],
 		314: [
 			[2, 2, 1, 3, 4],
 			['side', true, false]
 		],
 		315: [
-			[2, 2, 4, 3, 0],
-			[6, 3, 4, 3, 0]
+			[2, 2, 1, 1, 3],
+			['side', true, false]
 		],
 		316: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 2, 0]
+		],
+		317: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		317: [
+		318: [
+			[2, 2, 1, 3, 4],
+			['side', true, false]
+		],
+		319: [
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
+		],
+		320: [
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
+		],
+		321: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 1, 1, 3],
 			[7, 4, 3, 1, 0],
@@ -20054,68 +20145,73 @@ export const builtViews: BuiltViews = Object.freeze({
 			[14, 6, 3, 1, 0],
 			[17, 7, 3, 1, 0]
 		],
-		318: [
+		322: [
 			[3, 3, 4, 3, 0],
 			[2, 0],
 			[7, 4, 3, 1, 0],
 			[10, 5, 3, 1, 0]
 		],
-		319: [[2, 2, 4, 3, 0]],
-		320: [
+		323: [[2, 2, 4, 3, 0]],
+		324: [
 			[2, 2, 1, 3, 4],
 			[3, 3, 3, 1, 0]
 		],
-		321: [
+		325: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		322: [
+		326: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0]
 		],
-		323: [
+		327: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 4, 3, 0],
 			[13, 5, 3, 1, 0],
 			[16, 6, 4, 3, 0]
 		],
-		324: [[2, 2, 1, 3, 4]],
-		325: [[2, 2, 3, 1, 0]],
-		326: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 1, 1, 3]
-		],
-		327: [[2, 2, 1, 1, 3]],
-		328: [[2, 2, 1, 1, 3]],
-		329: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 1, 1, 3]
-		],
+		328: [[2, 2, 1, 3, 4]],
+		329: [[2, 2, 3, 1, 0]],
 		330: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3]
+		],
+		331: [[2, 2, 1, 1, 3]],
+		332: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 2, 0],
+			[6, 4, 1, 1, 3]
+		],
+		333: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3]
+		],
+		334: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 1, 3],
 			[6, 4, 3, 1, 0]
 		],
-		331: [
+		335: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 1, 2, 0]
 		],
-		332: [
+		336: [
 			[2, 2, 1, 2, 0],
 			[3, 3, 4, 3, 0]
 		],
-		370: [[2, 2, 3, 1, 0]]
+		374: [[2, 2, 3, 1, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,
 		2: leafHexIntegerLiteral,
-		10: leafStringFragment,
-		120: leafDecimalIntegerLiteralArm1,
-		121: leafDecimalIntegerLiteralArm2,
-		126: leafDecimalFloatingPointLiteralArm4Arm1,
-		127: leafDecimalFloatingPointLiteralArm4Arm2,
-		128: leafHexFloatingPointLiteralArm1,
-		166: leafMultilineStringFragment
+		13: leafStringFragment,
+		123: leafDecimalIntegerLiteralArm1,
+		124: leafDecimalIntegerLiteralArm2,
+		129: leafDecimalFloatingPointLiteralArm4Arm1,
+		130: leafDecimalFloatingPointLiteralArm4Arm2,
+		131: leafHexFloatingPointLiteralArm1,
+		150: leafTextBlockWhiteSpace,
+		170: leafMultilineStringFragment
 	})
 });

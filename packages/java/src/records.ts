@@ -736,6 +736,7 @@ export const records = {
 		value: { word: 16, width: 4, forms: 3, built: 6 }
 	},
 	ForStatementArmNode: { words: 3, builtWords: 3, init: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	TextBlockWhiteSpaceNode: { words: 2, builtWords: 2 },
 	FormalParametersReceiverNode: {
 		words: 5,
 		builtWords: 3,
@@ -748,7 +749,13 @@ export const records = {
 		element: { word: 5, width: 1, run: 3, forms: 1, built: 3 }
 	},
 	StringLiteralLineNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
-	StringLiteralTextBlockNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	StringLiteralTextBlockNode: {
+		words: 7,
+		builtWords: 5,
+		white_space: { word: 2, width: 3, forms: 1, built: 2 },
+		line_terminator: { word: 5, width: 1, forms: 2, built: 3 },
+		elements: { word: 6, width: 1, run: 3, forms: 1, built: 4 }
+	},
 	TryStatementCatchesNode: {
 		words: 6,
 		builtWords: 4,

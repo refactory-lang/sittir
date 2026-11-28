@@ -4670,6 +4670,27 @@
 			"text": "\"\"\""
 		},
 		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "white_space",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "white_space"
+						},
+						{
+							"kind": "adjacent"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "line_terminator"
+		},
+		{
 			"kind": "adjacent"
 		},
 		{

@@ -205,3 +205,6 @@
 (line_comment) @comment.line
 (block_comment) @comment.block
 ((block_comment) @comment.block.doc (#match? @comment.block.doc "^/\\*\\*"))
+
+; ── unclaimed (parser artefacts) ───────────────────────────────────────────────
+((text_block_white_space) @unclaimed (#set! reason "layout token"))

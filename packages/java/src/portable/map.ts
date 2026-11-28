@@ -151,6 +151,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.ParenthesizedExpression.Parsed
 				| T.ReturnStatement.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.ThrowStatement.Parsed
@@ -829,6 +830,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -945,6 +947,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -1061,6 +1064,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -1177,6 +1181,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -1293,6 +1298,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -1409,6 +1415,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -1525,6 +1532,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -1641,6 +1649,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -1757,6 +1766,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -1873,6 +1883,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -1989,6 +2000,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -2105,6 +2117,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -2215,6 +2228,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -2322,6 +2336,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -2431,6 +2446,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -2538,6 +2554,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -2648,6 +2665,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -2755,6 +2773,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -2865,6 +2884,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -2972,6 +2992,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -3082,6 +3103,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -3189,6 +3211,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -3299,6 +3322,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -3406,6 +3430,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -3516,6 +3541,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -3623,6 +3649,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -3733,6 +3760,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -3840,6 +3868,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -3950,6 +3979,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -4057,6 +4087,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -4167,6 +4198,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -4274,6 +4306,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -4384,6 +4417,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -4491,6 +4525,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -4601,6 +4636,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -4708,6 +4744,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -4818,6 +4855,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -4925,6 +4963,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -5035,6 +5074,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -5142,6 +5182,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -5252,6 +5293,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -5359,6 +5401,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -5469,6 +5512,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -5576,6 +5620,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -5686,6 +5731,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -5793,6 +5839,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -5903,6 +5950,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -6023,6 +6071,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -6158,6 +6207,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -6295,6 +6345,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -6440,6 +6491,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -6547,6 +6599,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -6654,6 +6707,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -6764,6 +6818,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -6875,6 +6930,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -6944,6 +7000,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed;
 			readonly $forms: V.Form<'field' | 'object'>;
 		};
@@ -7050,6 +7107,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -7160,6 +7218,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -7399,6 +7458,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.ParenthesizedExpression.Parsed
 				| T.ReturnStatement.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.ThrowStatement.Parsed
@@ -7547,6 +7607,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.ParenthesizedExpression.Parsed
 				| T.ReturnStatement.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.ThrowStatement.Parsed
@@ -7666,6 +7727,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -7790,6 +7852,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed
@@ -7902,6 +7965,7 @@ export interface JavaMap extends V.GrammarMap {
 				| T.OctalIntegerLiteral.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.StringLiteralLine.Parsed
+				| T.StringLiteralTextBlock.Parsed
 				| T.TemplateExpression.Parsed
 				| T.TernaryExpression.Parsed
 				| T.UnaryExpression.Parsed

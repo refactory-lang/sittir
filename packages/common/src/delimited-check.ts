@@ -135,7 +135,6 @@ export function checkDelimited(
 	if (engine === undefined) throw refusal(spec, body, openText, closeText, 'this content needs an engine to be checked');
 	const keep = new Set(spec.nodeKinds);
 	const nodes = kindsOf(content, keep);
-	const text = nodes.length === 0 ? openText + body + closeText : engine.render(node as AnyUntypedNode).toString();
-	const why = parseBack(engine, spec, text, nodes);
+	const why = parseBack(engine, spec, engine.render(node as AnyUntypedNode).toString(), nodes);
 	if (why !== undefined) throw refusal(spec, body, openText, closeText, why);
 }

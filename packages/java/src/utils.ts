@@ -23,34 +23,34 @@ export const triviaFacts = Object.freeze({
 	]),
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
-		122, 123, 124, 125, 129, 130, 131, 132, 133, 134, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319,
-		320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 370
+		125, 126, 127, 128, 132, 133, 134, 135, 136, 137, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323,
+		324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 374
 	]),
-	listKinds: new Set<number>([309, 310, 311, 314]),
-	layout: new Set<number>([149, 150, 151, 152, 153, 154, 155, 156]),
+	listKinds: new Set<number>([313, 314, 315, 318]),
+	layout: new Set<number>([153, 154, 155, 156, 157, 158, 159, 160]),
 	innerRegions: new Map<number, readonly string[]>([
-		[157, ['_toplevel_statements']],
-		[191, ['_expression']],
-		[193, ['_element']],
-		[205, ['_element']],
-		[209, ['_statements']],
-		[214, ['_label']],
-		[215, ['_label']],
-		[216, ['_expression']],
-		[238, ['_element_values']],
-		[241, ['_module_directives']],
-		[253, ['_enum_constants', '_enum_body_declarations']],
-		[265, ['_class_body_declarations']],
-		[269, ['_explicit_constructor_invocation', '_statements']],
-		[275, ['_elements']],
-		[280, ['_elements']],
-		[285, ['_variable_initializers']],
-		[326, ['_receiver_parameter', '_element']]
+		[161, ['_toplevel_statements']],
+		[195, ['_expression']],
+		[197, ['_element']],
+		[209, ['_element']],
+		[213, ['_statements']],
+		[218, ['_label']],
+		[219, ['_label']],
+		[220, ['_expression']],
+		[242, ['_element_values']],
+		[245, ['_module_directives']],
+		[257, ['_enum_constants', '_enum_body_declarations']],
+		[269, ['_class_body_declarations']],
+		[273, ['_explicit_constructor_invocation', '_statements']],
+		[279, ['_elements']],
+		[284, ['_elements']],
+		[289, ['_variable_initializers']],
+		[330, ['_receiver_parameter', '_element']]
 	]),
-	namedUnits: new Set<number>([5, 6, 16, 67, 109, 110, 115, 116, 251]),
+	namedUnits: new Set<number>([5, 6, 19, 70, 112, 113, 118, 119, 255]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\x09-\x0D\x20]))+)$/u,
-		kindIdByText: Object.freeze({ '': 149, ' ': 150, '\t': 151, '\n': 152, '\n\n': 153, '\n\n\n': 154 })
+		kindIdByText: Object.freeze({ '': 153, ' ': 154, '\t': 155, '\n': 156, '\n\n': 157, '\n\n\n': 158 })
 	})
 } satisfies TriviaFacts<TSKindId>);
 
@@ -66,204 +66,204 @@ export const querySlots: QuerySlots = Object.freeze({
 		['suffix', 2, undefined, '_suffix']
 	],
 	7: [['content', 0, undefined, '_content']],
-	15: [['content', 0, undefined, '_content']],
-	117: [['content', 0, undefined, '_content']],
-	118: [['content', 0, undefined, '_content']],
-	122: [
+	18: [['content', 0, undefined, '_content']],
+	120: [['content', 0, undefined, '_content']],
+	121: [['content', 0, undefined, '_content']],
+	125: [
 		['content', 0, undefined, '_content'],
 		['content2', 1, undefined, '_content2']
 	],
-	123: [['content', 0, undefined, '_content']],
-	124: [
+	126: [['content', 0, undefined, '_content']],
+	127: [
 		['content', 0, undefined, '_content'],
 		['suffix', 1, undefined, '_suffix'],
 		['content2', 2, undefined, '_content2']
 	],
-	125: [
+	128: [
 		['content', 0, undefined, '_content'],
 		['suffix', 1, undefined, '_suffix'],
 		['content2', 2, undefined, '_content2']
 	],
-	129: [
+	132: [
 		['prefix', 0, undefined, '_prefix'],
 		['content', 1, undefined, '_content'],
 		['content3', 2, undefined, '_content3']
 	],
-	130: [['content', 0, undefined, '_content']],
-	131: [['content', 0, undefined, '_content']],
-	132: [['content', 0, undefined, '_content']],
 	133: [['content', 0, undefined, '_content']],
 	134: [['content', 0, undefined, '_content']],
-	157: [['toplevelStatements', 0, undefined, '_toplevel_statements']],
-	161: [['content', 0, undefined, '_content']],
-	162: [['content', 0, undefined, '_content']],
-	167: [['expression', 0, undefined, '_expression']],
-	168: [['content', 0, undefined, '_content']],
-	171: [
+	135: [['content', 0, undefined, '_content']],
+	136: [['content', 0, undefined, '_content']],
+	137: [['content', 0, undefined, '_content']],
+	161: [['toplevelStatements', 0, undefined, '_toplevel_statements']],
+	165: [['content', 0, undefined, '_content']],
+	166: [['content', 0, undefined, '_content']],
+	171: [['expression', 0, undefined, '_expression']],
+	172: [['content', 0, undefined, '_content']],
+	175: [
 		['types', 0, undefined, '_type'],
 		['value', 1, undefined, '_value'],
 		['castExpressionArm', 2, undefined, '_cast_expression_arm']
 	],
-	172: [
+	176: [
 		['left', 0, undefined, '_left'],
 		['operator', 1, undefined, '_operator'],
 		['right', 2, undefined, '_right']
 	],
-	173: [
+	177: [
 		['left', 0, undefined, '_left'],
 		['operator', 1, undefined, '_operator'],
 		['right', 2, undefined, '_right']
 	],
-	174: [
+	178: [
 		['left', 0, undefined, '_left'],
-		['final', 1, 'final', '_final', 119],
+		['final', 1, 'final', '_final', 122],
 		['content', 2, undefined, '_content']
 	],
-	175: [
+	179: [
 		['parameters', 0, undefined, '_parameters'],
 		['body', 1, undefined, '_body']
 	],
-	176: [['elements', 0, undefined, '_element']],
-	177: [
+	180: [['elements', 0, undefined, '_element']],
+	181: [
 		['condition', 0, undefined, '_condition'],
 		['consequence', 1, undefined, '_consequence'],
 		['alternative', 2, undefined, '_alternative']
 	],
-	178: [
+	182: [
 		['operator', 0, undefined, '_operator'],
 		['operand', 1, undefined, '_operand']
 	],
-	181: [
+	185: [
 		['annotations', 0, undefined, '_annotations'],
 		['type', 1, undefined, '_type'],
 		['content', 2, undefined, '_content']
 	],
-	182: [
+	186: [
 		['annotations', 0, undefined, '_annotations'],
 		['expression', 1, undefined, '_expression']
 	],
-	183: [['expression', 0, undefined, '_expression']],
-	184: [['unannotatedType', 0, undefined, '_unannotated_type']],
-	185: [['content', 0, undefined, '_content']],
-	186: [
+	187: [['expression', 0, undefined, '_expression']],
+	188: [['unannotatedType', 0, undefined, '_unannotated_type']],
+	189: [['content', 0, undefined, '_content']],
+	190: [
 		['annotations', 0, undefined, '_annotations'],
 		['typeArguments', 1, undefined, '_type_arguments'],
 		['type', 2, undefined, '_type'],
 		['arguments', 3, undefined, '_arguments'],
 		['classBody', 4, undefined, '_class_body']
 	],
-	187: [
+	191: [
 		['object', 0, undefined, '_object'],
-		['super', 1, 'super', '_super', 116],
+		['super', 1, 'super', '_super', 119],
 		['field', 2, undefined, '_field']
 	],
-	188: [
+	192: [
 		['templateProcessor', 0, undefined, '_template_processor'],
 		['templateArgument', 1, undefined, '_template_argument']
 	],
-	189: [
+	193: [
 		['array', 0, undefined, '_array'],
 		['index', 1, undefined, '_index']
 	],
-	190: [
+	194: [
 		['content', 0, undefined, '_content'],
 		['arguments', 1, undefined, '_arguments']
 	],
-	191: [['expressions', 0, undefined, '_expression']],
-	192: [
+	195: [['expressions', 0, undefined, '_expression']],
+	196: [
 		['content', 0, undefined, '_content'],
 		['typeArguments', 1, undefined, '_type_arguments'],
 		['name', 2, undefined, '_name']
 	],
-	193: [['elements', 0, undefined, '_element']],
-	194: [
+	197: [['elements', 0, undefined, '_element']],
+	198: [
 		['annotations', 0, undefined, '_annotations'],
 		['wildcardBounds', 1, undefined, '_wildcard_bounds']
 	],
-	195: [['content', 0, undefined, '_content']],
-	196: [['annotations', 0, undefined, '_annotations']],
-	197: [
+	199: [['content', 0, undefined, '_content']],
+	200: [['annotations', 0, undefined, '_annotations']],
+	201: [
 		['condition', 0, undefined, '_condition'],
 		['body', 1, undefined, '_body']
 	],
-	198: [['contents', 0, undefined, '_content']],
-	199: [
+	202: [['contents', 0, undefined, '_content']],
+	203: [
 		['switchLabels', 0, undefined, '_switch_label'],
 		['statements', 1, undefined, '_statements']
 	],
-	200: [
+	204: [
 		['switchLabel', 0, undefined, '_switch_label'],
 		['content', 1, undefined, '_content']
 	],
-	201: [['switchLabelArm', 0, undefined, '_switch_label_arm']],
-	202: [['content', 0, undefined, '_content']],
-	203: [
+	205: [['switchLabelArm', 0, undefined, '_switch_label_arm']],
+	206: [['content', 0, undefined, '_content']],
+	207: [
 		['unannotatedType', 0, undefined, '_unannotated_type'],
 		['identifier', 1, undefined, '_identifier']
 	],
-	204: [
+	208: [
 		['content', 0, undefined, '_content'],
 		['recordPatternBody', 1, undefined, '_record_pattern_body']
 	],
-	205: [['elements', 0, undefined, '_element']],
-	206: [['content', 0, undefined, '_content']],
-	207: [['expression', 0, undefined, '_expression']],
-	209: [['statements', 0, undefined, '_statements']],
-	210: [['expression', 0, undefined, '_expression']],
-	211: [
+	209: [['elements', 0, undefined, '_element']],
+	210: [['content', 0, undefined, '_content']],
+	211: [['expression', 0, undefined, '_expression']],
+	213: [['statements', 0, undefined, '_statements']],
+	214: [['expression', 0, undefined, '_expression']],
+	215: [
 		['identifier', 0, undefined, '_identifier'],
 		['statement', 1, undefined, '_statement']
 	],
-	212: [['content', 0, undefined, '_content']],
-	213: [
+	216: [['content', 0, undefined, '_content']],
+	217: [
 		['body', 0, undefined, '_body'],
 		['condition', 1, undefined, '_condition']
 	],
-	214: [['label', 0, undefined, '_label']],
-	215: [['label', 0, undefined, '_label']],
-	216: [['expression', 0, undefined, '_expression']],
-	217: [['expression', 0, undefined, '_expression']],
-	218: [
+	218: [['label', 0, undefined, '_label']],
+	219: [['label', 0, undefined, '_label']],
+	220: [['expression', 0, undefined, '_expression']],
+	221: [['expression', 0, undefined, '_expression']],
+	222: [
 		['parenthesizedExpression', 0, undefined, '_parenthesized_expression'],
 		['body', 1, undefined, '_body']
 	],
-	219: [['expression', 0, undefined, '_expression']],
-	221: [
+	223: [['expression', 0, undefined, '_expression']],
+	225: [
 		['catchFormalParameter', 0, undefined, '_catch_formal_parameter'],
 		['body', 1, undefined, '_body']
 	],
-	222: [
+	226: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['catchType', 1, undefined, '_catch_type'],
 		['name', 2, undefined, '_name'],
 		['dimensions', 3, undefined, '_dimensions']
 	],
-	223: [['unannotatedTypes', 0, undefined, '_unannotated_type']],
-	224: [['block', 0, undefined, '_block']],
-	225: [
+	227: [['unannotatedTypes', 0, undefined, '_unannotated_type']],
+	228: [['block', 0, undefined, '_block']],
+	229: [
 		['resources', 0, undefined, '_resources'],
 		['body', 1, undefined, '_body'],
 		['catchClauses', 2, undefined, '_catch_clause'],
 		['finallyClause', 3, undefined, '_finally_clause']
 	],
-	226: [['resources', 0, undefined, '_resources']],
-	227: [['content', 0, undefined, '_content']],
-	228: [
+	230: [['resources', 0, undefined, '_resources']],
+	231: [['content', 0, undefined, '_content']],
+	232: [
 		['condition', 0, undefined, '_condition'],
 		['consequence', 1, undefined, '_consequence'],
 		['alternative', 2, undefined, '_alternative']
 	],
-	229: [
+	233: [
 		['condition', 0, undefined, '_condition'],
 		['body', 1, undefined, '_body']
 	],
-	230: [
+	234: [
 		['content', 0, undefined, '_content'],
 		['condition', 1, undefined, '_condition'],
 		['updates', 2, undefined, '_update'],
 		['body', 3, undefined, '_body']
 	],
-	231: [
+	235: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['type', 1, undefined, '_type'],
 		['name', 2, undefined, '_name'],
@@ -271,68 +271,68 @@ export const querySlots: QuerySlots = Object.freeze({
 		['value', 4, undefined, '_value'],
 		['body', 5, undefined, '_body']
 	],
-	233: [['name', 0, undefined, '_name']],
-	234: [
+	237: [['name', 0, undefined, '_name']],
+	238: [
 		['name', 0, undefined, '_name'],
 		['arguments', 1, undefined, '_arguments']
 	],
-	235: [['contents', 0, undefined, '_content']],
-	236: [
+	239: [['contents', 0, undefined, '_content']],
+	240: [
 		['key', 0, undefined, '_key'],
 		['value', 1, undefined, '_value']
 	],
-	238: [['elementValues', 0, undefined, '_element_values']],
-	240: [
+	242: [['elementValues', 0, undefined, '_element_values']],
+	244: [
 		['annotations', 0, undefined, '_annotations'],
-		['open', 1, 'open', '_open', 113],
+		['open', 1, 'open', '_open', 116],
 		['name', 2, undefined, '_name'],
 		['body', 3, undefined, '_body']
 	],
-	241: [['moduleDirectives', 0, undefined, '_module_directives']],
-	243: [
+	245: [['moduleDirectives', 0, undefined, '_module_directives']],
+	247: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['module', 1, undefined, '_module']
 	],
-	245: [
+	249: [
 		['package', 0, undefined, '_package'],
 		['modules', 1, undefined, '_modules']
 	],
-	246: [
+	250: [
 		['package', 0, undefined, '_package'],
 		['modules', 1, undefined, '_modules']
 	],
-	247: [['type', 0, undefined, '_type']],
-	248: [
+	251: [['type', 0, undefined, '_type']],
+	252: [
 		['provided', 0, undefined, '_provided'],
 		['providers', 1, undefined, '_provider']
 	],
-	249: [
+	253: [
 		['annotations', 0, undefined, '_annotations'],
 		['name', 1, undefined, '_name']
 	],
-	250: [
-		['static', 0, 'static', '_static', 88],
+	254: [
+		['static', 0, 'static', '_static', 91],
 		['name', 1, undefined, '_name'],
-		['asterisk', 2, '*', '_asterisk', 251]
+		['asterisk', 2, '*', '_asterisk', 255]
 	],
-	252: [
+	256: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['name', 1, undefined, '_name'],
 		['interfaces', 2, undefined, '_interfaces'],
 		['body', 3, undefined, '_body']
 	],
-	253: [
+	257: [
 		['enumConstants', 0, undefined, '_enum_constants'],
 		['enumBodyDeclarations', 1, undefined, '_enum_body_declarations']
 	],
-	254: [['classBodyDeclarations', 0, undefined, '_class_body_declarations']],
-	255: [
+	258: [['classBodyDeclarations', 0, undefined, '_class_body_declarations']],
+	259: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['name', 1, undefined, '_name'],
 		['arguments', 2, undefined, '_arguments'],
 		['body', 3, undefined, '_body']
 	],
-	256: [
+	260: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['name', 1, undefined, '_name'],
 		['typeParameters', 2, undefined, '_type_parameters'],
@@ -341,21 +341,21 @@ export const querySlots: QuerySlots = Object.freeze({
 		['permits', 5, undefined, '_permits'],
 		['body', 6, undefined, '_body']
 	],
-	257: [['elements', 0, undefined, '_elements']],
-	258: [['typeParameters', 0, undefined, '_type_parameter']],
-	259: [
+	261: [['elements', 0, undefined, '_elements']],
+	262: [['typeParameters', 0, undefined, '_type_parameter']],
+	263: [
 		['annotations', 0, undefined, '_annotations'],
 		['typeIdentifier', 1, undefined, '_type_identifier'],
 		['bounds', 2, undefined, '_bounds']
 	],
-	260: [['types', 0, undefined, '_type']],
-	261: [['type', 0, undefined, '_type']],
-	262: [['typeList', 0, undefined, '_type_list']],
-	263: [['types', 0, undefined, '_type']],
-	264: [['typeList', 0, undefined, '_type_list']],
-	265: [['classBodyDeclarations', 0, undefined, '_class_body_declarations']],
-	266: [['block', 0, undefined, '_block']],
-	267: [
+	264: [['types', 0, undefined, '_type']],
+	265: [['type', 0, undefined, '_type']],
+	266: [['typeList', 0, undefined, '_type_list']],
+	267: [['types', 0, undefined, '_type']],
+	268: [['typeList', 0, undefined, '_type_list']],
+	269: [['classBodyDeclarations', 0, undefined, '_class_body_declarations']],
+	270: [['block', 0, undefined, '_block']],
+	271: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['typeParameters', 1, undefined, '_type_parameters'],
 		['name', 2, undefined, '_name'],
@@ -363,24 +363,24 @@ export const querySlots: QuerySlots = Object.freeze({
 		['throws', 4, undefined, '_throws'],
 		['body', 5, undefined, '_body']
 	],
-	269: [
+	273: [
 		['explicitConstructorInvocation', 0, undefined, '_explicit_constructor_invocation'],
 		['statements', 1, undefined, '_statements']
 	],
-	270: [
+	274: [
 		['content', 0, undefined, '_content'],
 		['arguments', 1, undefined, '_arguments']
 	],
-	271: [
+	275: [
 		['scope', 0, undefined, '_scope'],
 		['name', 1, undefined, '_name']
 	],
-	272: [
+	276: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['type', 1, undefined, '_type'],
 		['declarators', 2, undefined, '_declarator']
 	],
-	273: [
+	277: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['name', 1, undefined, '_name'],
 		['typeParameters', 2, undefined, '_type_parameters'],
@@ -388,20 +388,20 @@ export const querySlots: QuerySlots = Object.freeze({
 		['interfaces', 4, undefined, '_interfaces'],
 		['body', 5, undefined, '_body']
 	],
-	274: [
+	278: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['name', 1, undefined, '_name'],
 		['body', 2, undefined, '_body']
 	],
-	275: [['elements', 0, undefined, '_elements']],
-	276: [
+	279: [['elements', 0, undefined, '_elements']],
+	280: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['type', 1, undefined, '_type'],
 		['name', 2, undefined, '_name'],
 		['dimensions', 3, undefined, '_dimensions'],
 		['value', 4, undefined, '_value']
 	],
-	278: [
+	282: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['name', 1, undefined, '_name'],
 		['typeParameters', 2, undefined, '_type_parameters'],
@@ -409,60 +409,60 @@ export const querySlots: QuerySlots = Object.freeze({
 		['permits', 4, undefined, '_permits'],
 		['body', 5, undefined, '_body']
 	],
-	279: [['typeList', 0, undefined, '_type_list']],
-	280: [['elements', 0, undefined, '_elements']],
-	281: [
+	283: [['typeList', 0, undefined, '_type_list']],
+	284: [['elements', 0, undefined, '_elements']],
+	285: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['type', 1, undefined, '_type'],
 		['declarators', 2, undefined, '_declarator']
 	],
-	283: [
+	287: [
 		['name', 0, undefined, '_name'],
 		['dimensions', 1, undefined, '_dimensions'],
 		['value', 2, undefined, '_value']
 	],
-	285: [['variableInitializers', 0, undefined, '_variable_initializers']],
-	288: [
+	289: [['variableInitializers', 0, undefined, '_variable_initializers']],
+	292: [
 		['annotations', 0, undefined, '_annotations'],
 		['unannotatedType', 1, undefined, '_unannotated_type']
 	],
-	289: [
+	293: [
 		['qualifier', 0, undefined, '_qualifier'],
 		['annotations', 1, undefined, '_annotations'],
 		['name', 2, undefined, '_name']
 	],
-	290: [
+	294: [
 		['content', 0, undefined, '_content'],
 		['typeArguments', 1, undefined, '_type_arguments']
 	],
-	291: [
+	295: [
 		['element', 0, undefined, '_element'],
 		['dimensions', 1, undefined, '_dimensions']
 	],
-	297: [
+	301: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['type', 1, undefined, '_type'],
 		['name', 2, undefined, '_name'],
 		['dimensions', 3, undefined, '_dimensions']
 	],
-	298: [
+	302: [
 		['annotations', 0, undefined, '_annotations'],
 		['unannotatedType', 1, undefined, '_unannotated_type'],
 		['identifiers', 2, undefined, '_identifier']
 	],
-	299: [
+	303: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['unannotatedType', 1, undefined, '_unannotated_type'],
 		['annotations', 2, undefined, '_annotations'],
 		['variableDeclarator', 3, undefined, '_variable_declarator']
 	],
-	300: [['types', 0, undefined, '_type']],
-	301: [
+	304: [['types', 0, undefined, '_type']],
+	305: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['type', 1, undefined, '_type'],
 		['declarators', 2, undefined, '_declarator']
 	],
-	302: [
+	306: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['typeParameters', 1, undefined, '_type_parameters'],
 		['annotations', 2, undefined, '_annotations'],
@@ -473,37 +473,37 @@ export const querySlots: QuerySlots = Object.freeze({
 		['throws', 7, undefined, '_throws'],
 		['body', 8, undefined, '_body']
 	],
-	303: [
+	307: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['name', 1, undefined, '_name'],
 		['body', 2, undefined, '_body']
 	],
-	307: [['dimensions', 0, undefined, '_dimensions']],
-	308: [
+	311: [['dimensions', 0, undefined, '_dimensions']],
+	312: [
 		['dimensions', 0, undefined, '_dimensions'],
 		['value', 1, undefined, '_value']
 	],
-	309: [['items', 0, undefined, '_item']],
-	310: [['items', 0, undefined, '_item']],
-	311: [['items', 0, undefined, '_item']],
-	312: [
+	313: [['items', 0, undefined, '_item']],
+	314: [['items', 0, undefined, '_item']],
+	315: [['items', 0, undefined, '_item']],
+	316: [
 		['typeArguments', 0, undefined, '_type_arguments'],
 		['constructor_', 1, undefined, '_constructor']
 	],
-	313: [
+	317: [
 		['object', 0, undefined, '_object'],
 		['typeArguments', 1, undefined, '_type_arguments']
 	],
-	314: [['items', 0, undefined, '_item']],
-	315: [
+	318: [['items', 0, undefined, '_item']],
+	319: [
 		['type', 0, undefined, '_type'],
 		['value', 1, undefined, '_value']
 	],
-	316: [
+	320: [
 		['right', 0, undefined, '_right'],
 		['name', 1, undefined, '_name']
 	],
-	317: [
+	321: [
 		['primaryExpression', 0, undefined, '_primary_expression'],
 		['annotations', 1, undefined, '_annotations'],
 		['typeArguments', 2, undefined, '_type_arguments'],
@@ -511,58 +511,62 @@ export const querySlots: QuerySlots = Object.freeze({
 		['arguments', 4, undefined, '_arguments'],
 		['classBody', 5, undefined, '_class_body']
 	],
-	318: [
+	322: [
 		['object', 0, undefined, '_object'],
-		['super', 1, 'super', '_super', 116],
+		['super', 1, 'super', '_super', 119],
 		['typeArguments', 2, undefined, '_type_arguments'],
 		['name', 3, undefined, '_name']
 	],
-	319: [['type', 0, undefined, '_type']],
-	320: [
+	323: [['type', 0, undefined, '_type']],
+	324: [
 		['contents', 0, undefined, '_content'],
 		['guard', 1, undefined, '_guard']
 	],
-	321: [
+	325: [
 		['unannotatedType', 0, undefined, '_unannotated_type'],
 		['identifier', 1, undefined, '_identifier']
 	],
-	322: [
+	326: [
 		['condition', 0, undefined, '_condition'],
 		['message', 1, undefined, '_message']
 	],
-	323: [
+	327: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['type', 1, undefined, '_type'],
 		['name', 2, undefined, '_name'],
 		['dimensions', 3, undefined, '_dimensions'],
 		['value', 4, undefined, '_value']
 	],
-	324: [['inits', 0, undefined, '_init']],
-	325: [['receiverParameter', 0, undefined, '_receiver_parameter']],
-	326: [
+	328: [['inits', 0, undefined, '_init']],
+	329: [['receiverParameter', 0, undefined, '_receiver_parameter']],
+	330: [
 		['receiverParameter', 0, undefined, '_receiver_parameter'],
 		['elements', 1, undefined, '_element']
 	],
-	327: [['elements', 0, undefined, '_elements']],
-	328: [['elements', 0, undefined, '_elements']],
-	329: [
+	331: [['elements', 0, undefined, '_elements']],
+	332: [
+		['whiteSpace', 0, undefined, '_white_space'],
+		['lineTerminator', 1, undefined, '_line_terminator'],
+		['elements', 2, undefined, '_elements']
+	],
+	333: [
 		['body', 0, undefined, '_body'],
 		['catchClauses', 1, undefined, '_catch_clause']
 	],
-	330: [
+	334: [
 		['body', 0, undefined, '_body'],
 		['catchClauses', 1, undefined, '_catch_clause'],
 		['finallyClause', 2, undefined, '_finally_clause']
 	],
-	331: [
+	335: [
 		['expression', 0, undefined, '_expression'],
 		['operator', 1, undefined, '_operator']
 	],
-	332: [
+	336: [
 		['operator', 0, undefined, '_operator'],
 		['expression', 1, undefined, '_expression']
 	],
-	370: [['content', 0, undefined, '_content']]
+	374: [['content', 0, undefined, '_content']]
 });
 
 export const structure: StructureTable = Object.freeze({
@@ -597,14 +601,14 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_content', 'content']],
 		single: [['_content', 'CharacterLiteral.content']]
 	},
-	15: {
+	18: {
 		kind: 'escape_sequence_text',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceText.content']]
 	},
-	117: { kind: 'line_comment', required: [['_content', 'content']], single: [['_content', 'LineComment.content']] },
-	118: { kind: 'block_comment', required: [['_content', 'content']], single: [['_content', 'BlockComment.content']] },
-	122: {
+	120: { kind: 'line_comment', required: [['_content', 'content']], single: [['_content', 'LineComment.content']] },
+	121: { kind: 'block_comment', required: [['_content', 'content']], single: [['_content', 'BlockComment.content']] },
+	125: {
 		kind: 'decimal_floating_point_literal_arm1',
 		required: [
 			['_content', 'content'],
@@ -616,12 +620,12 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['content', 'content2']
 	},
-	123: {
+	126: {
 		kind: 'decimal_floating_point_literal_arm2',
 		required: [['_content', 'content']],
 		single: [['_content', 'DecimalFloatingPointLiteralArm2.content']]
 	},
-	124: {
+	127: {
 		kind: 'decimal_floating_point_literal_arm3_arm1',
 		required: [
 			['_content', 'content'],
@@ -634,7 +638,7 @@ export const structure: StructureTable = Object.freeze({
 		texts: [['_suffix', 'DecimalFloatingPointLiteralArm3Arm1.suffix', ['-', '+']]],
 		config: ['content', 'suffix', 'content2']
 	},
-	125: {
+	128: {
 		kind: 'decimal_floating_point_literal_arm3_arm2',
 		required: [
 			['_content', 'content'],
@@ -647,7 +651,7 @@ export const structure: StructureTable = Object.freeze({
 		texts: [['_suffix', 'DecimalFloatingPointLiteralArm3Arm2.suffix', ['-', '+']]],
 		config: ['content', 'suffix', 'content2']
 	},
-	129: {
+	132: {
 		kind: 'hex_floating_point_literal_arm2',
 		required: [
 			['_prefix', 'prefix'],
@@ -661,39 +665,39 @@ export const structure: StructureTable = Object.freeze({
 		texts: [['_prefix', 'HexFloatingPointLiteralArm2.prefix', ['0x', '0X']]],
 		config: ['prefix', 'content', 'content3']
 	},
-	130: {
+	133: {
 		kind: 'escape_sequence_arm1',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceArm1.content']]
 	},
-	131: {
+	134: {
 		kind: 'escape_sequence_arm2',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceArm2.content']]
 	},
-	132: {
+	135: {
 		kind: 'escape_sequence_arm3',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceArm3.content']]
 	},
-	133: {
+	136: {
 		kind: 'escape_sequence_arm4',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceArm4.content']]
 	},
-	134: {
+	137: {
 		kind: 'escape_sequence_arm5',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceArm5.content']]
 	},
-	157: {
+	161: {
 		kind: 'program',
 		nodeOnly: [
-			['_toplevel_statements', 'Program.toplevelStatements', 'a built Statement / MethodDeclaration', [208, 302]]
+			['_toplevel_statements', 'Program.toplevelStatements', 'a built Statement / MethodDeclaration', [212, 306]]
 		],
 		lists: [['toplevelStatements', false, 0]]
 	},
-	161: {
+	165: {
 		kind: 'decimal_floating_point_literal',
 		required: [['_content', 'content']],
 		single: [['_content', 'DecimalFloatingPointLiteral.content']],
@@ -702,45 +706,45 @@ export const structure: StructureTable = Object.freeze({
 				'_content',
 				'DecimalFloatingPointLiteral.content',
 				'a built DecimalFloatingPointLiteralArm1 / DecimalFloatingPointLiteralArm2 / DecimalFloatingPointLiteralArm3 / DecimalFloatingPointLiteralArm4',
-				[122, 123, 305, 306]
+				[125, 126, 309, 310]
 			]
 		]
 	},
-	162: {
+	166: {
 		kind: 'hex_floating_point_literal',
 		required: [['_content', 'content']],
 		single: [['_content', 'HexFloatingPointLiteral.content']],
-		nodeOnly: [['_content', 'HexFloatingPointLiteral.content', 'buildHexFloatingPointLiteralArm1(…)', [128, 129]]]
+		nodeOnly: [['_content', 'HexFloatingPointLiteral.content', 'buildHexFloatingPointLiteralArm1(…)', [131, 132]]]
 	},
-	167: {
+	171: {
 		kind: 'string_interpolation',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'StringInterpolation.expression']],
-		nodeOnly: [['_expression', 'StringInterpolation.expression', 'a built Expression', [170]]]
+		nodeOnly: [['_expression', 'StringInterpolation.expression', 'a built Expression', [174]]]
 	},
-	168: {
+	172: {
 		kind: 'multiline_string_literal_arm1',
 		required: [['_content', 'content']],
 		single: [['_content', 'MultilineStringLiteralArm1.content']],
 		nodeOnly: [
-			['_content', 'MultilineStringLiteralArm1.content', 'a built EscapeSequenceText / EscapeSequence', [15, 169]]
+			['_content', 'MultilineStringLiteralArm1.content', 'a built EscapeSequenceText / EscapeSequence', [18, 173]]
 		]
 	},
-	171: {
+	175: {
 		kind: 'cast_expression',
 		single: [
 			['_value', 'CastExpression.value'],
 			['_cast_expression_arm', 'CastExpression.castExpressionArm']
 		],
 		nodeOnly: [
-			['_type', 'CastExpression.types', 'a built Type', [286]],
-			['_value', 'CastExpression.value', 'a built PrimaryExpression / LambdaExpression', [175, 180]],
-			['_cast_expression_arm', 'CastExpression.castExpressionArm', 'a built CastExpressionArm', [315]]
+			['_type', 'CastExpression.types', 'a built Type', [290]],
+			['_value', 'CastExpression.value', 'a built PrimaryExpression / LambdaExpression', [179, 184]],
+			['_cast_expression_arm', 'CastExpression.castExpressionArm', 'a built CastExpressionArm', [319]]
 		],
 		config: ['types', 'value', 'castExpressionArm'],
 		lists: [['types', false, 'key']]
 	},
-	172: {
+	176: {
 		kind: 'assignment_expression',
 		required: [
 			['_left', 'left'],
@@ -752,13 +756,13 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'AssignmentExpression.right']
 		],
 		nodeOnly: [
-			['_left', 'AssignmentExpression.left', 'buildIdentifier(…)', [1, 187, 189]],
-			['_right', 'AssignmentExpression.right', 'a built Expression', [170]]
+			['_left', 'AssignmentExpression.left', 'buildIdentifier(…)', [1, 191, 193]],
+			['_right', 'AssignmentExpression.right', 'a built Expression', [174]]
 		],
-		kindIds: [['_operator', 'AssignmentExpression.operator', [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]]],
+		kindIds: [['_operator', 'AssignmentExpression.operator', [23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]]],
 		config: ['left', 'operator', 'right']
 	},
-	173: {
+	177: {
 		kind: 'binary_expression',
 		required: [
 			['_left', 'left'],
@@ -770,19 +774,19 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'BinaryExpression.right']
 		],
 		nodeOnly: [
-			['_left', 'BinaryExpression.left', 'a built Expression', [170]],
-			['_right', 'BinaryExpression.right', 'a built Expression', [170]]
+			['_left', 'BinaryExpression.left', 'a built Expression', [174]],
+			['_right', 'BinaryExpression.right', 'a built Expression', [174]]
 		],
 		kindIds: [
 			[
 				'_operator',
 				'BinaryExpression.operator',
-				[18, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
+				[21, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52]
 			]
 		],
 		config: ['left', 'operator', 'right']
 	},
-	174: {
+	178: {
 		kind: 'instanceof_expression',
 		required: [
 			['_left', 'left'],
@@ -793,13 +797,13 @@ export const structure: StructureTable = Object.freeze({
 			['_content', 'InstanceofExpression.content']
 		],
 		nodeOnly: [
-			['_left', 'InstanceofExpression.left', 'a built Expression', [170]],
-			['_content', 'InstanceofExpression.content', 'a built InstanceofExpressionArm / RecordPattern', [204, 316]]
+			['_left', 'InstanceofExpression.left', 'a built Expression', [174]],
+			['_content', 'InstanceofExpression.content', 'a built InstanceofExpressionArm / RecordPattern', [208, 320]]
 		],
 		booleans: [['_final', 'InstanceofExpression.final']],
 		config: ['left', 'final', 'content']
 	},
-	175: {
+	179: {
 		kind: 'lambda_expression',
 		required: [
 			['_parameters', 'parameters'],
@@ -810,18 +814,18 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'LambdaExpression.body']
 		],
 		nodeOnly: [
-			['_parameters', 'LambdaExpression.parameters', 'buildIdentifier(…)', [1, 176, 296]],
-			['_body', 'LambdaExpression.body', 'a built Expression / Block', [170, 209]]
+			['_parameters', 'LambdaExpression.parameters', 'buildIdentifier(…)', [1, 180, 300]],
+			['_body', 'LambdaExpression.body', 'a built Expression / Block', [174, 213]]
 		],
 		config: ['parameters', 'body']
 	},
-	176: {
+	180: {
 		kind: 'inferred_parameters',
 		nonEmpty: [['_element', 'inferred_parameters.children']],
 		nodeOnly: [['_element', 'InferredParameters.elements', 'buildIdentifier(…)', [1]]],
 		lists: [['elements', false, 0]]
 	},
-	177: {
+	181: {
 		kind: 'ternary_expression',
 		required: [
 			['_condition', 'condition'],
@@ -834,24 +838,24 @@ export const structure: StructureTable = Object.freeze({
 			['_alternative', 'TernaryExpression.alternative']
 		],
 		nodeOnly: [
-			['_condition', 'TernaryExpression.condition', 'a built Expression', [170]],
-			['_consequence', 'TernaryExpression.consequence', 'a built Expression', [170]],
-			['_alternative', 'TernaryExpression.alternative', 'a built Expression', [170]]
+			['_condition', 'TernaryExpression.condition', 'a built Expression', [174]],
+			['_consequence', 'TernaryExpression.consequence', 'a built Expression', [174]],
+			['_alternative', 'TernaryExpression.alternative', 'a built Expression', [174]]
 		],
 		config: ['condition', 'consequence', 'alternative']
 	},
-	178: {
+	182: {
 		kind: 'unary_expression',
 		required: [
 			['_operator', 'operator'],
 			['_operand', 'operand']
 		],
 		single: [['_operand', 'UnaryExpression.operand']],
-		nodeOnly: [['_operand', 'UnaryExpression.operand', 'a built Expression', [170]]],
-		kindIds: [['_operator', 'UnaryExpression.operator', [40, 41, 55, 56]]],
+		nodeOnly: [['_operand', 'UnaryExpression.operand', 'a built Expression', [174]]],
+		kindIds: [['_operator', 'UnaryExpression.operator', [43, 44, 58, 59]]],
 		config: ['operator', 'operand']
 	},
-	181: {
+	185: {
 		kind: 'array_creation_expression',
 		required: [
 			['_type', 'type'],
@@ -862,47 +866,47 @@ export const structure: StructureTable = Object.freeze({
 			['_content', 'ArrayCreationExpression.content']
 		],
 		nodeOnly: [
-			['_annotations', 'ArrayCreationExpression.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]],
+			['_annotations', 'ArrayCreationExpression.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]],
 			[
 				'_type',
 				'ArrayCreationExpression.type',
 				'a built SimpleType',
-				[102, 103, 104, 105, 106, 107, 108, 109, 110, 289, 290, 370]
+				[105, 106, 107, 108, 109, 110, 111, 112, 113, 293, 294, 374]
 			],
 			[
 				'_content',
 				'ArrayCreationExpression.content',
 				'a built ArrayCreationExpressionArm1 / ArrayCreationExpressionArm2',
-				[307, 308]
+				[311, 312]
 			]
 		],
 		config: ['annotations', 'type', 'content'],
 		lists: [['annotations', false, 'key']]
 	},
-	182: {
+	186: {
 		kind: 'dimensions_expr',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'DimensionsExpr.expression']],
 		nodeOnly: [
-			['_annotations', 'DimensionsExpr.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]],
-			['_expression', 'DimensionsExpr.expression', 'a built Expression', [170]]
+			['_annotations', 'DimensionsExpr.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]],
+			['_expression', 'DimensionsExpr.expression', 'a built Expression', [174]]
 		],
 		config: ['annotations', 'expression'],
 		lists: [['annotations', false, 'key']]
 	},
-	183: {
+	187: {
 		kind: 'parenthesized_expression',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'ParenthesizedExpression.expression']],
-		nodeOnly: [['_expression', 'ParenthesizedExpression.expression', 'a built Expression', [170]]]
+		nodeOnly: [['_expression', 'ParenthesizedExpression.expression', 'a built Expression', [174]]]
 	},
-	184: {
+	188: {
 		kind: 'class_literal',
 		required: [['_unannotated_type', 'unannotatedType']],
 		single: [['_unannotated_type', 'ClassLiteral.unannotatedType']],
-		nodeOnly: [['_unannotated_type', 'ClassLiteral.unannotatedType', 'a built UnannotatedType', [287]]]
+		nodeOnly: [['_unannotated_type', 'ClassLiteral.unannotatedType', 'a built UnannotatedType', [291]]]
 	},
-	185: {
+	189: {
 		kind: 'object_creation_expression',
 		required: [['_content', 'content']],
 		single: [['_content', 'ObjectCreationExpression.content']],
@@ -911,11 +915,11 @@ export const structure: StructureTable = Object.freeze({
 				'_content',
 				'ObjectCreationExpression.content',
 				'a built UnqualifiedObjectCreationExpression / ObjectCreationExpressionArm',
-				[186, 317]
+				[190, 321]
 			]
 		]
 	},
-	186: {
+	190: {
 		kind: '_unqualified_object_creation_expression',
 		required: [
 			['_type', 'type'],
@@ -932,22 +936,22 @@ export const structure: StructureTable = Object.freeze({
 				'_annotations',
 				'UnqualifiedObjectCreationExpression.annotations',
 				'a built MarkerAnnotation / Annotation',
-				[233, 234]
+				[237, 238]
 			],
-			['_type_arguments', 'UnqualifiedObjectCreationExpression.typeArguments', 'a built TypeArguments', [193]],
+			['_type_arguments', 'UnqualifiedObjectCreationExpression.typeArguments', 'a built TypeArguments', [197]],
 			[
 				'_type',
 				'UnqualifiedObjectCreationExpression.type',
 				'a built SimpleType',
-				[102, 103, 104, 105, 106, 107, 108, 109, 110, 289, 290, 370]
+				[105, 106, 107, 108, 109, 110, 111, 112, 113, 293, 294, 374]
 			],
-			['_arguments', 'UnqualifiedObjectCreationExpression.arguments', 'a built ArgumentList', [191]],
-			['_class_body', 'UnqualifiedObjectCreationExpression.classBody', 'a built ClassBody', [265]]
+			['_arguments', 'UnqualifiedObjectCreationExpression.arguments', 'a built ArgumentList', [195]],
+			['_class_body', 'UnqualifiedObjectCreationExpression.classBody', 'a built ClassBody', [269]]
 		],
 		config: ['annotations', 'typeArguments', 'type', 'arguments', 'classBody'],
 		lists: [['annotations', false, 'key']]
 	},
-	187: {
+	191: {
 		kind: 'field_access',
 		required: [
 			['_object', 'object'],
@@ -958,13 +962,13 @@ export const structure: StructureTable = Object.freeze({
 			['_field', 'FieldAccess.field']
 		],
 		nodeOnly: [
-			['_object', 'FieldAccess.object', 'a built PrimaryExpression', [116, 180]],
-			['_field', 'FieldAccess.field', 'buildIdentifier(…)', [1, 115]]
+			['_object', 'FieldAccess.object', 'a built PrimaryExpression', [119, 184]],
+			['_field', 'FieldAccess.field', 'buildIdentifier(…)', [1, 118]]
 		],
 		booleans: [['_super', 'FieldAccess.super']],
 		config: ['object', 'super', 'field']
 	},
-	188: {
+	192: {
 		kind: 'template_expression',
 		required: [
 			['_template_processor', 'templateProcessor'],
@@ -975,12 +979,12 @@ export const structure: StructureTable = Object.freeze({
 			['_template_argument', 'TemplateExpression.templateArgument']
 		],
 		nodeOnly: [
-			['_template_processor', 'TemplateExpression.templateProcessor', 'a built PrimaryExpression', [180]],
-			['_template_argument', 'TemplateExpression.templateArgument', 'a built StringLiteral', [163]]
+			['_template_processor', 'TemplateExpression.templateProcessor', 'a built PrimaryExpression', [184]],
+			['_template_argument', 'TemplateExpression.templateArgument', 'a built StringLiteral', [167]]
 		],
 		config: ['templateProcessor', 'templateArgument']
 	},
-	189: {
+	193: {
 		kind: 'array_access',
 		required: [
 			['_array', 'array'],
@@ -991,12 +995,12 @@ export const structure: StructureTable = Object.freeze({
 			['_index', 'ArrayAccess.index']
 		],
 		nodeOnly: [
-			['_array', 'ArrayAccess.array', 'a built PrimaryExpression', [180]],
-			['_index', 'ArrayAccess.index', 'a built Expression', [170]]
+			['_array', 'ArrayAccess.array', 'a built PrimaryExpression', [184]],
+			['_index', 'ArrayAccess.index', 'a built Expression', [174]]
 		],
 		config: ['array', 'index']
 	},
-	190: {
+	194: {
 		kind: 'method_invocation',
 		required: [
 			['_content', 'content'],
@@ -1007,18 +1011,18 @@ export const structure: StructureTable = Object.freeze({
 			['_arguments', 'MethodInvocation.arguments']
 		],
 		nodeOnly: [
-			['_content', 'MethodInvocation.content', 'buildIdentifier(…)', [1, 318]],
-			['_arguments', 'MethodInvocation.arguments', 'a built ArgumentList', [191]]
+			['_content', 'MethodInvocation.content', 'buildIdentifier(…)', [1, 322]],
+			['_arguments', 'MethodInvocation.arguments', 'a built ArgumentList', [195]]
 		],
-		hoisted: [['arguments', 'MethodInvocation.arguments', 'a built ArgumentList', [170, 191]]],
+		hoisted: [['arguments', 'MethodInvocation.arguments', 'a built ArgumentList', [174, 195]]],
 		config: ['content', 'arguments']
 	},
-	191: {
+	195: {
 		kind: 'argument_list',
-		nodeOnly: [['_expression', 'ArgumentList.expressions', 'a built Expression', [170]]],
+		nodeOnly: [['_expression', 'ArgumentList.expressions', 'a built Expression', [174]]],
 		lists: [['expressions', false, 0]]
 	},
-	192: {
+	196: {
 		kind: 'method_reference',
 		required: [
 			['_content', 'content'],
@@ -1030,40 +1034,40 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'MethodReference.name']
 		],
 		nodeOnly: [
-			['_content', 'MethodReference.content', 'a built Type / PrimaryExpression', [116, 180, 286]],
-			['_type_arguments', 'MethodReference.typeArguments', 'a built TypeArguments', [193]],
+			['_content', 'MethodReference.content', 'a built Type / PrimaryExpression', [119, 184, 290]],
+			['_type_arguments', 'MethodReference.typeArguments', 'a built TypeArguments', [197]],
 			['_name', 'MethodReference.name', 'buildIdentifier(…)', [1]]
 		],
 		config: ['content', 'typeArguments', 'name']
 	},
-	193: {
+	197: {
 		kind: 'type_arguments',
-		nodeOnly: [['_element', 'TypeArguments.elements', 'a built Type / Wildcard', [194, 286]]],
+		nodeOnly: [['_element', 'TypeArguments.elements', 'a built Type / Wildcard', [198, 290]]],
 		lists: [['elements', false, 0]]
 	},
-	194: {
+	198: {
 		kind: 'wildcard',
 		single: [['_wildcard_bounds', 'Wildcard.wildcardBounds']],
 		nodeOnly: [
-			['_annotations', 'Wildcard.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]],
-			['_wildcard_bounds', 'Wildcard.wildcardBounds', 'a built WildcardBounds', [195]]
+			['_annotations', 'Wildcard.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]],
+			['_wildcard_bounds', 'Wildcard.wildcardBounds', 'a built WildcardBounds', [199]]
 		],
-		hoisted: [['wildcardBounds', 'Wildcard.wildcardBounds', 'a built WildcardBounds', [195, 286, 319]]],
+		hoisted: [['wildcardBounds', 'Wildcard.wildcardBounds', 'a built WildcardBounds', [199, 290, 323]]],
 		config: ['annotations', 'wildcardBounds'],
 		lists: [['annotations', false, 'key']]
 	},
-	195: {
+	199: {
 		kind: 'wildcard_bounds',
 		required: [['_content', 'content']],
 		single: [['_content', 'WildcardBounds.content']],
-		nodeOnly: [['_content', 'WildcardBounds.content', 'a built Type / WildcardBoundsArm', [286, 319]]]
+		nodeOnly: [['_content', 'WildcardBounds.content', 'a built Type / WildcardBoundsArm', [290, 323]]]
 	},
-	196: {
+	200: {
 		kind: 'dimensions',
-		nodeOnly: [['_annotations', 'Dimensions.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]]],
+		nodeOnly: [['_annotations', 'Dimensions.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]]],
 		lists: [['annotations', false, 0]]
 	},
-	197: {
+	201: {
 		kind: 'switch_expression',
 		required: [
 			['_condition', 'condition'],
@@ -1074,26 +1078,26 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'SwitchExpression.body']
 		],
 		nodeOnly: [
-			['_condition', 'SwitchExpression.condition', 'a built ParenthesizedExpression', [183]],
-			['_body', 'SwitchExpression.body', 'a built SwitchBlock', [198]]
+			['_condition', 'SwitchExpression.condition', 'a built ParenthesizedExpression', [187]],
+			['_body', 'SwitchExpression.body', 'a built SwitchBlock', [202]]
 		],
 		hoisted: [
-			['condition', 'SwitchExpression.condition', 'a built ParenthesizedExpression', [170, 183]],
-			['body', 'SwitchExpression.body', 'a built SwitchBlock', [198, 199, 200]]
+			['condition', 'SwitchExpression.condition', 'a built ParenthesizedExpression', [174, 187]],
+			['body', 'SwitchExpression.body', 'a built SwitchBlock', [202, 203, 204]]
 		],
 		config: ['condition', 'body']
 	},
-	198: {
+	202: {
 		kind: 'switch_block',
-		nodeOnly: [['_content', 'SwitchBlock.contents', 'a built SwitchBlockStatementGroup / SwitchRule', [199, 200]]],
+		nodeOnly: [['_content', 'SwitchBlock.contents', 'a built SwitchBlockStatementGroup / SwitchRule', [203, 204]]],
 		lists: [['contents', false, 0]]
 	},
-	199: {
+	203: {
 		kind: 'switch_block_statement_group',
 		nonEmpty: [['_switch_label', 'switch_block_statement_group.switchLabels']],
 		nodeOnly: [
-			['_switch_label', 'SwitchBlockStatementGroup.switchLabels', 'a built SwitchLabel', [201]],
-			['_statements', 'SwitchBlockStatementGroup.statements', 'a built Statement', [208]]
+			['_switch_label', 'SwitchBlockStatementGroup.switchLabels', 'a built SwitchLabel', [205]],
+			['_statements', 'SwitchBlockStatementGroup.statements', 'a built Statement', [212]]
 		],
 		config: ['switchLabels', 'statements'],
 		lists: [
@@ -1101,7 +1105,7 @@ export const structure: StructureTable = Object.freeze({
 			['statements', false, 'key']
 		]
 	},
-	200: {
+	204: {
 		kind: 'switch_rule',
 		required: [
 			['_switch_label', 'switchLabel'],
@@ -1112,24 +1116,24 @@ export const structure: StructureTable = Object.freeze({
 			['_content', 'SwitchRule.content']
 		],
 		nodeOnly: [
-			['_switch_label', 'SwitchRule.switchLabel', 'a built SwitchLabel', [201]],
-			['_content', 'SwitchRule.content', 'a built ExpressionStatement / ThrowStatement / Block', [209, 210, 219]]
+			['_switch_label', 'SwitchRule.switchLabel', 'a built SwitchLabel', [205]],
+			['_content', 'SwitchRule.content', 'a built ExpressionStatement / ThrowStatement / Block', [213, 214, 223]]
 		],
 		config: ['switchLabel', 'content']
 	},
-	201: {
+	205: {
 		kind: 'switch_label',
 		required: [['_switch_label_arm', 'switchLabelArm']],
 		single: [['_switch_label_arm', 'SwitchLabel.switchLabelArm']],
-		nodeOnly: [['_switch_label_arm', 'SwitchLabel.switchLabelArm', 'a built SwitchLabelArm', [320]]]
+		nodeOnly: [['_switch_label_arm', 'SwitchLabel.switchLabelArm', 'a built SwitchLabelArm', [324]]]
 	},
-	202: {
+	206: {
 		kind: 'pattern',
 		required: [['_content', 'content']],
 		single: [['_content', 'Pattern.content']],
-		nodeOnly: [['_content', 'Pattern.content', 'a built TypePattern / RecordPattern', [203, 204]]]
+		nodeOnly: [['_content', 'Pattern.content', 'a built TypePattern / RecordPattern', [207, 208]]]
 	},
-	203: {
+	207: {
 		kind: 'type_pattern',
 		required: [
 			['_unannotated_type', 'unannotatedType'],
@@ -1140,12 +1144,12 @@ export const structure: StructureTable = Object.freeze({
 			['_identifier', 'TypePattern.identifier']
 		],
 		nodeOnly: [
-			['_unannotated_type', 'TypePattern.unannotatedType', 'a built UnannotatedType', [287]],
+			['_unannotated_type', 'TypePattern.unannotatedType', 'a built UnannotatedType', [291]],
 			['_identifier', 'TypePattern.identifier', 'buildIdentifier(…)', [1]]
 		],
 		config: ['unannotatedType', 'identifier']
 	},
-	204: {
+	208: {
 		kind: 'record_pattern',
 		required: [
 			['_content', 'content'],
@@ -1156,43 +1160,43 @@ export const structure: StructureTable = Object.freeze({
 			['_record_pattern_body', 'RecordPattern.recordPatternBody']
 		],
 		nodeOnly: [
-			['_content', 'RecordPattern.content', 'buildIdentifier(…)', [1, 290]],
-			['_record_pattern_body', 'RecordPattern.recordPatternBody', 'a built RecordPatternBody', [205]]
+			['_content', 'RecordPattern.content', 'buildIdentifier(…)', [1, 294]],
+			['_record_pattern_body', 'RecordPattern.recordPatternBody', 'a built RecordPatternBody', [209]]
 		],
-		hoisted: [['recordPatternBody', 'RecordPattern.recordPatternBody', 'a built RecordPatternBody', [204, 205, 206]]],
+		hoisted: [['recordPatternBody', 'RecordPattern.recordPatternBody', 'a built RecordPatternBody', [208, 209, 210]]],
 		config: ['content', 'recordPatternBody']
 	},
-	205: {
+	209: {
 		kind: 'record_pattern_body',
 		nodeOnly: [
-			['_element', 'RecordPatternBody.elements', 'a built RecordPatternComponent / RecordPattern', [204, 206]]
+			['_element', 'RecordPatternBody.elements', 'a built RecordPatternComponent / RecordPattern', [208, 210]]
 		],
 		lists: [['elements', false, 0]]
 	},
-	206: {
+	210: {
 		kind: 'record_pattern_component',
 		required: [['_content', 'content']],
 		single: [['_content', 'RecordPatternComponent.content']],
-		nodeOnly: [['_content', 'RecordPatternComponent.content', 'a built RecordPatternComponentArm', [67, 321]]]
+		nodeOnly: [['_content', 'RecordPatternComponent.content', 'a built RecordPatternComponentArm', [70, 325]]]
 	},
-	207: {
+	211: {
 		kind: 'guard',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'Guard.expression']],
-		nodeOnly: [['_expression', 'Guard.expression', 'a built Expression', [170]]]
+		nodeOnly: [['_expression', 'Guard.expression', 'a built Expression', [174]]]
 	},
-	209: {
+	213: {
 		kind: 'block',
-		nodeOnly: [['_statements', 'Block.statements', 'a built Statement', [208]]],
+		nodeOnly: [['_statements', 'Block.statements', 'a built Statement', [212]]],
 		lists: [['statements', false, 0]]
 	},
-	210: {
+	214: {
 		kind: 'expression_statement',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'ExpressionStatement.expression']],
-		nodeOnly: [['_expression', 'ExpressionStatement.expression', 'a built Expression', [170]]]
+		nodeOnly: [['_expression', 'ExpressionStatement.expression', 'a built Expression', [174]]]
 	},
-	211: {
+	215: {
 		kind: 'labeled_statement',
 		required: [
 			['_identifier', 'identifier'],
@@ -1204,17 +1208,17 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_identifier', 'LabeledStatement.identifier', 'buildIdentifier(…)', [1]],
-			['_statement', 'LabeledStatement.statement', 'a built Statement', [208]]
+			['_statement', 'LabeledStatement.statement', 'a built Statement', [212]]
 		],
 		config: ['identifier', 'statement']
 	},
-	212: {
+	216: {
 		kind: 'assert_statement',
 		required: [['_content', 'content']],
 		single: [['_content', 'AssertStatement.content']],
-		nodeOnly: [['_content', 'AssertStatement.content', 'a built AssertStatementArm / Expression', [170, 322]]]
+		nodeOnly: [['_content', 'AssertStatement.content', 'a built AssertStatementArm / Expression', [174, 326]]]
 	},
-	213: {
+	217: {
 		kind: 'do_statement',
 		required: [
 			['_body', 'body'],
@@ -1225,34 +1229,34 @@ export const structure: StructureTable = Object.freeze({
 			['_condition', 'DoStatement.condition']
 		],
 		nodeOnly: [
-			['_body', 'DoStatement.body', 'a built Statement', [208]],
-			['_condition', 'DoStatement.condition', 'a built ParenthesizedExpression', [183]]
+			['_body', 'DoStatement.body', 'a built Statement', [212]],
+			['_condition', 'DoStatement.condition', 'a built ParenthesizedExpression', [187]]
 		],
-		hoisted: [['condition', 'DoStatement.condition', 'a built ParenthesizedExpression', [170, 183]]],
+		hoisted: [['condition', 'DoStatement.condition', 'a built ParenthesizedExpression', [174, 187]]],
 		config: ['body', 'condition']
 	},
-	214: {
+	218: {
 		kind: 'break_statement',
 		single: [['_label', 'BreakStatement.label']],
 		nodeOnly: [['_label', 'BreakStatement.label', 'buildIdentifier(…)', [1]]]
 	},
-	215: {
+	219: {
 		kind: 'continue_statement',
 		single: [['_label', 'ContinueStatement.label']],
 		nodeOnly: [['_label', 'ContinueStatement.label', 'buildIdentifier(…)', [1]]]
 	},
-	216: {
+	220: {
 		kind: 'return_statement',
 		single: [['_expression', 'ReturnStatement.expression']],
-		nodeOnly: [['_expression', 'ReturnStatement.expression', 'a built Expression', [170]]]
+		nodeOnly: [['_expression', 'ReturnStatement.expression', 'a built Expression', [174]]]
 	},
-	217: {
+	221: {
 		kind: 'yield_statement',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'YieldStatement.expression']],
-		nodeOnly: [['_expression', 'YieldStatement.expression', 'a built Expression', [170]]]
+		nodeOnly: [['_expression', 'YieldStatement.expression', 'a built Expression', [174]]]
 	},
-	218: {
+	222: {
 		kind: 'synchronized_statement',
 		required: [
 			['_parenthesized_expression', 'parenthesizedExpression'],
@@ -1267,28 +1271,28 @@ export const structure: StructureTable = Object.freeze({
 				'_parenthesized_expression',
 				'SynchronizedStatement.parenthesizedExpression',
 				'a built ParenthesizedExpression',
-				[183]
+				[187]
 			],
-			['_body', 'SynchronizedStatement.body', 'a built Block', [209]]
+			['_body', 'SynchronizedStatement.body', 'a built Block', [213]]
 		],
 		hoisted: [
 			[
 				'parenthesizedExpression',
 				'SynchronizedStatement.parenthesizedExpression',
 				'a built ParenthesizedExpression',
-				[170, 183]
+				[174, 187]
 			],
-			['body', 'SynchronizedStatement.body', 'a built Block', [208, 209]]
+			['body', 'SynchronizedStatement.body', 'a built Block', [212, 213]]
 		],
 		config: ['parenthesizedExpression', 'body']
 	},
-	219: {
+	223: {
 		kind: 'throw_statement',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'ThrowStatement.expression']],
-		nodeOnly: [['_expression', 'ThrowStatement.expression', 'a built Expression', [170]]]
+		nodeOnly: [['_expression', 'ThrowStatement.expression', 'a built Expression', [174]]]
 	},
-	221: {
+	225: {
 		kind: 'catch_clause',
 		required: [
 			['_catch_formal_parameter', 'catchFormalParameter'],
@@ -1299,13 +1303,13 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'CatchClause.body']
 		],
 		nodeOnly: [
-			['_catch_formal_parameter', 'CatchClause.catchFormalParameter', 'a built CatchFormalParameter', [222]],
-			['_body', 'CatchClause.body', 'a built Block', [209]]
+			['_catch_formal_parameter', 'CatchClause.catchFormalParameter', 'a built CatchFormalParameter', [226]],
+			['_body', 'CatchClause.body', 'a built Block', [213]]
 		],
-		hoisted: [['body', 'CatchClause.body', 'a built Block', [208, 209]]],
+		hoisted: [['body', 'CatchClause.body', 'a built Block', [212, 213]]],
 		config: ['catchFormalParameter', 'body']
 	},
-	222: {
+	226: {
 		kind: 'catch_formal_parameter',
 		required: [
 			['_catch_type', 'catchType'],
@@ -1318,28 +1322,28 @@ export const structure: StructureTable = Object.freeze({
 			['_dimensions', 'CatchFormalParameter.dimensions']
 		],
 		nodeOnly: [
-			['_modifiers', 'CatchFormalParameter.modifiers', 'a built Modifiers', [257]],
-			['_catch_type', 'CatchFormalParameter.catchType', 'a built CatchType', [223]],
-			['_name', 'CatchFormalParameter.name', 'buildIdentifier(…)', [1, 67]],
-			['_dimensions', 'CatchFormalParameter.dimensions', 'a built Dimensions', [196]]
+			['_modifiers', 'CatchFormalParameter.modifiers', 'a built Modifiers', [261]],
+			['_catch_type', 'CatchFormalParameter.catchType', 'a built CatchType', [227]],
+			['_name', 'CatchFormalParameter.name', 'buildIdentifier(…)', [1, 70]],
+			['_dimensions', 'CatchFormalParameter.dimensions', 'a built Dimensions', [200]]
 		],
-		hoisted: [['catchType', 'CatchFormalParameter.catchType', 'a built CatchType', [223, 287]]],
+		hoisted: [['catchType', 'CatchFormalParameter.catchType', 'a built CatchType', [227, 291]]],
 		config: ['modifiers', 'catchType', 'name', 'dimensions']
 	},
-	223: {
+	227: {
 		kind: 'catch_type',
 		nonEmpty: [['_unannotated_type', 'catch_type.children']],
-		nodeOnly: [['_unannotated_type', 'CatchType.unannotatedTypes', 'a built UnannotatedType', [287]]],
+		nodeOnly: [['_unannotated_type', 'CatchType.unannotatedTypes', 'a built UnannotatedType', [291]]],
 		lists: [['unannotatedTypes', false, 0]]
 	},
-	224: {
+	228: {
 		kind: 'finally_clause',
 		required: [['_block', 'block']],
 		single: [['_block', 'FinallyClause.block']],
-		nodeOnly: [['_block', 'FinallyClause.block', 'a built Block', [209]]],
-		hoisted: [['block', 'FinallyClause.block', 'a built Block', [208, 209]]]
+		nodeOnly: [['_block', 'FinallyClause.block', 'a built Block', [213]]],
+		hoisted: [['block', 'FinallyClause.block', 'a built Block', [212, 213]]]
 	},
-	225: {
+	229: {
 		kind: 'try_with_resources_statement',
 		required: [
 			['_resources', 'resources'],
@@ -1351,37 +1355,37 @@ export const structure: StructureTable = Object.freeze({
 			['_finally_clause', 'TryWithResourcesStatement.finallyClause']
 		],
 		nodeOnly: [
-			['_resources', 'TryWithResourcesStatement.resources', 'a built ResourceSpecification', [226]],
-			['_body', 'TryWithResourcesStatement.body', 'a built Block', [209]],
-			['_catch_clause', 'TryWithResourcesStatement.catchClauses', 'a built CatchClause', [221]],
-			['_finally_clause', 'TryWithResourcesStatement.finallyClause', 'a built FinallyClause', [224]]
+			['_resources', 'TryWithResourcesStatement.resources', 'a built ResourceSpecification', [230]],
+			['_body', 'TryWithResourcesStatement.body', 'a built Block', [213]],
+			['_catch_clause', 'TryWithResourcesStatement.catchClauses', 'a built CatchClause', [225]],
+			['_finally_clause', 'TryWithResourcesStatement.finallyClause', 'a built FinallyClause', [228]]
 		],
 		hoisted: [
 			[
 				'resources',
 				'TryWithResourcesStatement.resources',
 				'a built ResourceSpecification',
-				[1, 187, 226, 227, 309, 323]
+				[1, 191, 230, 231, 313, 327]
 			],
-			['body', 'TryWithResourcesStatement.body', 'a built Block', [208, 209]]
+			['body', 'TryWithResourcesStatement.body', 'a built Block', [212, 213]]
 		],
 		config: ['resources', 'body', 'catchClauses', 'finallyClause'],
 		lists: [['catchClauses', false, 'key']]
 	},
-	226: {
+	230: {
 		kind: 'resource_specification',
 		required: [['_resources', 'resources']],
 		single: [['_resources', 'ResourceSpecification.resources']],
-		nodeOnly: [['_resources', 'ResourceSpecification.resources', 'a built Resources', [309]]],
-		hoisted: [['resources', 'ResourceSpecification.resources', 'a built Resources', [1, 187, 227, 309, 323]]]
+		nodeOnly: [['_resources', 'ResourceSpecification.resources', 'a built Resources', [313]]],
+		hoisted: [['resources', 'ResourceSpecification.resources', 'a built Resources', [1, 191, 231, 313, 327]]]
 	},
-	227: {
+	231: {
 		kind: 'resource',
 		required: [['_content', 'content']],
 		single: [['_content', 'Resource.content']],
-		nodeOnly: [['_content', 'Resource.content', 'buildIdentifier(…)', [1, 187, 323]]]
+		nodeOnly: [['_content', 'Resource.content', 'buildIdentifier(…)', [1, 191, 327]]]
 	},
-	228: {
+	232: {
 		kind: 'if_statement',
 		required: [
 			['_condition', 'condition'],
@@ -1393,14 +1397,14 @@ export const structure: StructureTable = Object.freeze({
 			['_alternative', 'IfStatement.alternative']
 		],
 		nodeOnly: [
-			['_condition', 'IfStatement.condition', 'a built ParenthesizedExpression', [183]],
-			['_consequence', 'IfStatement.consequence', 'a built Statement', [208]],
-			['_alternative', 'IfStatement.alternative', 'a built Statement', [208]]
+			['_condition', 'IfStatement.condition', 'a built ParenthesizedExpression', [187]],
+			['_consequence', 'IfStatement.consequence', 'a built Statement', [212]],
+			['_alternative', 'IfStatement.alternative', 'a built Statement', [212]]
 		],
-		hoisted: [['condition', 'IfStatement.condition', 'a built ParenthesizedExpression', [170, 183]]],
+		hoisted: [['condition', 'IfStatement.condition', 'a built ParenthesizedExpression', [174, 187]]],
 		config: ['condition', 'consequence', 'alternative']
 	},
-	229: {
+	233: {
 		kind: 'while_statement',
 		required: [
 			['_condition', 'condition'],
@@ -1411,13 +1415,13 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'WhileStatement.body']
 		],
 		nodeOnly: [
-			['_condition', 'WhileStatement.condition', 'a built ParenthesizedExpression', [183]],
-			['_body', 'WhileStatement.body', 'a built Statement', [208]]
+			['_condition', 'WhileStatement.condition', 'a built ParenthesizedExpression', [187]],
+			['_body', 'WhileStatement.body', 'a built Statement', [212]]
 		],
-		hoisted: [['condition', 'WhileStatement.condition', 'a built ParenthesizedExpression', [170, 183]]],
+		hoisted: [['condition', 'WhileStatement.condition', 'a built ParenthesizedExpression', [174, 187]]],
 		config: ['condition', 'body']
 	},
-	230: {
+	234: {
 		kind: 'for_statement',
 		required: [
 			['_content', 'content'],
@@ -1429,15 +1433,15 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'ForStatement.body']
 		],
 		nodeOnly: [
-			['_content', 'ForStatement.content', 'a built ForStatementArm / LocalVariableDeclaration', [301, 324]],
-			['_condition', 'ForStatement.condition', 'a built Expression', [170]],
-			['_update', 'ForStatement.updates', 'a built Expression', [170]],
-			['_body', 'ForStatement.body', 'a built Statement', [208]]
+			['_content', 'ForStatement.content', 'a built ForStatementArm / LocalVariableDeclaration', [305, 328]],
+			['_condition', 'ForStatement.condition', 'a built Expression', [174]],
+			['_update', 'ForStatement.updates', 'a built Expression', [174]],
+			['_body', 'ForStatement.body', 'a built Statement', [212]]
 		],
 		config: ['content', 'condition', 'updates', 'body'],
 		lists: [['updates', false, 'key']]
 	},
-	231: {
+	235: {
 		kind: 'enhanced_for_statement',
 		required: [
 			['_type', 'type'],
@@ -1454,22 +1458,22 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'EnhancedForStatement.body']
 		],
 		nodeOnly: [
-			['_modifiers', 'EnhancedForStatement.modifiers', 'a built Modifiers', [257]],
-			['_type', 'EnhancedForStatement.type', 'a built UnannotatedType', [287]],
-			['_name', 'EnhancedForStatement.name', 'buildIdentifier(…)', [1, 67]],
-			['_dimensions', 'EnhancedForStatement.dimensions', 'a built Dimensions', [196]],
-			['_value', 'EnhancedForStatement.value', 'a built Expression', [170]],
-			['_body', 'EnhancedForStatement.body', 'a built Statement', [208]]
+			['_modifiers', 'EnhancedForStatement.modifiers', 'a built Modifiers', [261]],
+			['_type', 'EnhancedForStatement.type', 'a built UnannotatedType', [291]],
+			['_name', 'EnhancedForStatement.name', 'buildIdentifier(…)', [1, 70]],
+			['_dimensions', 'EnhancedForStatement.dimensions', 'a built Dimensions', [200]],
+			['_value', 'EnhancedForStatement.value', 'a built Expression', [174]],
+			['_body', 'EnhancedForStatement.body', 'a built Statement', [212]]
 		],
 		config: ['modifiers', 'type', 'name', 'dimensions', 'value', 'body']
 	},
-	233: {
+	237: {
 		kind: 'marker_annotation',
 		required: [['_name', 'name']],
 		single: [['_name', 'MarkerAnnotation.name']],
-		nodeOnly: [['_name', 'MarkerAnnotation.name', 'buildIdentifier(…)', [1, 271]]]
+		nodeOnly: [['_name', 'MarkerAnnotation.name', 'buildIdentifier(…)', [1, 275]]]
 	},
-	234: {
+	238: {
 		kind: 'annotation',
 		required: [
 			['_name', 'name'],
@@ -1480,25 +1484,25 @@ export const structure: StructureTable = Object.freeze({
 			['_arguments', 'Annotation.arguments']
 		],
 		nodeOnly: [
-			['_name', 'Annotation.name', 'buildIdentifier(…)', [1, 271]],
-			['_arguments', 'Annotation.arguments', 'a built AnnotationArgumentList', [235]]
+			['_name', 'Annotation.name', 'buildIdentifier(…)', [1, 275]],
+			['_arguments', 'Annotation.arguments', 'a built AnnotationArgumentList', [239]]
 		],
-		hoisted: [['arguments', 'Annotation.arguments', 'a built AnnotationArgumentList', [170, 233, 234, 235, 236, 238]]],
+		hoisted: [['arguments', 'Annotation.arguments', 'a built AnnotationArgumentList', [174, 237, 238, 239, 240, 242]]],
 		config: ['name', 'arguments']
 	},
-	235: {
+	239: {
 		kind: 'annotation_argument_list',
 		nodeOnly: [
 			[
 				'_content',
 				'AnnotationArgumentList.contents',
 				'a built Expression / ElementValueArrayInitializer / MarkerAnnotation / Annotation / ElementValuePair',
-				[170, 233, 234, 236, 238]
+				[174, 237, 238, 240, 242]
 			]
 		],
 		lists: [['contents', false, 0]]
 	},
-	236: {
+	240: {
 		kind: 'element_value_pair',
 		required: [
 			['_key', 'key'],
@@ -1514,25 +1518,25 @@ export const structure: StructureTable = Object.freeze({
 				'_value',
 				'ElementValuePair.value',
 				'a built Expression / ElementValueArrayInitializer / MarkerAnnotation / Annotation',
-				[170, 233, 234, 238]
+				[174, 237, 238, 242]
 			]
 		],
 		config: ['key', 'value']
 	},
-	238: {
+	242: {
 		kind: 'element_value_array_initializer',
 		single: [['_element_values', 'ElementValueArrayInitializer.elementValues']],
-		nodeOnly: [['_element_values', 'ElementValueArrayInitializer.elementValues', 'a built ElementValues', [310]]],
+		nodeOnly: [['_element_values', 'ElementValueArrayInitializer.elementValues', 'a built ElementValues', [314]]],
 		hoisted: [
 			[
 				'elementValues',
 				'ElementValueArrayInitializer.elementValues',
 				'a built ElementValues',
-				[170, 233, 234, 238, 310]
+				[174, 237, 238, 242, 314]
 			]
 		]
 	},
-	240: {
+	244: {
 		kind: 'module_declaration',
 		required: [
 			['_name', 'name'],
@@ -1543,92 +1547,92 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'ModuleDeclaration.body']
 		],
 		nodeOnly: [
-			['_annotations', 'ModuleDeclaration.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]],
-			['_name', 'ModuleDeclaration.name', 'buildIdentifier(…)', [1, 271]],
-			['_body', 'ModuleDeclaration.body', 'a built ModuleBody', [241]]
+			['_annotations', 'ModuleDeclaration.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]],
+			['_name', 'ModuleDeclaration.name', 'buildIdentifier(…)', [1, 275]],
+			['_body', 'ModuleDeclaration.body', 'a built ModuleBody', [245]]
 		],
 		booleans: [['_open', 'ModuleDeclaration.open']],
-		hoisted: [['body', 'ModuleDeclaration.body', 'a built ModuleBody', [241, 242]]],
+		hoisted: [['body', 'ModuleDeclaration.body', 'a built ModuleBody', [245, 246]]],
 		config: ['annotations', 'open', 'name', 'body'],
 		lists: [['annotations', false, 'key']]
 	},
-	241: {
+	245: {
 		kind: 'module_body',
-		nodeOnly: [['_module_directives', 'ModuleBody.moduleDirectives', 'a built ModuleDirective', [242]]],
+		nodeOnly: [['_module_directives', 'ModuleBody.moduleDirectives', 'a built ModuleDirective', [246]]],
 		lists: [['moduleDirectives', false, 0]]
 	},
-	243: {
+	247: {
 		kind: 'requires_module_directive',
 		required: [['_module', 'module']],
 		single: [['_module', 'RequiresModuleDirective.module']],
-		nodeOnly: [['_module', 'RequiresModuleDirective.module', 'buildIdentifier(…)', [1, 271]]],
-		kindIds: [['_modifiers', 'RequiresModuleDirective.modifiers', [87, 88]]],
+		nodeOnly: [['_module', 'RequiresModuleDirective.module', 'buildIdentifier(…)', [1, 275]]],
+		kindIds: [['_modifiers', 'RequiresModuleDirective.modifiers', [90, 91]]],
 		config: ['modifiers', 'module'],
 		lists: [['modifiers', false, 'key']]
 	},
-	245: {
+	249: {
 		kind: 'exports_module_directive',
 		required: [['_package', 'package']],
 		single: [['_package', 'ExportsModuleDirective.package']],
 		nodeOnly: [
-			['_package', 'ExportsModuleDirective.package', 'buildIdentifier(…)', [1, 271]],
-			['_modules', 'ExportsModuleDirective.modules', 'buildIdentifier(…)', [1, 271]]
+			['_package', 'ExportsModuleDirective.package', 'buildIdentifier(…)', [1, 275]],
+			['_modules', 'ExportsModuleDirective.modules', 'buildIdentifier(…)', [1, 275]]
 		],
 		config: ['package', 'modules'],
 		lists: [['modules', false, 'key']]
 	},
-	246: {
+	250: {
 		kind: 'opens_module_directive',
 		required: [['_package', 'package']],
 		single: [['_package', 'OpensModuleDirective.package']],
 		nodeOnly: [
-			['_package', 'OpensModuleDirective.package', 'buildIdentifier(…)', [1, 271]],
-			['_modules', 'OpensModuleDirective.modules', 'buildIdentifier(…)', [1, 271]]
+			['_package', 'OpensModuleDirective.package', 'buildIdentifier(…)', [1, 275]],
+			['_modules', 'OpensModuleDirective.modules', 'buildIdentifier(…)', [1, 275]]
 		],
 		config: ['package', 'modules'],
 		lists: [['modules', false, 'key']]
 	},
-	247: {
+	251: {
 		kind: 'uses_module_directive',
 		required: [['_type', 'type']],
 		single: [['_type', 'UsesModuleDirective.type']],
-		nodeOnly: [['_type', 'UsesModuleDirective.type', 'buildIdentifier(…)', [1, 271]]]
+		nodeOnly: [['_type', 'UsesModuleDirective.type', 'buildIdentifier(…)', [1, 275]]]
 	},
-	248: {
+	252: {
 		kind: 'provides_module_directive',
 		required: [['_provided', 'provided']],
 		single: [['_provided', 'ProvidesModuleDirective.provided']],
 		nonEmpty: [['_provider', 'provides_module_directive.providers']],
 		nodeOnly: [
-			['_provided', 'ProvidesModuleDirective.provided', 'buildIdentifier(…)', [1, 271]],
-			['_provider', 'ProvidesModuleDirective.providers', 'buildIdentifier(…)', [1, 271]]
+			['_provided', 'ProvidesModuleDirective.provided', 'buildIdentifier(…)', [1, 275]],
+			['_provider', 'ProvidesModuleDirective.providers', 'buildIdentifier(…)', [1, 275]]
 		],
 		config: ['provided', 'providers'],
 		lists: [['providers', false, 'key']]
 	},
-	249: {
+	253: {
 		kind: 'package_declaration',
 		required: [['_name', 'name']],
 		single: [['_name', 'PackageDeclaration.name']],
 		nodeOnly: [
-			['_annotations', 'PackageDeclaration.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]],
-			['_name', 'PackageDeclaration.name', 'buildIdentifier(…)', [1, 271]]
+			['_annotations', 'PackageDeclaration.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]],
+			['_name', 'PackageDeclaration.name', 'buildIdentifier(…)', [1, 275]]
 		],
 		config: ['annotations', 'name'],
 		lists: [['annotations', false, 'key']]
 	},
-	250: {
+	254: {
 		kind: 'import_declaration',
 		required: [['_name', 'name']],
 		single: [['_name', 'ImportDeclaration.name']],
-		nodeOnly: [['_name', 'ImportDeclaration.name', 'buildIdentifier(…)', [1, 271]]],
+		nodeOnly: [['_name', 'ImportDeclaration.name', 'buildIdentifier(…)', [1, 275]]],
 		booleans: [
 			['_static', 'ImportDeclaration.static'],
 			['_asterisk', 'ImportDeclaration.asterisk']
 		],
 		config: ['static', 'name', 'asterisk']
 	},
-	252: {
+	256: {
 		kind: 'enum_declaration',
 		required: [
 			['_name', 'name'],
@@ -1641,40 +1645,40 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'EnumDeclaration.body']
 		],
 		nodeOnly: [
-			['_modifiers', 'EnumDeclaration.modifiers', 'a built Modifiers', [257]],
+			['_modifiers', 'EnumDeclaration.modifiers', 'a built Modifiers', [261]],
 			['_name', 'EnumDeclaration.name', 'buildIdentifier(…)', [1]],
-			['_interfaces', 'EnumDeclaration.interfaces', 'a built SuperInterfaces', [262]],
-			['_body', 'EnumDeclaration.body', 'a built EnumBody', [253]]
+			['_interfaces', 'EnumDeclaration.interfaces', 'a built SuperInterfaces', [266]],
+			['_body', 'EnumDeclaration.body', 'a built EnumBody', [257]]
 		],
-		hoisted: [['interfaces', 'EnumDeclaration.interfaces', 'a built SuperInterfaces', [262, 263, 286]]],
+		hoisted: [['interfaces', 'EnumDeclaration.interfaces', 'a built SuperInterfaces', [266, 267, 290]]],
 		config: ['modifiers', 'name', 'interfaces', 'body']
 	},
-	253: {
+	257: {
 		kind: 'enum_body',
 		single: [
 			['_enum_constants', 'EnumBody.enumConstants'],
 			['_enum_body_declarations', 'EnumBody.enumBodyDeclarations']
 		],
 		nodeOnly: [
-			['_enum_constants', 'EnumBody.enumConstants', 'a built EnumConstants', [311]],
-			['_enum_body_declarations', 'EnumBody.enumBodyDeclarations', 'a built EnumBodyDeclarations', [254]]
+			['_enum_constants', 'EnumBody.enumConstants', 'a built EnumConstants', [315]],
+			['_enum_body_declarations', 'EnumBody.enumBodyDeclarations', 'a built EnumBodyDeclarations', [258]]
 		],
-		hoisted: [['enumConstants', 'EnumBody.enumConstants', 'a built EnumConstants', [1, 255, 311]]],
+		hoisted: [['enumConstants', 'EnumBody.enumConstants', 'a built EnumConstants', [1, 259, 315]]],
 		config: ['enumConstants', 'enumBodyDeclarations']
 	},
-	254: {
+	258: {
 		kind: 'enum_body_declarations',
 		nodeOnly: [
 			[
 				'_class_body_declarations',
 				'EnumBodyDeclarations.classBodyDeclarations',
 				'a built FieldDeclaration / RecordDeclaration / MethodDeclaration / CompactConstructorDeclaration / ClassDeclaration / InterfaceDeclaration / AnnotationTypeDeclaration / EnumDeclaration / Block / StaticInitializer / ConstructorDeclaration',
-				[209, 252, 256, 266, 267, 272, 273, 274, 278, 302, 303]
+				[213, 256, 260, 270, 271, 276, 277, 278, 282, 306, 307]
 			]
 		],
 		lists: [['classBodyDeclarations', false, 0]]
 	},
-	255: {
+	259: {
 		kind: 'enum_constant',
 		required: [['_name', 'name']],
 		single: [
@@ -1684,14 +1688,14 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'EnumConstant.body']
 		],
 		nodeOnly: [
-			['_modifiers', 'EnumConstant.modifiers', 'a built Modifiers', [257]],
+			['_modifiers', 'EnumConstant.modifiers', 'a built Modifiers', [261]],
 			['_name', 'EnumConstant.name', 'buildIdentifier(…)', [1]],
-			['_arguments', 'EnumConstant.arguments', 'a built ArgumentList', [191]],
-			['_body', 'EnumConstant.body', 'a built ClassBody', [265]]
+			['_arguments', 'EnumConstant.arguments', 'a built ArgumentList', [195]],
+			['_body', 'EnumConstant.body', 'a built ClassBody', [269]]
 		],
 		config: ['modifiers', 'name', 'arguments', 'body']
 	},
-	256: {
+	260: {
 		kind: 'class_declaration',
 		required: [
 			['_name', 'name'],
@@ -1707,35 +1711,35 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'ClassDeclaration.body']
 		],
 		nodeOnly: [
-			['_modifiers', 'ClassDeclaration.modifiers', 'a built Modifiers', [257]],
+			['_modifiers', 'ClassDeclaration.modifiers', 'a built Modifiers', [261]],
 			['_name', 'ClassDeclaration.name', 'buildIdentifier(…)', [1]],
-			['_type_parameters', 'ClassDeclaration.typeParameters', 'a built TypeParameters', [258]],
-			['_extends', 'ClassDeclaration.extends', 'a built Superclass', [261]],
-			['_implements', 'ClassDeclaration.implements', 'a built SuperInterfaces', [262]],
-			['_permits', 'ClassDeclaration.permits', 'a built Permits', [264]],
-			['_body', 'ClassDeclaration.body', 'a built ClassBody', [265]]
+			['_type_parameters', 'ClassDeclaration.typeParameters', 'a built TypeParameters', [262]],
+			['_extends', 'ClassDeclaration.extends', 'a built Superclass', [265]],
+			['_implements', 'ClassDeclaration.implements', 'a built SuperInterfaces', [266]],
+			['_permits', 'ClassDeclaration.permits', 'a built Permits', [268]],
+			['_body', 'ClassDeclaration.body', 'a built ClassBody', [269]]
 		],
 		hoisted: [
-			['typeParameters', 'ClassDeclaration.typeParameters', 'a built TypeParameters', [1, 258, 259, 370]],
-			['extends', 'ClassDeclaration.extends', 'a built Superclass', [261, 286]],
-			['implements', 'ClassDeclaration.implements', 'a built SuperInterfaces', [262, 263, 286]],
-			['permits', 'ClassDeclaration.permits', 'a built Permits', [263, 264, 286]]
+			['typeParameters', 'ClassDeclaration.typeParameters', 'a built TypeParameters', [1, 262, 263, 374]],
+			['extends', 'ClassDeclaration.extends', 'a built Superclass', [265, 290]],
+			['implements', 'ClassDeclaration.implements', 'a built SuperInterfaces', [266, 267, 290]],
+			['permits', 'ClassDeclaration.permits', 'a built Permits', [267, 268, 290]]
 		],
 		config: ['modifiers', 'name', 'typeParameters', 'extends', 'implements', 'permits', 'body']
 	},
-	257: {
+	261: {
 		kind: 'modifiers',
 		nonEmpty: [['_elements', 'modifiers.children']],
-		nodeOnly: [['_elements', 'Modifiers.elements', 'a built MarkerAnnotation / Annotation', [233, 234]]],
+		nodeOnly: [['_elements', 'Modifiers.elements', 'a built MarkerAnnotation / Annotation', [237, 238]]],
 		lists: [['elements', false, 0]]
 	},
-	258: {
+	262: {
 		kind: 'type_parameters',
 		nonEmpty: [['_type_parameter', 'type_parameters.children']],
-		nodeOnly: [['_type_parameter', 'TypeParameters.typeParameters', 'a built TypeParameter', [259, 370]]],
+		nodeOnly: [['_type_parameter', 'TypeParameters.typeParameters', 'a built TypeParameter', [263, 374]]],
 		lists: [['typeParameters', false, 0]]
 	},
-	259: {
+	263: {
 		kind: 'type_parameter',
 		required: [['_type_identifier', 'typeIdentifier']],
 		single: [
@@ -1743,66 +1747,66 @@ export const structure: StructureTable = Object.freeze({
 			['_bounds', 'TypeParameter.bounds']
 		],
 		nodeOnly: [
-			['_annotations', 'TypeParameter.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]],
-			['_type_identifier', 'TypeParameter.typeIdentifier', 'a built TypeIdentifier', [370]],
-			['_bounds', 'TypeParameter.bounds', 'a built TypeBound', [260]]
+			['_annotations', 'TypeParameter.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]],
+			['_type_identifier', 'TypeParameter.typeIdentifier', 'a built TypeIdentifier', [374]],
+			['_bounds', 'TypeParameter.bounds', 'a built TypeBound', [264]]
 		],
-		hoisted: [['bounds', 'TypeParameter.bounds', 'a built TypeBound', [260, 286]]],
+		hoisted: [['bounds', 'TypeParameter.bounds', 'a built TypeBound', [264, 290]]],
 		config: ['annotations', 'typeIdentifier', 'bounds'],
 		lists: [['annotations', false, 'key']]
 	},
-	260: {
+	264: {
 		kind: 'type_bound',
 		nonEmpty: [['_type', 'type_bound.children']],
-		nodeOnly: [['_type', 'TypeBound.types', 'a built Type', [286]]],
+		nodeOnly: [['_type', 'TypeBound.types', 'a built Type', [290]]],
 		lists: [['types', false, 0]]
 	},
-	261: {
+	265: {
 		kind: 'superclass',
 		required: [['_type', 'type']],
 		single: [['_type', 'Superclass.type']],
-		nodeOnly: [['_type', 'Superclass.type', 'a built Type', [286]]]
+		nodeOnly: [['_type', 'Superclass.type', 'a built Type', [290]]]
 	},
-	262: {
+	266: {
 		kind: 'super_interfaces',
 		required: [['_type_list', 'typeList']],
 		single: [['_type_list', 'SuperInterfaces.typeList']],
-		nodeOnly: [['_type_list', 'SuperInterfaces.typeList', 'a built TypeList', [263]]],
-		hoisted: [['typeList', 'SuperInterfaces.typeList', 'a built TypeList', [263, 286]]]
+		nodeOnly: [['_type_list', 'SuperInterfaces.typeList', 'a built TypeList', [267]]],
+		hoisted: [['typeList', 'SuperInterfaces.typeList', 'a built TypeList', [267, 290]]]
 	},
-	263: {
+	267: {
 		kind: 'type_list',
 		nonEmpty: [['_type', 'type_list.children']],
-		nodeOnly: [['_type', 'TypeList.types', 'a built Type', [286]]],
+		nodeOnly: [['_type', 'TypeList.types', 'a built Type', [290]]],
 		lists: [['types', false, 0]]
 	},
-	264: {
+	268: {
 		kind: 'permits',
 		required: [['_type_list', 'typeList']],
 		single: [['_type_list', 'Permits.typeList']],
-		nodeOnly: [['_type_list', 'Permits.typeList', 'a built TypeList', [263]]],
-		hoisted: [['typeList', 'Permits.typeList', 'a built TypeList', [263, 286]]]
+		nodeOnly: [['_type_list', 'Permits.typeList', 'a built TypeList', [267]]],
+		hoisted: [['typeList', 'Permits.typeList', 'a built TypeList', [267, 290]]]
 	},
-	265: {
+	269: {
 		kind: 'class_body',
 		nodeOnly: [
 			[
 				'_class_body_declarations',
 				'ClassBody.classBodyDeclarations',
 				'a built FieldDeclaration / RecordDeclaration / MethodDeclaration / CompactConstructorDeclaration / ClassDeclaration / InterfaceDeclaration / AnnotationTypeDeclaration / EnumDeclaration / Block / StaticInitializer / ConstructorDeclaration',
-				[209, 252, 256, 266, 267, 272, 273, 274, 278, 302, 303]
+				[213, 256, 260, 270, 271, 276, 277, 278, 282, 306, 307]
 			]
 		],
 		lists: [['classBodyDeclarations', false, 0]]
 	},
-	266: {
+	270: {
 		kind: 'static_initializer',
 		required: [['_block', 'block']],
 		single: [['_block', 'StaticInitializer.block']],
-		nodeOnly: [['_block', 'StaticInitializer.block', 'a built Block', [209]]],
-		hoisted: [['block', 'StaticInitializer.block', 'a built Block', [208, 209]]]
+		nodeOnly: [['_block', 'StaticInitializer.block', 'a built Block', [213]]],
+		hoisted: [['block', 'StaticInitializer.block', 'a built Block', [212, 213]]]
 	},
-	267: {
+	271: {
 		kind: 'constructor_declaration',
 		required: [
 			['_name', 'name'],
@@ -1818,20 +1822,20 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'ConstructorDeclaration.body']
 		],
 		nodeOnly: [
-			['_modifiers', 'ConstructorDeclaration.modifiers', 'a built Modifiers', [257]],
-			['_type_parameters', 'ConstructorDeclaration.typeParameters', 'a built TypeParameters', [258]],
+			['_modifiers', 'ConstructorDeclaration.modifiers', 'a built Modifiers', [261]],
+			['_type_parameters', 'ConstructorDeclaration.typeParameters', 'a built TypeParameters', [262]],
 			['_name', 'ConstructorDeclaration.name', 'buildIdentifier(…)', [1]],
-			['_parameters', 'ConstructorDeclaration.parameters', 'a built FormalParameters', [296]],
-			['_throws', 'ConstructorDeclaration.throws', 'a built Throws', [300]],
-			['_body', 'ConstructorDeclaration.body', 'a built ConstructorBody', [269]]
+			['_parameters', 'ConstructorDeclaration.parameters', 'a built FormalParameters', [300]],
+			['_throws', 'ConstructorDeclaration.throws', 'a built Throws', [304]],
+			['_body', 'ConstructorDeclaration.body', 'a built ConstructorBody', [273]]
 		],
 		hoisted: [
-			['typeParameters', 'ConstructorDeclaration.typeParameters', 'a built TypeParameters', [1, 258, 259, 370]],
-			['throws', 'ConstructorDeclaration.throws', 'a built Throws', [286, 300]]
+			['typeParameters', 'ConstructorDeclaration.typeParameters', 'a built TypeParameters', [1, 262, 263, 374]],
+			['throws', 'ConstructorDeclaration.throws', 'a built Throws', [290, 304]]
 		],
 		config: ['modifiers', 'typeParameters', 'name', 'parameters', 'throws', 'body']
 	},
-	269: {
+	273: {
 		kind: 'constructor_body',
 		single: [['_explicit_constructor_invocation', 'ConstructorBody.explicitConstructorInvocation']],
 		nodeOnly: [
@@ -1839,14 +1843,14 @@ export const structure: StructureTable = Object.freeze({
 				'_explicit_constructor_invocation',
 				'ConstructorBody.explicitConstructorInvocation',
 				'a built ExplicitConstructorInvocation',
-				[270]
+				[274]
 			],
-			['_statements', 'ConstructorBody.statements', 'a built Statement', [208]]
+			['_statements', 'ConstructorBody.statements', 'a built Statement', [212]]
 		],
 		config: ['explicitConstructorInvocation', 'statements'],
 		lists: [['statements', false, 'key']]
 	},
-	270: {
+	274: {
 		kind: 'explicit_constructor_invocation',
 		required: [
 			['_content', 'content'],
@@ -1861,14 +1865,14 @@ export const structure: StructureTable = Object.freeze({
 				'_content',
 				'ExplicitConstructorInvocation.content',
 				'a built ExplicitConstructorInvocationArm1 / ExplicitConstructorInvocationArm2',
-				[312, 313]
+				[316, 317]
 			],
-			['_arguments', 'ExplicitConstructorInvocation.arguments', 'a built ArgumentList', [191]]
+			['_arguments', 'ExplicitConstructorInvocation.arguments', 'a built ArgumentList', [195]]
 		],
-		hoisted: [['arguments', 'ExplicitConstructorInvocation.arguments', 'a built ArgumentList', [170, 191]]],
+		hoisted: [['arguments', 'ExplicitConstructorInvocation.arguments', 'a built ArgumentList', [174, 195]]],
 		config: ['content', 'arguments']
 	},
-	271: {
+	275: {
 		kind: 'scoped_identifier',
 		required: [
 			['_scope', 'scope'],
@@ -1879,12 +1883,12 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'ScopedIdentifier.name']
 		],
 		nodeOnly: [
-			['_scope', 'ScopedIdentifier.scope', 'buildIdentifier(…)', [1, 271]],
+			['_scope', 'ScopedIdentifier.scope', 'buildIdentifier(…)', [1, 275]],
 			['_name', 'ScopedIdentifier.name', 'buildIdentifier(…)', [1]]
 		],
 		config: ['scope', 'name']
 	},
-	272: {
+	276: {
 		kind: 'field_declaration',
 		required: [['_type', 'type']],
 		single: [
@@ -1893,14 +1897,14 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nonEmpty: [['_declarator', 'field_declaration.declarators']],
 		nodeOnly: [
-			['_modifiers', 'FieldDeclaration.modifiers', 'a built Modifiers', [257]],
-			['_type', 'FieldDeclaration.type', 'a built UnannotatedType', [287]],
-			['_declarator', 'FieldDeclaration.declarators', 'a built VariableDeclarator', [1, 67, 283]]
+			['_modifiers', 'FieldDeclaration.modifiers', 'a built Modifiers', [261]],
+			['_type', 'FieldDeclaration.type', 'a built UnannotatedType', [291]],
+			['_declarator', 'FieldDeclaration.declarators', 'a built VariableDeclarator', [1, 70, 287]]
 		],
 		config: ['modifiers', 'type', 'declarators'],
 		lists: [['declarators', false, 'key']]
 	},
-	273: {
+	277: {
 		kind: 'record_declaration',
 		required: [
 			['_name', 'name'],
@@ -1916,20 +1920,20 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'RecordDeclaration.body']
 		],
 		nodeOnly: [
-			['_modifiers', 'RecordDeclaration.modifiers', 'a built Modifiers', [257]],
+			['_modifiers', 'RecordDeclaration.modifiers', 'a built Modifiers', [261]],
 			['_name', 'RecordDeclaration.name', 'buildIdentifier(…)', [1]],
-			['_type_parameters', 'RecordDeclaration.typeParameters', 'a built TypeParameters', [258]],
-			['_parameters', 'RecordDeclaration.parameters', 'a built FormalParameters', [296]],
-			['_interfaces', 'RecordDeclaration.interfaces', 'a built SuperInterfaces', [262]],
-			['_body', 'RecordDeclaration.body', 'a built ClassBody', [265]]
+			['_type_parameters', 'RecordDeclaration.typeParameters', 'a built TypeParameters', [262]],
+			['_parameters', 'RecordDeclaration.parameters', 'a built FormalParameters', [300]],
+			['_interfaces', 'RecordDeclaration.interfaces', 'a built SuperInterfaces', [266]],
+			['_body', 'RecordDeclaration.body', 'a built ClassBody', [269]]
 		],
 		hoisted: [
-			['typeParameters', 'RecordDeclaration.typeParameters', 'a built TypeParameters', [1, 258, 259, 370]],
-			['interfaces', 'RecordDeclaration.interfaces', 'a built SuperInterfaces', [262, 263, 286]]
+			['typeParameters', 'RecordDeclaration.typeParameters', 'a built TypeParameters', [1, 262, 263, 374]],
+			['interfaces', 'RecordDeclaration.interfaces', 'a built SuperInterfaces', [266, 267, 290]]
 		],
 		config: ['modifiers', 'name', 'typeParameters', 'parameters', 'interfaces', 'body']
 	},
-	274: {
+	278: {
 		kind: 'annotation_type_declaration',
 		required: [
 			['_name', 'name'],
@@ -1941,25 +1945,25 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'AnnotationTypeDeclaration.body']
 		],
 		nodeOnly: [
-			['_modifiers', 'AnnotationTypeDeclaration.modifiers', 'a built Modifiers', [257]],
+			['_modifiers', 'AnnotationTypeDeclaration.modifiers', 'a built Modifiers', [261]],
 			['_name', 'AnnotationTypeDeclaration.name', 'buildIdentifier(…)', [1]],
-			['_body', 'AnnotationTypeDeclaration.body', 'a built AnnotationTypeBody', [275]]
+			['_body', 'AnnotationTypeDeclaration.body', 'a built AnnotationTypeBody', [279]]
 		],
 		config: ['modifiers', 'name', 'body']
 	},
-	275: {
+	279: {
 		kind: 'annotation_type_body',
 		nodeOnly: [
 			[
 				'_elements',
 				'AnnotationTypeBody.elements',
 				'a built AnnotationTypeElementDeclaration / ConstantDeclaration / ClassDeclaration / InterfaceDeclaration / EnumDeclaration / AnnotationTypeDeclaration',
-				[252, 256, 274, 276, 278, 281]
+				[256, 260, 278, 280, 282, 285]
 			]
 		],
 		lists: [['elements', false, 0]]
 	},
-	276: {
+	280: {
 		kind: 'annotation_type_element_declaration',
 		required: [
 			['_type', 'type'],
@@ -1973,20 +1977,20 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'AnnotationTypeElementDeclaration.value']
 		],
 		nodeOnly: [
-			['_modifiers', 'AnnotationTypeElementDeclaration.modifiers', 'a built Modifiers', [257]],
-			['_type', 'AnnotationTypeElementDeclaration.type', 'a built UnannotatedType', [287]],
+			['_modifiers', 'AnnotationTypeElementDeclaration.modifiers', 'a built Modifiers', [261]],
+			['_type', 'AnnotationTypeElementDeclaration.type', 'a built UnannotatedType', [291]],
 			['_name', 'AnnotationTypeElementDeclaration.name', 'buildIdentifier(…)', [1]],
-			['_dimensions', 'AnnotationTypeElementDeclaration.dimensions', 'a built Dimensions', [196]],
+			['_dimensions', 'AnnotationTypeElementDeclaration.dimensions', 'a built Dimensions', [200]],
 			[
 				'_value',
 				'AnnotationTypeElementDeclaration.value',
 				'a built Expression / ElementValueArrayInitializer / MarkerAnnotation / Annotation',
-				[170, 233, 234, 238]
+				[174, 237, 238, 242]
 			]
 		],
 		config: ['modifiers', 'type', 'name', 'dimensions', 'value']
 	},
-	278: {
+	282: {
 		kind: 'interface_declaration',
 		required: [
 			['_name', 'name'],
@@ -2001,40 +2005,40 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'InterfaceDeclaration.body']
 		],
 		nodeOnly: [
-			['_modifiers', 'InterfaceDeclaration.modifiers', 'a built Modifiers', [257]],
+			['_modifiers', 'InterfaceDeclaration.modifiers', 'a built Modifiers', [261]],
 			['_name', 'InterfaceDeclaration.name', 'buildIdentifier(…)', [1]],
-			['_type_parameters', 'InterfaceDeclaration.typeParameters', 'a built TypeParameters', [258]],
-			['_extends_interfaces', 'InterfaceDeclaration.extendsInterfaces', 'a built ExtendsInterfaces', [279]],
-			['_permits', 'InterfaceDeclaration.permits', 'a built Permits', [264]],
-			['_body', 'InterfaceDeclaration.body', 'a built InterfaceBody', [280]]
+			['_type_parameters', 'InterfaceDeclaration.typeParameters', 'a built TypeParameters', [262]],
+			['_extends_interfaces', 'InterfaceDeclaration.extendsInterfaces', 'a built ExtendsInterfaces', [283]],
+			['_permits', 'InterfaceDeclaration.permits', 'a built Permits', [268]],
+			['_body', 'InterfaceDeclaration.body', 'a built InterfaceBody', [284]]
 		],
 		hoisted: [
-			['typeParameters', 'InterfaceDeclaration.typeParameters', 'a built TypeParameters', [1, 258, 259, 370]],
-			['extendsInterfaces', 'InterfaceDeclaration.extendsInterfaces', 'a built ExtendsInterfaces', [263, 279, 286]],
-			['permits', 'InterfaceDeclaration.permits', 'a built Permits', [263, 264, 286]]
+			['typeParameters', 'InterfaceDeclaration.typeParameters', 'a built TypeParameters', [1, 262, 263, 374]],
+			['extendsInterfaces', 'InterfaceDeclaration.extendsInterfaces', 'a built ExtendsInterfaces', [267, 283, 290]],
+			['permits', 'InterfaceDeclaration.permits', 'a built Permits', [267, 268, 290]]
 		],
 		config: ['modifiers', 'name', 'typeParameters', 'extendsInterfaces', 'permits', 'body']
 	},
-	279: {
+	283: {
 		kind: 'extends_interfaces',
 		required: [['_type_list', 'typeList']],
 		single: [['_type_list', 'ExtendsInterfaces.typeList']],
-		nodeOnly: [['_type_list', 'ExtendsInterfaces.typeList', 'a built TypeList', [263]]],
-		hoisted: [['typeList', 'ExtendsInterfaces.typeList', 'a built TypeList', [263, 286]]]
+		nodeOnly: [['_type_list', 'ExtendsInterfaces.typeList', 'a built TypeList', [267]]],
+		hoisted: [['typeList', 'ExtendsInterfaces.typeList', 'a built TypeList', [267, 290]]]
 	},
-	280: {
+	284: {
 		kind: 'interface_body',
 		nodeOnly: [
 			[
 				'_elements',
 				'InterfaceBody.elements',
 				'a built ConstantDeclaration / EnumDeclaration / MethodDeclaration / ClassDeclaration / InterfaceDeclaration / RecordDeclaration / AnnotationTypeDeclaration',
-				[252, 256, 273, 274, 278, 281, 302]
+				[256, 260, 277, 278, 282, 285, 306]
 			]
 		],
 		lists: [['elements', false, 0]]
 	},
-	281: {
+	285: {
 		kind: 'constant_declaration',
 		required: [['_type', 'type']],
 		single: [
@@ -2043,14 +2047,14 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nonEmpty: [['_declarator', 'constant_declaration.declarators']],
 		nodeOnly: [
-			['_modifiers', 'ConstantDeclaration.modifiers', 'a built Modifiers', [257]],
-			['_type', 'ConstantDeclaration.type', 'a built UnannotatedType', [287]],
-			['_declarator', 'ConstantDeclaration.declarators', 'a built VariableDeclarator', [1, 67, 283]]
+			['_modifiers', 'ConstantDeclaration.modifiers', 'a built Modifiers', [261]],
+			['_type', 'ConstantDeclaration.type', 'a built UnannotatedType', [291]],
+			['_declarator', 'ConstantDeclaration.declarators', 'a built VariableDeclarator', [1, 70, 287]]
 		],
 		config: ['modifiers', 'type', 'declarators'],
 		lists: [['declarators', false, 'key']]
 	},
-	283: {
+	287: {
 		kind: 'variable_declarator',
 		required: [['_name', 'name']],
 		single: [
@@ -2059,35 +2063,35 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'VariableDeclarator.value']
 		],
 		nodeOnly: [
-			['_name', 'VariableDeclarator.name', 'buildIdentifier(…)', [1, 67]],
-			['_dimensions', 'VariableDeclarator.dimensions', 'a built Dimensions', [196]],
-			['_value', 'VariableDeclarator.value', 'a built Expression / ArrayInitializer', [170, 285]]
+			['_name', 'VariableDeclarator.name', 'buildIdentifier(…)', [1, 70]],
+			['_dimensions', 'VariableDeclarator.dimensions', 'a built Dimensions', [200]],
+			['_value', 'VariableDeclarator.value', 'a built Expression / ArrayInitializer', [174, 289]]
 		],
 		config: ['name', 'dimensions', 'value']
 	},
-	285: {
+	289: {
 		kind: 'array_initializer',
 		single: [['_variable_initializers', 'ArrayInitializer.variableInitializers']],
 		nodeOnly: [
-			['_variable_initializers', 'ArrayInitializer.variableInitializers', 'a built VariableInitializers', [314]]
+			['_variable_initializers', 'ArrayInitializer.variableInitializers', 'a built VariableInitializers', [318]]
 		],
 		hoisted: [
-			['variableInitializers', 'ArrayInitializer.variableInitializers', 'a built VariableInitializers', [170, 285, 314]]
+			['variableInitializers', 'ArrayInitializer.variableInitializers', 'a built VariableInitializers', [174, 289, 318]]
 		]
 	},
-	288: {
+	292: {
 		kind: 'annotated_type',
 		required: [['_unannotated_type', 'unannotatedType']],
 		single: [['_unannotated_type', 'AnnotatedType.unannotatedType']],
 		nonEmpty: [['_annotations', 'annotated_type.annotations']],
 		nodeOnly: [
-			['_annotations', 'AnnotatedType.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]],
-			['_unannotated_type', 'AnnotatedType.unannotatedType', 'a built UnannotatedType', [287]]
+			['_annotations', 'AnnotatedType.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]],
+			['_unannotated_type', 'AnnotatedType.unannotatedType', 'a built UnannotatedType', [291]]
 		],
 		config: ['annotations', 'unannotatedType'],
 		lists: [['annotations', false, 'key']]
 	},
-	289: {
+	293: {
 		kind: 'scoped_type_identifier',
 		required: [
 			['_qualifier', 'qualifier'],
@@ -2102,15 +2106,15 @@ export const structure: StructureTable = Object.freeze({
 				'_qualifier',
 				'ScopedTypeIdentifier.qualifier',
 				'a built TypeIdentifier / ScopedTypeIdentifier / GenericType',
-				[289, 290, 370]
+				[293, 294, 374]
 			],
-			['_annotations', 'ScopedTypeIdentifier.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]],
-			['_name', 'ScopedTypeIdentifier.name', 'a built TypeIdentifier', [370]]
+			['_annotations', 'ScopedTypeIdentifier.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]],
+			['_name', 'ScopedTypeIdentifier.name', 'a built TypeIdentifier', [374]]
 		],
 		config: ['qualifier', 'annotations', 'name'],
 		lists: [['annotations', false, 'key']]
 	},
-	290: {
+	294: {
 		kind: 'generic_type',
 		required: [
 			['_content', 'content'],
@@ -2121,13 +2125,13 @@ export const structure: StructureTable = Object.freeze({
 			['_type_arguments', 'GenericType.typeArguments']
 		],
 		nodeOnly: [
-			['_content', 'GenericType.content', 'a built TypeIdentifier / ScopedTypeIdentifier', [289, 370]],
-			['_type_arguments', 'GenericType.typeArguments', 'a built TypeArguments', [193]]
+			['_content', 'GenericType.content', 'a built TypeIdentifier / ScopedTypeIdentifier', [293, 374]],
+			['_type_arguments', 'GenericType.typeArguments', 'a built TypeArguments', [197]]
 		],
-		hoisted: [['typeArguments', 'GenericType.typeArguments', 'a built TypeArguments', [193, 194, 286]]],
+		hoisted: [['typeArguments', 'GenericType.typeArguments', 'a built TypeArguments', [197, 198, 290]]],
 		config: ['content', 'typeArguments']
 	},
-	291: {
+	295: {
 		kind: 'array_type',
 		required: [
 			['_element', 'element'],
@@ -2138,12 +2142,12 @@ export const structure: StructureTable = Object.freeze({
 			['_dimensions', 'ArrayType.dimensions']
 		],
 		nodeOnly: [
-			['_element', 'ArrayType.element', 'a built UnannotatedType', [287]],
-			['_dimensions', 'ArrayType.dimensions', 'a built Dimensions', [196]]
+			['_element', 'ArrayType.element', 'a built UnannotatedType', [291]],
+			['_dimensions', 'ArrayType.dimensions', 'a built Dimensions', [200]]
 		],
 		config: ['element', 'dimensions']
 	},
-	297: {
+	301: {
 		kind: 'formal_parameter',
 		required: [
 			['_type', 'type'],
@@ -2156,20 +2160,20 @@ export const structure: StructureTable = Object.freeze({
 			['_dimensions', 'FormalParameter.dimensions']
 		],
 		nodeOnly: [
-			['_modifiers', 'FormalParameter.modifiers', 'a built Modifiers', [257]],
-			['_type', 'FormalParameter.type', 'a built UnannotatedType', [287]],
-			['_name', 'FormalParameter.name', 'buildIdentifier(…)', [1, 67]],
-			['_dimensions', 'FormalParameter.dimensions', 'a built Dimensions', [196]]
+			['_modifiers', 'FormalParameter.modifiers', 'a built Modifiers', [261]],
+			['_type', 'FormalParameter.type', 'a built UnannotatedType', [291]],
+			['_name', 'FormalParameter.name', 'buildIdentifier(…)', [1, 70]],
+			['_dimensions', 'FormalParameter.dimensions', 'a built Dimensions', [200]]
 		],
 		config: ['modifiers', 'type', 'name', 'dimensions']
 	},
-	298: {
+	302: {
 		kind: 'receiver_parameter',
 		required: [['_unannotated_type', 'unannotatedType']],
 		single: [['_unannotated_type', 'ReceiverParameter.unannotatedType']],
 		nodeOnly: [
-			['_annotations', 'ReceiverParameter.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]],
-			['_unannotated_type', 'ReceiverParameter.unannotatedType', 'a built UnannotatedType', [287]],
+			['_annotations', 'ReceiverParameter.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]],
+			['_unannotated_type', 'ReceiverParameter.unannotatedType', 'a built UnannotatedType', [291]],
 			['_identifier', 'ReceiverParameter.identifiers', 'buildIdentifier(…)', [1]]
 		],
 		config: ['annotations', 'unannotatedType', 'identifiers'],
@@ -2178,7 +2182,7 @@ export const structure: StructureTable = Object.freeze({
 			['identifiers', false, 'key']
 		]
 	},
-	299: {
+	303: {
 		kind: 'spread_parameter',
 		required: [
 			['_unannotated_type', 'unannotatedType'],
@@ -2190,21 +2194,21 @@ export const structure: StructureTable = Object.freeze({
 			['_variable_declarator', 'SpreadParameter.variableDeclarator']
 		],
 		nodeOnly: [
-			['_modifiers', 'SpreadParameter.modifiers', 'a built Modifiers', [257]],
-			['_unannotated_type', 'SpreadParameter.unannotatedType', 'a built UnannotatedType', [287]],
-			['_annotations', 'SpreadParameter.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]],
-			['_variable_declarator', 'SpreadParameter.variableDeclarator', 'a built VariableDeclarator', [283]]
+			['_modifiers', 'SpreadParameter.modifiers', 'a built Modifiers', [261]],
+			['_unannotated_type', 'SpreadParameter.unannotatedType', 'a built UnannotatedType', [291]],
+			['_annotations', 'SpreadParameter.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]],
+			['_variable_declarator', 'SpreadParameter.variableDeclarator', 'a built VariableDeclarator', [287]]
 		],
 		config: ['modifiers', 'unannotatedType', 'annotations', 'variableDeclarator'],
 		lists: [['annotations', false, 'key']]
 	},
-	300: {
+	304: {
 		kind: 'throws',
 		nonEmpty: [['_type', 'throws.children']],
-		nodeOnly: [['_type', 'Throws.types', 'a built Type', [286]]],
+		nodeOnly: [['_type', 'Throws.types', 'a built Type', [290]]],
 		lists: [['types', false, 0]]
 	},
-	301: {
+	305: {
 		kind: 'local_variable_declaration',
 		required: [['_type', 'type']],
 		single: [
@@ -2213,14 +2217,14 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nonEmpty: [['_declarator', 'local_variable_declaration.declarators']],
 		nodeOnly: [
-			['_modifiers', 'LocalVariableDeclaration.modifiers', 'a built Modifiers', [257]],
-			['_type', 'LocalVariableDeclaration.type', 'a built UnannotatedType', [287]],
-			['_declarator', 'LocalVariableDeclaration.declarators', 'a built VariableDeclarator', [1, 67, 283]]
+			['_modifiers', 'LocalVariableDeclaration.modifiers', 'a built Modifiers', [261]],
+			['_type', 'LocalVariableDeclaration.type', 'a built UnannotatedType', [291]],
+			['_declarator', 'LocalVariableDeclaration.declarators', 'a built VariableDeclarator', [1, 70, 287]]
 		],
 		config: ['modifiers', 'type', 'declarators'],
 		lists: [['declarators', false, 'key']]
 	},
-	302: {
+	306: {
 		kind: 'method_declaration',
 		required: [
 			['_return_type', 'returnType'],
@@ -2238,19 +2242,19 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'MethodDeclaration.body']
 		],
 		nodeOnly: [
-			['_modifiers', 'MethodDeclaration.modifiers', 'a built Modifiers', [257]],
-			['_type_parameters', 'MethodDeclaration.typeParameters', 'a built TypeParameters', [258]],
-			['_annotations', 'MethodDeclaration.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]],
-			['_return_type', 'MethodDeclaration.returnType', 'a built UnannotatedType', [287]],
+			['_modifiers', 'MethodDeclaration.modifiers', 'a built Modifiers', [261]],
+			['_type_parameters', 'MethodDeclaration.typeParameters', 'a built TypeParameters', [262]],
+			['_annotations', 'MethodDeclaration.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]],
+			['_return_type', 'MethodDeclaration.returnType', 'a built UnannotatedType', [291]],
 			['_name', 'MethodDeclaration.name', 'buildIdentifier(…)', [1]],
-			['_parameters', 'MethodDeclaration.parameters', 'a built FormalParameters', [296]],
-			['_dimensions', 'MethodDeclaration.dimensions', 'a built Dimensions', [196]],
-			['_throws', 'MethodDeclaration.throws', 'a built Throws', [300]],
-			['_body', 'MethodDeclaration.body', 'a built Block', [209]]
+			['_parameters', 'MethodDeclaration.parameters', 'a built FormalParameters', [300]],
+			['_dimensions', 'MethodDeclaration.dimensions', 'a built Dimensions', [200]],
+			['_throws', 'MethodDeclaration.throws', 'a built Throws', [304]],
+			['_body', 'MethodDeclaration.body', 'a built Block', [213]]
 		],
 		hoisted: [
-			['typeParameters', 'MethodDeclaration.typeParameters', 'a built TypeParameters', [1, 258, 259, 370]],
-			['throws', 'MethodDeclaration.throws', 'a built Throws', [286, 300]]
+			['typeParameters', 'MethodDeclaration.typeParameters', 'a built TypeParameters', [1, 262, 263, 374]],
+			['throws', 'MethodDeclaration.throws', 'a built Throws', [290, 304]]
 		],
 		config: [
 			'modifiers',
@@ -2265,7 +2269,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		lists: [['annotations', false, 'key']]
 	},
-	303: {
+	307: {
 		kind: 'compact_constructor_declaration',
 		required: [
 			['_name', 'name'],
@@ -2277,22 +2281,22 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'CompactConstructorDeclaration.body']
 		],
 		nodeOnly: [
-			['_modifiers', 'CompactConstructorDeclaration.modifiers', 'a built Modifiers', [257]],
+			['_modifiers', 'CompactConstructorDeclaration.modifiers', 'a built Modifiers', [261]],
 			['_name', 'CompactConstructorDeclaration.name', 'buildIdentifier(…)', [1]],
-			['_body', 'CompactConstructorDeclaration.body', 'a built Block', [209]]
+			['_body', 'CompactConstructorDeclaration.body', 'a built Block', [213]]
 		],
-		hoisted: [['body', 'CompactConstructorDeclaration.body', 'a built Block', [208, 209]]],
+		hoisted: [['body', 'CompactConstructorDeclaration.body', 'a built Block', [212, 213]]],
 		config: ['modifiers', 'name', 'body']
 	},
-	307: {
+	311: {
 		kind: 'array_creation_expression_arm1',
 		nonEmpty: [['_dimensions', 'array_creation_expression_arm1.children']],
 		nodeOnly: [
-			['_dimensions', 'ArrayCreationExpressionArm1.dimensions', 'a built DimensionsExpr / Dimensions', [182, 196]]
+			['_dimensions', 'ArrayCreationExpressionArm1.dimensions', 'a built DimensionsExpr / Dimensions', [186, 200]]
 		],
 		lists: [['dimensions', false, 0]]
 	},
-	308: {
+	312: {
 		kind: 'array_creation_expression_arm2',
 		required: [
 			['_dimensions', 'dimensions'],
@@ -2303,19 +2307,19 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'ArrayCreationExpressionArm2.value']
 		],
 		nodeOnly: [
-			['_dimensions', 'ArrayCreationExpressionArm2.dimensions', 'a built Dimensions', [196]],
-			['_value', 'ArrayCreationExpressionArm2.value', 'a built ArrayInitializer', [285]]
+			['_dimensions', 'ArrayCreationExpressionArm2.dimensions', 'a built Dimensions', [200]],
+			['_value', 'ArrayCreationExpressionArm2.value', 'a built ArrayInitializer', [289]]
 		],
-		hoisted: [['value', 'ArrayCreationExpressionArm2.value', 'a built ArrayInitializer', [170, 285, 314]]],
+		hoisted: [['value', 'ArrayCreationExpressionArm2.value', 'a built ArrayInitializer', [174, 289, 318]]],
 		config: ['dimensions', 'value']
 	},
-	309: {
+	313: {
 		kind: 'resources',
 		nonEmpty: [['_item', 'resources.elements']],
-		nodeOnly: [['_item', 'Resources.items', 'a built Resource', [227]]],
+		nodeOnly: [['_item', 'Resources.items', 'a built Resource', [231]]],
 		lists: [['items', false, 0]]
 	},
-	310: {
+	314: {
 		kind: 'element_values',
 		nonEmpty: [['_item', 'element_values.elements']],
 		nodeOnly: [
@@ -2323,26 +2327,26 @@ export const structure: StructureTable = Object.freeze({
 				'_item',
 				'ElementValues.items',
 				'a built Expression / ElementValueArrayInitializer / MarkerAnnotation / Annotation',
-				[170, 233, 234, 238]
+				[174, 237, 238, 242]
 			]
 		],
 		lists: [['items', false, 0]]
 	},
-	311: {
+	315: {
 		kind: 'enum_constants',
 		nonEmpty: [['_item', 'enum_constants.elements']],
-		nodeOnly: [['_item', 'EnumConstants.items', 'a built EnumConstant', [1, 255]]],
+		nodeOnly: [['_item', 'EnumConstants.items', 'a built EnumConstant', [1, 259]]],
 		lists: [['items', false, 0]]
 	},
-	312: {
+	316: {
 		kind: 'explicit_constructor_invocation_arm1',
 		required: [['_constructor', 'constructor_']],
 		single: [['_type_arguments', 'ExplicitConstructorInvocationArm1.typeArguments']],
-		nodeOnly: [['_type_arguments', 'ExplicitConstructorInvocationArm1.typeArguments', 'a built TypeArguments', [193]]],
-		kindIds: [['_constructor', 'ExplicitConstructorInvocationArm1.constructor_', [115, 116]]],
+		nodeOnly: [['_type_arguments', 'ExplicitConstructorInvocationArm1.typeArguments', 'a built TypeArguments', [197]]],
+		kindIds: [['_constructor', 'ExplicitConstructorInvocationArm1.constructor_', [118, 119]]],
 		config: ['typeArguments', 'constructor_']
 	},
-	313: {
+	317: {
 		kind: 'explicit_constructor_invocation_arm2',
 		required: [['_object', 'object']],
 		single: [
@@ -2350,18 +2354,18 @@ export const structure: StructureTable = Object.freeze({
 			['_type_arguments', 'ExplicitConstructorInvocationArm2.typeArguments']
 		],
 		nodeOnly: [
-			['_object', 'ExplicitConstructorInvocationArm2.object', 'a built PrimaryExpression', [180]],
-			['_type_arguments', 'ExplicitConstructorInvocationArm2.typeArguments', 'a built TypeArguments', [193]]
+			['_object', 'ExplicitConstructorInvocationArm2.object', 'a built PrimaryExpression', [184]],
+			['_type_arguments', 'ExplicitConstructorInvocationArm2.typeArguments', 'a built TypeArguments', [197]]
 		],
 		config: ['object', 'typeArguments']
 	},
-	314: {
+	318: {
 		kind: 'variable_initializers',
 		nonEmpty: [['_item', 'variable_initializers.elements']],
-		nodeOnly: [['_item', 'VariableInitializers.items', 'a built Expression / ArrayInitializer', [170, 285]]],
+		nodeOnly: [['_item', 'VariableInitializers.items', 'a built Expression / ArrayInitializer', [174, 289]]],
 		lists: [['items', false, 0]]
 	},
-	315: {
+	319: {
 		kind: 'cast_expression_arm',
 		required: [
 			['_type', 'type'],
@@ -2372,12 +2376,12 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'CastExpressionArm.value']
 		],
 		nodeOnly: [
-			['_type', 'CastExpressionArm.type', 'a built Type', [286]],
-			['_value', 'CastExpressionArm.value', 'a built Expression', [170]]
+			['_type', 'CastExpressionArm.type', 'a built Type', [290]],
+			['_value', 'CastExpressionArm.value', 'a built Expression', [174]]
 		],
 		config: ['type', 'value']
 	},
-	316: {
+	320: {
 		kind: 'instanceof_expression_arm',
 		required: [['_right', 'right']],
 		single: [
@@ -2385,12 +2389,12 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'InstanceofExpressionArm.name']
 		],
 		nodeOnly: [
-			['_right', 'InstanceofExpressionArm.right', 'a built Type', [286]],
+			['_right', 'InstanceofExpressionArm.right', 'a built Type', [290]],
 			['_name', 'InstanceofExpressionArm.name', 'buildIdentifier(…)', [1]]
 		],
 		config: ['right', 'name']
 	},
-	317: {
+	321: {
 		kind: 'object_creation_expression_arm',
 		required: [
 			['_primary_expression', 'primaryExpression'],
@@ -2405,23 +2409,23 @@ export const structure: StructureTable = Object.freeze({
 			['_class_body', 'ObjectCreationExpressionArm.classBody']
 		],
 		nodeOnly: [
-			['_primary_expression', 'ObjectCreationExpressionArm.primaryExpression', 'a built PrimaryExpression', [180]],
-			['_annotations', 'ObjectCreationExpressionArm.annotations', 'a built MarkerAnnotation / Annotation', [233, 234]],
-			['_type_arguments', 'ObjectCreationExpressionArm.typeArguments', 'a built TypeArguments', [193]],
+			['_primary_expression', 'ObjectCreationExpressionArm.primaryExpression', 'a built PrimaryExpression', [184]],
+			['_annotations', 'ObjectCreationExpressionArm.annotations', 'a built MarkerAnnotation / Annotation', [237, 238]],
+			['_type_arguments', 'ObjectCreationExpressionArm.typeArguments', 'a built TypeArguments', [197]],
 			[
 				'_type',
 				'ObjectCreationExpressionArm.type',
 				'a built SimpleType',
-				[102, 103, 104, 105, 106, 107, 108, 109, 110, 289, 290, 370]
+				[105, 106, 107, 108, 109, 110, 111, 112, 113, 293, 294, 374]
 			],
-			['_arguments', 'ObjectCreationExpressionArm.arguments', 'a built ArgumentList', [191]],
-			['_class_body', 'ObjectCreationExpressionArm.classBody', 'a built ClassBody', [265]]
+			['_arguments', 'ObjectCreationExpressionArm.arguments', 'a built ArgumentList', [195]],
+			['_class_body', 'ObjectCreationExpressionArm.classBody', 'a built ClassBody', [269]]
 		],
-		hoisted: [['arguments', 'ObjectCreationExpressionArm.arguments', 'a built ArgumentList', [170, 191]]],
+		hoisted: [['arguments', 'ObjectCreationExpressionArm.arguments', 'a built ArgumentList', [174, 195]]],
 		config: ['primaryExpression', 'annotations', 'typeArguments', 'type', 'arguments', 'classBody'],
 		lists: [['annotations', false, 'key']]
 	},
-	318: {
+	322: {
 		kind: 'method_invocation_arm',
 		required: [
 			['_object', 'object'],
@@ -2433,32 +2437,32 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'MethodInvocationArm.name']
 		],
 		nodeOnly: [
-			['_object', 'MethodInvocationArm.object', 'a built PrimaryExpression', [116, 180]],
-			['_type_arguments', 'MethodInvocationArm.typeArguments', 'a built TypeArguments', [193]],
+			['_object', 'MethodInvocationArm.object', 'a built PrimaryExpression', [119, 184]],
+			['_type_arguments', 'MethodInvocationArm.typeArguments', 'a built TypeArguments', [197]],
 			['_name', 'MethodInvocationArm.name', 'buildIdentifier(…)', [1]]
 		],
 		booleans: [['_super', 'MethodInvocationArm.super']],
 		config: ['object', 'super', 'typeArguments', 'name']
 	},
-	319: {
+	323: {
 		kind: 'wildcard_bounds_arm',
 		required: [['_type', 'type']],
 		single: [['_type', 'WildcardBoundsArm.type']],
-		nodeOnly: [['_type', 'WildcardBoundsArm.type', 'a built Type', [286]]]
+		nodeOnly: [['_type', 'WildcardBoundsArm.type', 'a built Type', [290]]]
 	},
-	320: {
+	324: {
 		kind: 'switch_label_arm',
 		single: [['_guard', 'SwitchLabelArm.guard']],
 		nonEmpty: [['_content', 'switch_label_arm.contents']],
 		nodeOnly: [
-			['_content', 'SwitchLabelArm.contents', 'a built Pattern / Expression', [170, 202]],
-			['_guard', 'SwitchLabelArm.guard', 'a built Guard', [207]]
+			['_content', 'SwitchLabelArm.contents', 'a built Pattern / Expression', [174, 206]],
+			['_guard', 'SwitchLabelArm.guard', 'a built Guard', [211]]
 		],
-		hoisted: [['guard', 'SwitchLabelArm.guard', 'a built Guard', [170, 207]]],
+		hoisted: [['guard', 'SwitchLabelArm.guard', 'a built Guard', [174, 211]]],
 		config: ['contents', 'guard'],
 		lists: [['contents', false, 'key']]
 	},
-	321: {
+	325: {
 		kind: 'record_pattern_component_arm',
 		required: [
 			['_unannotated_type', 'unannotatedType'],
@@ -2469,12 +2473,12 @@ export const structure: StructureTable = Object.freeze({
 			['_identifier', 'RecordPatternComponentArm.identifier']
 		],
 		nodeOnly: [
-			['_unannotated_type', 'RecordPatternComponentArm.unannotatedType', 'a built UnannotatedType', [287]],
+			['_unannotated_type', 'RecordPatternComponentArm.unannotatedType', 'a built UnannotatedType', [291]],
 			['_identifier', 'RecordPatternComponentArm.identifier', 'buildIdentifier(…)', [1]]
 		],
 		config: ['unannotatedType', 'identifier']
 	},
-	322: {
+	326: {
 		kind: 'assert_statement_arm',
 		required: [
 			['_condition', 'condition'],
@@ -2485,12 +2489,12 @@ export const structure: StructureTable = Object.freeze({
 			['_message', 'AssertStatementArm.message']
 		],
 		nodeOnly: [
-			['_condition', 'AssertStatementArm.condition', 'a built Expression', [170]],
-			['_message', 'AssertStatementArm.message', 'a built Expression', [170]]
+			['_condition', 'AssertStatementArm.condition', 'a built Expression', [174]],
+			['_message', 'AssertStatementArm.message', 'a built Expression', [174]]
 		],
 		config: ['condition', 'message']
 	},
-	323: {
+	327: {
 		kind: 'resource_arm',
 		required: [
 			['_type', 'type'],
@@ -2505,61 +2509,68 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'ResourceArm.value']
 		],
 		nodeOnly: [
-			['_modifiers', 'ResourceArm.modifiers', 'a built Modifiers', [257]],
-			['_type', 'ResourceArm.type', 'a built UnannotatedType', [287]],
-			['_name', 'ResourceArm.name', 'buildIdentifier(…)', [1, 67]],
-			['_dimensions', 'ResourceArm.dimensions', 'a built Dimensions', [196]],
-			['_value', 'ResourceArm.value', 'a built Expression', [170]]
+			['_modifiers', 'ResourceArm.modifiers', 'a built Modifiers', [261]],
+			['_type', 'ResourceArm.type', 'a built UnannotatedType', [291]],
+			['_name', 'ResourceArm.name', 'buildIdentifier(…)', [1, 70]],
+			['_dimensions', 'ResourceArm.dimensions', 'a built Dimensions', [200]],
+			['_value', 'ResourceArm.value', 'a built Expression', [174]]
 		],
 		config: ['modifiers', 'type', 'name', 'dimensions', 'value']
 	},
-	324: {
+	328: {
 		kind: 'for_statement_arm',
-		nodeOnly: [['_init', 'ForStatementArm.inits', 'a built Expression', [170]]],
+		nodeOnly: [['_init', 'ForStatementArm.inits', 'a built Expression', [174]]],
 		lists: [['inits', false, 0]]
 	},
-	325: {
+	329: {
 		kind: 'formal_parameters_receiver',
 		required: [['_receiver_parameter', 'receiverParameter']],
 		single: [['_receiver_parameter', 'FormalParametersReceiver.receiverParameter']],
 		nodeOnly: [
-			['_receiver_parameter', 'FormalParametersReceiver.receiverParameter', 'a built ReceiverParameter', [298]]
+			['_receiver_parameter', 'FormalParametersReceiver.receiverParameter', 'a built ReceiverParameter', [302]]
 		]
 	},
-	326: {
+	330: {
 		kind: 'formal_parameters_list',
 		single: [['_receiver_parameter', 'FormalParametersList.receiverParameter']],
 		nodeOnly: [
-			['_receiver_parameter', 'FormalParametersList.receiverParameter', 'a built ReceiverParameter', [298]],
-			['_element', 'FormalParametersList.elements', 'a built FormalParameter / SpreadParameter', [297, 299]]
+			['_receiver_parameter', 'FormalParametersList.receiverParameter', 'a built ReceiverParameter', [302]],
+			['_element', 'FormalParametersList.elements', 'a built FormalParameter / SpreadParameter', [301, 303]]
 		],
 		config: ['receiverParameter', 'elements'],
 		lists: [['elements', false, 'key']]
 	},
-	327: {
+	331: {
 		kind: 'string_literal_line',
-		nodeOnly: [['_elements', 'StringLiteralLine.elements', 'buildStringFragment(…)', [10, 167, 169]]],
+		nodeOnly: [['_elements', 'StringLiteralLine.elements', 'buildStringFragment(…)', [13, 171, 173]]],
 		lists: [['elements', false, 0]]
 	},
-	328: {
+	332: {
 		kind: 'string_literal_text_block',
-		nodeOnly: [['_elements', 'StringLiteralTextBlock.elements', 'buildMultilineStringFragment(…)', [166, 167, 168]]],
-		lists: [['elements', false, 0]]
+		single: [['_white_space', 'StringLiteralTextBlock.whiteSpace']],
+		nodeOnly: [
+			['_white_space', 'StringLiteralTextBlock.whiteSpace', 'buildTextBlockWhiteSpace(…)', [150]],
+			['_elements', 'StringLiteralTextBlock.elements', 'buildMultilineStringFragment(…)', [170, 171, 172]]
+		],
+		kindIds: [['_line_terminator', 'StringLiteralTextBlock.lineTerminator', [10, 11, 12]]],
+		config: ['whiteSpace', 'lineTerminator', 'elements'],
+		lists: [['elements', false, 'key']],
+		options: ['lineTerminator']
 	},
-	329: {
+	333: {
 		kind: 'try_statement_catches',
 		required: [['_body', 'body']],
 		single: [['_body', 'TryStatementCatches.body']],
 		nonEmpty: [['_catch_clause', 'try_statement_catches.catchClauses']],
 		nodeOnly: [
-			['_body', 'TryStatementCatches.body', 'a built Block', [209]],
-			['_catch_clause', 'TryStatementCatches.catchClauses', 'a built CatchClause', [221]]
+			['_body', 'TryStatementCatches.body', 'a built Block', [213]],
+			['_catch_clause', 'TryStatementCatches.catchClauses', 'a built CatchClause', [225]]
 		],
-		hoisted: [['body', 'TryStatementCatches.body', 'a built Block', [208, 209]]],
+		hoisted: [['body', 'TryStatementCatches.body', 'a built Block', [212, 213]]],
 		config: ['body', 'catchClauses'],
 		lists: [['catchClauses', false, 'key']]
 	},
-	330: {
+	334: {
 		kind: 'try_statement_finally',
 		required: [
 			['_body', 'body'],
@@ -2570,40 +2581,40 @@ export const structure: StructureTable = Object.freeze({
 			['_finally_clause', 'TryStatementFinally.finallyClause']
 		],
 		nodeOnly: [
-			['_body', 'TryStatementFinally.body', 'a built Block', [209]],
-			['_catch_clause', 'TryStatementFinally.catchClauses', 'a built CatchClause', [221]],
-			['_finally_clause', 'TryStatementFinally.finallyClause', 'a built FinallyClause', [224]]
+			['_body', 'TryStatementFinally.body', 'a built Block', [213]],
+			['_catch_clause', 'TryStatementFinally.catchClauses', 'a built CatchClause', [225]],
+			['_finally_clause', 'TryStatementFinally.finallyClause', 'a built FinallyClause', [228]]
 		],
 		hoisted: [
-			['body', 'TryStatementFinally.body', 'a built Block', [208, 209]],
-			['finallyClause', 'TryStatementFinally.finallyClause', 'a built FinallyClause', [208, 209, 224]]
+			['body', 'TryStatementFinally.body', 'a built Block', [212, 213]],
+			['finallyClause', 'TryStatementFinally.finallyClause', 'a built FinallyClause', [212, 213, 228]]
 		],
 		config: ['body', 'catchClauses', 'finallyClause'],
 		lists: [['catchClauses', false, 'key']]
 	},
-	331: {
+	335: {
 		kind: 'update_expression_postfix',
 		required: [
 			['_expression', 'expression'],
 			['_operator', 'operator']
 		],
 		single: [['_expression', 'UpdateExpressionPostfix.expression']],
-		nodeOnly: [['_expression', 'UpdateExpressionPostfix.expression', 'a built Expression', [170]]],
-		kindIds: [['_operator', 'UpdateExpressionPostfix.operator', [147, 148]]],
+		nodeOnly: [['_expression', 'UpdateExpressionPostfix.expression', 'a built Expression', [174]]],
+		kindIds: [['_operator', 'UpdateExpressionPostfix.operator', [151, 152]]],
 		config: ['expression', 'operator']
 	},
-	332: {
+	336: {
 		kind: 'update_expression_prefix',
 		required: [
 			['_operator', 'operator'],
 			['_expression', 'expression']
 		],
 		single: [['_expression', 'UpdateExpressionPrefix.expression']],
-		nodeOnly: [['_expression', 'UpdateExpressionPrefix.expression', 'a built Expression', [170]]],
-		kindIds: [['_operator', 'UpdateExpressionPrefix.operator', [147, 148]]],
+		nodeOnly: [['_expression', 'UpdateExpressionPrefix.expression', 'a built Expression', [174]]],
+		kindIds: [['_operator', 'UpdateExpressionPrefix.operator', [151, 152]]],
 		config: ['operator', 'expression']
 	},
-	370: {
+	374: {
 		kind: 'type_identifier',
 		required: [['_content', 'content']],
 		single: [['_content', 'TypeIdentifier.content']],

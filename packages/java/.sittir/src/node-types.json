@@ -4342,6 +4342,34 @@
             "named": true
           }
         ]
+      },
+      "line_terminator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "\n",
+            "named": false
+          },
+          {
+            "type": "\r",
+            "named": false
+          },
+          {
+            "type": "\r\n",
+            "named": false
+          }
+        ]
+      },
+      "white_space": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "text_block_white_space",
+            "named": true
+          }
+        ]
       }
     }
   },
@@ -5260,6 +5288,18 @@
     }
   },
   {
+    "type": "\n",
+    "named": false
+  },
+  {
+    "type": "\r",
+    "named": false
+  },
+  {
+    "type": "\r\n",
+    "named": false
+  },
+  {
     "type": "!",
     "named": false
   },
@@ -5764,6 +5804,10 @@
   {
     "type": "synchronized",
     "named": false
+  },
+  {
+    "type": "text_block_white_space",
+    "named": true
   },
   {
     "type": "this",

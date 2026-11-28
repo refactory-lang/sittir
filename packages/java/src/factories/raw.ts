@@ -190,6 +190,7 @@ export const buildRecordPatternComponentArm = dispatched(() => backend().buildRe
 export const buildAssertStatementArm = dispatched(() => backend().buildAssertStatementArm);
 export const buildResourceArm = dispatched(() => backend().buildResourceArm);
 export const buildForStatementArm = dispatched(() => backend().buildForStatementArm);
+export const buildTextBlockWhiteSpace = dispatched(() => backend().buildTextBlockWhiteSpace);
 export const buildFormalParametersReceiver = dispatched(() => backend().buildFormalParametersReceiver);
 export const buildFormalParametersList = dispatched(() => backend().buildFormalParametersList);
 export const buildStringLiteralLine = dispatched(() => backend().buildStringLiteralLine);
@@ -378,6 +379,7 @@ export const _factoryMap = {
 	assert_statement_arm: buildAssertStatementArm,
 	resource_arm: buildResourceArm,
 	for_statement_arm: buildForStatementArm,
+	text_block_white_space: buildTextBlockWhiteSpace,
 	formal_parameters_receiver: buildFormalParametersReceiver,
 	formal_parameters_list: buildFormalParametersList,
 	string_literal_line: buildStringLiteralLine,

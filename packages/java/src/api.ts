@@ -39,7 +39,7 @@ export const hooks: LanguageHooks<JavaAPI> = Object.freeze<LanguageHooks<JavaAPI
 	}),
 	records: () => import('./factories/records.js'),
 	trivia: triviaFacts,
-	rootKinds: Object.freeze([157]),
+	rootKinds: Object.freeze([161]),
 	querySlots,
 	nativeSlots,
 	structure,

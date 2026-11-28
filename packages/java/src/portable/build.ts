@@ -55,7 +55,7 @@ const unseated = (
 const unnumbered = (owner: string, scalar: string): never => {
 	throw new Error(owner + ' builds no ' + scalar + ' number');
 };
-type expression_assignment_compound_add$172_left$Item =
+type expression_assignment_compound_add$176_left$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'expression.member'>
 	| TailInput<JavaMap, 'expression.member', 'member'>
@@ -65,7 +65,7 @@ type expression_assignment_compound_add$172_left$Item =
 	| JavaMap['nodes']['expression.subscript']
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const expression_assignment_compound_add$172_left = (value: expression_assignment_compound_add$172_left$Item) => {
+const expression_assignment_compound_add$176_left = (value: expression_assignment_compound_add$176_left$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -74,7 +74,7 @@ const expression_assignment_compound_add$172_left = (value: expression_assignmen
 		return unnumbered('expression.assignment.compound.add.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 187, 189])) return value;
+		if (seated(value, [1, 191, 193])) return value;
 		return unseated('expression.assignment.compound.add.left', value);
 	}
 	switch (value.$path) {
@@ -90,7 +90,7 @@ const expression_assignment_compound_add$172_left = (value: expression_assignmen
 			return unbuilt('expression.assignment.compound.add.left', value);
 	}
 };
-type expression_assignment_compound_add$172_right$Item =
+type expression_assignment_compound_add$176_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -308,29 +308,29 @@ type expression_assignment_compound_add$172_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_assignment_compound_add$172_right = (value: expression_assignment_compound_add$172_right$Item) => {
+const expression_assignment_compound_add$176_right = (value: expression_assignment_compound_add$176_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -340,7 +340,7 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.add.right', 'float');
 	}
@@ -349,13 +349,13 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.add.right', value);
 	}
@@ -365,85 +365,85 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.assignment.compound.add.right', value);
@@ -476,7 +476,7 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.assignment.compound.add.right', value);
@@ -484,7 +484,7 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.assignment.compound.add.right', value);
@@ -521,13 +521,13 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -540,11 +540,11 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.assignment.compound.add.right', value);
@@ -558,7 +558,7 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 			return unbuilt('expression.assignment.compound.add.right', value);
 	}
 };
-type expression_assignment_compound_bitwise_and$172_left$Item =
+type expression_assignment_compound_bitwise_and$176_left$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'expression.member'>
 	| TailInput<JavaMap, 'expression.member', 'member'>
@@ -568,8 +568,8 @@ type expression_assignment_compound_bitwise_and$172_left$Item =
 	| JavaMap['nodes']['expression.subscript']
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const expression_assignment_compound_bitwise_and$172_left = (
-	value: expression_assignment_compound_bitwise_and$172_left$Item
+const expression_assignment_compound_bitwise_and$176_left = (
+	value: expression_assignment_compound_bitwise_and$176_left$Item
 ) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
@@ -582,7 +582,7 @@ const expression_assignment_compound_bitwise_and$172_left = (
 		);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 187, 189])) return value;
+		if (seated(value, [1, 191, 193])) return value;
 		return unseated('expression.assignment.compound.bitwise_and.left', value);
 	}
 	switch (value.$path) {
@@ -598,7 +598,7 @@ const expression_assignment_compound_bitwise_and$172_left = (
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 	}
 };
-type expression_assignment_compound_bitwise_and$172_right$Item =
+type expression_assignment_compound_bitwise_and$176_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -816,31 +816,31 @@ type expression_assignment_compound_bitwise_and$172_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_assignment_compound_bitwise_and$172_right = (
-	value: expression_assignment_compound_bitwise_and$172_right$Item
+const expression_assignment_compound_bitwise_and$176_right = (
+	value: expression_assignment_compound_bitwise_and$176_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -850,7 +850,7 @@ const expression_assignment_compound_bitwise_and$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.bitwise_and.right', 'float');
 	}
@@ -859,13 +859,13 @@ const expression_assignment_compound_bitwise_and$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.bitwise_and.right', value);
 	}
@@ -875,85 +875,85 @@ const expression_assignment_compound_bitwise_and$172_right = (
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
@@ -986,7 +986,7 @@ const expression_assignment_compound_bitwise_and$172_right = (
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
@@ -994,7 +994,7 @@ const expression_assignment_compound_bitwise_and$172_right = (
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
@@ -1031,13 +1031,13 @@ const expression_assignment_compound_bitwise_and$172_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -1050,11 +1050,11 @@ const expression_assignment_compound_bitwise_and$172_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
@@ -1068,7 +1068,7 @@ const expression_assignment_compound_bitwise_and$172_right = (
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 	}
 };
-type expression_assignment_compound_bitwise_or$172_left$Item =
+type expression_assignment_compound_bitwise_or$176_left$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'expression.member'>
 	| TailInput<JavaMap, 'expression.member', 'member'>
@@ -1078,8 +1078,8 @@ type expression_assignment_compound_bitwise_or$172_left$Item =
 	| JavaMap['nodes']['expression.subscript']
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const expression_assignment_compound_bitwise_or$172_left = (
-	value: expression_assignment_compound_bitwise_or$172_left$Item
+const expression_assignment_compound_bitwise_or$176_left = (
+	value: expression_assignment_compound_bitwise_or$176_left$Item
 ) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
@@ -1092,7 +1092,7 @@ const expression_assignment_compound_bitwise_or$172_left = (
 		);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 187, 189])) return value;
+		if (seated(value, [1, 191, 193])) return value;
 		return unseated('expression.assignment.compound.bitwise_or.left', value);
 	}
 	switch (value.$path) {
@@ -1108,7 +1108,7 @@ const expression_assignment_compound_bitwise_or$172_left = (
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 	}
 };
-type expression_assignment_compound_bitwise_or$172_right$Item =
+type expression_assignment_compound_bitwise_or$176_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -1326,31 +1326,31 @@ type expression_assignment_compound_bitwise_or$172_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_assignment_compound_bitwise_or$172_right = (
-	value: expression_assignment_compound_bitwise_or$172_right$Item
+const expression_assignment_compound_bitwise_or$176_right = (
+	value: expression_assignment_compound_bitwise_or$176_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -1360,7 +1360,7 @@ const expression_assignment_compound_bitwise_or$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.bitwise_or.right', 'float');
 	}
@@ -1369,13 +1369,13 @@ const expression_assignment_compound_bitwise_or$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.bitwise_or.right', value);
 	}
@@ -1385,85 +1385,85 @@ const expression_assignment_compound_bitwise_or$172_right = (
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
@@ -1496,7 +1496,7 @@ const expression_assignment_compound_bitwise_or$172_right = (
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
@@ -1504,7 +1504,7 @@ const expression_assignment_compound_bitwise_or$172_right = (
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
@@ -1541,13 +1541,13 @@ const expression_assignment_compound_bitwise_or$172_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -1560,11 +1560,11 @@ const expression_assignment_compound_bitwise_or$172_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
@@ -1578,7 +1578,7 @@ const expression_assignment_compound_bitwise_or$172_right = (
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 	}
 };
-type expression_assignment_compound_bitwise_xor$172_left$Item =
+type expression_assignment_compound_bitwise_xor$176_left$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'expression.member'>
 	| TailInput<JavaMap, 'expression.member', 'member'>
@@ -1588,8 +1588,8 @@ type expression_assignment_compound_bitwise_xor$172_left$Item =
 	| JavaMap['nodes']['expression.subscript']
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const expression_assignment_compound_bitwise_xor$172_left = (
-	value: expression_assignment_compound_bitwise_xor$172_left$Item
+const expression_assignment_compound_bitwise_xor$176_left = (
+	value: expression_assignment_compound_bitwise_xor$176_left$Item
 ) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
@@ -1602,7 +1602,7 @@ const expression_assignment_compound_bitwise_xor$172_left = (
 		);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 187, 189])) return value;
+		if (seated(value, [1, 191, 193])) return value;
 		return unseated('expression.assignment.compound.bitwise_xor.left', value);
 	}
 	switch (value.$path) {
@@ -1618,7 +1618,7 @@ const expression_assignment_compound_bitwise_xor$172_left = (
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 	}
 };
-type expression_assignment_compound_bitwise_xor$172_right$Item =
+type expression_assignment_compound_bitwise_xor$176_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -1836,31 +1836,31 @@ type expression_assignment_compound_bitwise_xor$172_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_assignment_compound_bitwise_xor$172_right = (
-	value: expression_assignment_compound_bitwise_xor$172_right$Item
+const expression_assignment_compound_bitwise_xor$176_right = (
+	value: expression_assignment_compound_bitwise_xor$176_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -1870,7 +1870,7 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.bitwise_xor.right', 'float');
 	}
@@ -1879,13 +1879,13 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.bitwise_xor.right', value);
 	}
@@ -1895,85 +1895,85 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
@@ -2006,7 +2006,7 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
@@ -2014,7 +2014,7 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
@@ -2051,13 +2051,13 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -2070,11 +2070,11 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
@@ -2088,7 +2088,7 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 	}
 };
-type expression_assignment_compound_divide$172_left$Item =
+type expression_assignment_compound_divide$176_left$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'expression.member'>
 	| TailInput<JavaMap, 'expression.member', 'member'>
@@ -2098,7 +2098,7 @@ type expression_assignment_compound_divide$172_left$Item =
 	| JavaMap['nodes']['expression.subscript']
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const expression_assignment_compound_divide$172_left = (value: expression_assignment_compound_divide$172_left$Item) => {
+const expression_assignment_compound_divide$176_left = (value: expression_assignment_compound_divide$176_left$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -2107,7 +2107,7 @@ const expression_assignment_compound_divide$172_left = (value: expression_assign
 		return unnumbered('expression.assignment.compound.divide.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 187, 189])) return value;
+		if (seated(value, [1, 191, 193])) return value;
 		return unseated('expression.assignment.compound.divide.left', value);
 	}
 	switch (value.$path) {
@@ -2123,7 +2123,7 @@ const expression_assignment_compound_divide$172_left = (value: expression_assign
 			return unbuilt('expression.assignment.compound.divide.left', value);
 	}
 };
-type expression_assignment_compound_divide$172_right$Item =
+type expression_assignment_compound_divide$176_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -2341,31 +2341,31 @@ type expression_assignment_compound_divide$172_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_assignment_compound_divide$172_right = (
-	value: expression_assignment_compound_divide$172_right$Item
+const expression_assignment_compound_divide$176_right = (
+	value: expression_assignment_compound_divide$176_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -2375,7 +2375,7 @@ const expression_assignment_compound_divide$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.divide.right', 'float');
 	}
@@ -2384,13 +2384,13 @@ const expression_assignment_compound_divide$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.divide.right', value);
 	}
@@ -2400,85 +2400,85 @@ const expression_assignment_compound_divide$172_right = (
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.assignment.compound.divide.right', value);
@@ -2511,7 +2511,7 @@ const expression_assignment_compound_divide$172_right = (
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.assignment.compound.divide.right', value);
@@ -2519,7 +2519,7 @@ const expression_assignment_compound_divide$172_right = (
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.assignment.compound.divide.right', value);
@@ -2556,13 +2556,13 @@ const expression_assignment_compound_divide$172_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -2575,11 +2575,11 @@ const expression_assignment_compound_divide$172_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.assignment.compound.divide.right', value);
@@ -2593,7 +2593,7 @@ const expression_assignment_compound_divide$172_right = (
 			return unbuilt('expression.assignment.compound.divide.right', value);
 	}
 };
-type expression_assignment_compound_modulo$172_left$Item =
+type expression_assignment_compound_modulo$176_left$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'expression.member'>
 	| TailInput<JavaMap, 'expression.member', 'member'>
@@ -2603,7 +2603,7 @@ type expression_assignment_compound_modulo$172_left$Item =
 	| JavaMap['nodes']['expression.subscript']
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const expression_assignment_compound_modulo$172_left = (value: expression_assignment_compound_modulo$172_left$Item) => {
+const expression_assignment_compound_modulo$176_left = (value: expression_assignment_compound_modulo$176_left$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -2612,7 +2612,7 @@ const expression_assignment_compound_modulo$172_left = (value: expression_assign
 		return unnumbered('expression.assignment.compound.modulo.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 187, 189])) return value;
+		if (seated(value, [1, 191, 193])) return value;
 		return unseated('expression.assignment.compound.modulo.left', value);
 	}
 	switch (value.$path) {
@@ -2628,7 +2628,7 @@ const expression_assignment_compound_modulo$172_left = (value: expression_assign
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 	}
 };
-type expression_assignment_compound_modulo$172_right$Item =
+type expression_assignment_compound_modulo$176_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -2846,31 +2846,31 @@ type expression_assignment_compound_modulo$172_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_assignment_compound_modulo$172_right = (
-	value: expression_assignment_compound_modulo$172_right$Item
+const expression_assignment_compound_modulo$176_right = (
+	value: expression_assignment_compound_modulo$176_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -2880,7 +2880,7 @@ const expression_assignment_compound_modulo$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.modulo.right', 'float');
 	}
@@ -2889,13 +2889,13 @@ const expression_assignment_compound_modulo$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.modulo.right', value);
 	}
@@ -2905,85 +2905,85 @@ const expression_assignment_compound_modulo$172_right = (
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
@@ -3016,7 +3016,7 @@ const expression_assignment_compound_modulo$172_right = (
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
@@ -3024,7 +3024,7 @@ const expression_assignment_compound_modulo$172_right = (
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
@@ -3061,13 +3061,13 @@ const expression_assignment_compound_modulo$172_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -3080,11 +3080,11 @@ const expression_assignment_compound_modulo$172_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
@@ -3098,7 +3098,7 @@ const expression_assignment_compound_modulo$172_right = (
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 	}
 };
-type expression_assignment_compound_multiply$172_left$Item =
+type expression_assignment_compound_multiply$176_left$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'expression.member'>
 	| TailInput<JavaMap, 'expression.member', 'member'>
@@ -3108,8 +3108,8 @@ type expression_assignment_compound_multiply$172_left$Item =
 	| JavaMap['nodes']['expression.subscript']
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const expression_assignment_compound_multiply$172_left = (
-	value: expression_assignment_compound_multiply$172_left$Item
+const expression_assignment_compound_multiply$176_left = (
+	value: expression_assignment_compound_multiply$176_left$Item
 ) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
@@ -3122,7 +3122,7 @@ const expression_assignment_compound_multiply$172_left = (
 		);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 187, 189])) return value;
+		if (seated(value, [1, 191, 193])) return value;
 		return unseated('expression.assignment.compound.multiply.left', value);
 	}
 	switch (value.$path) {
@@ -3138,7 +3138,7 @@ const expression_assignment_compound_multiply$172_left = (
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 	}
 };
-type expression_assignment_compound_multiply$172_right$Item =
+type expression_assignment_compound_multiply$176_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -3356,31 +3356,31 @@ type expression_assignment_compound_multiply$172_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_assignment_compound_multiply$172_right = (
-	value: expression_assignment_compound_multiply$172_right$Item
+const expression_assignment_compound_multiply$176_right = (
+	value: expression_assignment_compound_multiply$176_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -3390,7 +3390,7 @@ const expression_assignment_compound_multiply$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.multiply.right', 'float');
 	}
@@ -3399,13 +3399,13 @@ const expression_assignment_compound_multiply$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.multiply.right', value);
 	}
@@ -3415,85 +3415,85 @@ const expression_assignment_compound_multiply$172_right = (
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
@@ -3526,7 +3526,7 @@ const expression_assignment_compound_multiply$172_right = (
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
@@ -3534,7 +3534,7 @@ const expression_assignment_compound_multiply$172_right = (
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
@@ -3571,13 +3571,13 @@ const expression_assignment_compound_multiply$172_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -3590,11 +3590,11 @@ const expression_assignment_compound_multiply$172_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
@@ -3608,7 +3608,7 @@ const expression_assignment_compound_multiply$172_right = (
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 	}
 };
-type expression_assignment_compound_shift_left$172_left$Item =
+type expression_assignment_compound_shift_left$176_left$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'expression.member'>
 	| TailInput<JavaMap, 'expression.member', 'member'>
@@ -3618,8 +3618,8 @@ type expression_assignment_compound_shift_left$172_left$Item =
 	| JavaMap['nodes']['expression.subscript']
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const expression_assignment_compound_shift_left$172_left = (
-	value: expression_assignment_compound_shift_left$172_left$Item
+const expression_assignment_compound_shift_left$176_left = (
+	value: expression_assignment_compound_shift_left$176_left$Item
 ) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
@@ -3632,7 +3632,7 @@ const expression_assignment_compound_shift_left$172_left = (
 		);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 187, 189])) return value;
+		if (seated(value, [1, 191, 193])) return value;
 		return unseated('expression.assignment.compound.shift_left.left', value);
 	}
 	switch (value.$path) {
@@ -3648,7 +3648,7 @@ const expression_assignment_compound_shift_left$172_left = (
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 	}
 };
-type expression_assignment_compound_shift_left$172_right$Item =
+type expression_assignment_compound_shift_left$176_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -3866,31 +3866,31 @@ type expression_assignment_compound_shift_left$172_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_assignment_compound_shift_left$172_right = (
-	value: expression_assignment_compound_shift_left$172_right$Item
+const expression_assignment_compound_shift_left$176_right = (
+	value: expression_assignment_compound_shift_left$176_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -3900,7 +3900,7 @@ const expression_assignment_compound_shift_left$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.shift_left.right', 'float');
 	}
@@ -3909,13 +3909,13 @@ const expression_assignment_compound_shift_left$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.shift_left.right', value);
 	}
@@ -3925,85 +3925,85 @@ const expression_assignment_compound_shift_left$172_right = (
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
@@ -4036,7 +4036,7 @@ const expression_assignment_compound_shift_left$172_right = (
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
@@ -4044,7 +4044,7 @@ const expression_assignment_compound_shift_left$172_right = (
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
@@ -4081,13 +4081,13 @@ const expression_assignment_compound_shift_left$172_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -4100,11 +4100,11 @@ const expression_assignment_compound_shift_left$172_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
@@ -4118,7 +4118,7 @@ const expression_assignment_compound_shift_left$172_right = (
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 	}
 };
-type expression_assignment_compound_shift_right$172_left$Item =
+type expression_assignment_compound_shift_right$176_left$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'expression.member'>
 	| TailInput<JavaMap, 'expression.member', 'member'>
@@ -4128,8 +4128,8 @@ type expression_assignment_compound_shift_right$172_left$Item =
 	| JavaMap['nodes']['expression.subscript']
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const expression_assignment_compound_shift_right$172_left = (
-	value: expression_assignment_compound_shift_right$172_left$Item
+const expression_assignment_compound_shift_right$176_left = (
+	value: expression_assignment_compound_shift_right$176_left$Item
 ) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
@@ -4142,7 +4142,7 @@ const expression_assignment_compound_shift_right$172_left = (
 		);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 187, 189])) return value;
+		if (seated(value, [1, 191, 193])) return value;
 		return unseated('expression.assignment.compound.shift_right.left', value);
 	}
 	switch (value.$path) {
@@ -4158,7 +4158,7 @@ const expression_assignment_compound_shift_right$172_left = (
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 	}
 };
-type expression_assignment_compound_shift_right$172_right$Item =
+type expression_assignment_compound_shift_right$176_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -4376,31 +4376,31 @@ type expression_assignment_compound_shift_right$172_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_assignment_compound_shift_right$172_right = (
-	value: expression_assignment_compound_shift_right$172_right$Item
+const expression_assignment_compound_shift_right$176_right = (
+	value: expression_assignment_compound_shift_right$176_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -4410,7 +4410,7 @@ const expression_assignment_compound_shift_right$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.shift_right.right', 'float');
 	}
@@ -4419,13 +4419,13 @@ const expression_assignment_compound_shift_right$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.shift_right.right', value);
 	}
@@ -4435,85 +4435,85 @@ const expression_assignment_compound_shift_right$172_right = (
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
@@ -4546,7 +4546,7 @@ const expression_assignment_compound_shift_right$172_right = (
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
@@ -4554,7 +4554,7 @@ const expression_assignment_compound_shift_right$172_right = (
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
@@ -4591,13 +4591,13 @@ const expression_assignment_compound_shift_right$172_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -4610,11 +4610,11 @@ const expression_assignment_compound_shift_right$172_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
@@ -4628,7 +4628,7 @@ const expression_assignment_compound_shift_right$172_right = (
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 	}
 };
-type expression_assignment_compound_shift_right_unsigned$172_left$Item =
+type expression_assignment_compound_shift_right_unsigned$176_left$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'expression.member'>
 	| TailInput<JavaMap, 'expression.member', 'member'>
@@ -4638,8 +4638,8 @@ type expression_assignment_compound_shift_right_unsigned$172_left$Item =
 	| JavaMap['nodes']['expression.subscript']
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const expression_assignment_compound_shift_right_unsigned$172_left = (
-	value: expression_assignment_compound_shift_right_unsigned$172_left$Item
+const expression_assignment_compound_shift_right_unsigned$176_left = (
+	value: expression_assignment_compound_shift_right_unsigned$176_left$Item
 ) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
@@ -4652,7 +4652,7 @@ const expression_assignment_compound_shift_right_unsigned$172_left = (
 		);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 187, 189])) return value;
+		if (seated(value, [1, 191, 193])) return value;
 		return unseated('expression.assignment.compound.shift_right_unsigned.left', value);
 	}
 	switch (value.$path) {
@@ -4668,7 +4668,7 @@ const expression_assignment_compound_shift_right_unsigned$172_left = (
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.left', value);
 	}
 };
-type expression_assignment_compound_shift_right_unsigned$172_right$Item =
+type expression_assignment_compound_shift_right_unsigned$176_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -4886,31 +4886,31 @@ type expression_assignment_compound_shift_right_unsigned$172_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_assignment_compound_shift_right_unsigned$172_right = (
-	value: expression_assignment_compound_shift_right_unsigned$172_right$Item
+const expression_assignment_compound_shift_right_unsigned$176_right = (
+	value: expression_assignment_compound_shift_right_unsigned$176_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -4920,7 +4920,7 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.shift_right_unsigned.right', 'float');
 	}
@@ -4929,13 +4929,13 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.shift_right_unsigned.right', value);
 	}
@@ -4945,85 +4945,85 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
@@ -5056,7 +5056,7 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
@@ -5064,7 +5064,7 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
@@ -5101,13 +5101,13 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -5120,11 +5120,11 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
@@ -5138,7 +5138,7 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
 	}
 };
-type expression_assignment_compound_subtract$172_left$Item =
+type expression_assignment_compound_subtract$176_left$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'expression.member'>
 	| TailInput<JavaMap, 'expression.member', 'member'>
@@ -5148,8 +5148,8 @@ type expression_assignment_compound_subtract$172_left$Item =
 	| JavaMap['nodes']['expression.subscript']
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const expression_assignment_compound_subtract$172_left = (
-	value: expression_assignment_compound_subtract$172_left$Item
+const expression_assignment_compound_subtract$176_left = (
+	value: expression_assignment_compound_subtract$176_left$Item
 ) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
@@ -5162,7 +5162,7 @@ const expression_assignment_compound_subtract$172_left = (
 		);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 187, 189])) return value;
+		if (seated(value, [1, 191, 193])) return value;
 		return unseated('expression.assignment.compound.subtract.left', value);
 	}
 	switch (value.$path) {
@@ -5178,7 +5178,7 @@ const expression_assignment_compound_subtract$172_left = (
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 	}
 };
-type expression_assignment_compound_subtract$172_right$Item =
+type expression_assignment_compound_subtract$176_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -5396,31 +5396,31 @@ type expression_assignment_compound_subtract$172_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_assignment_compound_subtract$172_right = (
-	value: expression_assignment_compound_subtract$172_right$Item
+const expression_assignment_compound_subtract$176_right = (
+	value: expression_assignment_compound_subtract$176_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -5430,7 +5430,7 @@ const expression_assignment_compound_subtract$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.subtract.right', 'float');
 	}
@@ -5439,13 +5439,13 @@ const expression_assignment_compound_subtract$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.subtract.right', value);
 	}
@@ -5455,85 +5455,85 @@ const expression_assignment_compound_subtract$172_right = (
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
@@ -5566,7 +5566,7 @@ const expression_assignment_compound_subtract$172_right = (
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
@@ -5574,7 +5574,7 @@ const expression_assignment_compound_subtract$172_right = (
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
@@ -5611,13 +5611,13 @@ const expression_assignment_compound_subtract$172_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -5630,11 +5630,11 @@ const expression_assignment_compound_subtract$172_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
@@ -5648,7 +5648,7 @@ const expression_assignment_compound_subtract$172_right = (
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 	}
 };
-type expression_binary_arithmetic_add$173_left$Item =
+type expression_binary_arithmetic_add$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -5866,29 +5866,29 @@ type expression_binary_arithmetic_add$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_arithmetic_add$173_left = (value: expression_binary_arithmetic_add$173_left$Item) => {
+const expression_binary_arithmetic_add$177_left = (value: expression_binary_arithmetic_add$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -5898,7 +5898,7 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.add.left', 'float');
 	}
@@ -5907,13 +5907,13 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.add.left', value);
 	}
@@ -5923,85 +5923,85 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
@@ -6034,7 +6034,7 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
@@ -6042,7 +6042,7 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
@@ -6079,13 +6079,13 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -6098,11 +6098,11 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
@@ -6116,7 +6116,7 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 	}
 };
-type expression_binary_arithmetic_add$173_right$Item =
+type expression_binary_arithmetic_add$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -6334,29 +6334,29 @@ type expression_binary_arithmetic_add$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_arithmetic_add$173_right = (value: expression_binary_arithmetic_add$173_right$Item) => {
+const expression_binary_arithmetic_add$177_right = (value: expression_binary_arithmetic_add$177_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -6366,7 +6366,7 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.add.right', 'float');
 	}
@@ -6375,13 +6375,13 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.add.right', value);
 	}
@@ -6391,85 +6391,85 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
@@ -6502,7 +6502,7 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
@@ -6510,7 +6510,7 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
@@ -6547,13 +6547,13 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -6566,11 +6566,11 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
@@ -6584,7 +6584,7 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 	}
 };
-type expression_binary_arithmetic_divide$173_left$Item =
+type expression_binary_arithmetic_divide$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -6802,29 +6802,29 @@ type expression_binary_arithmetic_divide$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_arithmetic_divide$173_left = (value: expression_binary_arithmetic_divide$173_left$Item) => {
+const expression_binary_arithmetic_divide$177_left = (value: expression_binary_arithmetic_divide$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -6834,7 +6834,7 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.divide.left', 'float');
 	}
@@ -6843,13 +6843,13 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.divide.left', value);
 	}
@@ -6859,85 +6859,85 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
@@ -6970,7 +6970,7 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
@@ -6978,7 +6978,7 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
@@ -7015,13 +7015,13 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -7034,11 +7034,11 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
@@ -7052,7 +7052,7 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 	}
 };
-type expression_binary_arithmetic_divide$173_right$Item =
+type expression_binary_arithmetic_divide$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -7270,29 +7270,29 @@ type expression_binary_arithmetic_divide$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_arithmetic_divide$173_right = (value: expression_binary_arithmetic_divide$173_right$Item) => {
+const expression_binary_arithmetic_divide$177_right = (value: expression_binary_arithmetic_divide$177_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -7302,7 +7302,7 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.divide.right', 'float');
 	}
@@ -7311,13 +7311,13 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.divide.right', value);
 	}
@@ -7327,85 +7327,85 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
@@ -7438,7 +7438,7 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
@@ -7446,7 +7446,7 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
@@ -7483,13 +7483,13 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -7502,11 +7502,11 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
@@ -7520,7 +7520,7 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 	}
 };
-type expression_binary_arithmetic_modulo$173_left$Item =
+type expression_binary_arithmetic_modulo$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -7738,29 +7738,29 @@ type expression_binary_arithmetic_modulo$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_arithmetic_modulo$173_left$Item) => {
+const expression_binary_arithmetic_modulo$177_left = (value: expression_binary_arithmetic_modulo$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -7770,7 +7770,7 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.modulo.left', 'float');
 	}
@@ -7779,13 +7779,13 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.modulo.left', value);
 	}
@@ -7795,85 +7795,85 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
@@ -7906,7 +7906,7 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
@@ -7914,7 +7914,7 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
@@ -7951,13 +7951,13 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -7970,11 +7970,11 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
@@ -7988,7 +7988,7 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 	}
 };
-type expression_binary_arithmetic_modulo$173_right$Item =
+type expression_binary_arithmetic_modulo$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -8206,29 +8206,29 @@ type expression_binary_arithmetic_modulo$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_arithmetic_modulo$173_right$Item) => {
+const expression_binary_arithmetic_modulo$177_right = (value: expression_binary_arithmetic_modulo$177_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -8238,7 +8238,7 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.modulo.right', 'float');
 	}
@@ -8247,13 +8247,13 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.modulo.right', value);
 	}
@@ -8263,85 +8263,85 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
@@ -8374,7 +8374,7 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
@@ -8382,7 +8382,7 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
@@ -8419,13 +8419,13 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -8438,11 +8438,11 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
@@ -8456,7 +8456,7 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 	}
 };
-type expression_binary_arithmetic_multiply$173_left$Item =
+type expression_binary_arithmetic_multiply$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -8674,29 +8674,29 @@ type expression_binary_arithmetic_multiply$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_arithmetic_multiply$173_left = (value: expression_binary_arithmetic_multiply$173_left$Item) => {
+const expression_binary_arithmetic_multiply$177_left = (value: expression_binary_arithmetic_multiply$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -8706,7 +8706,7 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.multiply.left', 'float');
 	}
@@ -8715,13 +8715,13 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.multiply.left', value);
 	}
@@ -8731,85 +8731,85 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
@@ -8842,7 +8842,7 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
@@ -8850,7 +8850,7 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
@@ -8887,13 +8887,13 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -8906,11 +8906,11 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
@@ -8924,7 +8924,7 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 	}
 };
-type expression_binary_arithmetic_multiply$173_right$Item =
+type expression_binary_arithmetic_multiply$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -9142,31 +9142,31 @@ type expression_binary_arithmetic_multiply$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_arithmetic_multiply$173_right = (
-	value: expression_binary_arithmetic_multiply$173_right$Item
+const expression_binary_arithmetic_multiply$177_right = (
+	value: expression_binary_arithmetic_multiply$177_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -9176,7 +9176,7 @@ const expression_binary_arithmetic_multiply$173_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.multiply.right', 'float');
 	}
@@ -9185,13 +9185,13 @@ const expression_binary_arithmetic_multiply$173_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.multiply.right', value);
 	}
@@ -9201,85 +9201,85 @@ const expression_binary_arithmetic_multiply$173_right = (
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
@@ -9312,7 +9312,7 @@ const expression_binary_arithmetic_multiply$173_right = (
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
@@ -9320,7 +9320,7 @@ const expression_binary_arithmetic_multiply$173_right = (
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
@@ -9357,13 +9357,13 @@ const expression_binary_arithmetic_multiply$173_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -9376,11 +9376,11 @@ const expression_binary_arithmetic_multiply$173_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
@@ -9394,7 +9394,7 @@ const expression_binary_arithmetic_multiply$173_right = (
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 	}
 };
-type expression_binary_arithmetic_subtract$173_left$Item =
+type expression_binary_arithmetic_subtract$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -9612,29 +9612,29 @@ type expression_binary_arithmetic_subtract$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_arithmetic_subtract$173_left = (value: expression_binary_arithmetic_subtract$173_left$Item) => {
+const expression_binary_arithmetic_subtract$177_left = (value: expression_binary_arithmetic_subtract$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -9644,7 +9644,7 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.subtract.left', 'float');
 	}
@@ -9653,13 +9653,13 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.subtract.left', value);
 	}
@@ -9669,85 +9669,85 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
@@ -9780,7 +9780,7 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
@@ -9788,7 +9788,7 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
@@ -9825,13 +9825,13 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -9844,11 +9844,11 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
@@ -9862,7 +9862,7 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 	}
 };
-type expression_binary_arithmetic_subtract$173_right$Item =
+type expression_binary_arithmetic_subtract$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -10080,31 +10080,31 @@ type expression_binary_arithmetic_subtract$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_arithmetic_subtract$173_right = (
-	value: expression_binary_arithmetic_subtract$173_right$Item
+const expression_binary_arithmetic_subtract$177_right = (
+	value: expression_binary_arithmetic_subtract$177_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -10114,7 +10114,7 @@ const expression_binary_arithmetic_subtract$173_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.subtract.right', 'float');
 	}
@@ -10123,13 +10123,13 @@ const expression_binary_arithmetic_subtract$173_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.subtract.right', value);
 	}
@@ -10139,85 +10139,85 @@ const expression_binary_arithmetic_subtract$173_right = (
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
@@ -10250,7 +10250,7 @@ const expression_binary_arithmetic_subtract$173_right = (
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
@@ -10258,7 +10258,7 @@ const expression_binary_arithmetic_subtract$173_right = (
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
@@ -10295,13 +10295,13 @@ const expression_binary_arithmetic_subtract$173_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -10314,11 +10314,11 @@ const expression_binary_arithmetic_subtract$173_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
@@ -10332,7 +10332,7 @@ const expression_binary_arithmetic_subtract$173_right = (
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 	}
 };
-type expression_binary_bitwise_and$173_left$Item =
+type expression_binary_bitwise_and$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -10550,29 +10550,29 @@ type expression_binary_bitwise_and$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise_and$173_left$Item) => {
+const expression_binary_bitwise_and$177_left = (value: expression_binary_bitwise_and$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -10582,7 +10582,7 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.bitwise.and.left', 'float');
 	}
@@ -10591,13 +10591,13 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.bitwise.and.left', value);
 	}
@@ -10607,85 +10607,85 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.bitwise.and.left', value);
@@ -10718,7 +10718,7 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.bitwise.and.left', value);
@@ -10726,7 +10726,7 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.bitwise.and.left', value);
@@ -10763,13 +10763,13 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -10782,11 +10782,11 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.bitwise.and.left', value);
@@ -10800,7 +10800,7 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.and.left', value);
 	}
 };
-type expression_binary_bitwise_and$173_right$Item =
+type expression_binary_bitwise_and$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -11018,29 +11018,29 @@ type expression_binary_bitwise_and$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwise_and$173_right$Item) => {
+const expression_binary_bitwise_and$177_right = (value: expression_binary_bitwise_and$177_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -11050,7 +11050,7 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.bitwise.and.right', 'float');
 	}
@@ -11059,13 +11059,13 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.bitwise.and.right', value);
 	}
@@ -11075,85 +11075,85 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.bitwise.and.right', value);
@@ -11186,7 +11186,7 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.bitwise.and.right', value);
@@ -11194,7 +11194,7 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.bitwise.and.right', value);
@@ -11231,13 +11231,13 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -11250,11 +11250,11 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.bitwise.and.right', value);
@@ -11268,7 +11268,7 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 			return unbuilt('expression.binary.bitwise.and.right', value);
 	}
 };
-type expression_binary_bitwise_or$173_left$Item =
+type expression_binary_bitwise_or$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -11486,29 +11486,29 @@ type expression_binary_bitwise_or$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_or$173_left$Item) => {
+const expression_binary_bitwise_or$177_left = (value: expression_binary_bitwise_or$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -11518,7 +11518,7 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.bitwise.or.left', 'float');
 	}
@@ -11527,13 +11527,13 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.bitwise.or.left', value);
 	}
@@ -11543,85 +11543,85 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.bitwise.or.left', value);
@@ -11654,7 +11654,7 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.bitwise.or.left', value);
@@ -11662,7 +11662,7 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.bitwise.or.left', value);
@@ -11699,13 +11699,13 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -11718,11 +11718,11 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.bitwise.or.left', value);
@@ -11736,7 +11736,7 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 			return unbuilt('expression.binary.bitwise.or.left', value);
 	}
 };
-type expression_binary_bitwise_or$173_right$Item =
+type expression_binary_bitwise_or$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -11954,29 +11954,29 @@ type expression_binary_bitwise_or$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise_or$173_right$Item) => {
+const expression_binary_bitwise_or$177_right = (value: expression_binary_bitwise_or$177_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -11986,7 +11986,7 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.bitwise.or.right', 'float');
 	}
@@ -11995,13 +11995,13 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.bitwise.or.right', value);
 	}
@@ -12011,85 +12011,85 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.bitwise.or.right', value);
@@ -12122,7 +12122,7 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.bitwise.or.right', value);
@@ -12130,7 +12130,7 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.bitwise.or.right', value);
@@ -12167,13 +12167,13 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -12186,11 +12186,11 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.bitwise.or.right', value);
@@ -12204,7 +12204,7 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.or.right', value);
 	}
 };
-type expression_binary_bitwise_xor$173_left$Item =
+type expression_binary_bitwise_xor$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -12422,29 +12422,29 @@ type expression_binary_bitwise_xor$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise_xor$173_left$Item) => {
+const expression_binary_bitwise_xor$177_left = (value: expression_binary_bitwise_xor$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -12454,7 +12454,7 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.bitwise.xor.left', 'float');
 	}
@@ -12463,13 +12463,13 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.bitwise.xor.left', value);
 	}
@@ -12479,85 +12479,85 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
@@ -12590,7 +12590,7 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
@@ -12598,7 +12598,7 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
@@ -12635,13 +12635,13 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -12654,11 +12654,11 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
@@ -12672,7 +12672,7 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 	}
 };
-type expression_binary_bitwise_xor$173_right$Item =
+type expression_binary_bitwise_xor$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -12890,29 +12890,29 @@ type expression_binary_bitwise_xor$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwise_xor$173_right$Item) => {
+const expression_binary_bitwise_xor$177_right = (value: expression_binary_bitwise_xor$177_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -12922,7 +12922,7 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.bitwise.xor.right', 'float');
 	}
@@ -12931,13 +12931,13 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.bitwise.xor.right', value);
 	}
@@ -12947,85 +12947,85 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
@@ -13058,7 +13058,7 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
@@ -13066,7 +13066,7 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
@@ -13103,13 +13103,13 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -13122,11 +13122,11 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
@@ -13140,7 +13140,7 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 	}
 };
-type expression_binary_comparison_equal$173_left$Item =
+type expression_binary_comparison_equal$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -13358,29 +13358,29 @@ type expression_binary_comparison_equal$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_comparison_equal$173_left = (value: expression_binary_comparison_equal$173_left$Item) => {
+const expression_binary_comparison_equal$177_left = (value: expression_binary_comparison_equal$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -13390,7 +13390,7 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.equal.left', 'float');
 	}
@@ -13399,13 +13399,13 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.equal.left', value);
 	}
@@ -13415,85 +13415,85 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.comparison.equal.left', value);
@@ -13526,7 +13526,7 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.comparison.equal.left', value);
@@ -13534,7 +13534,7 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.comparison.equal.left', value);
@@ -13571,13 +13571,13 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -13590,11 +13590,11 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.comparison.equal.left', value);
@@ -13608,7 +13608,7 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 			return unbuilt('expression.binary.comparison.equal.left', value);
 	}
 };
-type expression_binary_comparison_equal$173_right$Item =
+type expression_binary_comparison_equal$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -13826,29 +13826,29 @@ type expression_binary_comparison_equal$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_comparison_equal$173_right = (value: expression_binary_comparison_equal$173_right$Item) => {
+const expression_binary_comparison_equal$177_right = (value: expression_binary_comparison_equal$177_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -13858,7 +13858,7 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.equal.right', 'float');
 	}
@@ -13867,13 +13867,13 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.equal.right', value);
 	}
@@ -13883,85 +13883,85 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.comparison.equal.right', value);
@@ -13994,7 +13994,7 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.comparison.equal.right', value);
@@ -14002,7 +14002,7 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.comparison.equal.right', value);
@@ -14039,13 +14039,13 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -14058,11 +14058,11 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.comparison.equal.right', value);
@@ -14076,7 +14076,7 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 			return unbuilt('expression.binary.comparison.equal.right', value);
 	}
 };
-type expression_binary_comparison_greater$173_left$Item =
+type expression_binary_comparison_greater$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -14294,29 +14294,29 @@ type expression_binary_comparison_greater$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_comparison_greater$173_left = (value: expression_binary_comparison_greater$173_left$Item) => {
+const expression_binary_comparison_greater$177_left = (value: expression_binary_comparison_greater$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -14326,7 +14326,7 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.greater.left', 'float');
 	}
@@ -14335,13 +14335,13 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.greater.left', value);
 	}
@@ -14351,85 +14351,85 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.comparison.greater.left', value);
@@ -14462,7 +14462,7 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.comparison.greater.left', value);
@@ -14470,7 +14470,7 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.comparison.greater.left', value);
@@ -14507,13 +14507,13 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -14526,11 +14526,11 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.comparison.greater.left', value);
@@ -14544,7 +14544,7 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 			return unbuilt('expression.binary.comparison.greater.left', value);
 	}
 };
-type expression_binary_comparison_greater$173_right$Item =
+type expression_binary_comparison_greater$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -14762,29 +14762,29 @@ type expression_binary_comparison_greater$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_comparison_greater$173_right = (value: expression_binary_comparison_greater$173_right$Item) => {
+const expression_binary_comparison_greater$177_right = (value: expression_binary_comparison_greater$177_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -14794,7 +14794,7 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.greater.right', 'float');
 	}
@@ -14803,13 +14803,13 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.greater.right', value);
 	}
@@ -14819,85 +14819,85 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.comparison.greater.right', value);
@@ -14930,7 +14930,7 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.comparison.greater.right', value);
@@ -14938,7 +14938,7 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.comparison.greater.right', value);
@@ -14975,13 +14975,13 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -14994,11 +14994,11 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.comparison.greater.right', value);
@@ -15012,7 +15012,7 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 			return unbuilt('expression.binary.comparison.greater.right', value);
 	}
 };
-type expression_binary_comparison_greater_equal$173_left$Item =
+type expression_binary_comparison_greater_equal$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -15230,31 +15230,31 @@ type expression_binary_comparison_greater_equal$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_comparison_greater_equal$173_left = (
-	value: expression_binary_comparison_greater_equal$173_left$Item
+const expression_binary_comparison_greater_equal$177_left = (
+	value: expression_binary_comparison_greater_equal$177_left$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -15264,7 +15264,7 @@ const expression_binary_comparison_greater_equal$173_left = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.greater_equal.left', 'float');
 	}
@@ -15273,13 +15273,13 @@ const expression_binary_comparison_greater_equal$173_left = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.greater_equal.left', value);
 	}
@@ -15289,85 +15289,85 @@ const expression_binary_comparison_greater_equal$173_left = (
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
@@ -15400,7 +15400,7 @@ const expression_binary_comparison_greater_equal$173_left = (
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
@@ -15408,7 +15408,7 @@ const expression_binary_comparison_greater_equal$173_left = (
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
@@ -15445,13 +15445,13 @@ const expression_binary_comparison_greater_equal$173_left = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -15464,11 +15464,11 @@ const expression_binary_comparison_greater_equal$173_left = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
@@ -15482,7 +15482,7 @@ const expression_binary_comparison_greater_equal$173_left = (
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 	}
 };
-type expression_binary_comparison_greater_equal$173_right$Item =
+type expression_binary_comparison_greater_equal$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -15700,31 +15700,31 @@ type expression_binary_comparison_greater_equal$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_comparison_greater_equal$173_right = (
-	value: expression_binary_comparison_greater_equal$173_right$Item
+const expression_binary_comparison_greater_equal$177_right = (
+	value: expression_binary_comparison_greater_equal$177_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -15734,7 +15734,7 @@ const expression_binary_comparison_greater_equal$173_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.greater_equal.right', 'float');
 	}
@@ -15743,13 +15743,13 @@ const expression_binary_comparison_greater_equal$173_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.greater_equal.right', value);
 	}
@@ -15759,85 +15759,85 @@ const expression_binary_comparison_greater_equal$173_right = (
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
@@ -15870,7 +15870,7 @@ const expression_binary_comparison_greater_equal$173_right = (
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
@@ -15878,7 +15878,7 @@ const expression_binary_comparison_greater_equal$173_right = (
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
@@ -15915,13 +15915,13 @@ const expression_binary_comparison_greater_equal$173_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -15934,11 +15934,11 @@ const expression_binary_comparison_greater_equal$173_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
@@ -15952,7 +15952,7 @@ const expression_binary_comparison_greater_equal$173_right = (
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 	}
 };
-type expression_binary_comparison_less$173_left$Item =
+type expression_binary_comparison_less$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -16170,29 +16170,29 @@ type expression_binary_comparison_less$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_comparison_less$173_left = (value: expression_binary_comparison_less$173_left$Item) => {
+const expression_binary_comparison_less$177_left = (value: expression_binary_comparison_less$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -16202,7 +16202,7 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.less.left', 'float');
 	}
@@ -16211,13 +16211,13 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.less.left', value);
 	}
@@ -16227,85 +16227,85 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.comparison.less.left', value);
@@ -16338,7 +16338,7 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.comparison.less.left', value);
@@ -16346,7 +16346,7 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.comparison.less.left', value);
@@ -16383,13 +16383,13 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -16402,11 +16402,11 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.comparison.less.left', value);
@@ -16420,7 +16420,7 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 			return unbuilt('expression.binary.comparison.less.left', value);
 	}
 };
-type expression_binary_comparison_less$173_right$Item =
+type expression_binary_comparison_less$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -16638,29 +16638,29 @@ type expression_binary_comparison_less$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_comparison_less$173_right = (value: expression_binary_comparison_less$173_right$Item) => {
+const expression_binary_comparison_less$177_right = (value: expression_binary_comparison_less$177_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -16670,7 +16670,7 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.less.right', 'float');
 	}
@@ -16679,13 +16679,13 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.less.right', value);
 	}
@@ -16695,85 +16695,85 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.comparison.less.right', value);
@@ -16806,7 +16806,7 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.comparison.less.right', value);
@@ -16814,7 +16814,7 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.comparison.less.right', value);
@@ -16851,13 +16851,13 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -16870,11 +16870,11 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.comparison.less.right', value);
@@ -16888,7 +16888,7 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 			return unbuilt('expression.binary.comparison.less.right', value);
 	}
 };
-type expression_binary_comparison_less_equal$173_left$Item =
+type expression_binary_comparison_less_equal$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -17106,31 +17106,31 @@ type expression_binary_comparison_less_equal$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_comparison_less_equal$173_left = (
-	value: expression_binary_comparison_less_equal$173_left$Item
+const expression_binary_comparison_less_equal$177_left = (
+	value: expression_binary_comparison_less_equal$177_left$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -17140,7 +17140,7 @@ const expression_binary_comparison_less_equal$173_left = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.less_equal.left', 'float');
 	}
@@ -17149,13 +17149,13 @@ const expression_binary_comparison_less_equal$173_left = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.less_equal.left', value);
 	}
@@ -17165,85 +17165,85 @@ const expression_binary_comparison_less_equal$173_left = (
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
@@ -17276,7 +17276,7 @@ const expression_binary_comparison_less_equal$173_left = (
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
@@ -17284,7 +17284,7 @@ const expression_binary_comparison_less_equal$173_left = (
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
@@ -17321,13 +17321,13 @@ const expression_binary_comparison_less_equal$173_left = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -17340,11 +17340,11 @@ const expression_binary_comparison_less_equal$173_left = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
@@ -17358,7 +17358,7 @@ const expression_binary_comparison_less_equal$173_left = (
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 	}
 };
-type expression_binary_comparison_less_equal$173_right$Item =
+type expression_binary_comparison_less_equal$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -17576,31 +17576,31 @@ type expression_binary_comparison_less_equal$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_comparison_less_equal$173_right = (
-	value: expression_binary_comparison_less_equal$173_right$Item
+const expression_binary_comparison_less_equal$177_right = (
+	value: expression_binary_comparison_less_equal$177_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -17610,7 +17610,7 @@ const expression_binary_comparison_less_equal$173_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.less_equal.right', 'float');
 	}
@@ -17619,13 +17619,13 @@ const expression_binary_comparison_less_equal$173_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.less_equal.right', value);
 	}
@@ -17635,85 +17635,85 @@ const expression_binary_comparison_less_equal$173_right = (
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
@@ -17746,7 +17746,7 @@ const expression_binary_comparison_less_equal$173_right = (
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
@@ -17754,7 +17754,7 @@ const expression_binary_comparison_less_equal$173_right = (
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
@@ -17791,13 +17791,13 @@ const expression_binary_comparison_less_equal$173_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -17810,11 +17810,11 @@ const expression_binary_comparison_less_equal$173_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
@@ -17828,7 +17828,7 @@ const expression_binary_comparison_less_equal$173_right = (
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 	}
 };
-type expression_binary_comparison_not_equal$173_left$Item =
+type expression_binary_comparison_not_equal$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -18046,31 +18046,31 @@ type expression_binary_comparison_not_equal$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_comparison_not_equal$173_left = (
-	value: expression_binary_comparison_not_equal$173_left$Item
+const expression_binary_comparison_not_equal$177_left = (
+	value: expression_binary_comparison_not_equal$177_left$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -18080,7 +18080,7 @@ const expression_binary_comparison_not_equal$173_left = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.not_equal.left', 'float');
 	}
@@ -18089,13 +18089,13 @@ const expression_binary_comparison_not_equal$173_left = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.not_equal.left', value);
 	}
@@ -18105,85 +18105,85 @@ const expression_binary_comparison_not_equal$173_left = (
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
@@ -18216,7 +18216,7 @@ const expression_binary_comparison_not_equal$173_left = (
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
@@ -18224,7 +18224,7 @@ const expression_binary_comparison_not_equal$173_left = (
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
@@ -18261,13 +18261,13 @@ const expression_binary_comparison_not_equal$173_left = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -18280,11 +18280,11 @@ const expression_binary_comparison_not_equal$173_left = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
@@ -18298,7 +18298,7 @@ const expression_binary_comparison_not_equal$173_left = (
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 	}
 };
-type expression_binary_comparison_not_equal$173_right$Item =
+type expression_binary_comparison_not_equal$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -18516,31 +18516,31 @@ type expression_binary_comparison_not_equal$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_comparison_not_equal$173_right = (
-	value: expression_binary_comparison_not_equal$173_right$Item
+const expression_binary_comparison_not_equal$177_right = (
+	value: expression_binary_comparison_not_equal$177_right$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -18550,7 +18550,7 @@ const expression_binary_comparison_not_equal$173_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.not_equal.right', 'float');
 	}
@@ -18559,13 +18559,13 @@ const expression_binary_comparison_not_equal$173_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.not_equal.right', value);
 	}
@@ -18575,85 +18575,85 @@ const expression_binary_comparison_not_equal$173_right = (
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
@@ -18686,7 +18686,7 @@ const expression_binary_comparison_not_equal$173_right = (
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
@@ -18694,7 +18694,7 @@ const expression_binary_comparison_not_equal$173_right = (
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
@@ -18731,13 +18731,13 @@ const expression_binary_comparison_not_equal$173_right = (
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -18750,11 +18750,11 @@ const expression_binary_comparison_not_equal$173_right = (
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
@@ -18768,7 +18768,7 @@ const expression_binary_comparison_not_equal$173_right = (
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 	}
 };
-type expression_binary_logical_and$173_left$Item =
+type expression_binary_logical_and$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -18986,29 +18986,29 @@ type expression_binary_logical_and$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_logical_and$173_left = (value: expression_binary_logical_and$173_left$Item) => {
+const expression_binary_logical_and$177_left = (value: expression_binary_logical_and$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -19018,7 +19018,7 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.logical.and.left', 'float');
 	}
@@ -19027,13 +19027,13 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.logical.and.left', value);
 	}
@@ -19043,85 +19043,85 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.logical.and.left', value);
@@ -19154,7 +19154,7 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.logical.and.left', value);
@@ -19162,7 +19162,7 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.logical.and.left', value);
@@ -19199,13 +19199,13 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -19218,11 +19218,11 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.logical.and.left', value);
@@ -19236,7 +19236,7 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 			return unbuilt('expression.binary.logical.and.left', value);
 	}
 };
-type expression_binary_logical_and$173_right$Item =
+type expression_binary_logical_and$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -19454,29 +19454,29 @@ type expression_binary_logical_and$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_logical_and$173_right = (value: expression_binary_logical_and$173_right$Item) => {
+const expression_binary_logical_and$177_right = (value: expression_binary_logical_and$177_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -19486,7 +19486,7 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.logical.and.right', 'float');
 	}
@@ -19495,13 +19495,13 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.logical.and.right', value);
 	}
@@ -19511,85 +19511,85 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.logical.and.right', value);
@@ -19622,7 +19622,7 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.logical.and.right', value);
@@ -19630,7 +19630,7 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.logical.and.right', value);
@@ -19667,13 +19667,13 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -19686,11 +19686,11 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.logical.and.right', value);
@@ -19704,7 +19704,7 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 			return unbuilt('expression.binary.logical.and.right', value);
 	}
 };
-type expression_binary_logical_or$173_left$Item =
+type expression_binary_logical_or$177_left$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -19922,29 +19922,29 @@ type expression_binary_logical_or$173_left$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_logical_or$173_left = (value: expression_binary_logical_or$173_left$Item) => {
+const expression_binary_logical_or$177_left = (value: expression_binary_logical_or$177_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -19954,7 +19954,7 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.logical.or.left', 'float');
 	}
@@ -19963,13 +19963,13 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.logical.or.left', value);
 	}
@@ -19979,85 +19979,85 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.logical.or.left', value);
@@ -20090,7 +20090,7 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.logical.or.left', value);
@@ -20098,7 +20098,7 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.logical.or.left', value);
@@ -20135,13 +20135,13 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -20154,11 +20154,11 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.logical.or.left', value);
@@ -20172,7 +20172,7 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 			return unbuilt('expression.binary.logical.or.left', value);
 	}
 };
-type expression_binary_logical_or$173_right$Item =
+type expression_binary_logical_or$177_right$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -20390,29 +20390,29 @@ type expression_binary_logical_or$173_right$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_binary_logical_or$173_right = (value: expression_binary_logical_or$173_right$Item) => {
+const expression_binary_logical_or$177_right = (value: expression_binary_logical_or$177_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -20422,7 +20422,7 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.logical.or.right', 'float');
 	}
@@ -20431,13 +20431,13 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.logical.or.right', value);
 	}
@@ -20447,85 +20447,85 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.binary.logical.or.right', value);
@@ -20558,7 +20558,7 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.binary.logical.or.right', value);
@@ -20566,7 +20566,7 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.binary.logical.or.right', value);
@@ -20603,13 +20603,13 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -20622,11 +20622,11 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.binary.logical.or.right', value);
@@ -20640,7 +20640,7 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 			return unbuilt('expression.binary.logical.or.right', value);
 	}
 };
-type expression_conditional$177_alternative$Item =
+type expression_conditional$181_alternative$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -20858,29 +20858,29 @@ type expression_conditional$177_alternative$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_conditional$177_alternative = (value: expression_conditional$177_alternative$Item) => {
+const expression_conditional$181_alternative = (value: expression_conditional$181_alternative$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -20890,7 +20890,7 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.conditional.alternative', 'float');
 	}
@@ -20899,13 +20899,13 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.conditional.alternative', value);
 	}
@@ -20915,85 +20915,85 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 			return unbuilt('expression.conditional.alternative', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.conditional.alternative', value);
@@ -21026,7 +21026,7 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 			return unbuilt('expression.conditional.alternative', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.conditional.alternative', value);
@@ -21034,7 +21034,7 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 			return unbuilt('expression.conditional.alternative', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.conditional.alternative', value);
@@ -21071,13 +21071,13 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.conditional.alternative', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -21090,11 +21090,11 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.conditional.alternative', value);
@@ -21108,7 +21108,7 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 			return unbuilt('expression.conditional.alternative', value);
 	}
 };
-type expression_conditional$177_condition$Item =
+type expression_conditional$181_condition$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -21326,29 +21326,29 @@ type expression_conditional$177_condition$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_conditional$177_condition = (value: expression_conditional$177_condition$Item) => {
+const expression_conditional$181_condition = (value: expression_conditional$181_condition$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -21358,7 +21358,7 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.conditional.condition', 'float');
 	}
@@ -21367,13 +21367,13 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.conditional.condition', value);
 	}
@@ -21383,85 +21383,85 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 			return unbuilt('expression.conditional.condition', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.conditional.condition', value);
@@ -21494,7 +21494,7 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 			return unbuilt('expression.conditional.condition', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.conditional.condition', value);
@@ -21502,7 +21502,7 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 			return unbuilt('expression.conditional.condition', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.conditional.condition', value);
@@ -21539,13 +21539,13 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.conditional.condition', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -21558,11 +21558,11 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.conditional.condition', value);
@@ -21576,7 +21576,7 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 			return unbuilt('expression.conditional.condition', value);
 	}
 };
-type expression_conditional$177_consequence$Item =
+type expression_conditional$181_consequence$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -21794,29 +21794,29 @@ type expression_conditional$177_consequence$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_conditional$177_consequence = (value: expression_conditional$177_consequence$Item) => {
+const expression_conditional$181_consequence = (value: expression_conditional$181_consequence$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -21826,7 +21826,7 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.conditional.consequence', 'float');
 	}
@@ -21835,13 +21835,13 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.conditional.consequence', value);
 	}
@@ -21851,85 +21851,85 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 			return unbuilt('expression.conditional.consequence', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.conditional.consequence', value);
@@ -21962,7 +21962,7 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 			return unbuilt('expression.conditional.consequence', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.conditional.consequence', value);
@@ -21970,7 +21970,7 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 			return unbuilt('expression.conditional.consequence', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.conditional.consequence', value);
@@ -22007,13 +22007,13 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.conditional.consequence', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -22026,11 +22026,11 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.conditional.consequence', value);
@@ -22044,7 +22044,7 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 			return unbuilt('expression.conditional.consequence', value);
 	}
 };
-type expression_interpolation$167_expression$Item =
+type expression_interpolation$171_expression$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -22262,29 +22262,29 @@ type expression_interpolation$167_expression$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_interpolation$167_expression = (value: expression_interpolation$167_expression$Item) => {
+const expression_interpolation$171_expression = (value: expression_interpolation$171_expression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -22294,7 +22294,7 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.interpolation.expression', 'float');
 	}
@@ -22303,13 +22303,13 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.interpolation.expression', value);
 	}
@@ -22319,85 +22319,85 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 			return unbuilt('expression.interpolation.expression', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.interpolation.expression', value);
@@ -22430,7 +22430,7 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 			return unbuilt('expression.interpolation.expression', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.interpolation.expression', value);
@@ -22438,7 +22438,7 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 			return unbuilt('expression.interpolation.expression', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.interpolation.expression', value);
@@ -22475,13 +22475,13 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.interpolation.expression', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -22494,11 +22494,11 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.interpolation.expression', value);
@@ -22512,7 +22512,7 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 			return unbuilt('expression.interpolation.expression', value);
 	}
 };
-type expression_parenthesized$183_expression$Item =
+type expression_parenthesized$187_expression$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -22730,29 +22730,29 @@ type expression_parenthesized$183_expression$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const expression_parenthesized$183_expression = (value: expression_parenthesized$183_expression$Item) => {
+const expression_parenthesized$187_expression = (value: expression_parenthesized$187_expression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -22762,7 +22762,7 @@ const expression_parenthesized$183_expression = (value: expression_parenthesized
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.parenthesized.expression', 'float');
 	}
@@ -22771,13 +22771,13 @@ const expression_parenthesized$183_expression = (value: expression_parenthesized
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('expression.parenthesized.expression', value);
 	}
@@ -22787,85 +22787,85 @@ const expression_parenthesized$183_expression = (value: expression_parenthesized
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('expression.parenthesized.expression', value);
@@ -22898,7 +22898,7 @@ const expression_parenthesized$183_expression = (value: expression_parenthesized
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('expression.parenthesized.expression', value);
@@ -22906,7 +22906,7 @@ const expression_parenthesized$183_expression = (value: expression_parenthesized
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('expression.parenthesized.expression', value);
@@ -22943,13 +22943,13 @@ const expression_parenthesized$183_expression = (value: expression_parenthesized
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -22962,11 +22962,11 @@ const expression_parenthesized$183_expression = (value: expression_parenthesized
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('expression.parenthesized.expression', value);
@@ -23019,7 +23019,7 @@ const literal_number_integer_octal$3_suffix = (value: literal_number_integer_oct
 	}
 	throw new Error('literal.number.integer.octal.suffix takes no structure');
 };
-type literal_string$327_elements$Item =
+type literal_string$331_elements$Item =
 	| string
 	| Text<JavaMap, 'literal.string.text'>
 	| PathInput<JavaMap, 'expression.interpolation'>
@@ -23031,7 +23031,7 @@ type literal_string$327_elements$Item =
 	| BuildInput<JavaMap, 'literal.string.text'>
 	| TailInput<JavaMap, 'literal.string.text', 'text'>
 	| JavaMap['nodes']['literal.string.text'];
-const literal_string$327_elements = (value: literal_string$327_elements$Item) => {
+const literal_string$331_elements = (value: literal_string$331_elements$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[^"\\]+))$/u.test(value)) return b.stringFragment(value);
 		return b.stringFragment(value);
@@ -23040,42 +23040,42 @@ const literal_string$327_elements = (value: literal_string$327_elements$Item) =>
 		return unnumbered('literal.string.elements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [10, 130, 131, 132, 133, 134, 167, 169])) return value;
+		if (seated(value, [13, 133, 134, 135, 136, 137, 171, 173])) return value;
 		return unseated('literal.string.elements', value);
 	}
 	switch (value.$path) {
 		case undefined:
 		case 'interpolation':
 		case 'expression.interpolation':
-			return expression_interpolation$167(value);
+			return expression_interpolation$171(value);
 		case 'escape':
 		case 'literal.string.escape':
 			if ((typeof value.$value !== 'string' || /^(?:(?:[^xu0-7]))$/u.test(value.$value)) && value.$value !== undefined)
-				return literal_string_escape$130(value);
+				return literal_string_escape$133(value);
 			if (
 				(typeof value.$value !== 'string' || /^(?:(?:[0-7]{1,3}))$/u.test(value.$value)) &&
 				value.$value !== undefined
 			)
-				return literal_string_escape$131(value);
+				return literal_string_escape$134(value);
 			if (
 				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(value.$value)) &&
 				value.$value !== undefined
 			)
-				return literal_string_escape$132(value);
+				return literal_string_escape$135(value);
 			if (
 				(typeof value.$value !== 'string' || /^(?:(?:u[0-9a-fA-F]{4}))$/u.test(value.$value)) &&
 				value.$value !== undefined
 			)
-				return literal_string_escape$133(value);
-			return literal_string_escape$134(value);
+				return literal_string_escape$136(value);
+			return literal_string_escape$137(value);
 		case 'text':
 		case 'literal.string.text':
-			return literal_string_text$10(value);
+			return literal_string_text$13(value);
 		default:
 			return unbuilt('literal.string.elements', value);
 	}
 };
-type literal_string$328_elements$Item =
+type literal_string$332_elements$Item =
 	| string
 	| Text<JavaMap, 'literal.string.text'>
 	| PathInput<JavaMap, 'expression.interpolation'>
@@ -23087,7 +23087,7 @@ type literal_string$328_elements$Item =
 	| BuildInput<JavaMap, 'literal.string.text'>
 	| TailInput<JavaMap, 'literal.string.text', 'text'>
 	| JavaMap['nodes']['literal.string.text'];
-const literal_string$328_elements = (value: literal_string$328_elements$Item) => {
+const literal_string$332_elements = (value: literal_string$332_elements$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(?:[^"\\]+)|(?:"([^"\\]|\\")*)))$/u.test(value)) return b.multilineStringFragment(value);
 		return b.multilineStringFragment(value);
@@ -23096,43 +23096,43 @@ const literal_string$328_elements = (value: literal_string$328_elements$Item) =>
 		return unnumbered('literal.string.elements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [166, 167])) return value;
-		if (seated(value, [15, 130, 131, 132, 133, 134, 169])) return b.multilineStringLiteralArm1(value);
+		if (seated(value, [170, 171])) return value;
+		if (seated(value, [18, 133, 134, 135, 136, 137, 173])) return b.multilineStringLiteralArm1(value);
 		return unseated('literal.string.elements', value);
 	}
 	switch (value.$path) {
 		case undefined:
 		case 'interpolation':
 		case 'expression.interpolation':
-			return expression_interpolation$167(value);
+			return expression_interpolation$171(value);
 		case 'escape':
 		case 'literal.string.escape':
 			if ((typeof value.$value !== 'string' || /^(?:(?:[^xu0-7]))$/u.test(value.$value)) && value.$value !== undefined)
-				return b.multilineStringLiteralArm1(literal_string_escape$130(value));
+				return b.multilineStringLiteralArm1(literal_string_escape$133(value));
 			if (
 				(typeof value.$value !== 'string' || /^(?:(?:[0-7]{1,3}))$/u.test(value.$value)) &&
 				value.$value !== undefined
 			)
-				return b.multilineStringLiteralArm1(literal_string_escape$131(value));
+				return b.multilineStringLiteralArm1(literal_string_escape$134(value));
 			if (
 				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(value.$value)) &&
 				value.$value !== undefined
 			)
-				return b.multilineStringLiteralArm1(literal_string_escape$132(value));
+				return b.multilineStringLiteralArm1(literal_string_escape$135(value));
 			if (
 				(typeof value.$value !== 'string' || /^(?:(?:u[0-9a-fA-F]{4}))$/u.test(value.$value)) &&
 				value.$value !== undefined
 			)
-				return b.multilineStringLiteralArm1(literal_string_escape$133(value));
-			return b.multilineStringLiteralArm1(literal_string_escape$134(value));
+				return b.multilineStringLiteralArm1(literal_string_escape$136(value));
+			return b.multilineStringLiteralArm1(literal_string_escape$137(value));
 		case 'text':
 		case 'literal.string.text':
-			return literal_string_text$166(value);
+			return literal_string_text$170(value);
 		default:
 			return unbuilt('literal.string.elements', value);
 	}
 };
-type literal_string_multiline$328_elements$Item =
+type literal_string_multiline$332_elements$Item =
 	| string
 	| Text<JavaMap, 'literal.string.text'>
 	| PathInput<JavaMap, 'expression.interpolation'>
@@ -23144,7 +23144,7 @@ type literal_string_multiline$328_elements$Item =
 	| BuildInput<JavaMap, 'literal.string.text'>
 	| TailInput<JavaMap, 'literal.string.text', 'text'>
 	| JavaMap['nodes']['literal.string.text'];
-const literal_string_multiline$328_elements = (value: literal_string_multiline$328_elements$Item) => {
+const literal_string_multiline$332_elements = (value: literal_string_multiline$332_elements$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(?:[^"\\]+)|(?:"([^"\\]|\\")*)))$/u.test(value)) return b.multilineStringFragment(value);
 		return b.multilineStringFragment(value);
@@ -23153,43 +23153,43 @@ const literal_string_multiline$328_elements = (value: literal_string_multiline$3
 		return unnumbered('literal.string.multiline.elements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [166, 167])) return value;
-		if (seated(value, [15, 130, 131, 132, 133, 134, 169])) return b.multilineStringLiteralArm1(value);
+		if (seated(value, [170, 171])) return value;
+		if (seated(value, [18, 133, 134, 135, 136, 137, 173])) return b.multilineStringLiteralArm1(value);
 		return unseated('literal.string.multiline.elements', value);
 	}
 	switch (value.$path) {
 		case undefined:
 		case 'interpolation':
 		case 'expression.interpolation':
-			return expression_interpolation$167(value);
+			return expression_interpolation$171(value);
 		case 'escape':
 		case 'literal.string.escape':
 			if ((typeof value.$value !== 'string' || /^(?:(?:[^xu0-7]))$/u.test(value.$value)) && value.$value !== undefined)
-				return b.multilineStringLiteralArm1(literal_string_escape$130(value));
+				return b.multilineStringLiteralArm1(literal_string_escape$133(value));
 			if (
 				(typeof value.$value !== 'string' || /^(?:(?:[0-7]{1,3}))$/u.test(value.$value)) &&
 				value.$value !== undefined
 			)
-				return b.multilineStringLiteralArm1(literal_string_escape$131(value));
+				return b.multilineStringLiteralArm1(literal_string_escape$134(value));
 			if (
 				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(value.$value)) &&
 				value.$value !== undefined
 			)
-				return b.multilineStringLiteralArm1(literal_string_escape$132(value));
+				return b.multilineStringLiteralArm1(literal_string_escape$135(value));
 			if (
 				(typeof value.$value !== 'string' || /^(?:(?:u[0-9a-fA-F]{4}))$/u.test(value.$value)) &&
 				value.$value !== undefined
 			)
-				return b.multilineStringLiteralArm1(literal_string_escape$133(value));
-			return b.multilineStringLiteralArm1(literal_string_escape$134(value));
+				return b.multilineStringLiteralArm1(literal_string_escape$136(value));
+			return b.multilineStringLiteralArm1(literal_string_escape$137(value));
 		case 'text':
 		case 'literal.string.text':
-			return literal_string_text$166(value);
+			return literal_string_text$170(value);
 		default:
 			return unbuilt('literal.string.multiline.elements', value);
 	}
 };
-type statement_block$209_statements$Item =
+type statement_block$213_statements$Item =
 	| ';'
 	| 'boolean'
 	| 'byte'
@@ -23480,31 +23480,31 @@ type statement_block$209_statements$Item =
 	| Unmapped<'java:method_reference'>
 	| Unmapped<'java:package_declaration'>
 	| Unmapped<'java:synchronized_statement'>;
-const statement_block$209_statements = (value: statement_block$209_statements$Item) => {
+const statement_block$213_statements = (value: statement_block$213_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case ';':
-				return 69;
+				return 72;
 			case 'this':
-				return b.expressionStatement(115);
+				return b.expressionStatement(118);
 			case 'boolean':
-				return b.expressionStatement(b.classLiteral(109));
+				return b.expressionStatement(b.classLiteral(112));
 			case 'byte':
-				return b.expressionStatement(b.classLiteral(102));
-			case 'char':
-				return b.expressionStatement(b.classLiteral(106));
-			case 'double':
-				return b.expressionStatement(b.classLiteral(108));
-			case 'float':
-				return b.expressionStatement(b.classLiteral(107));
-			case 'int':
-				return b.expressionStatement(b.classLiteral(104));
-			case 'long':
 				return b.expressionStatement(b.classLiteral(105));
-			case 'short':
-				return b.expressionStatement(b.classLiteral(103));
-			case 'void':
+			case 'char':
+				return b.expressionStatement(b.classLiteral(109));
+			case 'double':
+				return b.expressionStatement(b.classLiteral(111));
+			case 'float':
 				return b.expressionStatement(b.classLiteral(110));
+			case 'int':
+				return b.expressionStatement(b.classLiteral(107));
+			case 'long':
+				return b.expressionStatement(b.classLiteral(108));
+			case 'short':
+				return b.expressionStatement(b.classLiteral(106));
+			case 'void':
+				return b.expressionStatement(b.classLiteral(113));
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
 					return b.expressionStatement(b.identifier(value));
@@ -23519,7 +23519,7 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return b.expressionStatement(literal_number_integer$121({ $path: 'literal.number.integer', $value: value }));
+			return b.expressionStatement(literal_number_integer$124({ $path: 'literal.number.integer', $value: value }));
 		}
 		return unnumbered('statement.block.statements', 'float');
 	}
@@ -23528,8 +23528,8 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			seated(
 				value,
 				[
-					69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249, 250,
-					252, 256, 273, 274, 278, 301, 329, 330
+					72, 201, 212, 213, 215, 216, 217, 218, 219, 220, 222, 223, 224, 229, 232, 233, 234, 235, 243, 244, 253, 254,
+					256, 260, 277, 278, 282, 305, 333, 334
 				]
 			)
 		)
@@ -23538,13 +23538,13 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 331, 332, 335, 336
 				]
 			)
 		)
 			return b.expressionStatement(value);
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.expressionStatement(b.classLiteral(value));
 		return unseated('statement.block.statements', value);
 	}
@@ -23578,85 +23578,85 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			return unbuilt('statement.block.statements', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return b.expressionStatement(expression_assignment_compound_add$172(value));
+			return b.expressionStatement(expression_assignment_compound_add$176(value));
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return b.expressionStatement(expression_assignment_compound_bitwise_and$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_and$176(value));
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return b.expressionStatement(expression_assignment_compound_bitwise_or$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_or$176(value));
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return b.expressionStatement(expression_assignment_compound_bitwise_xor$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_xor$176(value));
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return b.expressionStatement(expression_assignment_compound_divide$172(value));
+			return b.expressionStatement(expression_assignment_compound_divide$176(value));
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return b.expressionStatement(expression_assignment_compound_modulo$172(value));
+			return b.expressionStatement(expression_assignment_compound_modulo$176(value));
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return b.expressionStatement(expression_assignment_compound_multiply$172(value));
+			return b.expressionStatement(expression_assignment_compound_multiply$176(value));
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return b.expressionStatement(expression_assignment_compound_shift_left$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_left$176(value));
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return b.expressionStatement(expression_assignment_compound_shift_right$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_right$176(value));
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$176(value));
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return b.expressionStatement(expression_assignment_compound_subtract$172(value));
+			return b.expressionStatement(expression_assignment_compound_subtract$176(value));
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return b.expressionStatement(expression_binary_arithmetic_add$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_add$177(value));
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return b.expressionStatement(expression_binary_arithmetic_divide$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_divide$177(value));
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return b.expressionStatement(expression_binary_arithmetic_modulo$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_modulo$177(value));
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return b.expressionStatement(expression_binary_arithmetic_multiply$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_multiply$177(value));
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return b.expressionStatement(expression_binary_arithmetic_subtract$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_subtract$177(value));
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return b.expressionStatement(expression_binary_bitwise_and$173(value));
+			return b.expressionStatement(expression_binary_bitwise_and$177(value));
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return b.expressionStatement(expression_binary_bitwise_or$173(value));
+			return b.expressionStatement(expression_binary_bitwise_or$177(value));
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return b.expressionStatement(expression_binary_bitwise_xor$173(value));
+			return b.expressionStatement(expression_binary_bitwise_xor$177(value));
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return b.expressionStatement(expression_binary_comparison_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_equal$177(value));
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return b.expressionStatement(expression_binary_comparison_greater$173(value));
+			return b.expressionStatement(expression_binary_comparison_greater$177(value));
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return b.expressionStatement(expression_binary_comparison_greater_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_greater_equal$177(value));
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return b.expressionStatement(expression_binary_comparison_less$173(value));
+			return b.expressionStatement(expression_binary_comparison_less$177(value));
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return b.expressionStatement(expression_binary_comparison_less_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_less_equal$177(value));
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return b.expressionStatement(expression_binary_comparison_not_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_not_equal$177(value));
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return b.expressionStatement(expression_binary_logical_and$173(value));
+			return b.expressionStatement(expression_binary_logical_and$177(value));
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return b.expressionStatement(expression_binary_logical_or$173(value));
+			return b.expressionStatement(expression_binary_logical_or$177(value));
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('statement.block.statements', value);
@@ -23689,7 +23689,7 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			return unbuilt('statement.block.statements', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return b.expressionStatement(expression_conditional$177(value));
+			return b.expressionStatement(expression_conditional$181(value));
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('statement.block.statements', value);
@@ -23697,7 +23697,7 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			return unbuilt('statement.block.statements', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return b.expressionStatement(expression_parenthesized$183(value));
+			return b.expressionStatement(expression_parenthesized$187(value));
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('statement.block.statements', value);
@@ -23734,13 +23734,13 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			return b.expressionStatement(literal_character$7(value));
 		case 'null':
 		case 'literal.null':
-			return b.expressionStatement(literal_null$16(value));
+			return b.expressionStatement(literal_null$19(value));
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('statement.block.statements', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return b.expressionStatement(literal_number_integer$121(value));
+			return b.expressionStatement(literal_number_integer$124(value));
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return b.expressionStatement(literal_number_integer_binary$4(value));
@@ -23753,23 +23753,23 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$327(value));
-			return b.expressionStatement(literal_string$328(value));
+				return b.expressionStatement(literal_string$331(value));
+			return b.expressionStatement(literal_string$332(value));
 		case 'multiline':
 		case 'literal.string.multiline':
-			return b.expressionStatement(literal_string_multiline$328(value));
+			return b.expressionStatement(literal_string_multiline$332(value));
 		case 'assert':
 		case 'statement.assert':
 			return unbuilt('statement.block.statements', value);
 		case 'block':
 		case 'statement.block':
-			return statement_block$209(value);
+			return statement_block$213(value);
 		case 'break':
 		case 'statement.break':
-			return statement_break$214(value);
+			return statement_break$218(value);
 		case 'continue':
 		case 'statement.continue':
-			return statement_continue$215(value);
+			return statement_continue$219(value);
 		case 'if':
 		case 'statement.if':
 			return unbuilt('statement.block.statements', value);
@@ -23796,16 +23796,16 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			return unbuilt('statement.block.statements', value);
 		case 'return':
 		case 'statement.return':
-			return statement_return$216(value);
+			return statement_return$220(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('statement.block.statements', value);
 		case 'throw':
 		case 'statement.throw':
-			return statement_throw$219(value);
+			return statement_throw$223(value);
 		case 'try':
 		case 'statement.try':
-			return statement_try$330(value);
+			return statement_try$334(value);
 		case 'array':
 		case 'type.array':
 			return unbuilt('statement.block.statements', value);
@@ -23816,11 +23816,11 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			return unbuilt('statement.block.statements', value);
 	}
 };
-type statement_break$214_label$Item =
+type statement_break$218_label$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const statement_break$214_label = (value: statement_break$214_label$Item) => {
+const statement_break$218_label = (value: statement_break$218_label$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -23839,11 +23839,11 @@ const statement_break$214_label = (value: statement_break$214_label$Item) => {
 			return unbuilt('statement.break.label', value);
 	}
 };
-type statement_continue$215_label$Item =
+type statement_continue$219_label$Item =
 	| Text<JavaMap, 'identifier'>
 	| BuildInput<JavaMap, 'identifier'>
 	| JavaMap['nodes']['identifier'];
-const statement_continue$215_label = (value: statement_continue$215_label$Item) => {
+const statement_continue$219_label = (value: statement_continue$219_label$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
@@ -23862,7 +23862,7 @@ const statement_continue$215_label = (value: statement_continue$215_label$Item) 
 			return unbuilt('statement.continue.label', value);
 	}
 };
-type statement_return$216_expression$Item =
+type statement_return$220_expression$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -24080,29 +24080,29 @@ type statement_return$216_expression$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const statement_return$216_expression = (value: statement_return$216_expression$Item) => {
+const statement_return$220_expression = (value: statement_return$220_expression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -24112,7 +24112,7 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('statement.return.expression', 'float');
 	}
@@ -24121,13 +24121,13 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('statement.return.expression', value);
 	}
@@ -24137,85 +24137,85 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 			return unbuilt('statement.return.expression', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('statement.return.expression', value);
@@ -24248,7 +24248,7 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 			return unbuilt('statement.return.expression', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('statement.return.expression', value);
@@ -24256,7 +24256,7 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 			return unbuilt('statement.return.expression', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('statement.return.expression', value);
@@ -24293,13 +24293,13 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('statement.return.expression', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -24312,11 +24312,11 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('statement.return.expression', value);
@@ -24330,7 +24330,7 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 			return unbuilt('statement.return.expression', value);
 	}
 };
-type statement_throw$219_expression$Item =
+type statement_throw$223_expression$Item =
 	| 'boolean'
 	| 'byte'
 	| 'char'
@@ -24548,29 +24548,29 @@ type statement_throw$219_expression$Item =
 	| TailInput<JavaMap, 'type.generic', 'generic'>
 	| JavaMap['nodes']['type.generic']
 	| Unmapped<'java:method_reference'>;
-const statement_throw$219_expression = (value: statement_throw$219_expression$Item) => {
+const statement_throw$223_expression = (value: statement_throw$223_expression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 115;
+				return 118;
 			case 'boolean':
-				return b.classLiteral(109);
+				return b.classLiteral(112);
 			case 'byte':
-				return b.classLiteral(102);
-			case 'char':
-				return b.classLiteral(106);
-			case 'double':
-				return b.classLiteral(108);
-			case 'float':
-				return b.classLiteral(107);
-			case 'int':
-				return b.classLiteral(104);
-			case 'long':
 				return b.classLiteral(105);
-			case 'short':
-				return b.classLiteral(103);
-			case 'void':
+			case 'char':
+				return b.classLiteral(109);
+			case 'double':
+				return b.classLiteral(111);
+			case 'float':
 				return b.classLiteral(110);
+			case 'int':
+				return b.classLiteral(107);
+			case 'long':
+				return b.classLiteral(108);
+			case 'short':
+				return b.classLiteral(106);
+			case 'void':
+				return b.classLiteral(113);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -24580,7 +24580,7 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$124({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('statement.throw.expression', 'float');
 	}
@@ -24589,13 +24589,13 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					1, 2, 3, 4, 5, 6, 7, 19, 118, 123, 124, 163, 164, 165, 166, 167, 174, 175, 176, 177, 178, 179, 181, 182, 183,
+					184, 185, 187, 189, 191, 192, 193, 194, 196, 201, 331, 332, 335, 336
 				]
 			)
 		)
 			return value;
-		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [105, 106, 107, 108, 109, 110, 111, 112, 113, 291, 293, 294, 295, 296, 297, 374]))
 			return b.classLiteral(value);
 		return unseated('statement.throw.expression', value);
 	}
@@ -24605,85 +24605,85 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 			return unbuilt('statement.throw.expression', value);
 		case 'compound.add':
 		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$172(value);
+			return expression_assignment_compound_add$176(value);
 		case 'bitwise_and':
 		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$172(value);
+			return expression_assignment_compound_bitwise_and$176(value);
 		case 'bitwise_or':
 		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$172(value);
+			return expression_assignment_compound_bitwise_or$176(value);
 		case 'bitwise_xor':
 		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$172(value);
+			return expression_assignment_compound_bitwise_xor$176(value);
 		case 'compound.divide':
 		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$172(value);
+			return expression_assignment_compound_divide$176(value);
 		case 'compound.modulo':
 		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$172(value);
+			return expression_assignment_compound_modulo$176(value);
 		case 'compound.multiply':
 		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$172(value);
+			return expression_assignment_compound_multiply$176(value);
 		case 'shift_left':
 		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$172(value);
+			return expression_assignment_compound_shift_left$176(value);
 		case 'shift_right':
 		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$172(value);
+			return expression_assignment_compound_shift_right$176(value);
 		case 'shift_right_unsigned':
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$172(value);
+			return expression_assignment_compound_shift_right_unsigned$176(value);
 		case 'compound.subtract':
 		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$172(value);
+			return expression_assignment_compound_subtract$176(value);
 		case 'arithmetic.add':
 		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$173(value);
+			return expression_binary_arithmetic_add$177(value);
 		case 'arithmetic.divide':
 		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$173(value);
+			return expression_binary_arithmetic_divide$177(value);
 		case 'arithmetic.modulo':
 		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$173(value);
+			return expression_binary_arithmetic_modulo$177(value);
 		case 'arithmetic.multiply':
 		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$173(value);
+			return expression_binary_arithmetic_multiply$177(value);
 		case 'arithmetic.subtract':
 		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$173(value);
+			return expression_binary_arithmetic_subtract$177(value);
 		case 'bitwise.and':
 		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$173(value);
+			return expression_binary_bitwise_and$177(value);
 		case 'bitwise.or':
 		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$173(value);
+			return expression_binary_bitwise_or$177(value);
 		case 'xor':
 		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$173(value);
+			return expression_binary_bitwise_xor$177(value);
 		case 'equal':
 		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$173(value);
+			return expression_binary_comparison_equal$177(value);
 		case 'greater':
 		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$173(value);
+			return expression_binary_comparison_greater$177(value);
 		case 'greater_equal':
 		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$173(value);
+			return expression_binary_comparison_greater_equal$177(value);
 		case 'less':
 		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$173(value);
+			return expression_binary_comparison_less$177(value);
 		case 'less_equal':
 		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$173(value);
+			return expression_binary_comparison_less_equal$177(value);
 		case 'not_equal':
 		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$173(value);
+			return expression_binary_comparison_not_equal$177(value);
 		case 'logical.and':
 		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$173(value);
+			return expression_binary_logical_and$177(value);
 		case 'logical.or':
 		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$173(value);
+			return expression_binary_logical_or$177(value);
 		case 'instanceof':
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('statement.throw.expression', value);
@@ -24716,7 +24716,7 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 			return unbuilt('statement.throw.expression', value);
 		case 'conditional':
 		case 'expression.conditional':
-			return expression_conditional$177(value);
+			return expression_conditional$181(value);
 		case 'lambda':
 		case 'expression.lambda':
 			return unbuilt('statement.throw.expression', value);
@@ -24724,7 +24724,7 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 			return unbuilt('statement.throw.expression', value);
 		case 'parenthesized':
 		case 'expression.parenthesized':
-			return expression_parenthesized$183(value);
+			return expression_parenthesized$187(value);
 		case 'subscript':
 		case 'expression.subscript':
 			return unbuilt('statement.throw.expression', value);
@@ -24761,13 +24761,13 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 			return literal_character$7(value);
 		case 'null':
 		case 'literal.null':
-			return literal_null$16(value);
+			return literal_null$19(value);
 		case 'float':
 		case 'literal.number.float':
 			return unbuilt('statement.throw.expression', value);
 		case 'integer':
 		case 'literal.number.integer':
-			return literal_number_integer$121(value);
+			return literal_number_integer$124(value);
 		case 'binary':
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
@@ -24780,11 +24780,11 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 		case 'string':
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return literal_string$327(value);
-			return literal_string$328(value);
+				return literal_string$331(value);
+			return literal_string$332(value);
 		case 'multiline':
 		case 'literal.string.multiline':
-			return literal_string_multiline$328(value);
+			return literal_string_multiline$332(value);
 		case 'switch':
 		case 'statement.switch':
 			return unbuilt('statement.throw.expression', value);
@@ -24798,13 +24798,13 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 			return unbuilt('statement.throw.expression', value);
 	}
 };
-const comment_block$118 = (input: PathInput<JavaMap, 'comment.block'>): ReturnType<typeof b.blockComment> => {
+const comment_block$121 = (input: PathInput<JavaMap, 'comment.block'>): ReturnType<typeof b.blockComment> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('comment.block', unroutedSlot);
 	const text = input.$value;
 	return b.blockComment(text);
 };
-const comment_block_doc$118 = (input: PathInput<JavaMap, 'comment.block.doc'>): ReturnType<typeof b.blockComment> => {
+const comment_block_doc$121 = (input: PathInput<JavaMap, 'comment.block.doc'>): ReturnType<typeof b.blockComment> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('comment.block.doc', unroutedSlot);
 	const text = input.$value;
@@ -24812,134 +24812,134 @@ const comment_block_doc$118 = (input: PathInput<JavaMap, 'comment.block.doc'>): 
 		throw new Error('portable build: the block_comment built for comment.block.doc does not read as comment.block.doc');
 	return b.blockComment(text);
 };
-const comment_line$117 = (input: PathInput<JavaMap, 'comment.line'>): ReturnType<typeof b.lineComment> => {
+const comment_line$120 = (input: PathInput<JavaMap, 'comment.line'>): ReturnType<typeof b.lineComment> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('comment.line', unroutedSlot);
 	const text = input.$value;
 	return b.lineComment(text);
 };
-const expression_assignment_compound_add$172 = (
+const expression_assignment_compound_add$176 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.add', 'compound.add'>
 ): ReturnType<typeof b.assignmentExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
 	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.add', unroutedSlot);
 	return b.assignmentExpression({
-		left: expression_assignment_compound_add$172_left(input.left),
-		right: expression_assignment_compound_add$172_right(input.right),
-		operator: 21
+		left: expression_assignment_compound_add$176_left(input.left),
+		right: expression_assignment_compound_add$176_right(input.right),
+		operator: 24
 	});
 };
-const expression_assignment_compound_bitwise_and$172 = (
+const expression_assignment_compound_bitwise_and$176 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.bitwise_and', 'bitwise_and'>
 ): ReturnType<typeof b.assignmentExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
 	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.bitwise_and', unroutedSlot);
 	return b.assignmentExpression({
-		left: expression_assignment_compound_bitwise_and$172_left(input.left),
-		right: expression_assignment_compound_bitwise_and$172_right(input.right),
-		operator: 25
+		left: expression_assignment_compound_bitwise_and$176_left(input.left),
+		right: expression_assignment_compound_bitwise_and$176_right(input.right),
+		operator: 28
 	});
 };
-const expression_assignment_compound_bitwise_or$172 = (
+const expression_assignment_compound_bitwise_or$176 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.bitwise_or', 'bitwise_or'>
 ): ReturnType<typeof b.assignmentExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
 	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.bitwise_or', unroutedSlot);
 	return b.assignmentExpression({
-		left: expression_assignment_compound_bitwise_or$172_left(input.left),
-		right: expression_assignment_compound_bitwise_or$172_right(input.right),
-		operator: 26
+		left: expression_assignment_compound_bitwise_or$176_left(input.left),
+		right: expression_assignment_compound_bitwise_or$176_right(input.right),
+		operator: 29
 	});
 };
-const expression_assignment_compound_bitwise_xor$172 = (
+const expression_assignment_compound_bitwise_xor$176 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.bitwise_xor', 'bitwise_xor'>
 ): ReturnType<typeof b.assignmentExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
 	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.bitwise_xor', unroutedSlot);
 	return b.assignmentExpression({
-		left: expression_assignment_compound_bitwise_xor$172_left(input.left),
-		right: expression_assignment_compound_bitwise_xor$172_right(input.right),
-		operator: 27
+		left: expression_assignment_compound_bitwise_xor$176_left(input.left),
+		right: expression_assignment_compound_bitwise_xor$176_right(input.right),
+		operator: 30
 	});
 };
-const expression_assignment_compound_divide$172 = (
+const expression_assignment_compound_divide$176 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.divide', 'compound.divide'>
 ): ReturnType<typeof b.assignmentExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
 	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.divide', unroutedSlot);
 	return b.assignmentExpression({
-		left: expression_assignment_compound_divide$172_left(input.left),
-		right: expression_assignment_compound_divide$172_right(input.right),
-		operator: 24
+		left: expression_assignment_compound_divide$176_left(input.left),
+		right: expression_assignment_compound_divide$176_right(input.right),
+		operator: 27
 	});
 };
-const expression_assignment_compound_modulo$172 = (
+const expression_assignment_compound_modulo$176 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.modulo', 'compound.modulo'>
 ): ReturnType<typeof b.assignmentExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
 	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.modulo', unroutedSlot);
 	return b.assignmentExpression({
-		left: expression_assignment_compound_modulo$172_left(input.left),
-		right: expression_assignment_compound_modulo$172_right(input.right),
-		operator: 28
+		left: expression_assignment_compound_modulo$176_left(input.left),
+		right: expression_assignment_compound_modulo$176_right(input.right),
+		operator: 31
 	});
 };
-const expression_assignment_compound_multiply$172 = (
+const expression_assignment_compound_multiply$176 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.multiply', 'compound.multiply'>
 ): ReturnType<typeof b.assignmentExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
 	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.multiply', unroutedSlot);
 	return b.assignmentExpression({
-		left: expression_assignment_compound_multiply$172_left(input.left),
-		right: expression_assignment_compound_multiply$172_right(input.right),
-		operator: 23
+		left: expression_assignment_compound_multiply$176_left(input.left),
+		right: expression_assignment_compound_multiply$176_right(input.right),
+		operator: 26
 	});
 };
-const expression_assignment_compound_shift_left$172 = (
+const expression_assignment_compound_shift_left$176 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.shift_left', 'shift_left'>
 ): ReturnType<typeof b.assignmentExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
 	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.shift_left', unroutedSlot);
 	return b.assignmentExpression({
-		left: expression_assignment_compound_shift_left$172_left(input.left),
-		right: expression_assignment_compound_shift_left$172_right(input.right),
-		operator: 29
+		left: expression_assignment_compound_shift_left$176_left(input.left),
+		right: expression_assignment_compound_shift_left$176_right(input.right),
+		operator: 32
 	});
 };
-const expression_assignment_compound_shift_right$172 = (
+const expression_assignment_compound_shift_right$176 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.shift_right', 'shift_right'>
 ): ReturnType<typeof b.assignmentExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
 	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.shift_right', unroutedSlot);
 	return b.assignmentExpression({
-		left: expression_assignment_compound_shift_right$172_left(input.left),
-		right: expression_assignment_compound_shift_right$172_right(input.right),
-		operator: 30
+		left: expression_assignment_compound_shift_right$176_left(input.left),
+		right: expression_assignment_compound_shift_right$176_right(input.right),
+		operator: 33
 	});
 };
-const expression_assignment_compound_shift_right_unsigned$172 = (
+const expression_assignment_compound_shift_right_unsigned$176 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.shift_right_unsigned', 'shift_right_unsigned'>
 ): ReturnType<typeof b.assignmentExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
 	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.shift_right_unsigned', unroutedSlot);
 	return b.assignmentExpression({
-		left: expression_assignment_compound_shift_right_unsigned$172_left(input.left),
-		right: expression_assignment_compound_shift_right_unsigned$172_right(input.right),
-		operator: 31
+		left: expression_assignment_compound_shift_right_unsigned$176_left(input.left),
+		right: expression_assignment_compound_shift_right_unsigned$176_right(input.right),
+		operator: 34
 	});
 };
-const expression_assignment_compound_subtract$172 = (
+const expression_assignment_compound_subtract$176 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.subtract', 'compound.subtract'>
 ): ReturnType<typeof b.assignmentExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
 	if (unroutedSlot !== undefined) return unrouted('expression.assignment.compound.subtract', unroutedSlot);
 	return b.assignmentExpression({
-		left: expression_assignment_compound_subtract$172_left(input.left),
-		right: expression_assignment_compound_subtract$172_right(input.right),
-		operator: 22
+		left: expression_assignment_compound_subtract$176_left(input.left),
+		right: expression_assignment_compound_subtract$176_right(input.right),
+		operator: 25
 	});
 };
-const expression_binary_arithmetic_add$173 = (
+const expression_binary_arithmetic_add$177 = (
 	input: PathInput<JavaMap, 'expression.binary.arithmetic.add', 'arithmetic.add'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -24948,15 +24948,15 @@ const expression_binary_arithmetic_add$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.arithmetic.add.left')
-				: expression_binary_arithmetic_add$173_left(input.left),
+				: expression_binary_arithmetic_add$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.arithmetic.add.right')
-				: expression_binary_arithmetic_add$173_right(input.right),
-		operator: 40
+				: expression_binary_arithmetic_add$177_right(input.right),
+		operator: 43
 	});
 };
-const expression_binary_arithmetic_divide$173 = (
+const expression_binary_arithmetic_divide$177 = (
 	input: PathInput<JavaMap, 'expression.binary.arithmetic.divide', 'arithmetic.divide'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -24965,15 +24965,15 @@ const expression_binary_arithmetic_divide$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.arithmetic.divide.left')
-				: expression_binary_arithmetic_divide$173_left(input.left),
+				: expression_binary_arithmetic_divide$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.arithmetic.divide.right')
-				: expression_binary_arithmetic_divide$173_right(input.right),
-		operator: 43
+				: expression_binary_arithmetic_divide$177_right(input.right),
+		operator: 46
 	});
 };
-const expression_binary_arithmetic_modulo$173 = (
+const expression_binary_arithmetic_modulo$177 = (
 	input: PathInput<JavaMap, 'expression.binary.arithmetic.modulo', 'arithmetic.modulo'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -24982,15 +24982,15 @@ const expression_binary_arithmetic_modulo$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.arithmetic.modulo.left')
-				: expression_binary_arithmetic_modulo$173_left(input.left),
+				: expression_binary_arithmetic_modulo$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.arithmetic.modulo.right')
-				: expression_binary_arithmetic_modulo$173_right(input.right),
-		operator: 46
+				: expression_binary_arithmetic_modulo$177_right(input.right),
+		operator: 49
 	});
 };
-const expression_binary_arithmetic_multiply$173 = (
+const expression_binary_arithmetic_multiply$177 = (
 	input: PathInput<JavaMap, 'expression.binary.arithmetic.multiply', 'arithmetic.multiply'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -24999,15 +24999,15 @@ const expression_binary_arithmetic_multiply$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.arithmetic.multiply.left')
-				: expression_binary_arithmetic_multiply$173_left(input.left),
+				: expression_binary_arithmetic_multiply$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.arithmetic.multiply.right')
-				: expression_binary_arithmetic_multiply$173_right(input.right),
-		operator: 42
+				: expression_binary_arithmetic_multiply$177_right(input.right),
+		operator: 45
 	});
 };
-const expression_binary_arithmetic_subtract$173 = (
+const expression_binary_arithmetic_subtract$177 = (
 	input: PathInput<JavaMap, 'expression.binary.arithmetic.subtract', 'arithmetic.subtract'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -25016,15 +25016,15 @@ const expression_binary_arithmetic_subtract$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.arithmetic.subtract.left')
-				: expression_binary_arithmetic_subtract$173_left(input.left),
+				: expression_binary_arithmetic_subtract$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.arithmetic.subtract.right')
-				: expression_binary_arithmetic_subtract$173_right(input.right),
-		operator: 41
+				: expression_binary_arithmetic_subtract$177_right(input.right),
+		operator: 44
 	});
 };
-const expression_binary_bitwise_and$173 = (
+const expression_binary_bitwise_and$177 = (
 	input: PathInput<JavaMap, 'expression.binary.bitwise.and', 'bitwise.and'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -25033,15 +25033,15 @@ const expression_binary_bitwise_and$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.bitwise.and.left')
-				: expression_binary_bitwise_and$173_left(input.left),
+				: expression_binary_bitwise_and$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.bitwise.and.right')
-				: expression_binary_bitwise_and$173_right(input.right),
-		operator: 18
+				: expression_binary_bitwise_and$177_right(input.right),
+		operator: 21
 	});
 };
-const expression_binary_bitwise_or$173 = (
+const expression_binary_bitwise_or$177 = (
 	input: PathInput<JavaMap, 'expression.binary.bitwise.or', 'bitwise.or'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -25050,15 +25050,15 @@ const expression_binary_bitwise_or$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.bitwise.or.left')
-				: expression_binary_bitwise_or$173_left(input.left),
+				: expression_binary_bitwise_or$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.bitwise.or.right')
-				: expression_binary_bitwise_or$173_right(input.right),
-		operator: 44
+				: expression_binary_bitwise_or$177_right(input.right),
+		operator: 47
 	});
 };
-const expression_binary_bitwise_xor$173 = (
+const expression_binary_bitwise_xor$177 = (
 	input: PathInput<JavaMap, 'expression.binary.bitwise.xor', 'xor'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -25067,15 +25067,15 @@ const expression_binary_bitwise_xor$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.bitwise.xor.left')
-				: expression_binary_bitwise_xor$173_left(input.left),
+				: expression_binary_bitwise_xor$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.bitwise.xor.right')
-				: expression_binary_bitwise_xor$173_right(input.right),
-		operator: 45
+				: expression_binary_bitwise_xor$177_right(input.right),
+		operator: 48
 	});
 };
-const expression_binary_comparison_equal$173 = (
+const expression_binary_comparison_equal$177 = (
 	input: PathInput<JavaMap, 'expression.binary.comparison.equal', 'equal'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -25084,15 +25084,15 @@ const expression_binary_comparison_equal$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.comparison.equal.left')
-				: expression_binary_comparison_equal$173_left(input.left),
+				: expression_binary_comparison_equal$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.comparison.equal.right')
-				: expression_binary_comparison_equal$173_right(input.right),
-		operator: 36
+				: expression_binary_comparison_equal$177_right(input.right),
+		operator: 39
 	});
 };
-const expression_binary_comparison_greater$173 = (
+const expression_binary_comparison_greater$177 = (
 	input: PathInput<JavaMap, 'expression.binary.comparison.greater', 'greater'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -25101,15 +25101,15 @@ const expression_binary_comparison_greater$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.comparison.greater.left')
-				: expression_binary_comparison_greater$173_left(input.left),
+				: expression_binary_comparison_greater$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.comparison.greater.right')
-				: expression_binary_comparison_greater$173_right(input.right),
-		operator: 32
+				: expression_binary_comparison_greater$177_right(input.right),
+		operator: 35
 	});
 };
-const expression_binary_comparison_greater_equal$173 = (
+const expression_binary_comparison_greater_equal$177 = (
 	input: PathInput<JavaMap, 'expression.binary.comparison.greater_equal', 'greater_equal'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -25118,15 +25118,15 @@ const expression_binary_comparison_greater_equal$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.comparison.greater_equal.left')
-				: expression_binary_comparison_greater_equal$173_left(input.left),
+				: expression_binary_comparison_greater_equal$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.comparison.greater_equal.right')
-				: expression_binary_comparison_greater_equal$173_right(input.right),
-		operator: 34
+				: expression_binary_comparison_greater_equal$177_right(input.right),
+		operator: 37
 	});
 };
-const expression_binary_comparison_less$173 = (
+const expression_binary_comparison_less$177 = (
 	input: PathInput<JavaMap, 'expression.binary.comparison.less', 'less'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -25135,15 +25135,15 @@ const expression_binary_comparison_less$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.comparison.less.left')
-				: expression_binary_comparison_less$173_left(input.left),
+				: expression_binary_comparison_less$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.comparison.less.right')
-				: expression_binary_comparison_less$173_right(input.right),
-		operator: 33
+				: expression_binary_comparison_less$177_right(input.right),
+		operator: 36
 	});
 };
-const expression_binary_comparison_less_equal$173 = (
+const expression_binary_comparison_less_equal$177 = (
 	input: PathInput<JavaMap, 'expression.binary.comparison.less_equal', 'less_equal'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -25152,15 +25152,15 @@ const expression_binary_comparison_less_equal$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.comparison.less_equal.left')
-				: expression_binary_comparison_less_equal$173_left(input.left),
+				: expression_binary_comparison_less_equal$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.comparison.less_equal.right')
-				: expression_binary_comparison_less_equal$173_right(input.right),
-		operator: 35
+				: expression_binary_comparison_less_equal$177_right(input.right),
+		operator: 38
 	});
 };
-const expression_binary_comparison_not_equal$173 = (
+const expression_binary_comparison_not_equal$177 = (
 	input: PathInput<JavaMap, 'expression.binary.comparison.not_equal', 'not_equal'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -25169,15 +25169,15 @@ const expression_binary_comparison_not_equal$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.comparison.not_equal.left')
-				: expression_binary_comparison_not_equal$173_left(input.left),
+				: expression_binary_comparison_not_equal$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.comparison.not_equal.right')
-				: expression_binary_comparison_not_equal$173_right(input.right),
-		operator: 37
+				: expression_binary_comparison_not_equal$177_right(input.right),
+		operator: 40
 	});
 };
-const expression_binary_logical_and$173 = (
+const expression_binary_logical_and$177 = (
 	input: PathInput<JavaMap, 'expression.binary.logical.and', 'logical.and'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -25186,15 +25186,15 @@ const expression_binary_logical_and$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.logical.and.left')
-				: expression_binary_logical_and$173_left(input.left),
+				: expression_binary_logical_and$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.logical.and.right')
-				: expression_binary_logical_and$173_right(input.right),
-		operator: 38
+				: expression_binary_logical_and$177_right(input.right),
+		operator: 41
 	});
 };
-const expression_binary_logical_or$173 = (
+const expression_binary_logical_or$177 = (
 	input: PathInput<JavaMap, 'expression.binary.logical.or', 'logical.or'>
 ): ReturnType<typeof b.binaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['left', 'right']);
@@ -25203,26 +25203,26 @@ const expression_binary_logical_or$173 = (
 		left:
 			input.left === undefined
 				? missing('expression.binary.logical.or.left')
-				: expression_binary_logical_or$173_left(input.left),
+				: expression_binary_logical_or$177_left(input.left),
 		right:
 			input.right === undefined
 				? missing('expression.binary.logical.or.right')
-				: expression_binary_logical_or$173_right(input.right),
-		operator: 39
+				: expression_binary_logical_or$177_right(input.right),
+		operator: 42
 	});
 };
-const expression_conditional$177 = (
+const expression_conditional$181 = (
 	input: PathInput<JavaMap, 'expression.conditional', 'conditional'>
 ): ReturnType<typeof b.ternaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['alternative', 'condition', 'consequence']);
 	if (unroutedSlot !== undefined) return unrouted('expression.conditional', unroutedSlot);
 	return b.ternaryExpression({
-		condition: expression_conditional$177_condition(input.condition),
-		consequence: expression_conditional$177_consequence(input.consequence),
-		alternative: expression_conditional$177_alternative(input.alternative)
+		condition: expression_conditional$181_condition(input.condition),
+		consequence: expression_conditional$181_consequence(input.consequence),
+		alternative: expression_conditional$181_alternative(input.alternative)
 	});
 };
-const expression_interpolation$167 = (
+const expression_interpolation$171 = (
 	input: PathInput<JavaMap, 'expression.interpolation', 'interpolation'>
 ): ReturnType<typeof b.stringInterpolation> => {
 	const unroutedSlot = unroutedIn(input, ['expression']);
@@ -25230,15 +25230,15 @@ const expression_interpolation$167 = (
 	return b.stringInterpolation(
 		input.expression === undefined
 			? missing('expression.interpolation.expression')
-			: expression_interpolation$167_expression(input.expression)
+			: expression_interpolation$171_expression(input.expression)
 	);
 };
-const expression_parenthesized$183 = (
+const expression_parenthesized$187 = (
 	input: PathInput<JavaMap, 'expression.parenthesized', 'parenthesized'>
 ): ReturnType<typeof b.parenthesizedExpression> => {
 	const unroutedSlot = unroutedIn(input, ['expression']);
 	if (unroutedSlot !== undefined) return unrouted('expression.parenthesized', unroutedSlot);
-	return b.parenthesizedExpression(expression_parenthesized$183_expression(input.expression));
+	return b.parenthesizedExpression(expression_parenthesized$187_expression(input.expression));
 };
 const identifier$1 = (input: PathInput<JavaMap, 'identifier'>): ReturnType<typeof b.identifier> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -25262,12 +25262,12 @@ const literal_character$7 = (input: PathInput<JavaMap, 'literal.character'>): Re
 		input.content === undefined ? missing('literal.character.content') : literal_character$7_content(input.content)
 	);
 };
-const literal_null$16 = (input: PathInput<JavaMap, 'literal.null', 'null'>) => {
+const literal_null$19 = (input: PathInput<JavaMap, 'literal.null', 'null'>) => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('literal.null', unroutedSlot);
-	return 16;
+	return 19;
 };
-const literal_number_integer$121 = (
+const literal_number_integer$124 = (
 	input: PathInput<JavaMap, 'literal.number.integer', 'integer'>
 ): ReturnType<typeof b.decimalIntegerLiteral.arm2> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -25305,21 +25305,21 @@ const literal_number_integer_octal$3 = (
 		content: input.$value
 	});
 };
-const literal_string$327 = (
+const literal_string$331 = (
 	input: PathInput<JavaMap, 'literal.string', 'string'>
 ): ReturnType<typeof b.stringLiteralLine> => {
 	const unroutedSlot = unroutedIn(input, ['elements']);
 	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
-	return b.stringLiteralLine(...(input.elements ?? []).map(literal_string$327_elements));
+	return b.stringLiteralLine(...(input.elements ?? []).map(literal_string$331_elements));
 };
-const literal_string$328 = (
+const literal_string$332 = (
 	input: PathInput<JavaMap, 'literal.string', 'string'>
 ): ReturnType<typeof b.stringLiteralTextBlock> => {
 	const unroutedSlot = unroutedIn(input, ['elements']);
 	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
-	return b.stringLiteralTextBlock(...(input.elements ?? []).map(literal_string$328_elements));
+	return b.stringLiteralTextBlock({ elements: (input.elements ?? []).map(literal_string$332_elements) });
 };
-const literal_string_escape$130 = (
+const literal_string_escape$133 = (
 	input: PathInput<JavaMap, 'literal.string.escape', 'escape'>
 ): ReturnType<typeof b.escapeSequenceArm1> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -25327,7 +25327,7 @@ const literal_string_escape$130 = (
 	const text = input.$value;
 	return b.escapeSequenceArm1(text);
 };
-const literal_string_escape$131 = (
+const literal_string_escape$134 = (
 	input: PathInput<JavaMap, 'literal.string.escape', 'escape'>
 ): ReturnType<typeof b.escapeSequenceArm2> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -25335,7 +25335,7 @@ const literal_string_escape$131 = (
 	const text = input.$value;
 	return b.escapeSequenceArm2(text);
 };
-const literal_string_escape$132 = (
+const literal_string_escape$135 = (
 	input: PathInput<JavaMap, 'literal.string.escape', 'escape'>
 ): ReturnType<typeof b.escapeSequenceArm3> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -25343,7 +25343,7 @@ const literal_string_escape$132 = (
 	const text = input.$value;
 	return b.escapeSequenceArm3(text);
 };
-const literal_string_escape$133 = (
+const literal_string_escape$136 = (
 	input: PathInput<JavaMap, 'literal.string.escape', 'escape'>
 ): ReturnType<typeof b.escapeSequenceArm4> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -25351,7 +25351,7 @@ const literal_string_escape$133 = (
 	const text = input.$value;
 	return b.escapeSequenceArm4(text);
 };
-const literal_string_escape$134 = (
+const literal_string_escape$137 = (
 	input: PathInput<JavaMap, 'literal.string.escape', 'escape'>
 ): ReturnType<typeof b.escapeSequenceArm5> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -25359,56 +25359,56 @@ const literal_string_escape$134 = (
 	const text = input.$value;
 	return b.escapeSequenceArm5(text);
 };
-const literal_string_multiline$328 = (
+const literal_string_multiline$332 = (
 	input: PathInput<JavaMap, 'literal.string.multiline', 'multiline'>
 ): ReturnType<typeof b.stringLiteralTextBlock> => {
 	const unroutedSlot = unroutedIn(input, ['elements']);
 	if (unroutedSlot !== undefined) return unrouted('literal.string.multiline', unroutedSlot);
-	return b.stringLiteralTextBlock(...(input.elements ?? []).map(literal_string_multiline$328_elements));
+	return b.stringLiteralTextBlock({ elements: (input.elements ?? []).map(literal_string_multiline$332_elements) });
 };
-const literal_string_text$10 = (
+const literal_string_text$13 = (
 	input: PathInput<JavaMap, 'literal.string.text', 'text'>
 ): ReturnType<typeof b.stringFragment> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('literal.string.text', unroutedSlot);
 	return b.stringFragment(typeof input === 'string' ? input : input.$value);
 };
-const literal_string_text$166 = (
+const literal_string_text$170 = (
 	input: PathInput<JavaMap, 'literal.string.text', 'text'>
 ): ReturnType<typeof b.multilineStringFragment> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('literal.string.text', unroutedSlot);
 	return b.multilineStringFragment(typeof input === 'string' ? input : input.$value);
 };
-const statement_block$209 = (input: PathInput<JavaMap, 'statement.block', 'block'>): ReturnType<typeof b.block> => {
+const statement_block$213 = (input: PathInput<JavaMap, 'statement.block', 'block'>): ReturnType<typeof b.block> => {
 	const unroutedSlot = unroutedIn(input, ['statements']);
 	if (unroutedSlot !== undefined) return unrouted('statement.block', unroutedSlot);
-	return b.block(...(input.statements ?? []).map(statement_block$209_statements));
+	return b.block(...(input.statements ?? []).map(statement_block$213_statements));
 };
-const statement_break$214 = (
+const statement_break$218 = (
 	input: PathInput<JavaMap, 'statement.break', 'break'>
 ): ReturnType<typeof b.breakStatement> => {
 	const unroutedSlot = unroutedIn(input, ['label']);
 	if (unroutedSlot !== undefined) return unrouted('statement.break', unroutedSlot);
-	return b.breakStatement(input.label === undefined ? undefined : statement_break$214_label(input.label));
+	return b.breakStatement(input.label === undefined ? undefined : statement_break$218_label(input.label));
 };
-const statement_continue$215 = (
+const statement_continue$219 = (
 	input: PathInput<JavaMap, 'statement.continue', 'continue'>
 ): ReturnType<typeof b.continueStatement> => {
 	const unroutedSlot = unroutedIn(input, ['label']);
 	if (unroutedSlot !== undefined) return unrouted('statement.continue', unroutedSlot);
-	return b.continueStatement(input.label === undefined ? undefined : statement_continue$215_label(input.label));
+	return b.continueStatement(input.label === undefined ? undefined : statement_continue$219_label(input.label));
 };
-const statement_return$216 = (
+const statement_return$220 = (
 	input: PathInput<JavaMap, 'statement.return', 'return'>
 ): ReturnType<typeof b.returnStatement> => {
 	const unroutedSlot = unroutedIn(input, ['expression']);
 	if (unroutedSlot !== undefined) return unrouted('statement.return', unroutedSlot);
 	return b.returnStatement(
-		input.expression === undefined ? undefined : statement_return$216_expression(input.expression)
+		input.expression === undefined ? undefined : statement_return$220_expression(input.expression)
 	);
 };
-const statement_throw$219 = (
+const statement_throw$223 = (
 	input: PathInput<JavaMap, 'statement.throw', 'throw'>
 ): ReturnType<typeof b.throwStatement> => {
 	const unroutedSlot = unroutedIn(input, ['expression']);
@@ -25416,10 +25416,10 @@ const statement_throw$219 = (
 	return b.throwStatement(
 		input.expression === undefined
 			? missing('statement.throw.expression')
-			: statement_throw$219_expression(input.expression)
+			: statement_throw$223_expression(input.expression)
 	);
 };
-const statement_try$330 = (
+const statement_try$334 = (
 	input: PathInput<JavaMap, 'statement.try', 'try'>
 ): ReturnType<typeof b.tryStatementFinally> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -25427,125 +25427,125 @@ const statement_try$330 = (
 	return b.tryStatementFinally({});
 };
 const comment_block = (input: PathInput<JavaMap, 'comment.block'>) => {
-	return comment_block$118(input);
+	return comment_block$121(input);
 };
 const comment_block_doc = (input: PathInput<JavaMap, 'comment.block.doc'>) => {
-	return comment_block_doc$118(input);
+	return comment_block_doc$121(input);
 };
 const comment_line = (input: PathInput<JavaMap, 'comment.line'>) => {
-	return comment_line$117(input);
+	return comment_line$120(input);
 };
 const expression_assignment_compound_add = (input: PathInput<JavaMap, 'expression.assignment.compound.add'>) => {
-	return expression_assignment_compound_add$172(input);
+	return expression_assignment_compound_add$176(input);
 };
 const expression_assignment_compound_bitwise_and = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.bitwise_and'>
 ) => {
-	return expression_assignment_compound_bitwise_and$172(input);
+	return expression_assignment_compound_bitwise_and$176(input);
 };
 const expression_assignment_compound_bitwise_or = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.bitwise_or'>
 ) => {
-	return expression_assignment_compound_bitwise_or$172(input);
+	return expression_assignment_compound_bitwise_or$176(input);
 };
 const expression_assignment_compound_bitwise_xor = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.bitwise_xor'>
 ) => {
-	return expression_assignment_compound_bitwise_xor$172(input);
+	return expression_assignment_compound_bitwise_xor$176(input);
 };
 const expression_assignment_compound_divide = (input: PathInput<JavaMap, 'expression.assignment.compound.divide'>) => {
-	return expression_assignment_compound_divide$172(input);
+	return expression_assignment_compound_divide$176(input);
 };
 const expression_assignment_compound_modulo = (input: PathInput<JavaMap, 'expression.assignment.compound.modulo'>) => {
-	return expression_assignment_compound_modulo$172(input);
+	return expression_assignment_compound_modulo$176(input);
 };
 const expression_assignment_compound_multiply = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.multiply'>
 ) => {
-	return expression_assignment_compound_multiply$172(input);
+	return expression_assignment_compound_multiply$176(input);
 };
 const expression_assignment_compound_shift_left = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.shift_left'>
 ) => {
-	return expression_assignment_compound_shift_left$172(input);
+	return expression_assignment_compound_shift_left$176(input);
 };
 const expression_assignment_compound_shift_right = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.shift_right'>
 ) => {
-	return expression_assignment_compound_shift_right$172(input);
+	return expression_assignment_compound_shift_right$176(input);
 };
 const expression_assignment_compound_shift_right_unsigned = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.shift_right_unsigned'>
 ) => {
-	return expression_assignment_compound_shift_right_unsigned$172(input);
+	return expression_assignment_compound_shift_right_unsigned$176(input);
 };
 const expression_assignment_compound_subtract = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.subtract'>
 ) => {
-	return expression_assignment_compound_subtract$172(input);
+	return expression_assignment_compound_subtract$176(input);
 };
 const expression_binary_arithmetic_add = (input: PathInput<JavaMap, 'expression.binary.arithmetic.add'>) => {
-	return expression_binary_arithmetic_add$173(input);
+	return expression_binary_arithmetic_add$177(input);
 };
 const expression_binary_arithmetic_divide = (input: PathInput<JavaMap, 'expression.binary.arithmetic.divide'>) => {
-	return expression_binary_arithmetic_divide$173(input);
+	return expression_binary_arithmetic_divide$177(input);
 };
 const expression_binary_arithmetic_modulo = (input: PathInput<JavaMap, 'expression.binary.arithmetic.modulo'>) => {
-	return expression_binary_arithmetic_modulo$173(input);
+	return expression_binary_arithmetic_modulo$177(input);
 };
 const expression_binary_arithmetic_multiply = (input: PathInput<JavaMap, 'expression.binary.arithmetic.multiply'>) => {
-	return expression_binary_arithmetic_multiply$173(input);
+	return expression_binary_arithmetic_multiply$177(input);
 };
 const expression_binary_arithmetic_subtract = (input: PathInput<JavaMap, 'expression.binary.arithmetic.subtract'>) => {
-	return expression_binary_arithmetic_subtract$173(input);
+	return expression_binary_arithmetic_subtract$177(input);
 };
 const expression_binary_bitwise_and = (input: PathInput<JavaMap, 'expression.binary.bitwise.and'>) => {
-	return expression_binary_bitwise_and$173(input);
+	return expression_binary_bitwise_and$177(input);
 };
 const expression_binary_bitwise_or = (input: PathInput<JavaMap, 'expression.binary.bitwise.or'>) => {
-	return expression_binary_bitwise_or$173(input);
+	return expression_binary_bitwise_or$177(input);
 };
 const expression_binary_bitwise_xor = (input: PathInput<JavaMap, 'expression.binary.bitwise.xor'>) => {
-	return expression_binary_bitwise_xor$173(input);
+	return expression_binary_bitwise_xor$177(input);
 };
 const expression_binary_comparison_equal = (input: PathInput<JavaMap, 'expression.binary.comparison.equal'>) => {
-	return expression_binary_comparison_equal$173(input);
+	return expression_binary_comparison_equal$177(input);
 };
 const expression_binary_comparison_greater = (input: PathInput<JavaMap, 'expression.binary.comparison.greater'>) => {
-	return expression_binary_comparison_greater$173(input);
+	return expression_binary_comparison_greater$177(input);
 };
 const expression_binary_comparison_greater_equal = (
 	input: PathInput<JavaMap, 'expression.binary.comparison.greater_equal'>
 ) => {
-	return expression_binary_comparison_greater_equal$173(input);
+	return expression_binary_comparison_greater_equal$177(input);
 };
 const expression_binary_comparison_less = (input: PathInput<JavaMap, 'expression.binary.comparison.less'>) => {
-	return expression_binary_comparison_less$173(input);
+	return expression_binary_comparison_less$177(input);
 };
 const expression_binary_comparison_less_equal = (
 	input: PathInput<JavaMap, 'expression.binary.comparison.less_equal'>
 ) => {
-	return expression_binary_comparison_less_equal$173(input);
+	return expression_binary_comparison_less_equal$177(input);
 };
 const expression_binary_comparison_not_equal = (
 	input: PathInput<JavaMap, 'expression.binary.comparison.not_equal'>
 ) => {
-	return expression_binary_comparison_not_equal$173(input);
+	return expression_binary_comparison_not_equal$177(input);
 };
 const expression_binary_logical_and = (input: PathInput<JavaMap, 'expression.binary.logical.and'>) => {
-	return expression_binary_logical_and$173(input);
+	return expression_binary_logical_and$177(input);
 };
 const expression_binary_logical_or = (input: PathInput<JavaMap, 'expression.binary.logical.or'>) => {
-	return expression_binary_logical_or$173(input);
+	return expression_binary_logical_or$177(input);
 };
 const expression_conditional = (input: PathInput<JavaMap, 'expression.conditional'>) => {
-	return expression_conditional$177(input);
+	return expression_conditional$181(input);
 };
 const expression_interpolation = (input: PathInput<JavaMap, 'expression.interpolation'>) => {
-	return expression_interpolation$167(input);
+	return expression_interpolation$171(input);
 };
 const expression_parenthesized = (input: PathInput<JavaMap, 'expression.parenthesized'>) => {
-	return expression_parenthesized$183(input);
+	return expression_parenthesized$187(input);
 };
 const literal_boolean_false = (input: PathInput<JavaMap, 'literal.boolean.false'>) => {
 	return literal_boolean_false$6(input);
@@ -25557,10 +25557,10 @@ const literal_character = (input: PathInput<JavaMap, 'literal.character'>) => {
 	return literal_character$7(input);
 };
 const literal_null = (input: PathInput<JavaMap, 'literal.null'>) => {
-	return literal_null$16(input);
+	return literal_null$19(input);
 };
 const literal_number_integer = (input: PathInput<JavaMap, 'literal.number.integer'>) => {
-	return literal_number_integer$121(input);
+	return literal_number_integer$124(input);
 };
 const literal_number_integer_binary = (input: PathInput<JavaMap, 'literal.number.integer.binary'>) => {
 	return literal_number_integer_binary$4(input);
@@ -25573,46 +25573,46 @@ const literal_number_integer_octal = (input: PathInput<JavaMap, 'literal.number.
 };
 const literal_string = (input: PathInput<JavaMap, 'literal.string'>) => {
 	if ((input.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-		return literal_string$327(input);
-	return literal_string$328(input);
+		return literal_string$331(input);
+	return literal_string$332(input);
 };
 const literal_string_escape = (input: PathInput<JavaMap, 'literal.string.escape'>) => {
 	if ((typeof input.$value !== 'string' || /^(?:(?:[^xu0-7]))$/u.test(input.$value)) && input.$value !== undefined)
-		return literal_string_escape$130(input);
+		return literal_string_escape$133(input);
 	if ((typeof input.$value !== 'string' || /^(?:(?:[0-7]{1,3}))$/u.test(input.$value)) && input.$value !== undefined)
-		return literal_string_escape$131(input);
+		return literal_string_escape$134(input);
 	if (
 		(typeof input.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(input.$value)) &&
 		input.$value !== undefined
 	)
-		return literal_string_escape$132(input);
+		return literal_string_escape$135(input);
 	if (
 		(typeof input.$value !== 'string' || /^(?:(?:u[0-9a-fA-F]{4}))$/u.test(input.$value)) &&
 		input.$value !== undefined
 	)
-		return literal_string_escape$133(input);
-	return literal_string_escape$134(input);
+		return literal_string_escape$136(input);
+	return literal_string_escape$137(input);
 };
 const literal_string_multiline = (input: PathInput<JavaMap, 'literal.string.multiline'>) => {
-	return literal_string_multiline$328(input);
+	return literal_string_multiline$332(input);
 };
 const statement_block = (input: PathInput<JavaMap, 'statement.block'>) => {
-	return statement_block$209(input);
+	return statement_block$213(input);
 };
 const statement_break = (input: PathInput<JavaMap, 'statement.break'>) => {
-	return statement_break$214(input);
+	return statement_break$218(input);
 };
 const statement_continue = (input: PathInput<JavaMap, 'statement.continue'>) => {
-	return statement_continue$215(input);
+	return statement_continue$219(input);
 };
 const statement_return = (input: PathInput<JavaMap, 'statement.return'>) => {
-	return statement_return$216(input);
+	return statement_return$220(input);
 };
 const statement_throw = (input: PathInput<JavaMap, 'statement.throw'>) => {
-	return statement_throw$219(input);
+	return statement_throw$223(input);
 };
 const statement_try = (input: PathInput<JavaMap, 'statement.try'>) => {
-	return statement_try$330(input);
+	return statement_try$334(input);
 };
 export const portableBuild = {
 	comment: { block: Object.assign(comment_block, { doc: comment_block_doc }), line: comment_line },

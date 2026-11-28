@@ -175,6 +175,7 @@ export {
 	buildAssertStatementArm,
 	buildResourceArm,
 	buildForStatementArm,
+	buildTextBlockWhiteSpace,
 	buildFormalParametersReceiver,
 	buildFormalParametersList,
 	buildStringLiteralLine,

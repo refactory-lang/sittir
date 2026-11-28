@@ -175,6 +175,7 @@ export {
 	coerceToAssertStatementArm as buildAssertStatementArm,
 	coerceToResourceArm as buildResourceArm,
 	coerceToForStatementArm as buildForStatementArm,
+	coerceToTextBlockWhiteSpace as buildTextBlockWhiteSpace,
 	coerceToFormalParametersReceiver as buildFormalParametersReceiver,
 	coerceToFormalParametersList as buildFormalParametersList,
 	coerceToStringLiteralLine as buildStringLiteralLine,

@@ -3164,6 +3164,15 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('text_block_white_space', () => {
+		it('factory produces correct type', () => {
+			const node = ir.textBlockWhiteSpace(' ');
+			expect(node.$type).toBe(TSKindId.TextBlockWhiteSpace);
+			expectBuiltNode(node);
+			expect(node.$text()).toBe(' ');
+		});
+	});
+
 	describe('formal_parameters_receiver', () => {
 		it('factory produces correct type', () => {
 			const node = ir.formalParametersReceiver({
@@ -3223,13 +3232,14 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('string_literal_text_block', () => {
 		it('factory produces correct type', () => {
-			const node = ir.stringLiteralTextBlock();
+			const node = ir.stringLiteralTextBlock({}, { lineTerminator: TSKindId.Lf });
 			expect(node.$type).toBe(TSKindId.StringLiteralTextBlock);
 			expectBuiltNode(node);
 		});
-		it('render does not throw on minimal config', () => {
-			const node = ir.stringLiteralTextBlock();
-			expect(() => node.$render!()).not.toThrow();
+		it('render produces non-empty string', () => {
+			const node = ir.stringLiteralTextBlock({}, { lineTerminator: TSKindId.Lf });
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 
