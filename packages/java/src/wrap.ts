@@ -12511,9 +12511,6 @@ export function wrapStringLiteralTextBlock(
 		whiteSpace() {
 			return hydrateSlot<T.TextBlockWhiteSpace | undefined>(this, '_white_space', tree);
 		},
-		lineTerminator() {
-			return this._line_terminator;
-		},
 		elements() {
 			return hydrateSlots<T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation>(
 				this,
@@ -12538,7 +12535,6 @@ export function wrapStringLiteralTextBlock(
 	};
 	node.$with = {
 		whiteSpace: wrapStringLiteralTextBlock$with$whiteSpace,
-		lineTerminator: wrapStringLiteralTextBlock$with$lineTerminator,
 		elements: wrapStringLiteralTextBlock$with$elements,
 		[RECEIVER]: node
 	};
@@ -12559,22 +12555,6 @@ function wrapStringLiteralTextBlock$with(node: Held, setter: string, args: reado
 					);
 					checkDelimited(handle, edited, RAW._delimited_buildStringLiteralTextBlock, [
 						edited.whiteSpace(),
-						edited.lineTerminator(),
-						edited.elements()
-					]);
-					return edited;
-				})
-			);
-		case 'lineTerminator':
-			return applySetter(args, (v: NonNullable<T.StringLiteralTextBlock['_line_terminator']>) =>
-				rebuilt(node, handle, () => {
-					const edited = wrapStringLiteralTextBlock(
-						{ ...$edited(data), _line_terminator: admitSlot(handle, 'string_literal_text_block', 'lineTerminator', v) },
-						tree
-					);
-					checkDelimited(handle, edited, RAW._delimited_buildStringLiteralTextBlock, [
-						edited.whiteSpace(),
-						edited.lineTerminator(),
 						edited.elements()
 					]);
 					return edited;
@@ -12592,7 +12572,6 @@ function wrapStringLiteralTextBlock$with(node: Held, setter: string, args: reado
 					);
 					checkDelimited(handle, edited, RAW._delimited_buildStringLiteralTextBlock, [
 						edited.whiteSpace(),
-						edited.lineTerminator(),
 						edited.elements()
 					]);
 					return edited;
@@ -12603,9 +12582,6 @@ function wrapStringLiteralTextBlock$with(node: Held, setter: string, args: reado
 }
 function wrapStringLiteralTextBlock$with$whiteSpace(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapStringLiteralTextBlock$with(receiverOf(this, '$with.whiteSpace'), 'whiteSpace', args);
-}
-function wrapStringLiteralTextBlock$with$lineTerminator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapStringLiteralTextBlock$with(receiverOf(this, '$with.lineTerminator'), 'lineTerminator', args);
 }
 function wrapStringLiteralTextBlock$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapStringLiteralTextBlock$with(receiverOf(this, '$with.elements'), 'elements', args);
@@ -19007,17 +18983,14 @@ function viewStringLiteralLine(data: RecordPosition, tree: TreeHandle): T.String
 function viewStringLiteralTextBlock$whiteSpace(this: RecordHandle) {
 	return viewSlot<T.TextBlockWhiteSpace | undefined>(this, 2, 3, 1, 2);
 }
-function viewStringLiteralTextBlock$lineTerminator(this: RecordHandle) {
-	return childSlot(this, 5, 1, 2, 3);
-}
 function viewStringLiteralTextBlock$elements(this: RecordHandle) {
 	return viewSlots<T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation>(
 		this,
-		6,
+		5,
 		1,
 		3,
 		1,
-		4
+		3
 	);
 }
 function viewStringLiteralTextBlock(data: RecordPosition, tree: TreeHandle): T.StringLiteralTextBlock.Parsed {
@@ -19029,7 +19002,6 @@ function viewStringLiteralTextBlock(data: RecordPosition, tree: TreeHandle): T.S
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		whiteSpace: viewStringLiteralTextBlock$whiteSpace,
-		lineTerminator: viewStringLiteralTextBlock$lineTerminator,
 		elements: viewStringLiteralTextBlock$elements,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -19041,12 +19013,7 @@ function viewStringLiteralTextBlock(data: RecordPosition, tree: TreeHandle): T.S
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = {
-		whiteSpace: $with$whiteSpace,
-		lineTerminator: $with$lineTerminator,
-		elements: $with$elements,
-		[RECEIVER]: node
-	};
+	node.$with = { whiteSpace: $with$whiteSpace, elements: $with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.StringLiteralTextBlock.Parsed;
 }
@@ -19399,9 +19366,6 @@ function $with$label(this: Received<RecordPosition>, ...args: unknown[]): unknow
 }
 function $with$left(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.left'), _wrap, 'left', args);
-}
-function $with$lineTerminator(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(receiverOf(this, '$with.lineTerminator'), _wrap, 'lineTerminator', args);
 }
 function $with$message(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.message'), _wrap, 'message', args);

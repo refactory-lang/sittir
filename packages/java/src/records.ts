@@ -750,11 +750,10 @@ export const records = {
 	},
 	StringLiteralLineNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	StringLiteralTextBlockNode: {
-		words: 7,
-		builtWords: 5,
+		words: 6,
+		builtWords: 4,
 		white_space: { word: 2, width: 3, forms: 1, built: 2 },
-		line_terminator: { word: 5, width: 1, forms: 2, built: 3 },
-		elements: { word: 6, width: 1, run: 3, forms: 1, built: 4 }
+		elements: { word: 5, width: 1, run: 3, forms: 1, built: 3 }
 	},
 	TryStatementCatchesNode: {
 		words: 6,

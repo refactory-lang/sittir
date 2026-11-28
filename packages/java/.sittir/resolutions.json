@@ -1,5 +1,5 @@
 {
-	"grammarHash": "03b053bd84e8d764a5af0ea2bd47f6dae841888cac3b67359e612b5a9b374553",
+	"grammarHash": "1a05f4e203f9b94134b9e06ca90fc7e37d0e7a2234dd75a5b962e253830036d7",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["_unannotated_type","generic_type"]},"step":"upstream-declared","sourceChains":[["_unannotated_type"],["generic_type"]],"conflict":{"symbolSequence":["expression","'instanceof'","identifier"],"lookahead":"'<'","interpretations":["_unannotated_type","generic_type"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_unannotated_type","scoped_type_identifier"]},"step":"upstream-declared","sourceChains":[["_unannotated_type"],["scoped_type_identifier"]],"conflict":{"symbolSequence":["scoped_type_identifier"],"lookahead":"'.'","interpretations":["_unannotated_type","scoped_type_identifier","scoped_type_identifier"]}},
@@ -16,7 +16,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["yield_statement","_reserved_identifier"]},"step":"upstream-declared","sourceChains":[["yield_statement"],["_reserved_identifier"]],"conflict":{"symbolSequence":["'yield'"],"lookahead":"'('","interpretations":["yield_statement","_reserved_identifier"]}}
 	],
 	"bound": {
-		"grammarHash": "e010e1e83328535f3eb7d51ba16de1520df6b56bfbebabafe4db38f395bc302b",
+		"grammarHash": "4e2b039cefcd96f85ab30a850070b7156c7f82686804e0be4b6ce986765f85ae",
 		"resolutions": []
 	}
 }

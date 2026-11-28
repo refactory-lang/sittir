@@ -32,7 +32,6 @@ import {
 	restItems,
 	toElement,
 	admitAliasContent,
-	coerceKindEnumStorage,
 	kindIdStorage,
 	listStorage,
 	numberText,
@@ -18072,68 +18071,47 @@ export function buildStringLiteralTextBlock<
 	config?: RefusingConfig<
 		Partial<T.StringLiteralTextBlock.Config>,
 		{ whiteSpace: WhiteSpaceSlot; elements: ElementsSlot }
-	>,
-	options?: T.StringLiteralTextBlock.Options
+	>
 ): T.StringLiteralTextBlock.Bound;
 export function buildStringLiteralTextBlock(
-	config: Partial<T.StringLiteralTextBlock.Config> = {},
-	options?: T.StringLiteralTextBlock.Options
+	config: Partial<T.StringLiteralTextBlock.Config> = {}
 ): T.StringLiteralTextBlock.Bound {
 	currentHandle()?.admit(TSKindId.StringLiteralTextBlock, [config]);
 	const _white_space = config.whiteSpace;
-	const _line_terminator = coerceKindEnumStorage<NonNullable<T.StringLiteralTextBlock['_line_terminator']>>(
-		options?.lineTerminator,
-		[['\n', TSKindId.Lf] as const, ['\r\n', TSKindId.CrLf] as const, ['\r', TSKindId.Cr] as const]
-	);
 	const _elements = listStorage<NonNullable<T.StringLiteralTextBlock['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'string_literal_text_block', {
-			whiteSpace: _white_space,
-			lineTerminator: _line_terminator,
-			elements: _elements
-		});
+		admitChildren(handle, 'string_literal_text_block', { whiteSpace: _white_space, elements: _elements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.StringLiteralTextBlock as const, { _white_space, _line_terminator, _elements });
+	handle?.verifyStored?.(TSKindId.StringLiteralTextBlock as const, { _white_space, _elements });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.StringLiteralTextBlock as const);
 		storeCell(arena, record, 2, 2, _white_space);
-		storeCell(arena, record, 3, 5, _line_terminator);
-		storeList(arena, record, 4, 6, _elements);
+		storeList(arena, record, 3, 5, _elements);
 		const node = arena.view(record);
-		checkDelimited(handle, node, _delimited_buildStringLiteralTextBlock, [_white_space, _line_terminator, _elements]);
+		checkDelimited(handle, node, _delimited_buildStringLiteralTextBlock, [_white_space, _elements]);
 		return node as unknown as T.StringLiteralTextBlock.Bound;
 	});
 }
 
 function buildStringLiteralTextBlock$patch(
 	source: object,
-	config: Partial<T.StringLiteralTextBlock.Config> = {},
-	options?: T.StringLiteralTextBlock.Options
+	config: Partial<T.StringLiteralTextBlock.Config> = {}
 ): T.StringLiteralTextBlock.Bound {
 	currentHandle()?.admit(TSKindId.StringLiteralTextBlock, [config]);
 	const _white_space = config.whiteSpace;
-	const _line_terminator = coerceKindEnumStorage<NonNullable<T.StringLiteralTextBlock['_line_terminator']>>(
-		options?.lineTerminator,
-		[['\n', TSKindId.Lf] as const, ['\r\n', TSKindId.CrLf] as const, ['\r', TSKindId.Cr] as const]
-	);
 	const _elements = listStorage<NonNullable<T.StringLiteralTextBlock['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'string_literal_text_block', {
-			whiteSpace: _white_space,
-			lineTerminator: _line_terminator,
-			elements: _elements
-		});
+		admitChildren(handle, 'string_literal_text_block', { whiteSpace: _white_space, elements: _elements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.StringLiteralTextBlock as const, { _white_space, _line_terminator, _elements });
+	handle?.verifyStored?.(TSKindId.StringLiteralTextBlock as const, { _white_space, _elements });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.StringLiteralTextBlock as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'whiteSpace', _white_space));
-		patchCell(arena, record, 3, 5, carriedSlot(source, 'lineTerminator', _line_terminator));
-		patchList(arena, record, 4, 6, _elements);
+		patchList(arena, record, 3, 5, _elements);
 		const node = arena.view(record);
-		checkDelimited(handle, node, _delimited_buildStringLiteralTextBlock, [_white_space, _line_terminator, _elements]);
+		checkDelimited(handle, node, _delimited_buildStringLiteralTextBlock, [_white_space, _elements]);
 		return node as unknown as T.StringLiteralTextBlock.Bound;
 	});
 }
@@ -18143,30 +18121,18 @@ function withStringLiteralTextBlock(node: object, setter: string, args: readonly
 		case 'whiteSpace': {
 			const inputs = builtInputs(node);
 			const config = inputs.config as T.StringLiteralTextBlock.Config;
-			const options = inputs.options as T.StringLiteralTextBlock.Options;
 			return applySetter(args, (value?: Admit<T.TextBlockWhiteSpace>) =>
-				rebuilt(node, handle, () => buildStringLiteralTextBlock$patch(node, { ...config, whiteSpace: value }, options))
-			);
-		}
-		case 'lineTerminator': {
-			const inputs = builtInputs(node);
-			const config = inputs.config as T.StringLiteralTextBlock.Config;
-			const options = inputs.options as T.StringLiteralTextBlock.Options;
-			return applySetter(args, (spelling: TSKindId.Lf | TSKindId.CrLf | TSKindId.Cr) =>
-				rebuilt(node, handle, () =>
-					buildStringLiteralTextBlock$patch(node, config, { ...options, lineTerminator: spelling })
-				)
+				rebuilt(node, handle, () => buildStringLiteralTextBlock$patch(node, { ...config, whiteSpace: value }))
 			);
 		}
 		case 'elements': {
 			const inputs = builtInputs(node);
 			const config = inputs.config as T.StringLiteralTextBlock.Config;
-			const options = inputs.options as T.StringLiteralTextBlock.Options;
 			return applySetter(
 				args,
 				(...values: Admit<(T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation)[]>) =>
 					rebuilt(node, handle, () =>
-						buildStringLiteralTextBlock$patch(node, { ...config, elements: restItems('elements', values) }, options)
+						buildStringLiteralTextBlock$patch(node, { ...config, elements: restItems('elements', values) })
 					)
 			);
 		}
@@ -19194,363 +19160,365 @@ export const builtViews: BuiltViews = Object.freeze({
 		3: withOctalIntegerLiteral,
 		4: withBinaryIntegerLiteral,
 		7: withCharacterLiteral,
-		18: withEscapeSequenceText,
-		120: withLineComment,
-		121: withBlockComment,
-		125: withDecimalFloatingPointLiteralArm1,
-		126: withDecimalFloatingPointLiteralArm2,
-		127: withDecimalFloatingPointLiteralArm3Arm1,
-		128: withDecimalFloatingPointLiteralArm3Arm2,
-		132: withHexFloatingPointLiteralArm2,
-		133: withEscapeSequenceArm1,
-		134: withEscapeSequenceArm2,
-		135: withEscapeSequenceArm3,
-		136: withEscapeSequenceArm4,
-		137: withEscapeSequenceArm5,
-		161: withProgram,
-		165: withDecimalFloatingPointLiteral,
-		166: withHexFloatingPointLiteral,
-		171: withStringInterpolation,
-		172: withMultilineStringLiteralArm1,
-		175: withCastExpression,
-		176: withAssignmentExpression,
-		177: withBinaryExpression,
-		178: withInstanceofExpression,
-		179: withLambdaExpression,
-		180: withInferredParameters,
-		181: withTernaryExpression,
-		182: withUnaryExpression,
-		185: withArrayCreationExpression,
-		186: withDimensionsExpr,
-		187: withParenthesizedExpression,
-		188: withClassLiteral,
-		189: withObjectCreationExpression,
-		190: withUnqualifiedObjectCreationExpression,
-		191: withFieldAccess,
-		192: withTemplateExpression,
-		193: withArrayAccess,
-		194: withMethodInvocation,
-		195: withArgumentList,
-		196: withMethodReference,
-		197: withTypeArguments,
-		198: withWildcard,
-		199: withWildcardBounds,
-		200: withDimensions,
-		201: withSwitchExpression,
-		202: withSwitchBlock,
-		203: withSwitchBlockStatementGroup,
-		204: withSwitchRule,
-		205: withSwitchLabel,
-		206: withPattern,
-		207: withTypePattern,
-		208: withRecordPattern,
-		209: withRecordPatternBody,
-		210: withRecordPatternComponent,
-		211: withGuard,
-		213: withBlock,
-		214: withExpressionStatement,
-		215: withLabeledStatement,
-		216: withAssertStatement,
-		217: withDoStatement,
-		218: withBreakStatement,
-		219: withContinueStatement,
-		220: withReturnStatement,
-		221: withYieldStatement,
-		222: withSynchronizedStatement,
-		223: withThrowStatement,
-		225: withCatchClause,
-		226: withCatchFormalParameter,
-		227: withCatchType,
-		228: withFinallyClause,
-		229: withTryWithResourcesStatement,
-		230: withResourceSpecification,
-		231: withResource,
-		232: withIfStatement,
-		233: withWhileStatement,
-		234: withForStatement,
-		235: withEnhancedForStatement,
-		237: withMarkerAnnotation,
-		238: withAnnotation,
-		239: withAnnotationArgumentList,
-		240: withElementValuePair,
-		242: withElementValueArrayInitializer,
-		244: withModuleDeclaration,
-		245: withModuleBody,
-		247: withRequiresModuleDirective,
-		249: withExportsModuleDirective,
-		250: withOpensModuleDirective,
-		251: withUsesModuleDirective,
-		252: withProvidesModuleDirective,
-		253: withPackageDeclaration,
-		254: withImportDeclaration,
-		256: withEnumDeclaration,
-		257: withEnumBody,
-		258: withEnumBodyDeclarations,
-		259: withEnumConstant,
-		260: withClassDeclaration,
-		261: withModifiers,
-		262: withTypeParameters,
-		263: withTypeParameter,
-		264: withTypeBound,
-		265: withSuperclass,
-		266: withSuperInterfaces,
-		267: withTypeList,
-		268: withPermits,
-		269: withClassBody,
-		270: withStaticInitializer,
-		271: withConstructorDeclaration,
-		273: withConstructorBody,
-		274: withExplicitConstructorInvocation,
-		275: withScopedIdentifier,
-		276: withFieldDeclaration,
-		277: withRecordDeclaration,
-		278: withAnnotationTypeDeclaration,
-		279: withAnnotationTypeBody,
-		280: withAnnotationTypeElementDeclaration,
-		282: withInterfaceDeclaration,
-		283: withExtendsInterfaces,
-		284: withInterfaceBody,
-		285: withConstantDeclaration,
-		287: withVariableDeclarator,
-		289: withArrayInitializer,
-		292: withAnnotatedType,
-		293: withScopedTypeIdentifier,
-		294: withGenericType,
-		295: withArrayType,
-		301: withFormalParameter,
-		302: withReceiverParameter,
-		303: withSpreadParameter,
-		304: withThrows,
-		305: withLocalVariableDeclaration,
-		306: withMethodDeclaration,
-		307: withCompactConstructorDeclaration,
-		311: withArrayCreationExpressionArm1,
-		312: withArrayCreationExpressionArm2,
-		313: withResources,
-		314: withElementValues,
-		315: withEnumConstants,
-		316: withExplicitConstructorInvocationArm1,
-		317: withExplicitConstructorInvocationArm2,
-		318: withVariableInitializers,
-		319: withCastExpressionArm,
-		320: withInstanceofExpressionArm,
-		321: withObjectCreationExpressionArm,
-		322: withMethodInvocationArm,
-		323: withWildcardBoundsArm,
-		324: withSwitchLabelArm,
-		325: withRecordPatternComponentArm,
-		326: withAssertStatementArm,
-		327: withResourceArm,
-		328: withForStatementArm,
-		329: withFormalParametersReceiver,
-		330: withFormalParametersList,
-		331: withStringLiteralLine,
-		332: withStringLiteralTextBlock,
-		333: withTryStatementCatches,
-		334: withTryStatementFinally,
-		335: withUpdateExpressionPostfix,
-		336: withUpdateExpressionPrefix,
-		374: withTypeIdentifier
+		15: withEscapeSequenceText,
+		117: withLineComment,
+		118: withBlockComment,
+		122: withDecimalFloatingPointLiteralArm1,
+		123: withDecimalFloatingPointLiteralArm2,
+		124: withDecimalFloatingPointLiteralArm3Arm1,
+		125: withDecimalFloatingPointLiteralArm3Arm2,
+		129: withHexFloatingPointLiteralArm2,
+		130: withEscapeSequenceArm1,
+		131: withEscapeSequenceArm2,
+		132: withEscapeSequenceArm3,
+		133: withEscapeSequenceArm4,
+		134: withEscapeSequenceArm5,
+		159: withProgram,
+		163: withDecimalFloatingPointLiteral,
+		164: withHexFloatingPointLiteral,
+		169: withStringInterpolation,
+		170: withMultilineStringLiteralArm1,
+		173: withCastExpression,
+		174: withAssignmentExpression,
+		175: withBinaryExpression,
+		176: withInstanceofExpression,
+		177: withLambdaExpression,
+		178: withInferredParameters,
+		179: withTernaryExpression,
+		180: withUnaryExpression,
+		183: withArrayCreationExpression,
+		184: withDimensionsExpr,
+		185: withParenthesizedExpression,
+		186: withClassLiteral,
+		187: withObjectCreationExpression,
+		188: withUnqualifiedObjectCreationExpression,
+		189: withFieldAccess,
+		190: withTemplateExpression,
+		191: withArrayAccess,
+		192: withMethodInvocation,
+		193: withArgumentList,
+		194: withMethodReference,
+		195: withTypeArguments,
+		196: withWildcard,
+		197: withWildcardBounds,
+		198: withDimensions,
+		199: withSwitchExpression,
+		200: withSwitchBlock,
+		201: withSwitchBlockStatementGroup,
+		202: withSwitchRule,
+		203: withSwitchLabel,
+		204: withPattern,
+		205: withTypePattern,
+		206: withRecordPattern,
+		207: withRecordPatternBody,
+		208: withRecordPatternComponent,
+		209: withGuard,
+		211: withBlock,
+		212: withExpressionStatement,
+		213: withLabeledStatement,
+		214: withAssertStatement,
+		215: withDoStatement,
+		216: withBreakStatement,
+		217: withContinueStatement,
+		218: withReturnStatement,
+		219: withYieldStatement,
+		220: withSynchronizedStatement,
+		221: withThrowStatement,
+		223: withCatchClause,
+		224: withCatchFormalParameter,
+		225: withCatchType,
+		226: withFinallyClause,
+		227: withTryWithResourcesStatement,
+		228: withResourceSpecification,
+		229: withResource,
+		230: withIfStatement,
+		231: withWhileStatement,
+		232: withForStatement,
+		233: withEnhancedForStatement,
+		235: withMarkerAnnotation,
+		236: withAnnotation,
+		237: withAnnotationArgumentList,
+		238: withElementValuePair,
+		240: withElementValueArrayInitializer,
+		242: withModuleDeclaration,
+		243: withModuleBody,
+		245: withRequiresModuleDirective,
+		247: withExportsModuleDirective,
+		248: withOpensModuleDirective,
+		249: withUsesModuleDirective,
+		250: withProvidesModuleDirective,
+		251: withPackageDeclaration,
+		252: withImportDeclaration,
+		254: withEnumDeclaration,
+		255: withEnumBody,
+		256: withEnumBodyDeclarations,
+		257: withEnumConstant,
+		258: withClassDeclaration,
+		259: withModifiers,
+		260: withTypeParameters,
+		261: withTypeParameter,
+		262: withTypeBound,
+		263: withSuperclass,
+		264: withSuperInterfaces,
+		265: withTypeList,
+		266: withPermits,
+		267: withClassBody,
+		268: withStaticInitializer,
+		269: withConstructorDeclaration,
+		271: withConstructorBody,
+		272: withExplicitConstructorInvocation,
+		273: withScopedIdentifier,
+		274: withFieldDeclaration,
+		275: withRecordDeclaration,
+		276: withAnnotationTypeDeclaration,
+		277: withAnnotationTypeBody,
+		278: withAnnotationTypeElementDeclaration,
+		280: withInterfaceDeclaration,
+		281: withExtendsInterfaces,
+		282: withInterfaceBody,
+		283: withConstantDeclaration,
+		285: withVariableDeclarator,
+		287: withArrayInitializer,
+		290: withAnnotatedType,
+		291: withScopedTypeIdentifier,
+		292: withGenericType,
+		293: withArrayType,
+		299: withFormalParameter,
+		300: withReceiverParameter,
+		301: withSpreadParameter,
+		302: withThrows,
+		303: withLocalVariableDeclaration,
+		304: withMethodDeclaration,
+		305: withCompactConstructorDeclaration,
+		309: withArrayCreationExpressionArm1,
+		310: withArrayCreationExpressionArm2,
+		311: withResources,
+		312: withElementValues,
+		313: withEnumConstants,
+		314: withExplicitConstructorInvocationArm1,
+		315: withExplicitConstructorInvocationArm2,
+		316: withVariableInitializers,
+		317: withCastExpressionArm,
+		318: withInstanceofExpressionArm,
+		319: withObjectCreationExpressionArm,
+		320: withMethodInvocationArm,
+		321: withWildcardBoundsArm,
+		322: withSwitchLabelArm,
+		323: withRecordPatternComponentArm,
+		324: withAssertStatementArm,
+		325: withResourceArm,
+		326: withForStatementArm,
+		327: withFormalParametersReceiver,
+		328: withFormalParametersList,
+		329: withStringLiteralLine,
+		330: withStringLiteralTextBlock,
+		331: withTryStatementCatches,
+		332: withTryStatementFinally,
+		333: withUpdateExpressionPostfix,
+		334: withUpdateExpressionPrefix,
+		372: withTypeIdentifier
 	}),
 	words: Object.freeze({
 		3: 6,
 		4: 6,
 		7: 4,
-		18: 4,
-		120: 4,
-		121: 4,
-		125: 5,
-		126: 4,
-		127: 6,
-		128: 6,
-		132: 6,
+		15: 4,
+		117: 4,
+		118: 4,
+		122: 5,
+		123: 4,
+		124: 6,
+		125: 6,
+		129: 6,
+		130: 4,
+		131: 4,
+		132: 4,
 		133: 4,
 		134: 4,
-		135: 4,
-		136: 4,
-		137: 4,
-		161: 3,
-		165: 3,
-		166: 3,
-		171: 3,
-		172: 3,
+		159: 3,
+		163: 3,
+		164: 3,
+		169: 3,
+		170: 3,
+		173: 5,
+		174: 5,
 		175: 5,
 		176: 5,
-		177: 5,
-		178: 5,
-		179: 4,
-		180: 3,
-		181: 5,
-		182: 4,
-		185: 5,
-		186: 4,
+		177: 4,
+		178: 3,
+		179: 5,
+		180: 4,
+		183: 5,
+		184: 4,
+		185: 3,
+		186: 3,
 		187: 3,
-		188: 3,
-		189: 3,
-		190: 7,
-		191: 5,
+		188: 7,
+		189: 5,
+		190: 4,
+		191: 4,
 		192: 4,
-		193: 4,
-		194: 4,
+		193: 3,
+		194: 5,
 		195: 3,
-		196: 5,
+		196: 4,
 		197: 3,
-		198: 4,
-		199: 3,
+		198: 3,
+		199: 4,
 		200: 3,
 		201: 4,
-		202: 3,
-		203: 4,
-		204: 4,
-		205: 3,
-		206: 3,
-		207: 4,
-		208: 4,
+		202: 4,
+		203: 3,
+		204: 3,
+		205: 4,
+		206: 4,
+		207: 3,
+		208: 3,
 		209: 3,
-		210: 3,
 		211: 3,
-		213: 3,
+		212: 3,
+		213: 4,
 		214: 3,
 		215: 4,
 		216: 3,
-		217: 4,
+		217: 3,
 		218: 3,
 		219: 3,
-		220: 3,
+		220: 4,
 		221: 3,
-		222: 4,
-		223: 3,
-		225: 4,
-		226: 6,
-		227: 3,
+		223: 4,
+		224: 6,
+		225: 3,
+		226: 3,
+		227: 6,
 		228: 3,
-		229: 6,
-		230: 3,
-		231: 3,
-		232: 5,
-		233: 4,
-		234: 6,
-		235: 8,
+		229: 3,
+		230: 5,
+		231: 4,
+		232: 6,
+		233: 8,
+		235: 3,
+		236: 4,
 		237: 3,
 		238: 4,
-		239: 3,
-		240: 4,
-		242: 3,
-		244: 6,
-		245: 3,
+		240: 3,
+		242: 6,
+		243: 3,
+		245: 4,
 		247: 4,
-		249: 4,
+		248: 4,
+		249: 3,
 		250: 4,
-		251: 3,
+		251: 4,
 		252: 4,
-		253: 4,
-		254: 4,
-		256: 6,
-		257: 4,
-		258: 3,
-		259: 6,
-		260: 9,
-		261: 3,
+		254: 6,
+		255: 4,
+		256: 3,
+		257: 6,
+		258: 9,
+		259: 3,
+		260: 3,
+		261: 5,
 		262: 3,
-		263: 5,
+		263: 3,
 		264: 3,
 		265: 3,
 		266: 3,
 		267: 3,
 		268: 3,
-		269: 3,
-		270: 3,
-		271: 8,
+		269: 8,
+		271: 4,
+		272: 4,
 		273: 4,
-		274: 4,
-		275: 4,
+		274: 5,
+		275: 8,
 		276: 5,
-		277: 8,
-		278: 5,
-		279: 3,
-		280: 7,
-		282: 8,
-		283: 3,
-		284: 3,
+		277: 3,
+		278: 7,
+		280: 8,
+		281: 3,
+		282: 3,
+		283: 5,
 		285: 5,
-		287: 5,
-		289: 3,
+		287: 3,
+		290: 4,
+		291: 5,
 		292: 4,
-		293: 5,
-		294: 4,
-		295: 4,
+		293: 4,
+		299: 6,
+		300: 5,
 		301: 6,
-		302: 5,
-		303: 6,
-		304: 3,
+		302: 3,
+		303: 5,
+		304: 11,
 		305: 5,
-		306: 11,
-		307: 5,
+		309: 3,
+		310: 4,
 		311: 3,
-		312: 4,
+		312: 3,
 		313: 3,
-		314: 3,
-		315: 3,
-		316: 4,
+		314: 4,
+		315: 4,
+		316: 3,
 		317: 4,
-		318: 3,
-		319: 4,
-		320: 4,
-		321: 8,
-		322: 6,
-		323: 3,
+		318: 4,
+		319: 8,
+		320: 6,
+		321: 3,
+		322: 4,
+		323: 4,
 		324: 4,
-		325: 4,
-		326: 4,
-		327: 7,
-		328: 3,
+		325: 7,
+		326: 3,
+		327: 3,
+		328: 4,
 		329: 3,
 		330: 4,
-		331: 3,
+		331: 4,
 		332: 5,
 		333: 4,
-		334: 5,
-		335: 4,
-		336: 4,
-		374: 3
+		334: 4,
+		372: 3
 	}),
 	cells: Object.freeze({
 		3: 2,
 		4: 2,
 		7: 2,
-		18: 2,
-		120: 2,
-		121: 2,
+		15: 2,
+		117: 2,
+		118: 2,
+		122: 2,
+		123: 2,
+		124: 2,
 		125: 2,
-		126: 2,
-		127: 2,
-		128: 2,
+		129: 2,
+		130: 2,
+		131: 2,
 		132: 2,
 		133: 2,
 		134: 2,
-		135: 2,
-		136: 2,
-		137: 2,
-		161: 2,
-		165: 2,
-		166: 2,
-		171: 2,
-		172: 2,
+		159: 2,
+		163: 2,
+		164: 2,
+		169: 2,
+		170: 2,
+		173: 2,
+		174: 2,
 		175: 2,
-		176: 2,
+		176: 3,
 		177: 2,
-		178: 3,
+		178: 2,
 		179: 2,
 		180: 2,
-		181: 2,
-		182: 2,
+		183: 2,
+		184: 2,
 		185: 2,
 		186: 2,
 		187: 2,
 		188: 2,
-		189: 2,
+		189: 3,
 		190: 2,
-		191: 3,
+		191: 2,
 		192: 2,
 		193: 2,
 		194: 2,
@@ -19569,8 +19537,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		207: 2,
 		208: 2,
 		209: 2,
-		210: 2,
 		211: 2,
+		212: 2,
 		213: 2,
 		214: 2,
 		215: 2,
@@ -19580,8 +19548,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		219: 2,
 		220: 2,
 		221: 2,
-		222: 2,
 		223: 2,
+		224: 2,
 		225: 2,
 		226: 2,
 		227: 2,
@@ -19591,22 +19559,22 @@ export const builtViews: BuiltViews = Object.freeze({
 		231: 2,
 		232: 2,
 		233: 2,
-		234: 2,
 		235: 2,
+		236: 2,
 		237: 2,
 		238: 2,
-		239: 2,
 		240: 2,
-		242: 2,
-		244: 3,
+		242: 3,
+		243: 2,
 		245: 2,
 		247: 2,
+		248: 2,
 		249: 2,
 		250: 2,
 		251: 2,
-		252: 2,
-		253: 2,
-		254: 3,
+		252: 3,
+		254: 2,
+		255: 2,
 		256: 2,
 		257: 2,
 		258: 2,
@@ -19621,33 +19589,33 @@ export const builtViews: BuiltViews = Object.freeze({
 		267: 2,
 		268: 2,
 		269: 2,
-		270: 2,
 		271: 2,
+		272: 2,
 		273: 2,
 		274: 2,
 		275: 2,
 		276: 2,
 		277: 2,
 		278: 2,
-		279: 2,
 		280: 2,
+		281: 2,
 		282: 2,
 		283: 2,
-		284: 2,
 		285: 2,
 		287: 2,
-		289: 2,
+		290: 2,
+		291: 2,
 		292: 2,
 		293: 2,
-		294: 2,
-		295: 2,
+		299: 2,
+		300: 2,
 		301: 2,
 		302: 2,
 		303: 2,
 		304: 2,
 		305: 2,
-		306: 2,
-		307: 2,
+		309: 2,
+		310: 2,
 		311: 2,
 		312: 2,
 		313: 2,
@@ -19657,9 +19625,9 @@ export const builtViews: BuiltViews = Object.freeze({
 		317: 2,
 		318: 2,
 		319: 2,
-		320: 2,
+		320: 3,
 		321: 2,
-		322: 3,
+		322: 2,
 		323: 2,
 		324: 2,
 		325: 2,
@@ -19672,9 +19640,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		332: 2,
 		333: 2,
 		334: 2,
-		335: 2,
-		336: 2,
-		374: 2
+		372: 2
 	}),
 	places: Object.freeze({
 		3: [
@@ -19688,204 +19654,204 @@ export const builtViews: BuiltViews = Object.freeze({
 			[6, 4, 2, 4, 0]
 		],
 		7: [[2, 2, 2, 4, 0]],
-		18: [[2, 2, 2, 4, 0]],
-		120: [[2, 2, 2, 4, 0]],
-		121: [[2, 2, 2, 4, 0]],
-		125: [
+		15: [[2, 2, 2, 4, 0]],
+		117: [[2, 2, 2, 4, 0]],
+		118: [[2, 2, 2, 4, 0]],
+		122: [
 			[2, 2, 2, 4, 0],
 			[4, 3, 2, 4, 0]
 		],
-		126: [[2, 2, 2, 4, 0]],
-		127: [
+		123: [[2, 2, 2, 4, 0]],
+		124: [
 			[2, 2, 2, 4, 0],
 			[4, 3, 2, 4, 0],
 			[6, 4, 2, 4, 0]
 		],
-		128: [
+		125: [
 			[2, 2, 2, 4, 0],
 			[4, 3, 2, 4, 0],
 			[6, 4, 2, 4, 0]
 		],
-		132: [
+		129: [
 			[2, 2, 2, 4, 0],
 			[4, 3, 2, 4, 0],
 			[6, 4, 2, 4, 0]
 		],
+		130: [[2, 2, 2, 4, 0]],
+		131: [[2, 2, 2, 4, 0]],
+		132: [[2, 2, 2, 4, 0]],
 		133: [[2, 2, 2, 4, 0]],
 		134: [[2, 2, 2, 4, 0]],
-		135: [[2, 2, 2, 4, 0]],
-		136: [[2, 2, 2, 4, 0]],
-		137: [[2, 2, 2, 4, 0]],
-		161: [[2, 2, 1, 3, 4]],
-		165: [[2, 2, 3, 1, 0]],
-		166: [[2, 2, 3, 1, 0]],
-		171: [[2, 2, 4, 3, 0]],
-		172: [[2, 2, 3, 1, 0]],
-		175: [
+		159: [[2, 2, 1, 3, 4]],
+		163: [[2, 2, 3, 1, 0]],
+		164: [[2, 2, 3, 1, 0]],
+		169: [[2, 2, 4, 3, 0]],
+		170: [[2, 2, 3, 1, 0]],
+		173: [
 			[2, 2, 1, 3, 4],
 			[3, 3, 4, 3, 0],
 			[7, 4, 3, 1, 0]
 		],
-		176: [
+		174: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 2, 0],
 			[6, 4, 4, 3, 0]
 		],
-		177: [
+		175: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 1, 2, 0],
 			[7, 4, 4, 3, 0]
 		],
-		178: [
+		176: [
 			[3, 3, 4, 3, 0],
 			[2, 0],
 			[7, 4, 3, 1, 0]
 		],
-		179: [
+		177: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0]
 		],
-		180: [[2, 2, 1, 1, 3]],
-		181: [
+		178: [[2, 2, 1, 1, 3]],
+		179: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0],
 			[10, 4, 4, 3, 0]
 		],
-		182: [
+		180: [
 			[2, 2, 1, 2, 0],
 			[3, 3, 4, 3, 0]
 		],
-		185: [
+		183: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 4, 3, 0],
 			[7, 4, 3, 1, 0]
 		],
-		186: [
+		184: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 4, 3, 0]
 		],
-		187: [[2, 2, 4, 3, 0]],
-		188: [[2, 2, 4, 3, 0]],
-		189: [[2, 2, 3, 1, 0]],
-		190: [
+		185: [[2, 2, 4, 3, 0]],
+		186: [[2, 2, 4, 3, 0]],
+		187: [[2, 2, 3, 1, 0]],
+		188: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0],
 			[6, 4, 4, 3, 0],
 			[10, 5, 3, 1, 0],
 			[13, 6, 3, 1, 0]
 		],
-		191: [
+		189: [
 			[3, 3, 4, 3, 0],
 			[2, 0],
 			[7, 4, 4, 3, 0]
 		],
-		192: [
+		190: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		193: [
+		191: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0]
 		],
-		194: [
+		192: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		195: [[2, 2, 1, 3, 4]],
-		196: [
+		193: [[2, 2, 1, 3, 4]],
+		194: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0],
 			[9, 4, 4, 3, 0]
 		],
-		197: [[2, 2, 1, 3, 4]],
-		198: [
+		195: [[2, 2, 1, 3, 4]],
+		196: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0]
 		],
-		199: [[2, 2, 4, 3, 0]],
-		200: [[2, 2, 1, 1, 3]],
-		201: [
+		197: [[2, 2, 4, 3, 0]],
+		198: [[2, 2, 1, 1, 3]],
+		199: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		202: [[2, 2, 1, 1, 3]],
-		203: [
+		200: [[2, 2, 1, 1, 3]],
+		201: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 1, 3, 4]
 		],
-		204: [
+		202: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		205: [[2, 2, 4, 3, 0]],
-		206: [[2, 2, 3, 1, 0]],
-		207: [
+		203: [[2, 2, 4, 3, 0]],
+		204: [[2, 2, 3, 1, 0]],
+		205: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		208: [
+		206: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		209: [[2, 2, 1, 1, 3]],
-		210: [[2, 2, 4, 3, 0]],
-		211: [[2, 2, 4, 3, 0]],
-		213: [[2, 2, 1, 3, 4]],
-		214: [[2, 2, 4, 3, 0]],
-		215: [
+		207: [[2, 2, 1, 1, 3]],
+		208: [[2, 2, 4, 3, 0]],
+		209: [[2, 2, 4, 3, 0]],
+		211: [[2, 2, 1, 3, 4]],
+		212: [[2, 2, 4, 3, 0]],
+		213: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0]
 		],
-		216: [[2, 2, 4, 3, 0]],
-		217: [
+		214: [[2, 2, 4, 3, 0]],
+		215: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		218: [[2, 2, 3, 1, 0]],
-		219: [[2, 2, 3, 1, 0]],
-		220: [[2, 2, 4, 3, 0]],
+		216: [[2, 2, 3, 1, 0]],
+		217: [[2, 2, 3, 1, 0]],
+		218: [[2, 2, 4, 3, 0]],
+		219: [[2, 2, 4, 3, 0]],
+		220: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
+		],
 		221: [[2, 2, 4, 3, 0]],
-		222: [
+		223: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		223: [[2, 2, 4, 3, 0]],
-		225: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0]
-		],
-		226: [
+		224: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 4, 3, 0],
 			[12, 5, 3, 1, 0]
 		],
-		227: [[2, 2, 1, 3, 4]],
-		228: [[2, 2, 3, 1, 0]],
-		229: [
+		225: [[2, 2, 1, 3, 4]],
+		226: [[2, 2, 3, 1, 0]],
+		227: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 1, 1, 3],
 			[9, 5, 3, 1, 0]
 		],
-		230: [[2, 2, 3, 1, 0]],
-		231: [[2, 2, 3, 1, 0]],
-		232: [
+		228: [[2, 2, 3, 1, 0]],
+		229: [[2, 2, 3, 1, 0]],
+		230: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 4, 3, 0]
 		],
-		233: [
+		231: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0]
 		],
-		234: [
+		232: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 3, 4],
 			[10, 5, 4, 3, 0]
 		],
-		235: [
+		233: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 4, 3, 0],
@@ -19893,68 +19859,68 @@ export const builtViews: BuiltViews = Object.freeze({
 			[16, 6, 4, 3, 0],
 			[20, 7, 4, 3, 0]
 		],
-		237: [[2, 2, 3, 1, 0]],
-		238: [
+		235: [[2, 2, 3, 1, 0]],
+		236: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		239: [[2, 2, 1, 3, 4]],
-		240: [
+		237: [[2, 2, 1, 3, 4]],
+		238: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0]
 		],
-		242: [[2, 2, 3, 1, 0]],
-		244: [
+		240: [[2, 2, 3, 1, 0]],
+		242: [
 			[3, 3, 1, 1, 3],
 			[2, 0],
 			[4, 4, 3, 1, 0],
 			[7, 5, 3, 1, 0]
 		],
-		245: [[2, 2, 1, 1, 3]],
-		247: [
+		243: [[2, 2, 1, 1, 3]],
+		245: [
 			[2, 2, 1, 2, 1],
 			[3, 3, 3, 1, 0]
 		],
-		249: [
+		247: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 1, 3]
 		],
+		248: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3]
+		],
+		249: [[2, 2, 3, 1, 0]],
 		250: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 1, 3]
 		],
-		251: [[2, 2, 3, 1, 0]],
-		252: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 1, 1, 3]
-		],
-		253: [
+		251: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0]
 		],
-		254: [
+		252: [
 			[2, 0],
 			[3, 3, 3, 1, 0],
 			[2, 1]
 		],
-		256: [
+		254: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
 			[11, 5, 3, 1, 0]
 		],
-		257: [
+		255: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		258: [[2, 2, 1, 3, 4]],
-		259: [
+		256: [[2, 2, 1, 3, 4]],
+		257: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
 			[11, 5, 3, 1, 0]
 		],
-		260: [
+		258: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
@@ -19963,21 +19929,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[17, 7, 3, 1, 0],
 			[20, 8, 3, 1, 0]
 		],
-		261: [[2, 2, 1, 3, 4]],
-		262: [[2, 2, 1, 1, 3]],
-		263: [
+		259: [[2, 2, 1, 3, 4]],
+		260: [[2, 2, 1, 1, 3]],
+		261: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0],
 			[6, 4, 3, 1, 0]
 		],
-		264: [[2, 2, 1, 3, 4]],
-		265: [[2, 2, 4, 3, 0]],
+		262: [[2, 2, 1, 3, 4]],
+		263: [[2, 2, 4, 3, 0]],
+		264: [[2, 2, 3, 1, 0]],
+		265: [[2, 2, 1, 3, 4]],
 		266: [[2, 2, 3, 1, 0]],
 		267: [[2, 2, 1, 3, 4]],
 		268: [[2, 2, 3, 1, 0]],
-		269: [[2, 2, 1, 3, 4]],
-		270: [[2, 2, 3, 1, 0]],
-		271: [
+		269: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
@@ -19985,24 +19951,24 @@ export const builtViews: BuiltViews = Object.freeze({
 			[14, 6, 3, 1, 0],
 			[17, 7, 3, 1, 0]
 		],
-		273: [
+		271: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 3, 4]
 		],
+		272: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
+		],
+		273: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
+		],
 		274: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0]
-		],
-		275: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0]
-		],
-		276: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 1, 3]
 		],
-		277: [
+		275: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
@@ -20010,20 +19976,20 @@ export const builtViews: BuiltViews = Object.freeze({
 			[14, 6, 3, 1, 0],
 			[17, 7, 3, 1, 0]
 		],
-		278: [
+		276: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0]
 		],
-		279: [[2, 2, 1, 3, 4]],
-		280: [
+		277: [[2, 2, 1, 3, 4]],
+		278: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 3, 1, 0],
 			[12, 5, 3, 1, 0],
 			[15, 6, 4, 3, 0]
 		],
-		282: [
+		280: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
@@ -20031,60 +19997,60 @@ export const builtViews: BuiltViews = Object.freeze({
 			[14, 6, 3, 1, 0],
 			[17, 7, 3, 1, 0]
 		],
-		283: [[2, 2, 3, 1, 0]],
-		284: [[2, 2, 1, 3, 4]],
-		285: [
+		281: [[2, 2, 3, 1, 0]],
+		282: [[2, 2, 1, 3, 4]],
+		283: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 1, 3]
 		],
-		287: [
+		285: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0],
 			[9, 4, 4, 3, 0]
 		],
-		289: [[2, 2, 3, 1, 0]],
-		292: [
+		287: [[2, 2, 3, 1, 0]],
+		290: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 4, 3, 0]
 		],
-		293: [
+		291: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 1, 3],
 			[6, 4, 3, 1, 0]
 		],
-		294: [
+		292: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		295: [
+		293: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		301: [
+		299: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 4, 3, 0],
 			[13, 5, 3, 1, 0]
 		],
-		302: [
+		300: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 4, 3, 0],
 			[7, 4, 1, 1, 3]
 		],
-		303: [
+		301: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 1, 3],
 			[10, 5, 3, 1, 0]
 		],
-		304: [[2, 2, 1, 3, 4]],
-		305: [
+		302: [[2, 2, 1, 3, 4]],
+		303: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 1, 3]
 		],
-		306: [
+		304: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 1, 1, 3],
@@ -20095,49 +20061,49 @@ export const builtViews: BuiltViews = Object.freeze({
 			[22, 9, 3, 1, 0],
 			[25, 10, 3, 1, 0]
 		],
-		307: [
+		305: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0]
 		],
-		311: [[2, 2, 1, 1, 3]],
-		312: [
+		309: [[2, 2, 1, 1, 3]],
+		310: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
+		],
+		311: [
+			[2, 2, 1, 1, 3],
+			['side', true, false]
+		],
+		312: [
+			[2, 2, 1, 3, 4],
+			['side', true, false]
 		],
 		313: [
 			[2, 2, 1, 1, 3],
 			['side', true, false]
 		],
 		314: [
-			[2, 2, 1, 3, 4],
-			['side', true, false]
-		],
-		315: [
-			[2, 2, 1, 1, 3],
-			['side', true, false]
-		],
-		316: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 2, 0]
 		],
-		317: [
+		315: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		318: [
+		316: [
 			[2, 2, 1, 3, 4],
 			['side', true, false]
 		],
-		319: [
+		317: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0]
 		],
-		320: [
+		318: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		321: [
+		319: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 1, 1, 3],
 			[7, 4, 3, 1, 0],
@@ -20145,73 +20111,72 @@ export const builtViews: BuiltViews = Object.freeze({
 			[14, 6, 3, 1, 0],
 			[17, 7, 3, 1, 0]
 		],
-		322: [
+		320: [
 			[3, 3, 4, 3, 0],
 			[2, 0],
 			[7, 4, 3, 1, 0],
 			[10, 5, 3, 1, 0]
 		],
-		323: [[2, 2, 4, 3, 0]],
-		324: [
+		321: [[2, 2, 4, 3, 0]],
+		322: [
 			[2, 2, 1, 3, 4],
 			[3, 3, 3, 1, 0]
 		],
-		325: [
+		323: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		326: [
+		324: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0]
 		],
-		327: [
+		325: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 4, 3, 0],
 			[13, 5, 3, 1, 0],
 			[16, 6, 4, 3, 0]
 		],
-		328: [[2, 2, 1, 3, 4]],
-		329: [[2, 2, 3, 1, 0]],
+		326: [[2, 2, 1, 3, 4]],
+		327: [[2, 2, 3, 1, 0]],
+		328: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3]
+		],
+		329: [[2, 2, 1, 1, 3]],
 		330: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 1, 3]
 		],
-		331: [[2, 2, 1, 1, 3]],
-		332: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 1, 2, 0],
-			[6, 4, 1, 1, 3]
-		],
-		333: [
+		331: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 1, 3]
 		],
-		334: [
+		332: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 1, 3],
 			[6, 4, 3, 1, 0]
 		],
-		335: [
+		333: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 1, 2, 0]
 		],
-		336: [
+		334: [
 			[2, 2, 1, 2, 0],
 			[3, 3, 4, 3, 0]
 		],
-		374: [[2, 2, 3, 1, 0]]
+		372: [[2, 2, 3, 1, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,
 		2: leafHexIntegerLiteral,
-		13: leafStringFragment,
-		123: leafDecimalIntegerLiteralArm1,
-		124: leafDecimalIntegerLiteralArm2,
-		129: leafDecimalFloatingPointLiteralArm4Arm1,
-		130: leafDecimalFloatingPointLiteralArm4Arm2,
-		131: leafHexFloatingPointLiteralArm1,
-		150: leafTextBlockWhiteSpace,
-		170: leafMultilineStringFragment
+		10: leafStringFragment,
+		120: leafDecimalIntegerLiteralArm1,
+		121: leafDecimalIntegerLiteralArm2,
+		126: leafDecimalFloatingPointLiteralArm4Arm1,
+		127: leafDecimalFloatingPointLiteralArm4Arm2,
+		128: leafHexFloatingPointLiteralArm1,
+		147: leafTextBlockWhiteSpace,
+		168: leafMultilineStringFragment
 	})
 });

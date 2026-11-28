@@ -1,9 +1,9 @@
 {
 	"parser": {
-		"source": "df2abf1678c06aafeee67b62c26ee1d72b64ef1ff71e08fbfd502f0d6a7756fa",
-		"wasm": "e72c13b8c82d405ff63260028ac683732c6c78cf5521d56c52d07b37ee07d18c"
+		"source": "5c88a7d01b9c92dad39bcdf214c81de522d559f2d35f2de0b97f13fbabdcd816",
+		"wasm": "cc2a0f4bd83adb28cd3618f7fa1222e1c8b5ff93d04a1c58986bf11abb34ed9a"
 	},
-	"inputs": "268f6f30acb6edfbc74976438c1fcfbc1bc285fe0949a82056e36073997728de",
+	"inputs": "cefbed4031b1d12f1574ad5b6c5acdb6dd985845ae380a5f69bfce0edc04bfed",
 	"seams": [
 		{"seam":"_argument_list_optional1:members.0","next":"proven"},
 		{"seam":"_argument_list_optional1:members.1/content/members.1","next":"proven"},
@@ -113,7 +113,6 @@
 	"tight": [
 		{"seam":"_multiline_string_literal:members.1/members.0","previous":"\"\"\"","next":"   ","witness":"corpus","reason":"the space lexes into the next token"},
 		{"seam":"_multiline_string_literal:members.1","previous":"\"\"\"","next":"   ","witness":"corpus","reason":"the space lexes into the next token"},
-		{"seam":"_multiline_string_literal:members.2/members.0","previous":"\"\"\"","next":"\n","witness":"corpus","reason":"the space lexes into the next token"},
 		{"seam":"_multiline_string_literal:members.2","previous":"\"\"\"","next":"\n","witness":"corpus","reason":"the space lexes into the next token"},
 		{"seam":"_multiline_string_literal:members.3/content","previous":"        StringTemplate result = RAW.","next":"\\\"","witness":"corpus","reason":"the space lexes into the previous token"},
 		{"seam":"_multiline_string_literal:members.4","previous":"}","next":"\"\"\"","witness":"built","reason":"the space lexes into the next token"},

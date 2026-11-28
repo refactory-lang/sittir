@@ -1,7 +1,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
-import { enrich, field, preference, reauthored, variant, vocabulary, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+import { alias, enrich, field, preference, reauthored, variant, vocabulary, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
 const TEXT_BLOCK_PRODUCTION = 'JLS TextBlock: `"""` {TextBlockWhiteSpace} LineTerminator {TextBlockCharacter} `"""`';
 
@@ -22,11 +22,7 @@ const TEXT_BLOCK_WITNESSES = [
 
 export default grammar(enrich(base), wire({
 	resolutions,
-	options: {
-		indent: preference('    '),
-		text_block: { line_terminator: preference('\n') },
-		_labels: { 'string_literal_text_block/line_terminator:': 'text_block/line_terminator' }
-	},
+	options: { indent: preference('    ') },
 	expectDiagnostics: {
 		'token-interior-unstructurable': ['hex_floating_point_literal_arm1'],
 		'unclassifiable-shape': ['_unqualified_object_creation_expression', 'cast_expression', 'object_creation_expression_arm'],
@@ -52,11 +48,12 @@ export default grammar(enrich(base), wire({
 	},
 	rules: {
 		text_block_white_space: vocabulary(() => token.immediate(/[ \t\f]+/)),
+		_line_terminator: vocabulary(() => token.immediate(/\r?\n|\r/)),
 		_multiline_string_literal: reauthored('accepts-invalid-syntax', TEXT_BLOCK_WITNESSES, ($, original) =>
 			seq(
 				original.members[0],
 				optional(field('white_space', $.text_block_white_space)),
-				field('line_terminator', choice(token.immediate('\n'), token.immediate(prec(1, '\r\n')), token.immediate('\r'))),
+				alias($._line_terminator, '\n'),
 				original.members[1],
 				original.members[2]
 			)

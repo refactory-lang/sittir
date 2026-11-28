@@ -4343,24 +4343,6 @@
           }
         ]
       },
-      "line_terminator": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "\n",
-            "named": false
-          },
-          {
-            "type": "\r",
-            "named": false
-          },
-          {
-            "type": "\r\n",
-            "named": false
-          }
-        ]
-      },
       "white_space": {
         "multiple": false,
         "required": false,
@@ -5289,14 +5271,6 @@
   },
   {
     "type": "\n",
-    "named": false
-  },
-  {
-    "type": "\r",
-    "named": false
-  },
-  {
-    "type": "\r\n",
     "named": false
   },
   {

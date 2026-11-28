@@ -1171,34 +1171,34 @@ export interface IsGuards {
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TextBlockWhiteSpace };
 }
 
-const _supertype_literal_ids = new Set<number>([165, 123, 124, 2, 3, 4, 166, 5, 6, 7, 331, 332, 19]);
-const _supertype_decimalIntegerLiteral_ids = new Set<number>([123, 124]);
-const _supertype_stringLiteral_ids = new Set<number>([331, 332]);
-const _supertype_escapeSequence_ids = new Set<number>([133, 134, 135, 136, 137]);
+const _supertype_literal_ids = new Set<number>([163, 120, 121, 2, 3, 4, 164, 5, 6, 7, 329, 330, 16]);
+const _supertype_decimalIntegerLiteral_ids = new Set<number>([120, 121]);
+const _supertype_stringLiteral_ids = new Set<number>([329, 330]);
+const _supertype_escapeSequence_ids = new Set<number>([130, 131, 132, 133, 134]);
 const _supertype_expression_ids = new Set<number>([
-	176, 177, 178, 179, 181, 335, 336, 165, 123, 124, 2, 3, 4, 166, 5, 6, 7, 331, 332, 19, 188, 118, 1, 187, 189, 191,
-	193, 194, 196, 185, 192, 182, 175, 201
+	174, 175, 176, 177, 179, 333, 334, 163, 120, 121, 2, 3, 4, 164, 5, 6, 7, 329, 330, 16, 186, 115, 1, 185, 187, 189,
+	191, 192, 194, 183, 190, 180, 173, 199
 ]);
-const _supertype_updateExpression_ids = new Set<number>([335, 336]);
+const _supertype_updateExpression_ids = new Set<number>([333, 334]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	165, 123, 124, 2, 3, 4, 166, 5, 6, 7, 331, 332, 19, 188, 118, 1, 187, 189, 191, 193, 194, 196, 185, 192
+	163, 120, 121, 2, 3, 4, 164, 5, 6, 7, 329, 330, 16, 186, 115, 1, 185, 187, 189, 191, 192, 194, 183, 190
 ]);
 const _supertype_statement_ids = new Set<number>([
-	244, 253, 254, 260, 277, 282, 278, 256, 214, 215, 232, 233, 234, 235, 213, 72, 216, 217, 218, 219, 220, 221, 201, 222,
-	305, 223, 333, 334, 229
+	242, 251, 252, 258, 275, 280, 276, 254, 212, 213, 230, 231, 232, 233, 211, 69, 214, 215, 216, 217, 218, 219, 199, 220,
+	303, 221, 331, 332, 227
 ]);
-const _supertype_tryStatement_ids = new Set<number>([333, 334]);
-const _supertype_declaration_ids = new Set<number>([244, 253, 254, 260, 277, 282, 278, 256]);
-const _supertype_moduleDirective_ids = new Set<number>([247, 249, 250, 251, 252]);
-const _supertype_type_ids = new Set<number>([374, 113, 105, 106, 107, 108, 109, 110, 111, 112, 293, 294, 295, 292]);
+const _supertype_tryStatement_ids = new Set<number>([331, 332]);
+const _supertype_declaration_ids = new Set<number>([242, 251, 252, 258, 275, 280, 276, 254]);
+const _supertype_moduleDirective_ids = new Set<number>([245, 247, 248, 249, 250]);
+const _supertype_type_ids = new Set<number>([372, 110, 102, 103, 104, 105, 106, 107, 108, 109, 291, 292, 293, 290]);
 const _supertype_unannotatedType_ids = new Set<number>([
-	374, 113, 105, 106, 107, 108, 109, 110, 111, 112, 293, 294, 295
+	372, 110, 102, 103, 104, 105, 106, 107, 108, 109, 291, 292, 293
 ]);
-const _supertype_simpleType_ids = new Set<number>([374, 113, 105, 106, 107, 108, 109, 110, 111, 112, 293, 294]);
-const _supertype_formalParameters_ids = new Set<number>([329, 330]);
-const _supertype_decimalFloatingPointLiteralArm3_ids = new Set<number>([127, 128]);
-const _supertype_decimalFloatingPointLiteralArm4_ids = new Set<number>([129, 130]);
-const _supertype_layout_ids = new Set<number>([153, 154, 155, 156, 157, 158, 159, 160]);
+const _supertype_simpleType_ids = new Set<number>([372, 110, 102, 103, 104, 105, 106, 107, 108, 109, 291, 292]);
+const _supertype_formalParameters_ids = new Set<number>([327, 328]);
+const _supertype_decimalFloatingPointLiteralArm3_ids = new Set<number>([124, 125]);
+const _supertype_decimalFloatingPointLiteralArm4_ids = new Set<number>([126, 127]);
+const _supertype_layout_ids = new Set<number>([151, 152, 153, 154, 155, 156, 157, 158]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Literal, _supertype_literal_ids],
@@ -1217,9 +1217,9 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.FormalParameters, _supertype_formalParameters_ids],
 	[TSKindId.DecimalFloatingPointLiteralArm3, _supertype_decimalFloatingPointLiteralArm3_ids],
 	[TSKindId.DecimalFloatingPointLiteralArm4, _supertype_decimalFloatingPointLiteralArm4_ids],
-	[TSKindId.RequiresModifier, new Set<number>([90, 91])],
-	[TSKindId.IntegralType, new Set<number>([105, 106, 107, 108, 109])],
-	[TSKindId.FloatingPointType, new Set<number>([110, 111])]
+	[TSKindId.RequiresModifier, new Set<number>([87, 88])],
+	[TSKindId.IntegralType, new Set<number>([102, 103, 104, 105, 106])],
+	[TSKindId.FloatingPointType, new Set<number>([107, 108])]
 ]);
 const _single = new Map<number, ReadonlySet<number>>();
 function _kinds(kind: number): ReadonlySet<number> {
@@ -1565,30 +1565,30 @@ export function guardsWith(test: KindTest): IsGuards {
 		typeIdentifier: _at(_kind_GenericType_guard, 'content', _kind_TypeIdentifier_guard),
 		scopedTypeIdentifier: _at(_kind_GenericType_guard, 'content', _kind_ScopedTypeIdentifier_guard)
 	});
-	const _supertype_decimalIntegerLiteral_guard = _vg(_mg(164), {
+	const _supertype_decimalIntegerLiteral_guard = _vg(_mg(162), {
 		arm1: _kind_DecimalIntegerLiteralArm1_guard,
 		arm2: _kind_DecimalIntegerLiteralArm2_guard
 	});
-	const _supertype_stringLiteral_guard = _vg(_mg(167), {
+	const _supertype_stringLiteral_guard = _vg(_mg(165), {
 		line: _kind_StringLiteralLine_guard,
 		textBlock: _kind_StringLiteralTextBlock_guard
 	});
-	const _supertype_escapeSequence_guard = _vg(_mg(173), {
+	const _supertype_escapeSequence_guard = _vg(_mg(171), {
 		arm1: _kind_EscapeSequenceArm1_guard,
 		arm2: _kind_EscapeSequenceArm2_guard,
 		arm3: _kind_EscapeSequenceArm3_guard,
 		arm4: _kind_EscapeSequenceArm4_guard,
 		arm5: _kind_EscapeSequenceArm5_guard
 	});
-	const _supertype_updateExpression_guard = _vg(_mg(183), {
+	const _supertype_updateExpression_guard = _vg(_mg(181), {
 		postfix: _kind_UpdateExpressionPostfix_guard,
 		prefix: _kind_UpdateExpressionPrefix_guard
 	});
-	const _supertype_tryStatement_guard = _vg(_mg(224), {
+	const _supertype_tryStatement_guard = _vg(_mg(222), {
 		catches: _kind_TryStatementCatches_guard,
 		finally: _kind_TryStatementFinally_guard
 	});
-	const _supertype_declaration_guard = _vg(_mg(243), {
+	const _supertype_declaration_guard = _vg(_mg(241), {
 		module: _kind_ModuleDeclaration_guard,
 		package: _kind_PackageDeclaration_guard,
 		import: _kind_ImportDeclaration_guard,
@@ -1598,26 +1598,26 @@ export function guardsWith(test: KindTest): IsGuards {
 		annotationType: _kind_AnnotationTypeDeclaration_guard,
 		enum: _kind_EnumDeclaration_guard
 	});
-	const _supertype_moduleDirective_guard = _vg(_mg(246), {
+	const _supertype_moduleDirective_guard = _vg(_mg(244), {
 		requires: _kind_RequiresModuleDirective_guard,
 		exports: _kind_ExportsModuleDirective_guard,
 		opens: _kind_OpensModuleDirective_guard,
 		uses: _kind_UsesModuleDirective_guard,
 		provides: _kind_ProvidesModuleDirective_guard
 	});
-	const _supertype_formalParameters_guard = _vg(_mg(300), {
+	const _supertype_formalParameters_guard = _vg(_mg(298), {
 		receiver: _kind_FormalParametersReceiver_guard,
 		list: _kind_FormalParametersList_guard
 	});
-	const _supertype_decimalFloatingPointLiteralArm3_guard = _vg(_mg(309), {
+	const _supertype_decimalFloatingPointLiteralArm3_guard = _vg(_mg(307), {
 		arm1: _kind_DecimalFloatingPointLiteralArm3Arm1_guard,
 		arm2: _kind_DecimalFloatingPointLiteralArm3Arm2_guard
 	});
-	const _supertype_decimalFloatingPointLiteralArm4_guard = _vg(_mg(310), {
+	const _supertype_decimalFloatingPointLiteralArm4_guard = _vg(_mg(308), {
 		arm1: _kind_DecimalFloatingPointLiteralArm4Arm1_guard,
 		arm2: _kind_DecimalFloatingPointLiteralArm4Arm2_guard
 	});
-	const _supertype_literal_guard = _vg(_mg(163), {
+	const _supertype_literal_guard = _vg(_mg(161), {
 		decimalInteger: _supertype_decimalIntegerLiteral_guard,
 		hexInteger: _kind_HexIntegerLiteral_guard,
 		octalInteger: _kind_OctalIntegerLiteral_guard,
@@ -1630,7 +1630,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		string: _supertype_stringLiteral_guard,
 		null: _kind_NullLiteral_guard
 	});
-	const _supertype_primaryExpression_guard = _vg(_mg(184), {
+	const _supertype_primaryExpression_guard = _vg(_mg(182), {
 		literal: _supertype_literal_guard,
 		class: _kind_ClassLiteral_guard,
 		this: _kind_This_guard,
@@ -1644,7 +1644,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		arrayCreation: _form_ArrayCreationExpression_guard,
 		template: _kind_TemplateExpression_guard
 	});
-	const _supertype_statement_guard = _vg(_mg(212), {
+	const _supertype_statement_guard = _vg(_mg(210), {
 		declaration: _supertype_declaration_guard,
 		expression: _kind_ExpressionStatement_guard,
 		labeled: _kind_LabeledStatement_guard,
@@ -1667,7 +1667,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		try: _supertype_tryStatement_guard,
 		tryWithResources: _kind_TryWithResourcesStatement_guard
 	});
-	const _supertype_expression_guard = _vg(_mg(174), {
+	const _supertype_expression_guard = _vg(_mg(172), {
 		assignment: _kind_AssignmentExpression_guard,
 		binary: _kind_BinaryExpression_guard,
 		instanceof: _form_InstanceofExpression_guard,
@@ -1850,8 +1850,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		tryStatement: _supertype_tryStatement_guard,
 		declaration: _supertype_declaration_guard,
 		moduleDirective: _supertype_moduleDirective_guard,
-		type: _mg(290),
-		unannotatedType: _mg(291),
+		type: _mg(288),
+		unannotatedType: _mg(289),
 		simpleType: _sg(_supertype_simpleType_ids),
 		formalParameters: _supertype_formalParameters_guard,
 		decimalFloatingPointLiteralArm3: _supertype_decimalFloatingPointLiteralArm3_guard,

@@ -18,5 +18,7 @@ upstream, because the content and escape tokens are immediate.
 
 The patch is an `edits:` entry, not a `reauthored` rule: the narrowed form has
 the same members as the valid one, and only the extras between them differ,
-which a witness form cannot state. The immediate `'` is a token of its own,
+which a witness form cannot state. `packages/csharp/tests/character-literal.test.ts`
+pins the case in its place: the four forms above error, and `'a'`, `'\n'`,
+`'\x41'` and `' '` parse. The immediate `'` is a token of its own,
 which the parser folds onto `'` as `squote2`.

@@ -20,10 +20,14 @@ describe.each(Object.entries(engines))('%s text block', (_, engine) => {
 		expect(block.$render()).toBe('"""  \n  hi\n  """');
 	});
 
-	it('reads a CRLF after the opening delimiter as one line terminator', () => {
+	it('reads a CRLF after the opening delimiter as its line terminator, not as content', () => {
 		const root = engine.parse('class A { String s = """\r\nx"""; }\n');
 		const [block] = [...engine.query(root).$descendants.ofType(kinds.StringLiteralTextBlock)];
-		expect(block!.lineTerminator()).toBe(kinds.CrLf);
+		expect(root.$errors).toEqual([]);
 		expect(block!.elements().map((element) => element.$render())).toEqual(['x']);
+	});
+
+	it('renders the line terminator in the render line ending', () => {
+		expect(engine.render(build.stringLiteralTextBlock(), { layout: { newline: '\r\n' } }).toString()).toBe('"""\r\n"""');
 	});
 });

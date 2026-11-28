@@ -18,18 +18,19 @@ line terminator, before any content. Upstream puts the content right after
 The rule keeps upstream's members and inserts, after the opening `"""`:
 
 - `white_space`: an optional `text_block_white_space`;
-- `line_terminator`: one of `\n`, `\r\n` or `\r`, each an immediate token.
+- the line terminator: `_line_terminator`, `token.immediate(/\r?\n|\r/)`,
+  aliased to the anonymous `"\n"`.
 
 Both are immediate, so a comment between the delimiter and the line terminator
-is an error, as in javac. `\r\n` has lexical precedence 1: `\n` is also a
-separator in the extras, and tree-sitter would otherwise stop at `\r` and read
-the `\n` as the start of the content. The content no longer holds the opening
-line break, so a fragment starts after it.
+is an error, as in javac. One token holds every JLS LineTerminator, so `\r\n`
+lexes whole. The content no longer holds the opening line break, so a fragment
+starts after it.
 
-The line terminator is layout, not a member of the portable vocabulary: the
-`_labels` entry `string_literal_text_block/line_terminator:` binds it to the
-preference group `text_block`, whose `line_terminator` defaults to `\n`, so
-`build.stringLiteralTextBlock()` renders `"""\n"""`.
+The line terminator is a fixed `\n` to the render, not a slot: the render
+writes every line break in the render's line ending (`layout.newline`), so
+`build.stringLiteralTextBlock()` renders `"""\n"""`, or `"""\r\n"""` under
+`newline: '\r\n'`. `_line_terminator` is authored because enrich lifts a token
+inside an alias into a rule of its own, and a layer must be enrich's fixpoint.
 
 ### `text_block_white_space` (`packages/java/grammar.sittir.ts`, `rules:`)
 

@@ -589,41 +589,13 @@
           ]
         },
         {
-          "type": "FIELD",
-          "name": "line_terminator",
+          "type": "ALIAS",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "IMMEDIATE_TOKEN",
-                "content": {
-                  "type": "STRING",
-                  "value": "\n"
-                }
-              },
-              {
-                "type": "IMMEDIATE_TOKEN",
-                "content": {
-                  "type": "PREC",
-                  "value": 1,
-                  "content": {
-                    "type": "STRING",
-                    "value": "\r\n"
-                  }
-                }
-              },
-              {
-                "type": "IMMEDIATE_TOKEN",
-                "content": {
-                  "type": "STRING",
-                  "value": "\r"
-                }
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_line_terminator"
           },
-          "metadata": {
-            "fieldSource": "override"
-          }
+          "named": false,
+          "value": "\n"
         },
         {
           "type": "FIELD",
@@ -10457,6 +10429,13 @@
       "content": {
         "type": "PATTERN",
         "value": "[ \\t\\f]+"
+      }
+    },
+    "_line_terminator": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "\\r?\\n|\\r"
       }
     },
     "formal_parameters_receiver": {

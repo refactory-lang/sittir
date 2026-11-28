@@ -4678,20 +4678,14 @@
 						{
 							"kind": "slot",
 							"name": "white_space"
-						},
-						{
-							"kind": "adjacent"
 						}
 					]
 				}
 			]
 		},
 		{
-			"kind": "slot",
-			"name": "line_terminator"
-		},
-		{
-			"kind": "adjacent"
+			"kind": "tokenSeam",
+			"text": "\n"
 		},
 		{
 			"kind": "slot",

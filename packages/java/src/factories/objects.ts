@@ -58,7 +58,6 @@ import {
 	restItems,
 	toElement,
 	admitAliasContent,
-	coerceKindEnumStorage,
 	kindIdStorage,
 	listStorage,
 	numberText,
@@ -131,13 +130,7 @@ export const _delimited_buildStringLiteralTextBlock: DelimitedSpec = {
 	open: '"""',
 	close: '"""',
 	host: 'class _H { Object _r = $r; }',
-	nodeKinds: [
-		TSKindId.Lf as const,
-		TSKindId.CrLf as const,
-		TSKindId.Cr as const,
-		TSKindId.EscapeSequence as const,
-		TSKindId.StringInterpolation as const
-	]
+	nodeKinds: [TSKindId.EscapeSequence as const, TSKindId.StringInterpolation as const]
 };
 
 export function buildProgram(): T.EmptyProgram;
@@ -12434,36 +12427,24 @@ export function buildStringLiteralTextBlock<
 	config?: RefusingConfig<
 		Partial<T.StringLiteralTextBlock.Config>,
 		{ whiteSpace: WhiteSpaceSlot; elements: ElementsSlot }
-	>,
-	options?: T.StringLiteralTextBlock.Options
+	>
 ): T.StringLiteralTextBlock.Bound;
 export function buildStringLiteralTextBlock(
-	config: Partial<T.StringLiteralTextBlock.Config> = {},
-	options?: T.StringLiteralTextBlock.Options
+	config: Partial<T.StringLiteralTextBlock.Config> = {}
 ): T.StringLiteralTextBlock.Bound {
 	currentHandle()?.admit(TSKindId.StringLiteralTextBlock, [config]);
 	const _white_space = config.whiteSpace;
-	const _line_terminator = coerceKindEnumStorage<NonNullable<T.StringLiteralTextBlock['_line_terminator']>>(
-		options?.lineTerminator,
-		[['\n', TSKindId.Lf] as const, ['\r\n', TSKindId.CrLf] as const, ['\r', TSKindId.Cr] as const]
-	);
 	const _elements = listStorage<NonNullable<T.StringLiteralTextBlock['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'string_literal_text_block', {
-			whiteSpace: _white_space,
-			lineTerminator: _line_terminator,
-			elements: _elements
-		});
+		admitChildren(handle, 'string_literal_text_block', { whiteSpace: _white_space, elements: _elements });
 	const node = {
 		$type: TSKindId.StringLiteralTextBlock as const,
 		_white_space,
-		_line_terminator,
 		_elements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		whiteSpace: () => hydrateStoredSlot(node, '_white_space'),
-		lineTerminator: () => _line_terminator,
 		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -12473,39 +12454,32 @@ export function buildStringLiteralTextBlock(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
 		whiteSpace: buildStringLiteralTextBlock$with$whiteSpace,
-		lineTerminator: buildStringLiteralTextBlock$with$lineTerminator,
 		elements: buildStringLiteralTextBlock$with$elements,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	checkDelimited(handle, node, _delimited_buildStringLiteralTextBlock, [_white_space, _line_terminator, _elements]);
+	checkDelimited(handle, node, _delimited_buildStringLiteralTextBlock, [_white_space, _elements]);
 	return node as unknown as T.StringLiteralTextBlock.Bound;
 }
 
 function buildStringLiteralTextBlock$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.StringLiteralTextBlock.Config;
-	const options = node[OPTIONS] as T.StringLiteralTextBlock.Options;
 	switch (setter) {
 		case 'whiteSpace':
 			return applySetter(args, (value?: Admit<T.TextBlockWhiteSpace>) =>
-				rebuilt(node, handle, () => buildStringLiteralTextBlock({ ...config, whiteSpace: value }, options))
-			);
-		case 'lineTerminator':
-			return applySetter(args, (spelling: TSKindId.Lf | TSKindId.CrLf | TSKindId.Cr) =>
-				rebuilt(node, handle, () => buildStringLiteralTextBlock(config, { ...options, lineTerminator: spelling }))
+				rebuilt(node, handle, () => buildStringLiteralTextBlock({ ...config, whiteSpace: value }))
 			);
 		case 'elements':
 			return applySetter(
 				args,
 				(...values: Admit<(T.MultilineStringFragment | T.MultilineStringLiteralArm1 | T.StringInterpolation)[]>) =>
 					rebuilt(node, handle, () =>
-						buildStringLiteralTextBlock({ ...config, elements: restItems('elements', values) }, options)
+						buildStringLiteralTextBlock({ ...config, elements: restItems('elements', values) })
 					)
 			);
 	}
@@ -12513,9 +12487,6 @@ function buildStringLiteralTextBlock$with(node: Held, setter: string, args: read
 }
 function buildStringLiteralTextBlock$with$whiteSpace(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildStringLiteralTextBlock$with(receiverOf(this, '$with.whiteSpace'), 'whiteSpace', args);
-}
-function buildStringLiteralTextBlock$with$lineTerminator(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildStringLiteralTextBlock$with(receiverOf(this, '$with.lineTerminator'), 'lineTerminator', args);
 }
 function buildStringLiteralTextBlock$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildStringLiteralTextBlock$with(receiverOf(this, '$with.elements'), 'elements', args);
