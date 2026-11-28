@@ -12,6 +12,7 @@ import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { emitAll, type EmitAllResult } from '../emit.ts';
 import { probeDiagnostics, type TypeCheckDiagnostic } from '../../typecheck.ts';
 import { REPO_ROOT } from '../../grammars.ts';
+import { isNodeValue } from '@sittir/common/utils';
 
 const tokens = [
 	"semi: () => ';'",
@@ -345,4 +346,36 @@ describe('a required child whose default is not built by forwarding is filled wi
 		);
 		expect(diagnostics.map((d) => d.head)).toEqual([]);
 	}, 300_000);
+});
+
+const optionsOnlyOuter = {
+	rules: [
+		'source: ($) => repeat($.outer)',
+		"outer: ($) => seq(field('base', $.base), optional(field('outer_end', $.semi)))",
+		"base: ($) => alias('base', $.base)",
+		...tokens
+	],
+	options: "options: { outer: { 'outer_end:': preference('blank') } }"
+};
+
+describe('an options-only call on a zero-argument target routes its bag to the outer options, in both storage emitters', () => {
+	it('passes a bag in the first position to the outer builder as its options', async () => {
+		const { pkg } = await emitted(optionsOnlyOuter);
+		const bag = { outerEnd: ';' };
+		for (const text of [pkg.factories, pkg.factoriesRecords]) {
+			const body = emittedFunction(text, 'buildOuter');
+			const referenced = [...new Set(body.match(/\b_?build[A-Z]\w*/g) ?? [])].filter((n) => n !== 'buildOuter');
+			const recorded: Recorded[] = [];
+			const stubs = referenced.map((builder) => (...args: unknown[]) => {
+				recorded.push({ builder, args });
+				return { $type: builder, args };
+			});
+			const kinds = new Proxy({}, { get: (_target, key) => String(key) });
+			const buildOuter = new Function(...referenced, 'isNodeValue', 'TSKindId', `${body}\nreturn buildOuter;`)(...stubs, isNodeValue, kinds) as (...args: unknown[]) => unknown;
+			buildOuter(bag);
+			const outer = recorded.find((r) => r.builder === '_buildOuter');
+			expect(outer?.args[1]).toBe(bag);
+			expect(outer?.args[0]).not.toBe(bag);
+		}
+	});
 });

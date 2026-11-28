@@ -1815,6 +1815,7 @@ interface ForwardedConstruction {
 	readonly rowParams: readonly string[];
 	readonly rows: readonly string[];
 	readonly hasOwnOptions: boolean;
+	readonly optionsOnly: boolean;
 }
 
 const OPTION_CHAIN_MAX_HOPS = 8;
@@ -1930,6 +1931,7 @@ function forwardedConstruction(
 		target,
 		targetParams,
 		hasOwnOptions: spellingTypeOf(node, nodeMap, kindEntries) !== undefined,
+		optionsOnly: trailingOptions !== undefined && (targetDeclarations ?? []).some((entry) => entry.params === trailingOptions),
 		overloads: ordered(
 			[publicParams(ownSurface), ...(targetDeclarations ?? [plainParams(`...args: Parameters<typeof ${targetNode.rawFactoryName!}>`)])].map(declarationOf),
 			(declared) => declared.params
@@ -2491,6 +2493,13 @@ function fieldCarryingFactoryText(
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		]);
 		if (!forwardsTargetArguments(node, nodeMap)) {
+			if (optionsOnlyRoutes(node, forwarded, nodeMap)) {
+				wrapper.push(
+					`  if (typeof args[0] === 'object' && args[0] !== null && !isNodeValue(args[0])) {`,
+					`    return _${fn}(${targetEmpty} as Parameters<typeof _${fn}>[0], args[0] as never);`,
+					`  }`
+				);
+			}
 			if (!directParamOptional && targetTakesNoArgs) {
 				wrapper.push(
 					`  if (args.length === 0 || args[0] === undefined) {`,
@@ -2931,6 +2940,20 @@ export function hasShapes(node: AssembledNode, nodeMap: NodeMap, kindEntries: re
 
 export function anyShapes(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): boolean {
 	return [...nodeMap.nodes.values()].some((node) => hasShapes(node, nodeMap, kindEntries));
+}
+
+function optionsOnlyRoutes(node: FieldCarryingNode, forwarded: ForwardedConstruction, nodeMap: NodeMap): boolean {
+	if (!forwarded.optionsOnly || forwardsTargetArguments(node, nodeMap)) return false;
+	const targetNode = nodeMap.nodes.get(forwarded.target);
+	return forwarded.targetParams !== undefined && targetNode !== undefined && targetNode.argumentOptional(nodeMap);
+}
+
+function anyOptionsOnlyRoutes(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): boolean {
+	return [...nodeMap.nodes.values()].some((node) => {
+		if (!isAuthoredCompound(node)) return false;
+		const forwarded = forwardedConstruction(node, resolveFactorySurface(node, nodeMap, kindEntries), nodeMap, kindEntries);
+		return forwarded !== null && optionsOnlyRoutes(node, forwarded, nodeMap);
+	});
 }
 
 export function groupSeatHints(
@@ -3687,7 +3710,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
 		lines.push(`import type { ${OBJECT_MEMBER_TYPES.join(', ')} } from '@sittir/common/utils';`);
-		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...(anyShapes(nodeMap, kindEntries) ? ['hasSlot'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', ...OBJECT_MEMBER_VALUES, ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...spelledReadImports(nodeMap), ...(usesElementWrap ? ['toElement'] : []), ...storageCoercionImports];
+		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...(anyShapes(nodeMap, kindEntries) ? ['hasSlot'] : []), ...(anyOptionsOnlyRoutes(nodeMap, kindEntries) ? ['isNodeValue'] : []),...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', ...OBJECT_MEMBER_VALUES, ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...spelledReadImports(nodeMap), ...(usesElementWrap ? ['toElement'] : []), ...storageCoercionImports];
 		const utilsImportAt = lines.length;
 		lines.push(utilsImportLine(utilsImports));
 		lines.push('');
