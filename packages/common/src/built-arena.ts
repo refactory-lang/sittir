@@ -1207,17 +1207,33 @@ export class BuiltArena {
 	}
 
 	/** `entries` as the side holds them: a layout member as its unit, a record, built or a read's, as itself, the count its handle holds moved to the side or one more taken, a node a read left named by its record as that record, and a kind with text as a leaf entry, which holds its string chunk once more. Refuses any other entry, and a node named by no record a read left, before any is written. */
-	#keptEntries(entries: readonly WireNode[]): KeptEntry[] {
+	#keptEntries(entries: readonly WireNode[], take: (at: number) => void = (at) => this.adopt(at)): KeptEntry[] {
 		const forms = entries.map((entry) => keptForm(entry, this));
 		const kept = forms.map((form): KeptEntry => {
-			if (form.form === 'layout') return { cell: unitCell(form.kind, this.format), layout: form.kind };
-			if (form.form === 'record') return { cell: builtCell(form.at) };
+			if (form.form === 'layout') return { cell: unitCell(form.kind, this.format), layout: form.kind, counted: false };
+			if (form.form === 'record') return { cell: builtCell(form.at), counted: form.adopt };
 			const entry = this.entry(form.kind === BLANK_KIND_ID ? 0 : form.kind, form.text);
 			this.holdText(entry.at);
-			return { cell: builtCell(entry.at) };
+			return { cell: builtCell(entry.at), counted: true };
 		});
-		for (const form of forms) if (form.form === 'record' && form.adopt) this.adopt(form.at);
+		for (const form of forms) if (form.form === 'record' && form.adopt) take(form.at);
 		return kept;
+	}
+
+	/** `use`'s answer, given `sides` kept as a side keeps its entries (`#keptEntries`), each side as its entries' cells, or `null` for no sides: a record a handle names is held once more rather than taken from its handle, and every count the cells hold is given back once `use` returns. */
+	withKeptSides<T>(sides: TriviaSides<WireNode> | undefined, use: (cells: TriviaSides<number> | null) => T): T {
+		if (sides === undefined) return use(null);
+		const counted: number[] = [];
+		const keep = (entries: readonly WireNode[]): number[] =>
+			this.#keptEntries(entries, (at) => this.hold(at)).map((entry) => {
+				if (entry.counted) counted.push(entry.cell);
+				return entry.cell;
+			});
+		try {
+			return use(mapTriviaEntries(sides, keep));
+		} finally {
+			for (const cell of counted) this.dropCell(cell, false);
+		}
 	}
 
 	/** `kept`, written to `side` of the record at `at`: the gap members at its head, as many as the header keeps codes for the side, set as those codes, and the rest the side's row, none when the codes hold the whole side. An inner side keeps no codes. */
@@ -1888,6 +1904,7 @@ function recordRefOf(entry: unknown): BuiltRecordRef | undefined {
 interface KeptEntry {
 	readonly cell: number;
 	readonly layout?: number;
+	readonly counted: boolean;
 }
 
 type KeptForm = { readonly form: 'layout'; readonly kind: number } | { readonly form: 'record'; readonly at: number; readonly adopt: boolean } | { readonly form: 'text'; readonly kind: number; readonly text: string };

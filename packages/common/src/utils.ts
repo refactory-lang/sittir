@@ -235,7 +235,7 @@ export function writeLeafSites(leaf: object, sites: readonly number[]): void {
 	if (ref !== undefined) writeSites(ref.arena, sites, own, wireSides(leaf, own));
 }
 
-export function leafWireSides(leaf: object): TriviaSides<unknown> | undefined {
+export function leafWireSides(leaf: object): TriviaSides<WireNode> | undefined {
 	const own = triviaOf(leaf);
 	return own === undefined ? undefined : wireSides(leaf, own);
 }

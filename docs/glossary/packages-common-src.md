@@ -1345,6 +1345,10 @@ For a record a read left, each side `units` lists is written as a parsed node's 
 
 The bytes in its source of the unit a key names (`NativeEngineLike.readUnitSpan`): the one fact about a parsed node that a side write needs and the arena's words do not hold.
 
+### `packages/common/src/built-arena.ts::BuiltArena::withKeptSides`
+
+The sides of a lone built leaf rendered as a root, which has no holder and so no site to keep them at, kept for the one render that reads them. Each entry is kept as `writeSide` keeps it (`#keptEntries`): a layout member as its unit, a text entry as a leaf entry holding its string chunk, and a record as itself. Unlike a side write, a record a handle names is held once more instead of taking the handle's count, because the sides last only for the render. Every count the cells hold is given back once the callback returns, even when it throws. The engine passes the cells to `renderBuiltLeaf`, so native reads the entries in chunks JavaScript opened and never writes one itself.
+
 ### `packages/common/src/create-engine.ts::storedVerifierOf`
 
 The writer check a record builder runs before it writes (`EngineHandle.verifyStored`): the stored values checked against the kind's structure row, as `verifyStructure` checks an object node's. Only an engine in `verifyStructure: 'runtime'` mode has one. A built record's node is checked here, as it is written, so the walk after a build leaves it alone (`isBuiltNode`).

@@ -339,6 +339,7 @@ macro_rules! napi_engine {
                 let grammar = <$grammar as ::std::default::Default>::default();
                 let engine = $crate::engine::Engine::new(grammar, table)
                 .map_err(::napi::Error::from_reason)?;
+                engine.written().open_builder_chunks_in_javascript();
                 Ok(Self { engine: ::std::rc::Rc::new(EngineHold { engine: HeldEngine::new(engine), given }) })
             }
 
@@ -1189,18 +1190,21 @@ macro_rules! napi_engine {
             /// arena `owner` holds at `entry`, rendered as a render root whose
             /// `leading` and `trailing` edges have no neighbour, under
             /// `options` over this engine's, with `sides`, the sides the
-            /// leaf holds (`{ leading?, trailing?, inner? }`): a root has
-            /// no site in the store. Refuses a kind no node of the grammar
-            /// is written as, an entry of another kind or outside the
-            /// arena's strings, and a leaf whose render refuses.
+            /// leaf holds (`{ leading?, trailing?, inner? }`), each the cells
+            /// its entries are kept as in `owner`'s arena, whose counts the
+            /// caller holds through the call: a root has no site in the
+            /// store. Refuses a kind no node of the grammar is written as,
+            /// an entry of another kind or outside the arena's strings, a
+            /// side by any other name, a cell that is no side's entry, and a
+            /// leaf whose render refuses.
             #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
-            #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null", ts_return_type = "string")]
+            #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, kind: number, entry: number, sides: { leading?: readonly number[], trailing?: readonly number[], inner?: readonly number[] } | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null", ts_return_type = "string")]
             pub fn render_built_leaf(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
                 owner: &::napi::bindgen_prelude::External<EngineCell>,
                 kind: u32,
                 entry: u32,
-                sides: Option<$crate::trivia::NodeTrivia<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                sides: Option<::std::collections::HashMap<String, Vec<u32>>>,
                 leading: bool,
                 trailing: bool,
                 options: Option<$options>,
@@ -1209,30 +1213,30 @@ macro_rules! napi_engine {
                 let owner = engine_of(owner)?;
                 let kind = $crate::types::KindId(u16::try_from(kind).map_err(|_| ::napi::Error::from_reason(format!("kind {kind} is wider than a kind")))?);
                 let table = render_options(&engine, options)?;
+                let sides = sides.into_iter().flatten().map(|(side, cells)| Ok(($crate::napi_engine::trivia_side_from_wire(&side)?, cells))).collect::<::napi::Result<Vec<_>>>()?;
                 let root = owner.written().root_leaf(sides).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 let canonical = {
                     let chunks = owner.written().built();
                     chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string())).and_then(|built| {
                         let changed = $crate::slot::ChangedEdges { leading, trailing };
-                        ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.render_built_leaf(built, kind, $crate::arena::Address(entry), &root.store, changed, &table, $crate::napi_engine::admit_entry::<$grammar>)))
+                        ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.render_built_leaf(built, kind, $crate::arena::Address(entry), &root, changed, &table, $crate::napi_engine::admit_entry::<$grammar>)))
                             .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
                             .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))
                     })
                 };
-                root.release().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical?, &table.newline)))
             }
 
             /// `render_built_leaf`'s text written to `path`
             /// (`save_rendered`), answering whether it wrote.
             #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
-            #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null")]
+            #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, kind: number, entry: number, sides: { leading?: readonly number[], trailing?: readonly number[], inner?: readonly number[] } | undefined | null, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null")]
             pub fn render_built_leaf_to_file(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
                 owner: &::napi::bindgen_prelude::External<EngineCell>,
                 kind: u32,
                 entry: u32,
-                sides: Option<$crate::trivia::NodeTrivia<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                sides: Option<::std::collections::HashMap<String, Vec<u32>>>,
                 leading: bool,
                 trailing: bool,
                 path: String,

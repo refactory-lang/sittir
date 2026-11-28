@@ -258,6 +258,7 @@ impl<'a> BuiltWriter<'a> {
     pub fn place(&mut self, words: &[u32], count: u8) -> Result<Address, ArenaError> {
         let len = u32::try_from(words.len()).map_err(|_| ArenaError::Full)?;
         if !self.words.as_ref().is_some_and(|open| open.fits(len)) {
+            self.chunks.refuse_native_open()?;
             let made = self.chunks.alloc_words(len.max(CHUNK_WORDS))?;
             self.words = Some(Open { chunk: made.chunk, mem: made.mem, used: 0 });
         }
@@ -343,6 +344,9 @@ impl<'a> BuiltWriter<'a> {
         let len = u32::try_from(text.len()).ok().filter(|&len| len < 1 << (32 - bits)).ok_or(ArenaError::Full)?;
         let size = (ENTRY_HEAD_BYTES + len).next_multiple_of(4);
         let head = with_kind(kind, bits)? | len << bits;
+        if self.chunks.open_strings_with_room(size).is_none() {
+            self.chunks.refuse_native_open()?;
+        }
         let open = self.chunks.open_strings(size)?;
         let byte = self.chunks.reserve_strings(open.chunk, size)?;
         // SAFETY: as `place`.
@@ -432,6 +436,31 @@ mod tests {
         assert_eq!(text_at(&chunks, javascript), (NAME, "js".to_owned()));
         assert_eq!(text_at(&chunks, native), (NAME, "native".to_owned()));
         assert_eq!(text_at(&chunks, after), (NAME, "after".to_owned()));
+    }
+
+    #[test]
+    fn on_an_arena_whose_builder_chunks_javascript_opens_the_native_writer_writes_in_an_open_chunk_and_refuses_to_open_one() {
+        let mut chunks = store();
+        chunks.open_builder_chunks_in_javascript();
+        let refusal = Err(ArenaError::Unwritable("a native write opens no builder chunk on an arena whose builder chunks JavaScript opens"));
+        assert_eq!(BuiltWriter::new(&mut chunks).entry(NAME, "native"), refusal, "no string chunk is open");
+        assert_eq!(BuiltWriter::new(&mut chunks).place(&[1, 2], 1), refusal, "the writer has no words chunk open");
+        let open = chunks.open_strings(8).expect("a chunk JavaScript asks for").chunk;
+        let native = BuiltWriter::new(&mut chunks).entry(NAME, "native").expect("written in the open chunk");
+        assert_eq!(native.chunk(), open);
+        write_as_javascript(&chunks, open, NAME, &"x".repeat(FIRST_STRING_BYTES as usize - 16));
+        assert_eq!(written(&chunks, open), FIRST_STRING_BYTES, "JavaScript filled it");
+        assert_eq!(BuiltWriter::new(&mut chunks).entry(NAME, "full"), refusal, "the open chunk is full");
+        assert_eq!(chunks.open_strings(8).map(|made| made.chunk == open), Ok(false), "JavaScript's own request opens the next");
+    }
+
+    #[test]
+    fn on_an_arena_rust_alone_writes_the_native_writer_opens_the_chunks_it_writes_in() {
+        let mut chunks = store();
+        let entry = BuiltWriter::new(&mut chunks).entry(NAME, "native").expect("written in a chunk it opened");
+        assert_eq!(text_at(&chunks, entry), (NAME, "native".to_owned()));
+        let record = BuiltWriter::new(&mut chunks).place(&[1, 2], 1).expect("placed in a chunk it opened");
+        assert_ne!(record.chunk(), entry.chunk());
     }
 
     fn past(at: Address, words: u32) -> Address {

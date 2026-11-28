@@ -1,5 +1,5 @@
 {
-	"about": "Side writes to a built record, which the native kept core (TriviaStore::write_kept_in) and the TypeScript built arena (BuiltArena.writeSide) both keep: each case's writes, in order, then what its record holds. codes: the gap kinds its header keeps for a side. rows: a side's row, null for none. rowsRecord: whether its side word names a side record of rows. under: the side record it names under its rows, or that its side word names with no rows: own, the side record of other fields the record held before the writes, or none.",
+	"about": "Side writes to a built record, which the native record writer (RecordSink, BuiltWriter, through TriviaStore::write_kept_in) and the TypeScript built arena (BuiltArena.writeSide) both keep: each case's writes, in order, then what its record holds. The native side writes each case as side writes, and each case of one write to a record with no side record of its own also as a whole record write (write_record). codes: the gap kinds its header keeps for a side. rows: a side's row, null for none. rowsRecord: whether its side word names a side record of rows. under: the side record it names under its rows, or that its side word names with no rows: own, the side record of other fields the record held before the writes, or none.",
 	"cases": [
 		{
 			"name": "three gap members go to the header, the rest to the row",

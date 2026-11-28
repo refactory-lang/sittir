@@ -22,6 +22,7 @@ import { mintTreeToken, registerTree, treeOf } from './tree-token.ts';
 import type { DescendantBatch, TreeQuery } from './query.ts';
 import { cellFormatOf, type CellFormat } from './record-cell.ts';
 import { readOwnEntries, readOwnUnits, type BuiltRecords, type ParsedRecords, type WritableWords } from './built-arena.ts';
+import type { TriviaSides } from './trivia.ts';
 import { builtRefOf, handleArenaOf } from './built-ref.ts';
 import { nodeStorageOf } from './engine-scope.ts';
 import { leafWireSides, type NodeAddress } from './utils.ts';
@@ -238,7 +239,7 @@ export interface NativeEngineLike<TNode = unknown> {
 		owner: object,
 		kind: number,
 		entry: number,
-		sides: object | null,
+		sides: TriviaSides<number> | null,
 		leading: boolean,
 		trailing: boolean,
 		options?: object
@@ -250,7 +251,7 @@ export interface NativeEngineLike<TNode = unknown> {
 		owner: object,
 		kind: number,
 		entry: number,
-		sides: object | null,
+		sides: TriviaSides<number> | null,
 		leading: boolean,
 		trailing: boolean,
 		path: string,
@@ -715,8 +716,8 @@ export function createNativeEngine<
 				const kind = (node as AnyUntypedNode).$type as number;
 				const entry = (): number => built.arena.placeEntry(node as object, kind, built.text).at;
 				return createRenderHandle(
-					() => renderBuiltLeaf.call(engine, built.arena.owner, kind, entry(), leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall),
-					(path, create) => renderBuiltLeafToFile.call(engine, built.arena.owner, kind, entry(), leafWireSides(node as object) ?? null, changed.leading, changed.trailing, path, create, perCall),
+					() => built.arena.withKeptSides(leafWireSides(node as object), (sides) => renderBuiltLeaf.call(engine, built.arena.owner, kind, entry(), sides, changed.leading, changed.trailing, perCall)),
+					(path, create) => built.arena.withKeptSides(leafWireSides(node as object), (sides) => renderBuiltLeafToFile.call(engine, built.arena.owner, kind, entry(), sides, changed.leading, changed.trailing, path, create, perCall)),
 					writeText
 				);
 			}

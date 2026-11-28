@@ -651,6 +651,9 @@ pub struct BuiltChunks {
     /// less what sealing a words chunk saves (`alloc_words`) and what
     /// `drop_chunk` takes off (`allocated_bytes`).
     bytes: usize,
+    /// Whether JavaScript opens every chunk builders write in
+    /// (`open_builder_chunks_in_javascript`).
+    javascript_opens_builder_chunks: bool,
 }
 
 impl BuiltChunks {
@@ -658,7 +661,7 @@ impl BuiltChunks {
     /// shapes are `shape`'s: the grammar's stamps.
     #[must_use]
     pub fn new(kind_bits: u32, shape: ShapeOf) -> Self {
-        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), overflow: HashMap::default(), sources: None, reads: None, bytes: 0 }
+        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), overflow: HashMap::default(), sources: None, reads: None, bytes: 0, javascript_opens_builder_chunks: false }
     }
 
     /// A new words chunk of `len` words, zeroed: its number, its memory and
@@ -782,13 +785,46 @@ impl BuiltChunks {
     ///
     /// As `alloc_words`.
     pub fn open_strings(&mut self, least: u32) -> Result<NewChunk<u8>, ArenaError> {
+        if let Some(open) = self.open_strings_with_room(least) {
+            return Ok(open);
+        }
         if least > STRING_CHUNK_BYTES {
             return self.alloc_bytes(least);
         }
-        match self.open[1].and_then(|chunk| self.strings_chunk(chunk)) {
-            Some(open) if open.mem.len() - count::strings_written(&open.meta) as usize >= least as usize => Ok(open),
-            open => self.alloc_bytes(next_limit(open.and_then(|open| u32::try_from(open.mem.len()).ok()), FIRST_STRING_BYTES, STRING_CHUNK_BYTES, least)),
+        let last = self.open[1].and_then(|chunk| self.strings_chunk(chunk)).and_then(|open| u32::try_from(open.mem.len()).ok());
+        self.alloc_bytes(next_limit(last, FIRST_STRING_BYTES, STRING_CHUNK_BYTES, least))
+    }
+
+    /// The open string chunk when it has `least` bytes past those written
+    /// into it and `least` is no more than a shared chunk takes; none when
+    /// `open_strings` would open a chunk.
+    pub(crate) fn open_strings_with_room(&self, least: u32) -> Option<NewChunk<u8>> {
+        if least > STRING_CHUNK_BYTES {
+            return None;
         }
+        self.open[1].and_then(|chunk| self.strings_chunk(chunk)).filter(|open| open.mem.len() - count::strings_written(&open.meta) as usize >= least as usize)
+    }
+
+    /// Marks this arena as one whose builder chunks JavaScript opens, as the
+    /// addon's engine's is: JavaScript views only the chunks it asked for
+    /// (`builtWords`, `builtBytes`), so an entry in a chunk native opened is
+    /// one it cannot read, and the native writer (`BuiltWriter`) refuses to
+    /// open one. An arena Rust alone writes opens its own.
+    pub fn open_builder_chunks_in_javascript(&mut self) {
+        self.javascript_opens_builder_chunks = true;
+    }
+
+    /// Refuses a builder chunk the native writer would open, on an arena
+    /// whose builder chunks JavaScript opens.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Unwritable` on such an arena.
+    pub(crate) fn refuse_native_open(&self) -> Result<(), ArenaError> {
+        if self.javascript_opens_builder_chunks {
+            return Err(ArenaError::Unwritable("a native write opens no builder chunk on an arena whose builder chunks JavaScript opens"));
+        }
+        Ok(())
     }
 
     fn number(&mut self, len: u32) -> Result<u32, ArenaError> {

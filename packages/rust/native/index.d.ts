@@ -548,18 +548,21 @@ export declare function renderBuilt(engine: object, owner: object, address: numb
  * r" arena `owner` holds at `entry`, rendered as a render root whose
  * r" `leading` and `trailing` edges have no neighbour, under
  * r" `options` over this engine's, with `sides`, the sides the
- * r" leaf holds (`{ leading?, trailing?, inner? }`): a root has
- * r" no site in the store. Refuses a kind no node of the grammar
- * r" is written as, an entry of another kind or outside the
- * r" arena's strings, and a leaf whose render refuses.
+ * r" leaf holds (`{ leading?, trailing?, inner? }`), each the cells
+ * r" its entries are kept as in `owner`'s arena, whose counts the
+ * r" caller holds through the call: a root has no site in the
+ * r" store. Refuses a kind no node of the grammar is written as,
+ * r" an entry of another kind or outside the arena's strings, a
+ * r" side by any other name, a cell that is no side's entry, and a
+ * r" leaf whose render refuses.
  */
-export declare function renderBuiltLeaf(engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+export declare function renderBuiltLeaf(engine: object, owner: object, kind: number, entry: number, sides: { leading?: readonly number[], trailing?: readonly number[], inner?: readonly number[] } | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
 
 /**
  * r" `render_built_leaf`'s text written to `path`
  * r" (`save_rendered`), answering whether it wrote.
  */
-export declare function renderBuiltLeafToFile(engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null): boolean
+export declare function renderBuiltLeafToFile(engine: object, owner: object, kind: number, entry: number, sides: { leading?: readonly number[], trailing?: readonly number[], inner?: readonly number[] } | undefined | null, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null): boolean
 
 /**
  * r" `render_built`'s text written to `path` (`save_rendered`),
