@@ -452,6 +452,7 @@ fn a_read_s_record_answers_its_sides_by_its_address_as_a_built_record_does() {
     let source = "fn f() {\n    // why\n    a;\n}\n";
     let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
     let root = engine.parse_records::<sittir_rust::render::AnyNode>(source).expect("a parse").root.expect("a root");
+    let side_of = |at: Address, side: TriviaSide| engine.read_node(at, |tree, index| tree.trivia_side(index, side)).expect("a read").expect("the record's node");
     let (at, side, assigned): (Address, TriviaSide, Vec<Option<(Address, sittir_core::types::Span)>>) = {
         let built = engine.written().built();
         let records = sittir_core::engine::Records::over(&engine, &built, root).expect("a tree over the records");
@@ -474,10 +475,9 @@ fn a_read_s_record_answers_its_sides_by_its_address_as_a_built_record_does() {
             .expect("a record whose side holds the comment")
     };
     assert!(assigned.iter().all(Option::is_some), "the side holds the comment by its record, as its source: {assigned:?}");
-    let read = engine.built_trivia_side(at, side).expect("a side").expect("the side its source assigns");
-    assert_eq!(entry_sources(&read), assigned);
+    assert_eq!(entry_sources(&side_of(at, side)), assigned);
     engine.write_built_trivia_side(at, side, &[]).expect("a write");
-    assert_eq!(engine.built_trivia_side(at, side).expect("a side").map(|entries| entries.len()), Some(0), "the written side is the one read");
+    assert_eq!(side_of(at, side).len(), 0, "the written side is the one read");
 }
 
 #[test]

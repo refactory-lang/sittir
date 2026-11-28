@@ -13,37 +13,14 @@ use crate::trivia_store::{Place, Site, TriviaStore};
 use crate::trivia_table::TriviaSide;
 use crate::types::{KindId, NodeIndex};
 
-/// A record's render, and for a record a read left its three sides:
-/// leading, trailing and inner.
-pub struct RenderedSides<T> {
-    pub text: String,
-    pub sides: Option<[Vec<TriviaEntry<T>>; 3]>,
-}
-
 impl<G: RecordGrammar> Engine<G> {
-    /// The entries of `side` of the record at `at`. For a built record, the
-    /// ones a write gave it, or `None` when no write did, so the side is the
-    /// one of the node it was rebuilt from. For a record a read left, the
-    /// ones a write gave it, else the ones its source assigns it.
-    ///
-    /// # Errors
-    ///
-    /// `ArenaError::Malformed` for address 0, which names no record, and
-    /// what reading a read's record refuses.
-    pub fn built_trivia_side(&self, at: Address, side: TriviaSide) -> Result<Option<Vec<TriviaEntry<G::Trivia>>>, ArenaError> {
-        let at = at.record()?;
-        match self.read_node(at, |tree, index| tree.trivia_side(index, side))? {
-            Some(entries) => Ok(Some(entries)),
-            None => self.written().side(Place::record(at), side, &*self.written().built()),
-        }
-    }
-
     /// Replace `side` of the record at `at`, a built one or one a read left,
     /// with `entries`, which its render then writes (`render_built`).
     ///
     /// # Errors
     ///
-    /// As `built_trivia_side`.
+    /// `ArenaError::Malformed` for address 0, which names no record, and
+    /// what reading a read's record refuses.
     pub fn write_built_trivia_side(&self, at: Address, side: TriviaSide, entries: &[TriviaEntry<G::Trivia>]) -> Result<(), ArenaError> {
         let at = at.record()?;
         if self.written().built().read_record(at) {
@@ -315,47 +292,12 @@ impl<G: RecordGrammar> Engine<G> {
     /// `admit` refuses, a side's built record `entries` refuses, else what
     /// the record's render refuses.
     pub fn render_at(&self, built: &super::BuiltChunks, at: Address, changed: ChangedEdges, options: &crate::options::ResolvedOptions, templates: bool, entries: crate::engine::AdmitEntry) -> Result<String, RenderError> {
-        self.rendered_at(built, at, changed, options, templates, entries, |_| ()).map(|(text, ())| text)
-    }
-
-    /// What `render_at` renders from the arena alone, and, for a record a
-    /// read left, its three sides (leading, trailing, inner) as
-    /// `ParsedTree::trivia_side` answers them, read from the tree the
-    /// render made over its source; none for a built record.
-    ///
-    /// # Errors
-    ///
-    /// As `render_at`, and what reading the record's source refuses.
-    pub fn render_at_with_sides(&self, built: &super::BuiltChunks, at: Address, changed: ChangedEdges, options: &crate::options::ResolvedOptions, entries: crate::engine::AdmitEntry) -> Result<RenderedSides<G::Trivia>, RenderError> {
-        use crate::engine::Trees;
-        let read = built.read_record(at);
-        self.rendered_at(built, at, changed, options, false, entries, |trees| {
-            let name = crate::types::NodeId::record(at.0);
-            let tree = read.then(|| trees.holding(crate::slot::NodeIdOrCoordinate::of(name)))??;
-            let index = tree.index_named(name)?;
-            Some([TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].map(|side| tree.trivia_side(index, side)))
-        })
-        .map(|(text, sides)| RenderedSides { text, sides })
-    }
-
-    #[allow(clippy::too_many_arguments, reason = "the record and its edges, then what the render reads through, then what reads its trees")]
-    fn rendered_at<R>(
-        &self,
-        built: &super::BuiltChunks,
-        at: Address,
-        changed: ChangedEdges,
-        options: &crate::options::ResolvedOptions,
-        templates: bool,
-        entries: crate::engine::AdmitEntry,
-        after: impl FnOnce(&crate::engine::SourceRecords<'_, G>) -> R,
-    ) -> Result<(String, R), RenderError> {
         let root = root_at::<G>(built, at, changed)?;
         let trees = crate::engine::SourceRecords::new(self, built, entries);
         let read = ReadSources::over(&trees);
         let through = crate::render::ThroughTemplates(&read);
         let sources: &dyn crate::render::SourceTable = if templates { &through } else { &read };
-        let text = G::render_record(self.grammar(), root, Some(built), built, self.written(), &RenderContext::new(options, sources))?;
-        Ok((text, after(&trees)))
+        G::render_record(self.grammar(), root, Some(built), built, self.written(), &RenderContext::new(options, sources))
     }
 
     /// The lone built leaf of `kind` whose leaf entry is at `entry` in the

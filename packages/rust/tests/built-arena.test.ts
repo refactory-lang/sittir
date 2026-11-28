@@ -25,7 +25,7 @@ const NO_READS: Pick<Records, 'read' | 'parse' | 'query' | 'reads'> = {
 	read: () => undefined,
 	parse: noRead,
 	query: { descendants: noRead, planHolds: noRead },
-	reads: { snapshotLayouts: noRead, sides: noRead, unitSides: noRead, writeTriviaSide: noRead, slotLayouts: noRead, slotSeparator: noRead, isEmpty: noRead }
+	reads: { snapshotLayouts: noRead, writeTriviaSide: noRead, slotLayouts: noRead, slotSeparator: noRead, isEmpty: noRead }
 };
 type Views = ConstructorParameters<typeof BuiltArena>[3];
 type WriteLeafSites = ConstructorParameters<typeof BuiltArena>[4];
@@ -126,80 +126,6 @@ describe('a built arena', () => {
 		arena.defer(at, () => ran.push(at));
 		expect(sideEntryOf(node, arena, undefined)).toEqual({ $type: 7, $record: at });
 		expect(ran).toEqual([at]);
-	});
-
-	it("asks the engine for a read node's sides once and for its unit sides once, apart, and again after one of them is written", () => {
-		const asked: number[] = [];
-		const askedUnits: number[] = [];
-		const written: [number, string][] = [];
-		const sides = (node: number) => {
-			asked.push(node);
-			return { leading: [{ text: `leading ${asked.length}` }], trailing: [], inner: [] };
-		};
-		const unitSides = (node: number) => {
-			askedUnits.push(node);
-			return [{ slot: 'body', item: 0, leading: [{ text: 'unit' }] }];
-		};
-		const record = new Uint32Array(2 ** format!.chunkShift);
-		const read = { data: record, meta: new Uint8Array(metaBytes(record.length)) };
-		const reads = { ...NO_READS.reads, sides, unitSides, writeTriviaSide: (node: number, side: string) => void written.push([node, side]) };
-		const arena = new BuiltArena(
-			{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], cross: () => undefined, ...NO_READS, read: (chunk: number) => (chunk === 9 ? read : undefined), reads, trivia: NO_SIDES },
-			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
-			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
-			NO_VIEWS,
-			() => undefined
-		);
-		const at = 9 * 2 ** format!.chunkShift + 4;
-		for (const key of [at, -77]) {
-			asked.length = 0;
-			askedUnits.length = 0;
-			const first = arena.tree.triviaSide(key, 'leading')!;
-			expect(first).toEqual([{ text: 'leading 1' }]);
-			first.push({ text: "a caller's own" } as never);
-			expect(arena.tree.triviaSide(key, 'leading')).toEqual([{ text: 'leading 1' }]);
-			expect(arena.tree.triviaSide(key, 'trailing')).toEqual([]);
-			expect(arena.tree.triviaSide(key, 'inner')).toEqual([]);
-			expect(askedUnits).toEqual([]);
-			expect(arena.tree.unitSides(key)).toEqual([{ slot: 'body', item: 0, leading: [{ text: 'unit' }] }]);
-			expect(arena.tree.unitSides(key)).toEqual([{ slot: 'body', item: 0, leading: [{ text: 'unit' }] }]);
-			expect(asked).toEqual([key]);
-			expect(askedUnits).toEqual([key]);
-		}
-		arena.tree.writeTriviaSide(-77, 'leading', []);
-		expect(written).toEqual([[-77, 'leading']]);
-		asked.length = 0;
-		askedUnits.length = 0;
-		arena.tree.triviaSide(-77, 'trailing');
-		arena.tree.triviaSide(at, 'trailing');
-		arena.tree.unitSides(-77);
-		arena.tree.unitSides(at);
-		expect(asked).toEqual([-77, at]);
-		expect(askedUnits).toEqual([-77, at]);
-	});
-
-	it('keeps the sides a render handed it for a read node, and asks the engine for none', () => {
-		const asked: number[] = [];
-		const record = new Uint32Array(2 ** format!.chunkShift);
-		const read = { data: record, meta: new Uint8Array(metaBytes(record.length)) };
-		const reads = { ...NO_READS.reads, sides: (node: number) => (asked.push(node), { leading: [], trailing: [], inner: [] }) };
-		const arena = new BuiltArena(
-			{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], cross: () => undefined, ...NO_READS, read: (chunk: number) => (chunk === 9 ? read : undefined), reads, trivia: NO_SIDES },
-			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
-			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
-			NO_VIEWS,
-			() => undefined
-		);
-		const at = 9 * 2 ** format!.chunkShift + 4;
-		const built = (arena.view(arena.draft(7, 4)) as { readonly $at: number }).$at;
-		expect(arena.wantsSides(at)).toBe(true);
-		expect(arena.wantsSides(built)).toBe(false);
-		arena.keepSides(at, { leading: [{ text: 'handed' } as never], trailing: [], inner: [] });
-		expect(arena.wantsSides(at)).toBe(false);
-		expect(arena.tree.triviaSide(at, 'leading')).toEqual([{ text: 'handed' }]);
-		expect(asked).toEqual([]);
-		arena.tree.writeTriviaSide(at, 'leading', []);
-		expect(arena.wantsSides(at)).toBe(true);
 	});
 
 	it("reads a read's records in a chunk number a freed builder chunk had", () => {

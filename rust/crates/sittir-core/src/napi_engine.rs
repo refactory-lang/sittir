@@ -974,27 +974,6 @@ macro_rules! napi_engine {
                 Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
             }
 
-            /// `{ text, sides }`: `renderBuilt`'s text, and for a record a
-            /// read left what `readSides` answers for it, read from the
-            /// tree the render made over its source; `sides` is absent for
-            /// a built record. Refuses as `renderBuilt` does.
-            #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null", ts_return_type = "{ text: string; sides?: { leading: import('@sittir/types').WireNode[]; trailing: import('@sittir/types').WireNode[]; inner: import('@sittir/types').WireNode[] } }")]
-            #[allow(clippy::too_many_arguments, reason = "renderBuilt's arguments, and the environment the answer is made in")]
-            pub fn render_built_sides(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, owner: &::napi::bindgen_prelude::External<EngineCell>, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<$crate::napi_engine::Made> {
-                let engine = engine_of(engine)?;
-                let owner = engine_of(owner)?;
-                let at = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
-                let changed = $crate::slot::ChangedEdges { leading, trailing };
-                let chunks = owner.written().built();
-                let built = chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                let table = render_options(&engine, options)?;
-                let rendered = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.render_at_with_sides(built, at, changed, &table, $crate::napi_engine::admit_entry::<$grammar>)))
-                    .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
-                    .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
-                let text = $crate::boundary::RenderedText($crate::line_endings::spell(rendered.text, &table.newline));
-                $crate::napi_engine::rendered_sides_object(&env, text, rendered.sides.map(|sides| $crate::napi_engine::sides_object(&env, sides)).transpose()?)
-            }
-
             /// Runs `f` on the node a read left that the key `node` names
             /// (`NodeId::key`): the tree over its source's records, made
             /// for this call, and the id the call gives the node. Refuses an
@@ -1063,14 +1042,6 @@ macro_rules! napi_engine {
                 })
             }
 
-            /// `triviaSide` for the node a read left that the key `node`
-            /// names. Refuses as `with_read_node`, and any other side.
-            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').WireNode[]")]
-            pub fn read_trivia_side(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64, side: String) -> ::napi::Result<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
-                let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
-                with_read_node(engine, node, |tree, index| Ok(tree.trivia_side(index, side)))
-            }
-
             /// Replaces `side` of the node a read left that the key `node`
             /// names with `entries`, which its render then writes. Refuses
             /// an engine already disposed, a number that is no key, a name
@@ -1081,22 +1052,6 @@ macro_rules! napi_engine {
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
                 engine.write_read_side($crate::napi_engine::named_key(node)?, side, &entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 $crate::napi_engine::settle(&env, engine.written())
-            }
-
-            /// `unitSides` for the node a read left that the key `node` names.
-            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').UnitSidesWire[]")]
-            pub fn read_unit_sides(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64) -> ::napi::Result<Vec<$crate::layout::UnitSides<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
-                with_read_node(engine, node, |tree, index| Ok(tree.unit_sides(index)))
-            }
-
-            /// `{ leading, trailing, inner }`: `triviaSide` of each side for
-            /// the node a read left that the key `node` names, all from one
-            /// tree over its source's records.
-            #[::napi_derive::napi(ts_return_type = "{ leading: import('@sittir/types').WireNode[]; trailing: import('@sittir/types').WireNode[]; inner: import('@sittir/types').WireNode[] }")]
-            pub fn read_sides(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, node: f64) -> ::napi::Result<$crate::napi_engine::Made> {
-                use $crate::trivia_table::TriviaSide::{Inner, Leading, Trailing};
-                let sides = with_read_node(engine, node, |tree, index| Ok([Leading, Trailing, Inner].map(|side| tree.trivia_side(index, side))))?;
-                $crate::napi_engine::sides_object(&env, sides)
             }
 
             /// `slotLayouts` for the node a read left that the key `node` names.
@@ -1990,38 +1945,6 @@ pub fn built_chunk<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "data", data)?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "meta", Made(meta))?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "freed", std::mem::take(&mut buffers.unreported))?;
-    Ok(Made(object.raw()))
-}
-
-/// `{ leading, trailing, inner }` of `sides`, in that order.
-///
-/// # Errors
-///
-/// What making the object refuses.
-#[cfg(feature = "arena")]
-pub fn sides_object<E: napi::bindgen_prelude::ToNapiValue>(env: &napi::Env, sides: [Vec<E>; 3]) -> napi::Result<Made> {
-    use napi::JsValue;
-    let mut object = napi::bindgen_prelude::Object::new(env)?;
-    for (name, entries) in ["leading", "trailing", "inner"].into_iter().zip(sides) {
-        napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, name, entries)?;
-    }
-    Ok(Made(object.raw()))
-}
-
-/// `{ text, sides }` of a render's `text` and, when it read any, the
-/// sides object of the record it rendered.
-///
-/// # Errors
-///
-/// What making the object refuses.
-#[cfg(feature = "arena")]
-pub fn rendered_sides_object(env: &napi::Env, text: crate::boundary::RenderedText, sides: Option<Made>) -> napi::Result<Made> {
-    use napi::JsValue;
-    let mut object = napi::bindgen_prelude::Object::new(env)?;
-    napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "text", text)?;
-    if let Some(sides) = sides {
-        napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "sides", sides)?;
-    }
     Ok(Made(object.raw()))
 }
 

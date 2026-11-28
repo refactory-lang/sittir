@@ -1163,27 +1163,15 @@ Bound as `BuiltRecords.read`. Both views, the words (or, for a chunk of a read's
 
 ### `packages/common/src/engine.ts::NativeEngineLike::readRenderAt`
 
-Renders a read node with no tree and no built parent. Only the native hydration profile calls it; the engine renders read records through `renderBuilt` and `renderBuiltSides`, which also render them inside a built parent.
+Renders a read node with no tree and no built parent. Only the native hydration profile calls it; the engine renders read records through `renderBuilt`, which also renders them inside a built parent.
 
 ### `packages/common/src/engine.ts::NativeEngineLike::readSnapshotLayouts`
 
 Bound as `ReadNodes.snapshotLayouts`, so a snapshot of a read node finds its stored layouts with no tree.
 
-### `packages/common/src/engine.ts::NativeEngineLike::readTriviaSide`
-
-One side of a read node. The engine reads all three at once (`readSides`); this per-side read is what tests call to compare one side.
-
 ### `packages/common/src/engine.ts::NativeEngineLike::writeReadTriviaSide`
 
 Bound as `ReadNodes.writeTriviaSide`: a `$trivia` write to a read node keeps the side in the engine's side store under the node's name, with no tree.
-
-### `packages/common/src/engine.ts::NativeEngineLike::readUnitSides`
-
-Bound as `ReadNodes.unitSides`: the sides of the units a read node holds, which the arena keeps per node.
-
-### `packages/common/src/engine.ts::NativeEngineLike::readSides`
-
-Bound as `ReadNodes.sides`. One call places the node's source's records once and answers all three sides, which the arena keeps per node.
 
 ### `packages/common/src/engine.ts::NativeEngineLike::readSlotLayouts`
 
@@ -1196,10 +1184,6 @@ Bound as `ReadNodes.slotSeparator`, null mapped to `undefined`: the separator a 
 ### `packages/common/src/engine.ts::NativeEngineLike::readIsEmpty`
 
 Bound as `ReadNodes.isEmpty`: whether a read node spans nothing but trivia.
-
-### `packages/common/src/engine.ts::NativeEngineLike::renderBuiltSides`
-
-What the engine calls instead of `renderBuilt` for a read record whose sides the arena does not keep yet (`BuiltArena.wantsSides`). One call renders the text and answers the sides, which the engine hands to `BuiltArena.keepSides`, so a side read after the render does not place the source's records again.
 
 ### `packages/common/src/engine.ts::NativeEngineLike::builtBump`
 
@@ -1253,10 +1237,6 @@ Answers a read node's `$errors` from the arena, since a parse in arena storage k
 
 Whether a record is the root `parse` recorded for its source. `rootEdges` asks it of a render root in arena storage, as it asks a tree for index 0: only a source's own root renders with the document's edges.
 
-### `packages/common/src/built-arena.ts::BuiltArena::keepSides`
-
-Keeps the sides a render of a read record answered with its text (`NativeEngineLike.renderBuiltSides`), so a side read that follows the render answers from the arena instead of placing the source's records again. The first answer for a node stays; a write to a read node's sides forgets it (`#forgetReadSides`).
-
 ### `packages/common/src/built-arena.ts::BuiltArena::linkRow`
 
 Writes the link record that lets a built record hold, untouched, a node a read left with no record of its own. The link names the node by its holder record and cell site, as the node's read coordinate does, and carries its kind and span for the render. `builtCell` writes one when a build takes such a node as a slot value.
@@ -1281,10 +1261,6 @@ Whether a record lives in a chunk a read wrote, which the arena reads through `B
 
 A built record that replaces a read node takes the read node's name in its side record, so the sides the node had and its place among its holder's neighbours carry over to the rebuild. Held by its handle alone and owned, the record is renamed in place; otherwise a copy is. The key is the read node's `coordinateIndex`, which `keyName` splits into holder and site.
 
-### `packages/common/src/built-arena.ts::BuiltArena::wantsSides`
-
-Lets a render of a read record ask the native side for its sides in the same call as its text (`NativeEngineLike.renderBuiltSides`), once a node. A built record, and a read record whose sides the arena already keeps, render their text alone.
-
 ### `packages/common/src/built-arena.ts::BuiltRecords::parse`
 
 The native parse that leaves a source's records in the built arena and keeps no tree (`NativeEngineLike.parseRecords`), its JSON answer decoded as `ParsedRecords`. `BuiltArena.parse` is its caller.
@@ -1299,15 +1275,7 @@ What a records parse answers: the address of the root's record, null when the ro
 
 ### `packages/common/src/built-arena.ts::ReadNodes`
 
-The tree reads arena storage answers natively for a node a read left, each keyed by the node's key (`coordinateIndex`) and shaped as `TreeHandle` names them, so the built arena's tree handle answers a read node as a tree answers a parsed one. `builtRecordsOf` binds them to the `NativeEngineLike` read calls.
-
-### `packages/common/src/built-arena.ts::ReadNodes::sides`
-
-The three sides of a read node from one native call (`NativeEngineLike.readSides`), which places the node's source's records once for all three. The arena keeps the answer per node.
-
-### `packages/common/src/built-arena.ts::ReadSides`
-
-A read node's leading, trailing and inner sides as wire entries: what `ReadNodes.sides` answers and what the arena keeps per node (`BuiltArena.keepSides`).
+The tree reads arena storage still answers natively for a node a read left (its sides and unit sides JavaScript reads from the records: `BuiltArena.readSide`, `BuiltArena.readUnitSides`), each keyed by the node's key (`coordinateIndex`) and shaped as `TreeHandle` names them, so the built arena's tree handle answers a read node as a tree answers a parsed one. `builtRecordsOf` binds them to the `NativeEngineLike` read calls.
 
 ### `packages/common/src/built-arena.ts::ReadChunk`
 
@@ -1332,6 +1300,22 @@ Crosses the releases the engine holds waiting (`NativeEngineLike.crossReleases`)
 ### `packages/common/src/built-arena.ts::BuiltArena::sourceOf`
 
 The address of the entry a read's record names as its source, read from the record's side record (`source`). Every record a read writes names it, so `errorsOf` and `readText` find a node's source from the node alone; a builder's record names none and is refused.
+
+### `packages/common/src/built-arena.ts::BuiltArena::readSide`
+
+One side of a node a read left, as wire entries, read from the arena's views with no native call: what `TreeHandle.triviaSide` answers for a read node's key. Where the read's list of replaced ranges holds an entry for the node and side, its row is the side, as written; otherwise the side is the gap kinds the record's header keeps for a side of its own followed by the row the record's side record of rows holds, as the parse placed it. A record that same read left for a node that still renders as its source (no entry of the list replaces its inner side) is named by that node, `{ $node, $span, $type }`, or for an `ERROR` by its kind and source text; any other entry keeps its written form. A site has no inner side.
+
+### `packages/common/src/built-arena.ts::BuiltArena::readUnitSides`
+
+The sides of the units a read's record holds, by slot and item, as wire entries, read from the arena's views: what `TreeHandle.unitSides` answers for a read node's key. Its sites are the record's site rows with each of its read's replaced ranges for a site of the record in their place, kept where the record's parsed cell at the site is a unit's, in key order. The entries keep their written form. A key that names a site, rather than a record, holds no units.
+
+### `packages/common/src/built-arena.ts::ReplacedRange`
+
+One entry of a read's list of replaced ranges, as `BuiltArena.readSide` decodes it from the read's side record: the record its node is kept in, its site packed as `keyName` packs a key's site (0 for the record's own node), the side's code (`CellFormat.sideCodes`) and the list cell of its row. The offset each entry also holds is a render's, which reading a side has no use for.
+
+### `packages/common/src/built-arena.ts::byteWord`
+
+The little-endian `u32` at a byte offset of a string chunk's view: a source entry's length and the address of its read's side record, which native writes as words into a bytes chunk.
 
 ### `packages/common/src/create-engine.ts::storedVerifierOf`
 
@@ -1412,6 +1396,10 @@ A cell site packed as the native side packs it, the item above the word in `Node
 ### `packages/common/src/node-data.ts::parseErrorsOf`
 
 The portable reader's `$errors` for a node: its tree's regions, or, when its parse kept no tree, the arena's for that parse (`BuiltArena.errorsOf`).
+
+### `packages/common/src/node-data.ts::unpackedSite`
+
+The slot word and item a packed site holds: the inverse of `packedSite`, for a site `keyName` splits off a key or a read's list of replaced ranges names.
 
 ### `packages/common/src/runtime.ts::SplicedEnvelope`
 

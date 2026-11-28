@@ -438,13 +438,6 @@ export declare function readPlanHolds(engine: object, addresses: string, plan: s
  */
 export declare function readRenderAt(engine: object, node: number, leading: boolean, trailing: boolean, options?: object | undefined | null, templates?: boolean | undefined | null): string
 
-/**
- * r" `{ leading, trailing, inner }`: `triviaSide` of each side for
- * r" the node a read left that the key `node` names, all from one
- * r" tree over its source's records.
- */
-export declare function readSides(engine: object, node: number): { leading: import('@sittir/types').WireNode[]; trailing: import('@sittir/types').WireNode[]; inner: import('@sittir/types').WireNode[] }
-
 /** r" `slotLayouts` for the node a read left that the key `node` names. */
 export declare function readSlotLayouts(engine: object, node: number): import('@sittir/types').SlotLayoutWire[]
 
@@ -464,15 +457,6 @@ export declare function readSnapshotLayouts(engine: object, node: number, holder
  * r" left that the key `node` names: `{ slots }`. A diagnostic.
  */
 export declare function readStoredLayout(engine: object, node: number): { slots: number }
-
-/**
- * r" `triviaSide` for the node a read left that the key `node`
- * r" names. Refuses as `with_read_node`, and any other side.
- */
-export declare function readTriviaSide(engine: object, node: number, side: string): import('@sittir/types').WireNode[]
-
-/** r" `unitSides` for the node a read left that the key `node` names. */
-export declare function readUnitSides(engine: object, node: number): import('@sittir/types').UnitSidesWire[]
 
 /**
  * r" Chunk `chunk` of the built arena, which a read wrote into, with
@@ -572,14 +556,6 @@ export declare function renderBuiltLeaf(engine: object, owner: object, kind: num
  * r" (`save_rendered`), answering whether it wrote.
  */
 export declare function renderBuiltLeafToFile(engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null): boolean
-
-/**
- * r" `{ text, sides }`: `renderBuilt`'s text, and for a record a
- * r" read left what `readSides` answers for it, read from the
- * r" tree the render made over its source; `sides` is absent for
- * r" a built record. Refuses as `renderBuilt` does.
- */
-export declare function renderBuiltSides(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): { text: string; sides?: { leading: import('@sittir/types').WireNode[]; trailing: import('@sittir/types').WireNode[]; inner: import('@sittir/types').WireNode[] } }
 
 /**
  * r" `render_built`'s text written to `path` (`save_rendered`),

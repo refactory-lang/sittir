@@ -237,6 +237,10 @@ export function packedSite(site: CellSite | undefined, format: NodeIdFormat): nu
 	return item * 2 ** format.wordBits + word;
 }
 
+export function unpackedSite(site: number, format: NodeIdFormat): readonly [word: number, item: number] {
+	return [site % 2 ** format.wordBits, Math.floor(site / 2 ** format.wordBits)];
+}
+
 export function keyName(key: number, format: NodeIdFormat): { readonly node: number; readonly site: number } {
 	const sites = 2 ** (format.itemBits + format.wordBits);
 	return key >= 0 ? { node: key, site: 0 } : { node: Math.floor(-key / sites), site: -key % sites };
