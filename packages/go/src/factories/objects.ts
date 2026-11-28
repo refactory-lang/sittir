@@ -25,6 +25,7 @@ import {
 	listElementsHop,
 	storedHop,
 	wrapHoisted,
+	elementsWith,
 	seatWith,
 	groupField,
 	LIST_METHODS,
@@ -38,7 +39,6 @@ import {
 	listOption,
 	refuseReadStub,
 	hydrateStored,
-	elementsWith,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -216,8 +216,20 @@ function buildSourceFile$with(node: Held, setter: string, args: readonly unknown
 	const config = node[INPUT] as T.SourceFile.Config;
 	switch (setter) {
 		case 'elements':
-			return applySetter(args, (...values: Admit<(T.SourceFileArm1 | T.SourceFileArm2)[]>) =>
-				rebuilt(node, handle, () => buildSourceFile({ ...config, elements: restItems('elements', values) }))
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'elements', keys: ['statement', 'terminator'], make: buildSourceFileArm1 },
+						(...args: never[]) =>
+							elementsWith(
+								args,
+								{ slot: 'elements', keys: ['topLevelDeclaration', 'terminator'], make: buildSourceFileArm2 },
+								(...values: Admit<(T.SourceFileArm1 | T.SourceFileArm2)[]>) =>
+									buildSourceFile({ ...config, elements: restItems('elements', values) })
+							)
+					)
+				)
 			);
 		case 'topLevelDeclaration':
 			return applySetter(
@@ -8699,25 +8711,25 @@ function buildCommentArm2$with$content(this: Received<Held>, ...args: unknown[])
 
 export function buildSourceFileArm1<
 	StatementSlot extends T.SourceFileArm1.Config['statement'],
-	SourceFileTextSlot extends T.SourceFileArm1.Config['sourceFileText']
+	TerminatorSlot extends T.SourceFileArm1.Config['terminator']
 >(
-	config: RefusingConfig<T.SourceFileArm1.Config, { statement: StatementSlot; sourceFileText: SourceFileTextSlot }>
+	config: RefusingConfig<T.SourceFileArm1.Config, { statement: StatementSlot; terminator: TerminatorSlot }>
 ): T.SourceFileArm1.Bound;
 export function buildSourceFileArm1(config: T.SourceFileArm1.Config): T.SourceFileArm1.Bound {
 	currentHandle()?.admit(TSKindId.SourceFileArm1, [config]);
 	const _statement = kindIdStorage<NonNullable<T.SourceFileArm1['_statement']>>(config.statement);
-	const _source_file_text = kindIdStorage<NonNullable<T.SourceFileArm1['_source_file_text']>>(config.sourceFileText);
+	const _terminator = kindIdStorage<NonNullable<T.SourceFileArm1['_terminator']>>(config.terminator);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'source_file_arm1', { statement: _statement, sourceFileText: _source_file_text });
+		admitChildren(handle, 'source_file_arm1', { statement: _statement, terminator: _terminator });
 	const node = {
 		$type: TSKindId.SourceFileArm1 as const,
 		_statement,
-		_source_file_text,
+		_terminator,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		statement: () => hydrateStoredSlot(node, '_statement'),
-		sourceFileText: () => hydrateStoredSlot(node, '_source_file_text'),
+		terminator: () => hydrateStoredSlot(node, '_terminator'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -8730,7 +8742,7 @@ export function buildSourceFileArm1(config: T.SourceFileArm1.Config): T.SourceFi
 	};
 	node.$with = {
 		statement: buildSourceFileArm1$with$statement,
-		sourceFileText: buildSourceFileArm1$with$sourceFileText,
+		terminator: buildSourceFileArm1$with$terminator,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8745,9 +8757,9 @@ function buildSourceFileArm1$with(node: Held, setter: string, args: readonly unk
 			return applySetter(args, (value: Admit<NonNullable<T.SourceFileArm1.Config>['statement']>) =>
 				rebuilt(node, handle, () => buildSourceFileArm1({ ...config, statement: value }))
 			);
-		case 'sourceFileText':
-			return applySetter(args, (value: Admit<NonNullable<T.SourceFileArm1.Config>['sourceFileText']>) =>
-				rebuilt(node, handle, () => buildSourceFileArm1({ ...config, sourceFileText: value }))
+		case 'terminator':
+			return applySetter(args, (value: Admit<NonNullable<T.SourceFileArm1.Config>['terminator']>) =>
+				rebuilt(node, handle, () => buildSourceFileArm1({ ...config, terminator: value }))
 			);
 	}
 	throw new Error(`source_file_arm1 has no $with.${setter}`);
@@ -8755,37 +8767,34 @@ function buildSourceFileArm1$with(node: Held, setter: string, args: readonly unk
 function buildSourceFileArm1$with$statement(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildSourceFileArm1$with(receiverOf(this, '$with.statement'), 'statement', args);
 }
-function buildSourceFileArm1$with$sourceFileText(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildSourceFileArm1$with(receiverOf(this, '$with.sourceFileText'), 'sourceFileText', args);
+function buildSourceFileArm1$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSourceFileArm1$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function buildSourceFileArm2<
 	TopLevelDeclarationSlot extends T.SourceFileArm2.Config['topLevelDeclaration'],
-	SourceFileTextSlot extends T.SourceFileArm2.Config['sourceFileText']
+	TerminatorSlot extends T.SourceFileArm2.Config['terminator']
 >(
 	config: RefusingConfig<
 		T.SourceFileArm2.Config,
-		{ topLevelDeclaration: TopLevelDeclarationSlot; sourceFileText: SourceFileTextSlot }
+		{ topLevelDeclaration: TopLevelDeclarationSlot; terminator: TerminatorSlot }
 	>
 ): T.SourceFileArm2.Bound;
 export function buildSourceFileArm2(config: T.SourceFileArm2.Config): T.SourceFileArm2.Bound {
 	currentHandle()?.admit(TSKindId.SourceFileArm2, [config]);
 	const _top_level_declaration = config.topLevelDeclaration;
-	const _source_file_text = kindIdStorage<NonNullable<T.SourceFileArm2['_source_file_text']>>(config.sourceFileText);
+	const _terminator = kindIdStorage<NonNullable<T.SourceFileArm2['_terminator']>>(config.terminator);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'source_file_arm2', {
-			topLevelDeclaration: _top_level_declaration,
-			sourceFileText: _source_file_text
-		});
+		admitChildren(handle, 'source_file_arm2', { topLevelDeclaration: _top_level_declaration, terminator: _terminator });
 	const node = {
 		$type: TSKindId.SourceFileArm2 as const,
 		_top_level_declaration,
-		_source_file_text,
+		_terminator,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		topLevelDeclaration: () => hydrateStoredSlot(node, '_top_level_declaration'),
-		sourceFileText: () => hydrateStoredSlot(node, '_source_file_text'),
+		terminator: () => hydrateStoredSlot(node, '_terminator'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -8798,7 +8807,7 @@ export function buildSourceFileArm2(config: T.SourceFileArm2.Config): T.SourceFi
 	};
 	node.$with = {
 		topLevelDeclaration: buildSourceFileArm2$with$topLevelDeclaration,
-		sourceFileText: buildSourceFileArm2$with$sourceFileText,
+		terminator: buildSourceFileArm2$with$terminator,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8815,9 +8824,9 @@ function buildSourceFileArm2$with(node: Held, setter: string, args: readonly unk
 				(value: Admit<T.PackageClause | T.FunctionDeclaration | T.MethodDeclaration | T.ImportDeclaration>) =>
 					rebuilt(node, handle, () => buildSourceFileArm2({ ...config, topLevelDeclaration: value }))
 			);
-		case 'sourceFileText':
-			return applySetter(args, (value: Admit<NonNullable<T.SourceFileArm2.Config>['sourceFileText']>) =>
-				rebuilt(node, handle, () => buildSourceFileArm2({ ...config, sourceFileText: value }))
+		case 'terminator':
+			return applySetter(args, (value: Admit<NonNullable<T.SourceFileArm2.Config>['terminator']>) =>
+				rebuilt(node, handle, () => buildSourceFileArm2({ ...config, terminator: value }))
 			);
 	}
 	throw new Error(`source_file_arm2 has no $with.${setter}`);
@@ -8825,8 +8834,8 @@ function buildSourceFileArm2$with(node: Held, setter: string, args: readonly unk
 function buildSourceFileArm2$with$topLevelDeclaration(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildSourceFileArm2$with(receiverOf(this, '$with.topLevelDeclaration'), 'topLevelDeclaration', args);
 }
-function buildSourceFileArm2$with$sourceFileText(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildSourceFileArm2$with(receiverOf(this, '$with.sourceFileText'), 'sourceFileText', args);
+function buildSourceFileArm2$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSourceFileArm2$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 const buildImportSpecs$wrapper = {

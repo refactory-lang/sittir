@@ -166,11 +166,24 @@ function wrapSourceFile$with(node: Held, setter: string, args: readonly unknown[
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'elements':
-			return applySetter(args, (...v: NonNullable<T.SourceFile['_elements']>[number][]) =>
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapSourceFile(
-						{ ...$edited(data), _elements: admitSlot(handle, 'source_file', 'elements', restItems('elements', v)) },
-						tree
+					elementsWith(
+						args,
+						{ slot: 'elements', keys: ['statement', 'terminator'], make: RAW.buildSourceFileArm1 },
+						(...args: never[]) =>
+							elementsWith(
+								args,
+								{ slot: 'elements', keys: ['topLevelDeclaration', 'terminator'], make: RAW.buildSourceFileArm2 },
+								(...v: NonNullable<T.SourceFile['_elements']>[number][]) =>
+									wrapSourceFile(
+										{
+											...$edited(data),
+											_elements: admitSlot(handle, 'source_file', 'elements', restItems('elements', v))
+										},
+										tree
+									)
+							)
 					)
 				)
 			);
@@ -8747,8 +8760,8 @@ export function wrapSourceFileArm1(data: T.SourceFileArm1, tree: TreeHandle): T.
 		statement() {
 			return hydrateSlot<T.Statement>(this, '_statement', tree);
 		},
-		sourceFileText() {
-			return hydrateSlot<T.SourceFileText | TSKindId.Semi | TSKindId.Null>(this, '_source_file_text', tree);
+		terminator() {
+			return hydrateSlot<T.SourceFileText | TSKindId.Semi | TSKindId.Null>(this, '_terminator', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -8767,7 +8780,7 @@ export function wrapSourceFileArm1(data: T.SourceFileArm1, tree: TreeHandle): T.
 	};
 	node.$with = {
 		statement: wrapSourceFileArm1$with$statement,
-		sourceFileText: wrapSourceFileArm1$with$sourceFileText,
+		terminator: wrapSourceFileArm1$with$terminator,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8787,11 +8800,11 @@ function wrapSourceFileArm1$with(node: Held, setter: string, args: readonly unkn
 					)
 				)
 			);
-		case 'sourceFileText':
-			return applySetter(args, (v: NonNullable<T.SourceFileArm1['_source_file_text']>) =>
+		case 'terminator':
+			return applySetter(args, (v: NonNullable<T.SourceFileArm1['_terminator']>) =>
 				rebuilt(node, handle, () =>
 					wrapSourceFileArm1(
-						{ ...$edited(data), _source_file_text: admitSlot(handle, 'source_file_arm1', 'sourceFileText', v) },
+						{ ...$edited(data), _terminator: admitSlot(handle, 'source_file_arm1', 'terminator', v) },
 						tree
 					)
 				)
@@ -8802,8 +8815,8 @@ function wrapSourceFileArm1$with(node: Held, setter: string, args: readonly unkn
 function wrapSourceFileArm1$with$statement(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapSourceFileArm1$with(receiverOf(this, '$with.statement'), 'statement', args);
 }
-function wrapSourceFileArm1$with$sourceFileText(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSourceFileArm1$with(receiverOf(this, '$with.sourceFileText'), 'sourceFileText', args);
+function wrapSourceFileArm1$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSourceFileArm1$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function wrapSourceFileArm2(data: T.SourceFileArm2, tree: TreeHandle): T.SourceFileArm2.Parsed {
@@ -8818,8 +8831,8 @@ export function wrapSourceFileArm2(data: T.SourceFileArm2, tree: TreeHandle): T.
 				tree
 			);
 		},
-		sourceFileText() {
-			return hydrateSlot<T.SourceFileText | TSKindId.Semi | TSKindId.Null>(this, '_source_file_text', tree);
+		terminator() {
+			return hydrateSlot<T.SourceFileText | TSKindId.Semi | TSKindId.Null>(this, '_terminator', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -8838,7 +8851,7 @@ export function wrapSourceFileArm2(data: T.SourceFileArm2, tree: TreeHandle): T.
 	};
 	node.$with = {
 		topLevelDeclaration: wrapSourceFileArm2$with$topLevelDeclaration,
-		sourceFileText: wrapSourceFileArm2$with$sourceFileText,
+		terminator: wrapSourceFileArm2$with$terminator,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8861,11 +8874,11 @@ function wrapSourceFileArm2$with(node: Held, setter: string, args: readonly unkn
 					)
 				)
 			);
-		case 'sourceFileText':
-			return applySetter(args, (v: NonNullable<T.SourceFileArm2['_source_file_text']>) =>
+		case 'terminator':
+			return applySetter(args, (v: NonNullable<T.SourceFileArm2['_terminator']>) =>
 				rebuilt(node, handle, () =>
 					wrapSourceFileArm2(
-						{ ...$edited(data), _source_file_text: admitSlot(handle, 'source_file_arm2', 'sourceFileText', v) },
+						{ ...$edited(data), _terminator: admitSlot(handle, 'source_file_arm2', 'terminator', v) },
 						tree
 					)
 				)
@@ -8876,8 +8889,8 @@ function wrapSourceFileArm2$with(node: Held, setter: string, args: readonly unkn
 function wrapSourceFileArm2$with$topLevelDeclaration(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapSourceFileArm2$with(receiverOf(this, '$with.topLevelDeclaration'), 'topLevelDeclaration', args);
 }
-function wrapSourceFileArm2$with$sourceFileText(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSourceFileArm2$with(receiverOf(this, '$with.sourceFileText'), 'sourceFileText', args);
+function wrapSourceFileArm2$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSourceFileArm2$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 const wrapImportSpecs$wrapper = {
@@ -16072,7 +16085,7 @@ function viewCommentArm2(data: RecordPosition, tree: TreeHandle): T.CommentArm2.
 function viewSourceFileArm1$statement(this: RecordHandle) {
 	return viewSlot<T.Statement>(this, 2, 4, 3, 2);
 }
-function viewSourceFileArm1$sourceFileText(this: RecordHandle) {
+function viewSourceFileArm1$terminator(this: RecordHandle) {
 	return viewSlot<T.SourceFileText | TSKindId.Semi | TSKindId.Null>(this, 6, 4, 3, 3);
 }
 function viewSourceFileArm1(data: RecordPosition, tree: TreeHandle): T.SourceFileArm1.Parsed {
@@ -16084,7 +16097,7 @@ function viewSourceFileArm1(data: RecordPosition, tree: TreeHandle): T.SourceFil
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		statement: viewSourceFileArm1$statement,
-		sourceFileText: viewSourceFileArm1$sourceFileText,
+		terminator: viewSourceFileArm1$terminator,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -16095,7 +16108,7 @@ function viewSourceFileArm1(data: RecordPosition, tree: TreeHandle): T.SourceFil
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { statement: $with$statement, sourceFileText: $with$sourceFileText, [RECEIVER]: node };
+	node.$with = { statement: $with$statement, terminator: $with$terminator, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SourceFileArm1.Parsed;
 }
@@ -16109,7 +16122,7 @@ function viewSourceFileArm2$topLevelDeclaration(this: RecordHandle) {
 		2
 	);
 }
-function viewSourceFileArm2$sourceFileText(this: RecordHandle) {
+function viewSourceFileArm2$terminator(this: RecordHandle) {
 	return viewSlot<T.SourceFileText | TSKindId.Semi | TSKindId.Null>(this, 5, 4, 3, 3);
 }
 function viewSourceFileArm2(data: RecordPosition, tree: TreeHandle): T.SourceFileArm2.Parsed {
@@ -16121,7 +16134,7 @@ function viewSourceFileArm2(data: RecordPosition, tree: TreeHandle): T.SourceFil
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		topLevelDeclaration: viewSourceFileArm2$topLevelDeclaration,
-		sourceFileText: viewSourceFileArm2$sourceFileText,
+		terminator: viewSourceFileArm2$terminator,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -16132,11 +16145,7 @@ function viewSourceFileArm2(data: RecordPosition, tree: TreeHandle): T.SourceFil
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = {
-		topLevelDeclaration: $with$topLevelDeclaration,
-		sourceFileText: $with$sourceFileText,
-		[RECEIVER]: node
-	};
+	node.$with = { topLevelDeclaration: $with$topLevelDeclaration, terminator: $with$terminator, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SourceFileArm2.Parsed;
 }
@@ -17923,6 +17932,9 @@ function $with$statements(this: Received<RecordPosition>, ...args: unknown[]): u
 }
 function $with$tag(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.tag'), _wrap, 'tag', args);
+}
+function $with$terminator(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(receiverOf(this, '$with.terminator'), _wrap, 'terminator', args);
 }
 function $with$topLevelDeclaration(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.topLevelDeclaration'), _wrap, 'topLevelDeclaration', args);

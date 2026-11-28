@@ -5467,10 +5467,15 @@ A group is flattenable when its kind is `seated` (a hidden group) or the referen
 ### `packages/codegen/src/compiler/model/sub-factories.ts::elementsSeatOf`
 
 The shape-3 seats: every multiple slot — a compound's list slot or a list
-kind's own elements — among whose values exactly one is a hoisted,
+kind's own elements — among whose values one is a hoisted,
 config-shaped compound (python `comparison_operator.comparators` holding
 `_comparison_operator_comparator`; rust's `_type_arguments_elements` holding
-`_type_argument` beside the bare types it also admits). A repeated group
+`_type_argument` beside the bare types it also admits), or several are, each
+with a config key no other has (`keyedApart`: go `source_file.elements`
+holding `source_file_arm1`, with `statement`, and `source_file_arm2`, with
+`topLevelDeclaration`). Each such group is a seat of its own. When one group's keys
+cover another's, a config of the second is also a config of the first, so
+neither is seated. A repeated group
 cannot flatten, so the slot takes the group's configs among its elements and
 the overlay builds each one (`elementsShape`); an element that is not a
 config of that group — a built node, a kind id — passes through. A parent

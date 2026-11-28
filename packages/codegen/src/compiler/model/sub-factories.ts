@@ -413,17 +413,22 @@ export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 	const seats: FlattenSeat[] = [];
 	for (const slot of node.slots) {
 		if (!isMultiple(slot) || slot.values.length === 0) continue;
-		const groups: AssembledNode[] = [];
+		const groups = new Set<AssembledNode>();
 		for (const value of slot.values) {
 			if (!isNodeRef(value)) continue;
 			const child = nodeMap.nodes.get(storageKindOfRef(value.node));
 			if (!(child instanceof AbstractAssembledCompound) || !child.seated) continue;
 			if (child.rawFactoryName === undefined || classifyFactoryShape(child, nodeMap) !== 'config') continue;
-			groups.push(child);
+			groups.add(child);
 		}
-		if (groups.length === 1) seats.push({ slot, group: groups[0]! });
+		if (groups.size === 1 || keyedApart([...groups])) for (const group of groups) seats.push({ slot, group });
 	}
 	return seats;
+}
+
+function keyedApart(groups: readonly AssembledNode[]): boolean {
+	const keys = groups.map((group) => new Set(configKeysOf(group)));
+	return keys.every((own, at) => keys.every((other, to) => at === to || [...own].some((key) => !other.has(key))));
 }
 
 export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenSeat[] {

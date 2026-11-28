@@ -3269,7 +3269,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "source_file_text"
+			"name": "terminator"
 		},
 		{
 			"kind": "seam",
@@ -3287,7 +3287,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "source_file_text"
+			"name": "terminator"
 		},
 		{
 			"kind": "seam",

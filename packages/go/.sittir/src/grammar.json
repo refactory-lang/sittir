@@ -7868,30 +7868,31 @@
           "name": "_statement"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "source_file_text",
-              "annotations": {
-                "variantOf": "source_file_arm1"
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "source_file_text",
+                "annotations": {
+                  "variantOf": "source_file_arm1"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": ";"
+              },
+              {
+                "type": "STRING",
+                "value": "\u0000"
               }
-            },
-            {
-              "type": "STRING",
-              "value": ";",
-              "annotations": {
-                "variantOf": "source_file_arm1"
-              }
-            },
-            {
-              "type": "STRING",
-              "value": "\u0000",
-              "annotations": {
-                "variantOf": "source_file_arm1"
-              }
-            }
-          ]
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ],
       "annotations": {
@@ -7906,30 +7907,31 @@
           "name": "_top_level_declaration"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "source_file_text",
-              "annotations": {
-                "variantOf": "source_file_arm2"
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "source_file_text",
+                "annotations": {
+                  "variantOf": "source_file_arm2"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": ";"
+              },
+              {
+                "type": "STRING",
+                "value": "\u0000"
               }
-            },
-            {
-              "type": "STRING",
-              "value": ";",
-              "annotations": {
-                "variantOf": "source_file_arm2"
-              }
-            },
-            {
-              "type": "STRING",
-              "value": "\u0000",
-              "annotations": {
-                "variantOf": "source_file_arm2"
-              }
-            }
-          ]
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ],
       "annotations": {

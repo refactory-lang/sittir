@@ -7,4 +7,4 @@
 // (packages/go/src/backend.ts) compares it against the TS-side copy to
 // detect a native binary built from older generated code.
 
-pub const RENDER_MODULE_HASH: &str = "b687209499b9038e3b954e157f16393d25dbba9e3a8a7caecc317efb271b803d";
+pub const RENDER_MODULE_HASH: &str = "ef72b1621c361ab11c968d227fe18b5dbc538db5a23cc8001b9097c2a70dca93";

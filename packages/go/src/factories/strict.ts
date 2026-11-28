@@ -192,6 +192,16 @@ export const importSpecList$seated: EmptyForm<
 	Seat<T.ImportSpecList.BuildArgs, ReturnType<typeof F.buildImportSpecList>>
 > = withEmptyForm(K.importSpecList$flatten$importSpecListGroup(F.buildImportSpecList, F.buildImportSpecListGroup));
 
+export const sourceFile$seated: EmptyForm<
+	T.EmptySourceFile,
+	Seat<T.SourceFile.BuildArgs, ReturnType<typeof F.buildSourceFile>>
+> = withEmptyForm(
+	K.sourceFile$elements$SourceFileArm2(
+		K.sourceFile$elements$SourceFileArm1(F.buildSourceFile, F.buildSourceFileArm1),
+		F.buildSourceFileArm2
+	)
+);
+
 export const constSpec$seated: Seat<
 	T.ConstSpec.BuildArgs,
 	ReturnType<typeof F.buildConstSpec>

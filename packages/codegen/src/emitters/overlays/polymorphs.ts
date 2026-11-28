@@ -886,7 +886,7 @@ function elementsShape(
 		};
 	}
 	const seated = (p: string, c: string): string =>
-		`${p} | (OmitEach<NonNullable<${p}>, '${k}'> & { ${k}: ReadonlyArray<${c}[0] | (NonNullable<${p}> extends { readonly ${k}?: infer E } ? (E extends readonly (infer I)[] ? I : never) : never)> })`;
+		`${p} | (OmitEach<NonNullable<${p}>, '${k}'> & { ${k}: ReadonlyArray<${c}[0] | (NonNullable<${p}> extends infer Q ? (Q extends { readonly ${k}?: infer E } ? (E extends readonly (infer I)[] ? I : never) : never) : never)> })`;
 	return {
 		method: [
 			`export const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) => {`,
@@ -949,7 +949,12 @@ function seatEmission(
 	nodeMap: NodeMap,
 	forwardedList?: AssembledList
 ): SeatEmission {
-	const m = methodName(parentKey, kind === 'flatten' ? `flatten$${seat.slot.propertyName}` : seat.slot.propertyName);
+	const sharedSlot =
+		kind === 'elements' && forwardedList === undefined && (wires.byKind.get(parent.kind)?.elements ?? []).filter((other) => other.slot === seat.slot).length > 1;
+	const m = methodName(
+		parentKey,
+		kind === 'flatten' ? `flatten$${seat.slot.propertyName}` : sharedSlot ? `${seat.slot.propertyName}$${seat.group.typeName}` : seat.slot.propertyName
+	);
 	const direct = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
 	const childKey = wires.keyByKind.get(seat.group.kind);
 	const child: FlavorRefs<string> =

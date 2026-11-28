@@ -4905,9 +4905,9 @@ export function resolveSourceFileArm1_statement(
 	);
 }
 
-export function resolveSourceFileArm1_sourceFileText(
-	value: T.SourceFileArm1.LooseConfig['sourceFileText']
-): Admit<T.SourceFileArm1['_source_file_text']> {
+export function resolveSourceFileArm1_terminator(
+	value: T.SourceFileArm1.LooseConfig['terminator']
+): Admit<T.SourceFileArm1['_terminator']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.Semi, TSKindId.Null], () =>
 			_resolveOneLeaf<T.SourceFileText | TSKindId.Semi | TSKindId.Null>(value, 'source_file_text')
@@ -4925,7 +4925,7 @@ export function coerceToSourceFileArm1(input: T.SourceFileArm1.Loose): ReturnTyp
 	currentHandle()?.admit(TSKindId.SourceFileArm1, [input]);
 	return F.buildSourceFileArm1({
 		statement: resolveSourceFileArm1_statement(input.statement),
-		sourceFileText: resolveSourceFileArm1_sourceFileText(input.sourceFileText)
+		terminator: resolveSourceFileArm1_terminator(input.terminator)
 	});
 }
 
@@ -4939,9 +4939,9 @@ export function resolveSourceFileArm2_topLevelDeclaration(
 	);
 }
 
-export function resolveSourceFileArm2_sourceFileText(
-	value: T.SourceFileArm2.LooseConfig['sourceFileText']
-): Admit<T.SourceFileArm2['_source_file_text']> {
+export function resolveSourceFileArm2_terminator(
+	value: T.SourceFileArm2.LooseConfig['terminator']
+): Admit<T.SourceFileArm2['_terminator']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.Semi, TSKindId.Null], () =>
 			_resolveOneLeaf<T.SourceFileText | TSKindId.Semi | TSKindId.Null>(value, 'source_file_text')
@@ -4959,7 +4959,7 @@ export function coerceToSourceFileArm2(input: T.SourceFileArm2.Loose): ReturnTyp
 	currentHandle()?.admit(TSKindId.SourceFileArm2, [input]);
 	return F.buildSourceFileArm2({
 		topLevelDeclaration: resolveSourceFileArm2_topLevelDeclaration(input.topLevelDeclaration),
-		sourceFileText: resolveSourceFileArm2_sourceFileText(input.sourceFileText)
+		terminator: resolveSourceFileArm2_terminator(input.terminator)
 	});
 }
 

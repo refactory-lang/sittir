@@ -222,15 +222,18 @@ const readGroupName = (slot: string): string => `readGroup_${slot}`;
 export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): SetterEntry[] {
 	const seated = setters.map((entry) => {
 		const base = `(${entry.params}) => ${entry.body}`;
-		const element = plan.elements.find((candidate) => candidate.slot === entry.name);
+		const [element, ...more] = plan.elements.filter((candidate) => candidate.slot === entry.name);
+		const elementCall = (spec: string, set: string): string => `elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${spec} }, ${set})`;
+		const throughElements = (specs: readonly { readonly spec: string }[], set: string): string =>
+			specs.reduceRight((inner, { spec }) => `(...args: never[]) => ${elementCall(spec, inner)}`, set);
 		const slot = plan.slots.find((candidate) => candidate.slot === entry.name);
 		const wrapped = slot?.wrap === undefined ? base : `(list: never) => ((${entry.params}) => ${entry.body})((list === undefined ? undefined : ${slot.wrap}) as never)`;
-		const elementSet = element === undefined ? wrapped : `(...args: never[]) => elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${wrapped})`;
+		const elementSet = throughElements(element === undefined ? [] : [element, ...more], wrapped);
 		if (slot !== undefined) {
 			return { name: entry.name, params: '...args: unknown[]', body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})`, reads: entry.reads, hoist: entry.hoist === undefined || slot.wrap === undefined ? entry.hoist : { ...entry.hoist, list: slot.spec, placed: { params: entry.params, body: entry.body }, listPlaced: { params: 'list: never', body: `((${entry.params}) => ${entry.body})((list === undefined ? undefined : ${slot.wrap}) as never)` } } };
 		}
 		if (element !== undefined) {
-			return { name: entry.name, params: '...args: unknown[]', body: `elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`, reads: entry.reads, hoist: entry.hoist };
+			return { name: entry.name, params: '...args: unknown[]', body: elementCall(element.spec, throughElements(more, base)), reads: entry.reads, hoist: entry.hoist };
 		}
 		return entry;
 	});

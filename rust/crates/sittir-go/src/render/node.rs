@@ -6775,8 +6775,8 @@ impl ::sittir_core::render::Render for InterpretedStringLiteralElementsNodeSlotR
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = SourceFileArm1SourceFileTextNodeSlotRecord)]
-pub enum SourceFileArm1SourceFileTextNodeSlot {
+#[node(choice, stamp = stamp, view = SourceFileArm1TerminatorNodeSlotRecord)]
+pub enum SourceFileArm1TerminatorNodeSlot {
     #[kind(kind::SOURCE_FILE_TEXT)]
     SourceFileText(SourceFileTextNode),
     #[kind(kind::SEMI)]
@@ -6787,37 +6787,37 @@ pub enum SourceFileArm1SourceFileTextNodeSlot {
     Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for SourceFileArm1SourceFileTextNodeSlot {
+impl ::sittir_core::prepare::Prepare for SourceFileArm1TerminatorNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
-            SourceFileArm1SourceFileTextNodeSlot::SourceFileText(t) => t.prepare(ctx),
-            SourceFileArm1SourceFileTextNodeSlot::Semi => Ok(()),
-            SourceFileArm1SourceFileTextNodeSlot::Null => Ok(()),
-            SourceFileArm1SourceFileTextNodeSlot::Verbatim(t) => t.prepare(ctx),
+            SourceFileArm1TerminatorNodeSlot::SourceFileText(t) => t.prepare(ctx),
+            SourceFileArm1TerminatorNodeSlot::Semi => Ok(()),
+            SourceFileArm1TerminatorNodeSlot::Null => Ok(()),
+            SourceFileArm1TerminatorNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            SourceFileArm1SourceFileTextNodeSlot::SourceFileText(t) => t.gap_edges(),
-            SourceFileArm1SourceFileTextNodeSlot::Semi => None,
-            SourceFileArm1SourceFileTextNodeSlot::Null => None,
-            SourceFileArm1SourceFileTextNodeSlot::Verbatim(t) => t.gap_edges(),
+            SourceFileArm1TerminatorNodeSlot::SourceFileText(t) => t.gap_edges(),
+            SourceFileArm1TerminatorNodeSlot::Semi => None,
+            SourceFileArm1TerminatorNodeSlot::Null => None,
+            SourceFileArm1TerminatorNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            SourceFileArm1SourceFileTextNodeSlot::SourceFileText(t) => t.snapshot_edge(),
-            SourceFileArm1SourceFileTextNodeSlot::Semi => None,
-            SourceFileArm1SourceFileTextNodeSlot::Null => None,
-            SourceFileArm1SourceFileTextNodeSlot::Verbatim(t) => t.snapshot_edge(),
+            SourceFileArm1TerminatorNodeSlot::SourceFileText(t) => t.snapshot_edge(),
+            SourceFileArm1TerminatorNodeSlot::Semi => None,
+            SourceFileArm1TerminatorNodeSlot::Null => None,
+            SourceFileArm1TerminatorNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
-            SourceFileArm1SourceFileTextNodeSlot::SourceFileText(t) => t.source_coordinate(),
-            SourceFileArm1SourceFileTextNodeSlot::Semi => None,
-            SourceFileArm1SourceFileTextNodeSlot::Null => None,
-            SourceFileArm1SourceFileTextNodeSlot::Verbatim(t) => t.source_coordinate(),
+            SourceFileArm1TerminatorNodeSlot::SourceFileText(t) => t.source_coordinate(),
+            SourceFileArm1TerminatorNodeSlot::Semi => None,
+            SourceFileArm1TerminatorNodeSlot::Null => None,
+            SourceFileArm1TerminatorNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -6828,7 +6828,7 @@ impl ::sittir_core::prepare::Prepare for SourceFileArm1SourceFileTextNodeSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for SourceFileArm1SourceFileTextNodeSlot {
+impl ::sittir_core::view::KindOf for SourceFileArm1TerminatorNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::SourceFileText(inner) => inner.kind_in(kinds),
@@ -6839,19 +6839,19 @@ impl ::sittir_core::view::KindOf for SourceFileArm1SourceFileTextNodeSlot {
     }
 }
 
-impl ::sittir_core::render::Render for SourceFileArm1SourceFileTextNodeSlot {
+impl ::sittir_core::render::Render for SourceFileArm1TerminatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SourceFileArm1SourceFileTextNodeSlot::SourceFileText(inner) => inner.render(w),
-            SourceFileArm1SourceFileTextNodeSlot::Semi => render_semi(w),
-            SourceFileArm1SourceFileTextNodeSlot::Null => render_null(w),
-            SourceFileArm1SourceFileTextNodeSlot::Verbatim(inner) => inner.render(w),
+            SourceFileArm1TerminatorNodeSlot::SourceFileText(inner) => inner.render(w),
+            SourceFileArm1TerminatorNodeSlot::Semi => render_semi(w),
+            SourceFileArm1TerminatorNodeSlot::Null => render_null(w),
+            SourceFileArm1TerminatorNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
 ::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for SourceFileArm1SourceFileTextNodeSlotRecord<'_> {
+impl ::sittir_core::view::KindOf for SourceFileArm1TerminatorNodeSlotRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::SourceFileText(inner) => inner.kind_in(kinds),
@@ -6862,13 +6862,13 @@ impl ::sittir_core::view::KindOf for SourceFileArm1SourceFileTextNodeSlotRecord<
     }
 }
 
-impl ::sittir_core::render::Render for SourceFileArm1SourceFileTextNodeSlotRecord<'_> {
+impl ::sittir_core::render::Render for SourceFileArm1TerminatorNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SourceFileArm1SourceFileTextNodeSlotRecord::SourceFileText(inner) => inner.render(w),
-            SourceFileArm1SourceFileTextNodeSlotRecord::Semi => render_semi(w),
-            SourceFileArm1SourceFileTextNodeSlotRecord::Null => render_null(w),
-            SourceFileArm1SourceFileTextNodeSlotRecord::Verbatim(inner) => inner.render(w),
+            SourceFileArm1TerminatorNodeSlotRecord::SourceFileText(inner) => inner.render(w),
+            SourceFileArm1TerminatorNodeSlotRecord::Semi => render_semi(w),
+            SourceFileArm1TerminatorNodeSlotRecord::Null => render_null(w),
+            SourceFileArm1TerminatorNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -18035,7 +18035,7 @@ fn prepare_comment_arm2<N: CommentArm2Prepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SOURCE_FILE_ARM1, layout = [kind::SEMI, kind::NULL], words = 10, built_words = 4, order = [statement, source_file_text], edges = ([slot(statement)], [slot(source_file_text)]), fields = SourceFileArm1Fields, prepare = SourceFileArm1Prepare, view = SourceFileArm1NodeRecord, prepare_fn = prepare_source_file_arm1)]
+#[node(kind = kind::SOURCE_FILE_ARM1, words = 10, built_words = 4, order = [statement, terminator], edges = ([slot(statement)], [slot(terminator)]), fields = SourceFileArm1Fields, prepare = SourceFileArm1Prepare, view = SourceFileArm1NodeRecord, prepare_fn = prepare_source_file_arm1)]
 pub struct SourceFileArm1Node {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18045,9 +18045,9 @@ pub struct SourceFileArm1Node {
     #[wire(key = "_statement")]
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub statement: ::sittir_core::SlotValue<StatementNode>,
-    #[wire(key = "_source_file_text")]
-    #[slot(word = 6, width = 4, forms = 3, built = 3)]
-    pub source_file_text: ::sittir_core::SlotValue<SourceFileArm1SourceFileTextNodeSlot>,
+    #[wire(key = "_terminator")]
+    #[slot(field = field::TERMINATOR, word = 6, width = 4, forms = 3, built = 3)]
+    pub terminator: ::sittir_core::SlotValue<SourceFileArm1TerminatorNodeSlot>,
 }
 
 impl ::sittir_core::view::KindOf for SourceFileArm1Node {
@@ -18109,12 +18109,12 @@ fn prepare_source_file_arm1<N: SourceFileArm1Prepare + ?Sized>(node: &mut N, ove
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(236), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.statement, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.source_file_text, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.terminator, overlay, ctx)?;
     Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SOURCE_FILE_ARM2, layout = [kind::SEMI, kind::NULL], words = 9, built_words = 4, order = [top_level_declaration, source_file_text], edges = ([slot(top_level_declaration)], [slot(source_file_text)]), fields = SourceFileArm2Fields, prepare = SourceFileArm2Prepare, view = SourceFileArm2NodeRecord, prepare_fn = prepare_source_file_arm2)]
+#[node(kind = kind::SOURCE_FILE_ARM2, words = 9, built_words = 4, order = [top_level_declaration, terminator], edges = ([slot(top_level_declaration)], [slot(terminator)]), fields = SourceFileArm2Fields, prepare = SourceFileArm2Prepare, view = SourceFileArm2NodeRecord, prepare_fn = prepare_source_file_arm2)]
 pub struct SourceFileArm2Node {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18124,9 +18124,9 @@ pub struct SourceFileArm2Node {
     #[wire(key = "_top_level_declaration")]
     #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub top_level_declaration: ::sittir_core::SlotValue<SourceFileTopLevelDeclarationNodeSlot>,
-    #[wire(key = "_source_file_text")]
-    #[slot(word = 5, width = 4, forms = 3, built = 3)]
-    pub source_file_text: ::sittir_core::SlotValue<SourceFileArm1SourceFileTextNodeSlot>,
+    #[wire(key = "_terminator")]
+    #[slot(field = field::TERMINATOR, word = 5, width = 4, forms = 3, built = 3)]
+    pub terminator: ::sittir_core::SlotValue<SourceFileArm1TerminatorNodeSlot>,
 }
 
 impl ::sittir_core::view::KindOf for SourceFileArm2Node {
@@ -18188,7 +18188,7 @@ fn prepare_source_file_arm2<N: SourceFileArm2Prepare + ?Sized>(node: &mut N, ove
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(237), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.top_level_declaration, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.source_file_text, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.terminator, overlay, ctx)?;
     Ok(())
 }
 
@@ -20150,7 +20150,7 @@ pub struct StatementListGroupNode {
     height: u16,
     #[wire(key = "_source_file_text")]
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
-    pub source_file_text: ::sittir_core::SlotValue<SourceFileArm1SourceFileTextNodeSlot>,
+    pub source_file_text: ::sittir_core::SlotValue<SourceFileArm1TerminatorNodeSlot>,
     #[wire(key = "_empty_labeled_statement")]
     #[slot(word = 6, width = 3, forms = 1, built = 3)]
     pub empty_labeled_statement: Option<::sittir_core::SlotValue<EmptyLabeledStatementNode>>,
@@ -26538,25 +26538,25 @@ fn render_comment_arm2<N: CommentArm2Fields + ?Sized>(node: &N, w: &mut dyn ::si
 }
 
 fn render_source_file_arm1<N: SourceFileArm1Fields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let source_file_text = node.source_file_text();
     let statement = node.statement();
+    let terminator = node.terminator();
     w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_statement", ::sittir_core::types::ItemIndex(0), w, |w| statement.render(w))?;
-    if source_file_text.kind_in(&*w, &[::sittir_core::types::KindId(13)]) { w.site_at(options::SITE_SOURCE_FILE_ARM1_SEMI_BEFORE); }
-    if source_file_text.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_SOURCE_FILE_ARM1_NULL_BEFORE); }
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_source_file_text", ::sittir_core::types::ItemIndex(0), w, |w| source_file_text.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(13)]) { w.site_at(options::SITE_SOURCE_FILE_ARM1_SEMI_BEFORE); }
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_SOURCE_FILE_ARM1_NULL_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_source_file_arm2<N: SourceFileArm2Fields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let source_file_text = node.source_file_text();
+    let terminator = node.terminator();
     let top_level_declaration = node.top_level_declaration();
     w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_top_level_declaration", ::sittir_core::types::ItemIndex(0), w, |w| top_level_declaration.render(w))?;
-    if source_file_text.kind_in(&*w, &[::sittir_core::types::KindId(13)]) { w.site_at(options::SITE_SOURCE_FILE_ARM2_SEMI_BEFORE); }
-    if source_file_text.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_SOURCE_FILE_ARM2_NULL_BEFORE); }
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_source_file_text", ::sittir_core::types::ItemIndex(0), w, |w| source_file_text.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(13)]) { w.site_at(options::SITE_SOURCE_FILE_ARM2_SEMI_BEFORE); }
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_SOURCE_FILE_ARM2_NULL_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -29136,7 +29136,7 @@ const _: () = assert!(::core::mem::size_of::<VarSpecNode>() <= 256, "VarSpecNode
 const _: () = assert!(::core::mem::size_of::<VariadicArgumentNode>() <= 256, "VariadicArgumentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<VariadicParameterDeclarationNode>() <= 256, "VariadicParameterDeclarationNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, TypeNode, SimpleTypeNode, ChannelTypeNode, StatementNode, SimpleStatementNode, ExpressionNode, IntLiteralNode, FloatLiteralNode, ImaginaryLiteralNode, RuneLiteralNode, FloatLiteralArm4Node, ImaginaryLiteralArm9Node, RuneLiteralArm2Node, SourceFileElementsNodeSlot, SourceFileTopLevelDeclarationNodeSlot, ImportDeclarationContentNodeSlot, ImportSpecNameNodeSlot, ImportSpecPathNodeSlot, ConstDeclarationContentNodeSlot, VarDeclarationContentNodeSlot, VarSpecContentNodeSlot, FunctionDeclarationReturnTypeNodeSlot, TypeDeclarationContentNodeSlot, GenericTypeTypeNodeSlot, StatementListContentNodeSlot, AssignmentStatementOperatorNodeSlot, IfStatementAlternativeNodeSlot, ForStatementContentNodeSlot, ExpressionSwitchStatementElementsNodeSlot, TypeSwitchStatementElementsNodeSlot, SelectStatementElementsNodeSlot, CommunicationCaseCommunicationNodeSlot, CallExpressionContentNodeSlot, TypeConversionExpressionTrailingCommaNodeSlot, CompositeLiteralTypeNodeSlot, LiteralElementContentNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, InterpretedStringLiteralElementsNodeSlot, SourceFileArm1SourceFileTextNodeSlot, ParameterListElementsItemNodeSlot, TypeDeclarationElementsItemNodeSlot, InterfaceElemsItemNodeSlot, ArgumentListElementsItemNodeSlot, LiteralValueElementsItemNodeSlot, FieldDeclarationArmTypeNodeSlot, ReceiveStatementGroupOperatorNodeSlot, PointerTypeFieldDeclarationArmTypeNodeSlot, SourceFileNode, SourceFileTextNode, PackageClauseNode, ImportDeclarationNode, ImportSpecNode, DotNode, BlankIdentifierNode, ImportSpecListNode, ConstDeclarationNode, ConstSpecNode, VarDeclarationNode, VarSpecNode, VarSpecListNode, FunctionDeclarationNode, MethodDeclarationNode, TypeParameterListNode, TypeParameterDeclarationNode, ParameterListNode, ParameterDeclarationNode, VariadicParameterDeclarationNode, TypeAliasNode, TypeDeclarationNode, TypeSpecNode, ExpressionListNode, ParenthesizedTypeNode, GenericTypeNode, TypeArgumentsNode, PointerTypeNode, ArrayTypeNode, ImplicitLengthArrayTypeNode, SliceTypeNode, StructTypeNode, NegatedTypeNode, FieldDeclarationListNode, FieldDeclarationNode, InterfaceTypeNode, MethodElemNode, TypeElemNode, MapTypeNode, FunctionTypeNode, BlockNode, StatementListNode, EmptyStatementNode, ExpressionStatementNode, SendStatementNode, ReceiveStatementNode, IncStatementNode, DecStatementNode, AssignmentStatementNode, ShortVarDeclarationNode, LabeledStatementNode, EmptyLabeledStatementNode, FallthroughStatementNode, BreakStatementNode, ContinueStatementNode, GotoStatementNode, ReturnStatementNode, GoStatementNode, DeferStatementNode, IfStatementNode, ForStatementNode, ForClauseNode, RangeClauseNode, ExpressionSwitchStatementNode, ExpressionCaseNode, DefaultCaseNode, TypeSwitchStatementNode, TypeCaseNode, SelectStatementNode, CommunicationCaseNode, ParenthesizedExpressionNode, CallExpressionNode, VariadicArgumentNode, SpecialArgumentListNode, ArgumentListNode, SelectorExpressionNode, IndexExpressionNode, SliceExpressionNode, TypeAssertionExpressionNode, TypeConversionExpressionNode, TypeInstantiationExpressionNode, CompositeLiteralNode, LiteralValueNode, LiteralElementNode, KeyedElementNode, FuncLiteralNode, UnaryExpressionNode, BinaryExpressionNode, QualifiedTypeNode, IdentifierNode, RawStringLiteralNode, InterpretedStringLiteralNode, NilNode, TrueNode, FalseNode, IotaNode, RawStringLiteralContentNode, InterpretedStringLiteralContentNode, EscapeSequenceArm1Node, EscapeSequenceArm2Node, EscapeSequenceArm3Node, EscapeSequenceArm4Node, EscapeSequenceArm5Node, IntLiteralArm1Node, IntLiteralArm2Node, IntLiteralArm3Node, IntLiteralArm4Node, IntLiteralArm5Node, FloatLiteralArm1Node, FloatLiteralArm2Node, FloatLiteralArm3Node, FloatLiteralArm4Arm1Node, FloatLiteralArm4Arm2Node, FloatLiteralArm4Arm3Node, ImaginaryLiteralArm1Node, ImaginaryLiteralArm2Node, ImaginaryLiteralArm3Node, ImaginaryLiteralArm4Node, ImaginaryLiteralArm5Node, ImaginaryLiteralArm6Node, ImaginaryLiteralArm7Node, ImaginaryLiteralArm8Node, ImaginaryLiteralArm9Arm1Node, ImaginaryLiteralArm9Arm2Node, ImaginaryLiteralArm9Arm3Node, RuneLiteralArm1Node, RuneLiteralArm2Arm1Node, RuneLiteralArm2Arm2Node, RuneLiteralArm2Arm3Node, RuneLiteralArm2Arm4Node, RuneLiteralArm2Arm5Node, CommentArm1Node, CommentArm2Node, SourceFileArm1Node, SourceFileArm2Node, ImportSpecsNode, TypeParameterDeclarationsNode, ParameterListElementsNode, TypeDeclarationElementsNode, TypeElemsNode, FieldDeclarationsNode, InterfaceElemsNode, StatementsNode, CallExpressionArm1Node, CallExpressionArm2Node, ArgumentListElementsNode, TypesNode, LiteralValueElementsNode, ImportSpecListArmNode, ImportSpecListGroupNode, ConstDeclarationArmNode, ConstSpecGroupNode, VarSpecArmNode, TypeDeclarationGroupNode, TypeDeclarationArmNode, FieldDeclarationListGroupNode, FieldDeclarationArmNode, InterfaceTypeGroupNode, StatementListGroupNode, StatementListArmNode, ReceiveStatementGroupNode, SpecialArgumentListGroupNode, ChannelTypeBidirectionalNode, ChannelTypeSendOnlyNode, ChannelTypeReceiveOnlyNode, PointerTypeFieldDeclarationArmNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, PackageIdentifierNode, FieldIdentifierNode, TypeIdentifierNode, LabelNameNode, PackageKeywordNode, ImportKeywordNode, DotPunctuationNode, LparenNode, RparenNode, ConstKeywordNode, VarKeywordNode, EqNode, FuncKeywordNode, LbrackNode, RbrackNode, DotDotDotNode, TypeKeywordNode, StarNode, StructKeywordNode, TildeNode, LbraceNode, RbraceNode, InterfaceKeywordNode, MapKeywordNode, SemiNode, LtDashNode, PlusPlusNode, DashDashNode, StarEqNode, SlashEqNode, PercentEqNode, LtLtEqNode, GtGtEqNode, AmpEqNode, AmpCaretEqNode, PlusEqNode, DashEqNode, PipeEqNode, CaretEqNode, ColonEqNode, ColonNode, FallthroughKeywordNode, BreakKeywordNode, ContinueKeywordNode, GotoKeywordNode, ReturnKeywordNode, GoKeywordNode, DeferKeywordNode, IfKeywordNode, ElseKeywordNode, ForKeywordNode, RangeKeywordNode, SwitchKeywordNode, CaseKeywordNode, DefaultKeywordNode, SelectKeywordNode, CommaNode, PlusNode, DashNode, BangNode, CaretNode, AmpNode, SlashNode, PercentNode, LtLtNode, GtGtNode, AmpCaretNode, PipeNode, EqEqNode, BangEqNode, LtNode, LtEqNode, GtNode, GtEqNode, AmpAmpNode, PipePipeNode, BquoteNode, DquoteNode, NullNode, ChanKeywordNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, TypeNode, SimpleTypeNode, ChannelTypeNode, StatementNode, SimpleStatementNode, ExpressionNode, IntLiteralNode, FloatLiteralNode, ImaginaryLiteralNode, RuneLiteralNode, FloatLiteralArm4Node, ImaginaryLiteralArm9Node, RuneLiteralArm2Node, SourceFileElementsNodeSlot, SourceFileTopLevelDeclarationNodeSlot, ImportDeclarationContentNodeSlot, ImportSpecNameNodeSlot, ImportSpecPathNodeSlot, ConstDeclarationContentNodeSlot, VarDeclarationContentNodeSlot, VarSpecContentNodeSlot, FunctionDeclarationReturnTypeNodeSlot, TypeDeclarationContentNodeSlot, GenericTypeTypeNodeSlot, StatementListContentNodeSlot, AssignmentStatementOperatorNodeSlot, IfStatementAlternativeNodeSlot, ForStatementContentNodeSlot, ExpressionSwitchStatementElementsNodeSlot, TypeSwitchStatementElementsNodeSlot, SelectStatementElementsNodeSlot, CommunicationCaseCommunicationNodeSlot, CallExpressionContentNodeSlot, TypeConversionExpressionTrailingCommaNodeSlot, CompositeLiteralTypeNodeSlot, LiteralElementContentNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, InterpretedStringLiteralElementsNodeSlot, SourceFileArm1TerminatorNodeSlot, ParameterListElementsItemNodeSlot, TypeDeclarationElementsItemNodeSlot, InterfaceElemsItemNodeSlot, ArgumentListElementsItemNodeSlot, LiteralValueElementsItemNodeSlot, FieldDeclarationArmTypeNodeSlot, ReceiveStatementGroupOperatorNodeSlot, PointerTypeFieldDeclarationArmTypeNodeSlot, SourceFileNode, SourceFileTextNode, PackageClauseNode, ImportDeclarationNode, ImportSpecNode, DotNode, BlankIdentifierNode, ImportSpecListNode, ConstDeclarationNode, ConstSpecNode, VarDeclarationNode, VarSpecNode, VarSpecListNode, FunctionDeclarationNode, MethodDeclarationNode, TypeParameterListNode, TypeParameterDeclarationNode, ParameterListNode, ParameterDeclarationNode, VariadicParameterDeclarationNode, TypeAliasNode, TypeDeclarationNode, TypeSpecNode, ExpressionListNode, ParenthesizedTypeNode, GenericTypeNode, TypeArgumentsNode, PointerTypeNode, ArrayTypeNode, ImplicitLengthArrayTypeNode, SliceTypeNode, StructTypeNode, NegatedTypeNode, FieldDeclarationListNode, FieldDeclarationNode, InterfaceTypeNode, MethodElemNode, TypeElemNode, MapTypeNode, FunctionTypeNode, BlockNode, StatementListNode, EmptyStatementNode, ExpressionStatementNode, SendStatementNode, ReceiveStatementNode, IncStatementNode, DecStatementNode, AssignmentStatementNode, ShortVarDeclarationNode, LabeledStatementNode, EmptyLabeledStatementNode, FallthroughStatementNode, BreakStatementNode, ContinueStatementNode, GotoStatementNode, ReturnStatementNode, GoStatementNode, DeferStatementNode, IfStatementNode, ForStatementNode, ForClauseNode, RangeClauseNode, ExpressionSwitchStatementNode, ExpressionCaseNode, DefaultCaseNode, TypeSwitchStatementNode, TypeCaseNode, SelectStatementNode, CommunicationCaseNode, ParenthesizedExpressionNode, CallExpressionNode, VariadicArgumentNode, SpecialArgumentListNode, ArgumentListNode, SelectorExpressionNode, IndexExpressionNode, SliceExpressionNode, TypeAssertionExpressionNode, TypeConversionExpressionNode, TypeInstantiationExpressionNode, CompositeLiteralNode, LiteralValueNode, LiteralElementNode, KeyedElementNode, FuncLiteralNode, UnaryExpressionNode, BinaryExpressionNode, QualifiedTypeNode, IdentifierNode, RawStringLiteralNode, InterpretedStringLiteralNode, NilNode, TrueNode, FalseNode, IotaNode, RawStringLiteralContentNode, InterpretedStringLiteralContentNode, EscapeSequenceArm1Node, EscapeSequenceArm2Node, EscapeSequenceArm3Node, EscapeSequenceArm4Node, EscapeSequenceArm5Node, IntLiteralArm1Node, IntLiteralArm2Node, IntLiteralArm3Node, IntLiteralArm4Node, IntLiteralArm5Node, FloatLiteralArm1Node, FloatLiteralArm2Node, FloatLiteralArm3Node, FloatLiteralArm4Arm1Node, FloatLiteralArm4Arm2Node, FloatLiteralArm4Arm3Node, ImaginaryLiteralArm1Node, ImaginaryLiteralArm2Node, ImaginaryLiteralArm3Node, ImaginaryLiteralArm4Node, ImaginaryLiteralArm5Node, ImaginaryLiteralArm6Node, ImaginaryLiteralArm7Node, ImaginaryLiteralArm8Node, ImaginaryLiteralArm9Arm1Node, ImaginaryLiteralArm9Arm2Node, ImaginaryLiteralArm9Arm3Node, RuneLiteralArm1Node, RuneLiteralArm2Arm1Node, RuneLiteralArm2Arm2Node, RuneLiteralArm2Arm3Node, RuneLiteralArm2Arm4Node, RuneLiteralArm2Arm5Node, CommentArm1Node, CommentArm2Node, SourceFileArm1Node, SourceFileArm2Node, ImportSpecsNode, TypeParameterDeclarationsNode, ParameterListElementsNode, TypeDeclarationElementsNode, TypeElemsNode, FieldDeclarationsNode, InterfaceElemsNode, StatementsNode, CallExpressionArm1Node, CallExpressionArm2Node, ArgumentListElementsNode, TypesNode, LiteralValueElementsNode, ImportSpecListArmNode, ImportSpecListGroupNode, ConstDeclarationArmNode, ConstSpecGroupNode, VarSpecArmNode, TypeDeclarationGroupNode, TypeDeclarationArmNode, FieldDeclarationListGroupNode, FieldDeclarationArmNode, InterfaceTypeGroupNode, StatementListGroupNode, StatementListArmNode, ReceiveStatementGroupNode, SpecialArgumentListGroupNode, ChannelTypeBidirectionalNode, ChannelTypeSendOnlyNode, ChannelTypeReceiveOnlyNode, PointerTypeFieldDeclarationArmNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, PackageIdentifierNode, FieldIdentifierNode, TypeIdentifierNode, LabelNameNode, PackageKeywordNode, ImportKeywordNode, DotPunctuationNode, LparenNode, RparenNode, ConstKeywordNode, VarKeywordNode, EqNode, FuncKeywordNode, LbrackNode, RbrackNode, DotDotDotNode, TypeKeywordNode, StarNode, StructKeywordNode, TildeNode, LbraceNode, RbraceNode, InterfaceKeywordNode, MapKeywordNode, SemiNode, LtDashNode, PlusPlusNode, DashDashNode, StarEqNode, SlashEqNode, PercentEqNode, LtLtEqNode, GtGtEqNode, AmpEqNode, AmpCaretEqNode, PlusEqNode, DashEqNode, PipeEqNode, CaretEqNode, ColonEqNode, ColonNode, FallthroughKeywordNode, BreakKeywordNode, ContinueKeywordNode, GotoKeywordNode, ReturnKeywordNode, GoKeywordNode, DeferKeywordNode, IfKeywordNode, ElseKeywordNode, ForKeywordNode, RangeKeywordNode, SwitchKeywordNode, CaseKeywordNode, DefaultKeywordNode, SelectKeywordNode, CommaNode, PlusNode, DashNode, BangNode, CaretNode, AmpNode, SlashNode, PercentNode, LtLtNode, GtGtNode, AmpCaretNode, PipeNode, EqEqNode, BangEqNode, LtNode, LtEqNode, GtNode, GtEqNode, AmpAmpNode, PipePipeNode, BquoteNode, DquoteNode, NullNode, ChanKeywordNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AmpAmpNode>() == 0, "AmpAmpNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -29624,7 +29624,7 @@ const _: () = assert!(::core::mem::size_of::<SliceTypeNode>() == 56, "SliceTypeN
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SourceFileArm1Node>() == 296, "SourceFileArm1Node is not the 296 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SourceFileArm1SourceFileTextNodeSlot>() == 40, "SourceFileArm1SourceFileTextNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SourceFileArm1TerminatorNodeSlot>() == 40, "SourceFileArm1TerminatorNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SourceFileArm2Node>() == 216, "SourceFileArm2Node is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

@@ -30307,9 +30307,11 @@ export namespace QueryExpression {
 			| (OmitEach<NonNullable<ConfigOf<T.QueryExpression>>, 'queryBodyGroups'> & {
 					queryBodyGroups: ReadonlyArray<
 						| T.QueryBodyGroup.BuildArgs[0]
-						| (NonNullable<ConfigOf<T.QueryExpression>> extends { readonly queryBodyGroups?: infer E }
-								? E extends readonly (infer I)[]
-									? I
+						| (NonNullable<ConfigOf<T.QueryExpression>> extends infer Q
+								? Q extends { readonly queryBodyGroups?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
 									: never
 								: never)
 					>;
@@ -30321,9 +30323,11 @@ export namespace QueryExpression {
 			| (OmitEach<NonNullable<T.QueryExpression.Loose>, 'queryBodyGroups'> & {
 					queryBodyGroups: ReadonlyArray<
 						| T.QueryBodyGroup.LooseArgs[0]
-						| (NonNullable<T.QueryExpression.Loose> extends { readonly queryBodyGroups?: infer E }
-								? E extends readonly (infer I)[]
-									? I
+						| (NonNullable<T.QueryExpression.Loose> extends infer Q
+								? Q extends { readonly queryBodyGroups?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
 									: never
 								: never)
 					>;

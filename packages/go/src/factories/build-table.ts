@@ -24,86 +24,86 @@ export interface Routes<Table extends AnyTable> {
 		readonly importSpecList: Routes<Table>['importDeclaration$importSpecList'];
 	};
 	readonly sourceFile$packageClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSourceFile']>[0], 'topLevelDeclaration'> & {
+		const V extends OmitEach<ArgsOf<Table['sourceFile$seated']>[0], 'topLevelDeclaration'> & {
 			topLevelDeclaration: ArgsOf<Table['buildPackageClause']>[0];
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildSourceFile']>[0], 'topLevelDeclaration'> & {
+				OmitEach<ArgsOf<Table['sourceFile$seated']>[0], 'topLevelDeclaration'> & {
 					topLevelDeclaration: ArgsOf<Table['buildPackageClause']>[0];
 				}
 			>,
-		options?: OptionsArg<Table['buildSourceFile']>
-	) => ReturnType<Table['buildSourceFile']>;
+		options?: OptionsArg<Table['sourceFile$seated']>
+	) => ReturnType<Table['sourceFile$seated']>;
 	readonly sourceFile$functionDeclaration: <
-		const V extends OmitEach<ArgsOf<Table['buildSourceFile']>[0], 'topLevelDeclaration'> &
+		const V extends OmitEach<ArgsOf<Table['sourceFile$seated']>[0], 'topLevelDeclaration'> &
 			ArgsOf<Table['buildFunctionDeclaration']>[0]
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildSourceFile']>[0], 'topLevelDeclaration'> &
+				OmitEach<ArgsOf<Table['sourceFile$seated']>[0], 'topLevelDeclaration'> &
 					ArgsOf<Table['buildFunctionDeclaration']>[0]
 			>,
-		options?: OptionsArg<Table['buildSourceFile']>
-	) => ReturnType<Table['buildSourceFile']>;
+		options?: OptionsArg<Table['sourceFile$seated']>
+	) => ReturnType<Table['sourceFile$seated']>;
 	readonly sourceFile$methodDeclaration: <
-		const V extends OmitEach<ArgsOf<Table['buildSourceFile']>[0], 'topLevelDeclaration'> &
+		const V extends OmitEach<ArgsOf<Table['sourceFile$seated']>[0], 'topLevelDeclaration'> &
 			ArgsOf<Table['buildMethodDeclaration']>[0]
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildSourceFile']>[0], 'topLevelDeclaration'> &
+				OmitEach<ArgsOf<Table['sourceFile$seated']>[0], 'topLevelDeclaration'> &
 					ArgsOf<Table['buildMethodDeclaration']>[0]
 			>,
-		options?: OptionsArg<Table['buildSourceFile']>
-	) => ReturnType<Table['buildSourceFile']>;
+		options?: OptionsArg<Table['sourceFile$seated']>
+	) => ReturnType<Table['sourceFile$seated']>;
 	readonly sourceFile$importDeclaration: <
-		const V extends OmitEach<ArgsOf<Table['buildSourceFile']>[0], 'topLevelDeclaration'> & {
+		const V extends OmitEach<ArgsOf<Table['sourceFile$seated']>[0], 'topLevelDeclaration'> & {
 			topLevelDeclaration: ArgsOf<Table['buildImportDeclaration']>[0];
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildSourceFile']>[0], 'topLevelDeclaration'> & {
+				OmitEach<ArgsOf<Table['sourceFile$seated']>[0], 'topLevelDeclaration'> & {
 					topLevelDeclaration: ArgsOf<Table['buildImportDeclaration']>[0];
 				}
 			>,
-		options?: OptionsArg<Table['buildSourceFile']>
-	) => ReturnType<Table['buildSourceFile']>;
+		options?: OptionsArg<Table['sourceFile$seated']>
+	) => ReturnType<Table['sourceFile$seated']>;
 	readonly sourceFile$importDeclaration$importSpec: <
-		const V extends OmitEach<ArgsOf<Table['buildSourceFile']>[0], 'topLevelDeclaration'> & {
+		const V extends OmitEach<ArgsOf<Table['sourceFile$seated']>[0], 'topLevelDeclaration'> & {
 			topLevelDeclaration: ArgsOf<Routes<Table>['importDeclaration$importSpec']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildSourceFile']>[0], 'topLevelDeclaration'> & {
+				OmitEach<ArgsOf<Table['sourceFile$seated']>[0], 'topLevelDeclaration'> & {
 					topLevelDeclaration: ArgsOf<Routes<Table>['importDeclaration$importSpec']>;
 				}
 			>,
-		options?: OptionsArg<Table['buildSourceFile']>
-	) => ReturnType<Table['buildSourceFile']>;
+		options?: OptionsArg<Table['sourceFile$seated']>
+	) => ReturnType<Table['sourceFile$seated']>;
 	readonly sourceFile$importDeclaration$importSpecList: <
-		const V extends OmitEach<ArgsOf<Table['buildSourceFile']>[0], 'topLevelDeclaration'> & {
+		const V extends OmitEach<ArgsOf<Table['sourceFile$seated']>[0], 'topLevelDeclaration'> & {
 			topLevelDeclaration: ArgsOf<Routes<Table>['importDeclaration$importSpecList']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildSourceFile']>[0], 'topLevelDeclaration'> & {
+				OmitEach<ArgsOf<Table['sourceFile$seated']>[0], 'topLevelDeclaration'> & {
 					topLevelDeclaration: ArgsOf<Routes<Table>['importDeclaration$importSpecList']>;
 				}
 			>,
-		options?: OptionsArg<Table['buildSourceFile']>
-	) => ReturnType<Table['buildSourceFile']>;
-	readonly sourceFile: Table['buildSourceFile'] & {
+		options?: OptionsArg<Table['sourceFile$seated']>
+	) => ReturnType<Table['sourceFile$seated']>;
+	readonly sourceFile: Table['sourceFile$seated'] & {
 		readonly packageClause: Routes<Table>['sourceFile$packageClause'];
 		readonly functionDeclaration: Routes<Table>['sourceFile$functionDeclaration'];
 		readonly methodDeclaration: Routes<Table>['sourceFile$methodDeclaration'];
@@ -903,25 +903,25 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const sourceFile$packageClause: Routes<Table>['sourceFile$packageClause'] = K.sourceFile$packageClause(
-		$at('buildSourceFile'),
+		$at('sourceFile$seated'),
 		$at('buildPackageClause')
 	);
 	const sourceFile$functionDeclaration: Routes<Table>['sourceFile$functionDeclaration'] =
-		K.sourceFile$functionDeclaration($at('buildSourceFile'), $at('buildFunctionDeclaration'));
+		K.sourceFile$functionDeclaration($at('sourceFile$seated'), $at('buildFunctionDeclaration'));
 	const sourceFile$methodDeclaration: Routes<Table>['sourceFile$methodDeclaration'] = K.sourceFile$methodDeclaration(
-		$at('buildSourceFile'),
+		$at('sourceFile$seated'),
 		$at('buildMethodDeclaration')
 	);
 	const sourceFile$importDeclaration: Routes<Table>['sourceFile$importDeclaration'] = K.sourceFile$importDeclaration(
-		$at('buildSourceFile'),
+		$at('sourceFile$seated'),
 		$at('buildImportDeclaration')
 	);
 	const sourceFile$importDeclaration$importSpec: Routes<Table>['sourceFile$importDeclaration$importSpec'] =
-		K.sourceFile$importDeclaration$importSpec($at('buildSourceFile'), importDeclaration.importSpec);
+		K.sourceFile$importDeclaration$importSpec($at('sourceFile$seated'), importDeclaration.importSpec);
 	const sourceFile$importDeclaration$importSpecList: Routes<Table>['sourceFile$importDeclaration$importSpecList'] =
-		K.sourceFile$importDeclaration$importSpecList($at('buildSourceFile'), importDeclaration.importSpecList);
+		K.sourceFile$importDeclaration$importSpecList($at('sourceFile$seated'), importDeclaration.importSpecList);
 	const sourceFile: Routes<Table>['sourceFile'] = Object.freeze(
-		Object.assign(delegate($at('buildSourceFile')), {
+		Object.assign(delegate($at('sourceFile$seated')), {
 			packageClause: sourceFile$packageClause,
 			functionDeclaration: sourceFile$functionDeclaration,
 			methodDeclaration: sourceFile$methodDeclaration,

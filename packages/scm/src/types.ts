@@ -2084,9 +2084,11 @@ export namespace Grouping {
 			| (OmitEach<NonNullable<ConfigOf<T.Grouping>>, 'groupingGroups'> & {
 					groupingGroups: ReadonlyArray<
 						| T.GroupingGroup.BuildArgs[0]
-						| (NonNullable<ConfigOf<T.Grouping>> extends { readonly groupingGroups?: infer E }
-								? E extends readonly (infer I)[]
-									? I
+						| (NonNullable<ConfigOf<T.Grouping>> extends infer Q
+								? Q extends { readonly groupingGroups?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
 									: never
 								: never)
 					>;
@@ -2098,9 +2100,11 @@ export namespace Grouping {
 			| (OmitEach<NonNullable<T.Grouping.Loose>, 'groupingGroups'> & {
 					groupingGroups: ReadonlyArray<
 						| T.GroupingGroup.LooseArgs[0]
-						| (NonNullable<T.Grouping.Loose> extends { readonly groupingGroups?: infer E }
-								? E extends readonly (infer I)[]
-									? I
+						| (NonNullable<T.Grouping.Loose> extends infer Q
+								? Q extends { readonly groupingGroups?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
 									: never
 								: never)
 					>;
@@ -2410,9 +2414,11 @@ export namespace NamedNodeGroupChildren {
 			| (OmitEach<NonNullable<ConfigOf<T.NamedNodeGroupChildren>>, 'namedNodeExpressions'> & {
 					namedNodeExpressions: ReadonlyArray<
 						| T.NamedNodeExpressionArm.BuildArgs[0]
-						| (NonNullable<ConfigOf<T.NamedNodeGroupChildren>> extends { readonly namedNodeExpressions?: infer E }
-								? E extends readonly (infer I)[]
-									? I
+						| (NonNullable<ConfigOf<T.NamedNodeGroupChildren>> extends infer Q
+								? Q extends { readonly namedNodeExpressions?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
 									: never
 								: never)
 					>;
@@ -2424,9 +2430,11 @@ export namespace NamedNodeGroupChildren {
 			| (OmitEach<NonNullable<T.NamedNodeGroupChildren.Loose>, 'namedNodeExpressions'> & {
 					namedNodeExpressions: ReadonlyArray<
 						| T.NamedNodeExpressionArm.LooseArgs[0]
-						| (NonNullable<T.NamedNodeGroupChildren.Loose> extends { readonly namedNodeExpressions?: infer E }
-								? E extends readonly (infer I)[]
-									? I
+						| (NonNullable<T.NamedNodeGroupChildren.Loose> extends infer Q
+								? Q extends { readonly namedNodeExpressions?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
 									: never
 								: never)
 					>;
@@ -2468,9 +2476,11 @@ export namespace NamedNodeGroupAnchoredLast {
 			| (OmitEach<NonNullable<ConfigOf<T.NamedNodeGroupAnchoredLast>>, 'namedNodeExpressions'> & {
 					namedNodeExpressions: ReadonlyArray<
 						| T.NamedNodeExpressionArm.BuildArgs[0]
-						| (NonNullable<ConfigOf<T.NamedNodeGroupAnchoredLast>> extends { readonly namedNodeExpressions?: infer E }
-								? E extends readonly (infer I)[]
-									? I
+						| (NonNullable<ConfigOf<T.NamedNodeGroupAnchoredLast>> extends infer Q
+								? Q extends { readonly namedNodeExpressions?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
 									: never
 								: never)
 					>;
@@ -2482,9 +2492,11 @@ export namespace NamedNodeGroupAnchoredLast {
 			| (OmitEach<NonNullable<T.NamedNodeGroupAnchoredLast.Loose>, 'namedNodeExpressions'> & {
 					namedNodeExpressions: ReadonlyArray<
 						| T.NamedNodeExpressionArm.LooseArgs[0]
-						| (NonNullable<T.NamedNodeGroupAnchoredLast.Loose> extends { readonly namedNodeExpressions?: infer E }
-								? E extends readonly (infer I)[]
-									? I
+						| (NonNullable<T.NamedNodeGroupAnchoredLast.Loose> extends infer Q
+								? Q extends { readonly namedNodeExpressions?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
 									: never
 								: never)
 					>;

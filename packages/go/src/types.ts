@@ -1716,7 +1716,12 @@ export interface SourceFile {
 		readonly _top_level_declaration: 'topLevelDeclaration';
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<(T.SourceFileArm1 | T.SourceFileArm2)[], true, true>;
+		readonly elements: SlotHint<
+			(T.SourceFileArm1 | T.SourceFileArm2)[],
+			true,
+			true,
+			T.SourceFileArm1.Config | T.SourceFileArm2.Config
+		>;
 		readonly topLevelDeclaration: SlotHint<
 			T.PackageClause | T.FunctionDeclaration | T.MethodDeclaration | T.ImportDeclaration,
 			true
@@ -4177,42 +4182,42 @@ export interface CommentArm2 {
 export interface SourceFileArm1 {
 	readonly $type: TSKindId.SourceFileArm1;
 	readonly _statement: Statement;
-	readonly _source_file_text: SourceFileText | TSKindId.Semi | TSKindId.Null;
+	readonly _terminator: SourceFileText | TSKindId.Semi | TSKindId.Null;
 	readonly __slotNames__?: {
 		readonly _statement: 'statement';
-		readonly _source_file_text: 'sourceFileText';
+		readonly _terminator: 'terminator';
 	};
 	readonly __inputHints__?: {
 		readonly statement: KindEnum<'fallthrough' | ';', TSKindId.FallthroughKeyword | TSKindId.Semi> | Statement;
-		readonly source_file_text: KindEnum<';' | '\u0000', TSKindId.Semi | TSKindId.Null> | SourceFileText;
+		readonly terminator: KindEnum<';' | '\u0000', TSKindId.Semi | TSKindId.Null> | SourceFileText;
 	};
 	readonly __slotHints__?: {
 		readonly statement: SlotHint<NonNullable<T.SourceFileArm1.Config>['statement']>;
-		readonly sourceFileText: SlotHint<NonNullable<T.SourceFileArm1.Config>['sourceFileText']>;
+		readonly terminator: SlotHint<NonNullable<T.SourceFileArm1.Config>['terminator']>;
 	};
 	readonly statement: () => Statement;
-	readonly sourceFileText: () => SourceFileText | TSKindId.Semi | TSKindId.Null;
+	readonly terminator: () => SourceFileText | TSKindId.Semi | TSKindId.Null;
 }
 
 export interface SourceFileArm2 {
 	readonly $type: TSKindId.SourceFileArm2;
 	readonly _top_level_declaration: PackageClause | FunctionDeclaration | MethodDeclaration | ImportDeclaration;
-	readonly _source_file_text: SourceFileText | TSKindId.Semi | TSKindId.Null;
+	readonly _terminator: SourceFileText | TSKindId.Semi | TSKindId.Null;
 	readonly __slotNames__?: {
 		readonly _top_level_declaration: 'topLevelDeclaration';
-		readonly _source_file_text: 'sourceFileText';
+		readonly _terminator: 'terminator';
 	};
 	readonly __inputHints__?: {
-		readonly source_file_text: KindEnum<';' | '\u0000', TSKindId.Semi | TSKindId.Null> | SourceFileText;
+		readonly terminator: KindEnum<';' | '\u0000', TSKindId.Semi | TSKindId.Null> | SourceFileText;
 	};
 	readonly __slotHints__?: {
 		readonly topLevelDeclaration: SlotHint<
 			T.PackageClause | T.FunctionDeclaration | T.MethodDeclaration | T.ImportDeclaration
 		>;
-		readonly sourceFileText: SlotHint<NonNullable<T.SourceFileArm2.Config>['sourceFileText']>;
+		readonly terminator: SlotHint<NonNullable<T.SourceFileArm2.Config>['terminator']>;
 	};
 	readonly topLevelDeclaration: () => PackageClause | FunctionDeclaration | MethodDeclaration | ImportDeclaration;
-	readonly sourceFileText: () => SourceFileText | TSKindId.Semi | TSKindId.Null;
+	readonly terminator: () => SourceFileText | TSKindId.Semi | TSKindId.Null;
 }
 
 export interface ImportSpecs {
@@ -9793,8 +9798,124 @@ export namespace SourceFile {
 	}
 	export type Loose = LooseFor<TSKindId.SourceFile>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SourceFile>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.SourceFile>>];
-	export type LooseArgs = [config?: T.SourceFile.Loose];
+	export type BuildArgs = [
+		config?:
+			| Partial<ConfigOf<T.SourceFile>>
+			| (OmitEach<NonNullable<Partial<ConfigOf<T.SourceFile>>>, 'elements'> & {
+					elements: ReadonlyArray<
+						| T.SourceFileArm1.BuildArgs[0]
+						| (NonNullable<Partial<ConfigOf<T.SourceFile>>> extends infer Q
+								? Q extends { readonly elements?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
+									: never
+								: never)
+					>;
+			  })
+			| (OmitEach<
+					NonNullable<
+						| Partial<ConfigOf<T.SourceFile>>
+						| (OmitEach<NonNullable<Partial<ConfigOf<T.SourceFile>>>, 'elements'> & {
+								elements: ReadonlyArray<
+									| T.SourceFileArm1.BuildArgs[0]
+									| (NonNullable<Partial<ConfigOf<T.SourceFile>>> extends infer Q
+											? Q extends { readonly elements?: infer E }
+												? E extends readonly (infer I)[]
+													? I
+													: never
+												: never
+											: never)
+								>;
+						  })
+					>,
+					'elements'
+			  > & {
+					elements: ReadonlyArray<
+						| T.SourceFileArm2.BuildArgs[0]
+						| (NonNullable<
+								| Partial<ConfigOf<T.SourceFile>>
+								| (OmitEach<NonNullable<Partial<ConfigOf<T.SourceFile>>>, 'elements'> & {
+										elements: ReadonlyArray<
+											| T.SourceFileArm1.BuildArgs[0]
+											| (NonNullable<Partial<ConfigOf<T.SourceFile>>> extends infer Q
+													? Q extends { readonly elements?: infer E }
+														? E extends readonly (infer I)[]
+															? I
+															: never
+														: never
+													: never)
+										>;
+								  })
+						  > extends infer Q
+								? Q extends { readonly elements?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
+									: never
+								: never)
+					>;
+			  })
+	];
+	export type LooseArgs = [
+		config?:
+			| T.SourceFile.Loose
+			| (OmitEach<NonNullable<T.SourceFile.Loose>, 'elements'> & {
+					elements: ReadonlyArray<
+						| T.SourceFileArm1.LooseArgs[0]
+						| (NonNullable<T.SourceFile.Loose> extends infer Q
+								? Q extends { readonly elements?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
+									: never
+								: never)
+					>;
+			  })
+			| (OmitEach<
+					NonNullable<
+						| T.SourceFile.Loose
+						| (OmitEach<NonNullable<T.SourceFile.Loose>, 'elements'> & {
+								elements: ReadonlyArray<
+									| T.SourceFileArm1.LooseArgs[0]
+									| (NonNullable<T.SourceFile.Loose> extends infer Q
+											? Q extends { readonly elements?: infer E }
+												? E extends readonly (infer I)[]
+													? I
+													: never
+												: never
+											: never)
+								>;
+						  })
+					>,
+					'elements'
+			  > & {
+					elements: ReadonlyArray<
+						| T.SourceFileArm2.LooseArgs[0]
+						| (NonNullable<
+								| T.SourceFile.Loose
+								| (OmitEach<NonNullable<T.SourceFile.Loose>, 'elements'> & {
+										elements: ReadonlyArray<
+											| T.SourceFileArm1.LooseArgs[0]
+											| (NonNullable<T.SourceFile.Loose> extends infer Q
+													? Q extends { readonly elements?: infer E }
+														? E extends readonly (infer I)[]
+															? I
+															: never
+														: never
+													: never)
+										>;
+								  })
+						  > extends infer Q
+								? Q extends { readonly elements?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
+									: never
+								: never)
+					>;
+			  })
+	];
 	export type Kind = TSKindId.SourceFile;
 }
 export namespace PackageClause {

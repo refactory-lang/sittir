@@ -1103,9 +1103,10 @@ function emitSlotHints(
 	const groupSeats = groupSeatHints(node, nodeMap, kindEntries);
 	if (setters.length === 0 && view === undefined) return;
 	lines.push('  readonly __slotHints__?: {');
-	const elementConfigs = new Map(elementConfigsOf(node, nodeMap).map((fact) => [fact.slot, fact.config]));
+	const elementConfigs = elementConfigsOf(node, nodeMap);
 	for (const setter of setters) {
-		const config = elementConfigs.get(setter.name);
+		const configs = elementConfigs.filter((fact) => fact.slot === setter.name).map((fact) => fact.config);
+		const config = configs.length === 0 ? undefined : configs.join(' | ');
 		const flags =
 			config !== undefined
 				? `, ${setter.optional}, ${setter.rest}, ${config}`

@@ -194,6 +194,16 @@ export const importSpecList$seated: EmptyForm<
 	K.importSpecList$flatten$importSpecListGroup(C.coerceToImportSpecList, C.coerceToImportSpecListGroup)
 );
 
+export const sourceFile$seated: EmptyForm<
+	T.EmptySourceFile,
+	Seat<T.SourceFile.LooseArgs, ReturnType<typeof C.coerceToSourceFile>>
+> = withEmptyForm(
+	K.sourceFile$elements$SourceFileArm2(
+		K.sourceFile$elements$SourceFileArm1(C.coerceToSourceFile, C.coerceToSourceFileArm1),
+		C.coerceToSourceFileArm2
+	)
+);
+
 export const constSpec$seated: Seat<
 	T.ConstSpec.LooseArgs,
 	ReturnType<typeof C.coerceToConstSpec>

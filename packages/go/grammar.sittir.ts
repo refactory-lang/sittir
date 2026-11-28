@@ -31,6 +31,7 @@ export default grammar(enrich(base), wire({
 				return field('type', choice(replace(copy($.pointer_type), 'type:', type.content), type.content));
 			}
 		},
+		source_file: { '0/0/0/0/1': field('terminator'), '0/0/0/1/1': field('terminator') },
 		special_argument_list_group: { '2/0': field('trailing_comma') },
 		type_conversion_expression: { '3/0': field('trailing_comma') },
 		// The extras' `\s` also matches `\n`, so the lexer reads a whole run of

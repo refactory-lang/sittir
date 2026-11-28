@@ -8237,7 +8237,7 @@ A kind with setters, or that owns a list, stamps `__slotHints__` (`emitSlotHints
 
 ### `packages/codegen/src/emitters/types.ts::emitSlotHints`
 
-Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` per setter of the kind's built surface, keyed by the setter name that its accessor and `$with` share, `$listView` when `listViewHint` is defined, `$flat` (the union of one `FlatHint` per entry of `groupSeatHints`) when the node seats a group, and `$listSlots` with one `ListSlotHint` per slot `listSlotHints` names, carrying the element config only for a list whose element group has one. The node surface types read these hints and never re-derive a slot's input, or whether a kind or a slot holds a list, from storage keys.
+Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` per setter of the kind's built surface, whose config is the union of the configs of the groups the slot seats (`elementConfigsOf`), keyed by the setter name that its accessor and `$with` share, `$listView` when `listViewHint` is defined, `$flat` (the union of one `FlatHint` per entry of `groupSeatHints`) when the node seats a group, and `$listSlots` with one `ListSlotHint` per slot `listSlotHints` names, carrying the element config only for a list whose element group has one. The node surface types read these hints and never re-derive a slot's input, or whether a kind or a slot holds a list, from storage keys.
 
 ### `packages/codegen/src/emitters/types.ts::enumStorageDiscriminantExpr`
 
@@ -12173,7 +12173,10 @@ parent: the seat's array is mapped and the parent called with the rest. A
 list, or a spread-shaped parent whose sole slot is the seat (python
 `union_pattern`): the elements arrive as rest arguments and are mapped in
 place, options object included, which the key test leaves alone. The
-type admits the parent's own input or the group's config per element.
+type admits the parent's own input or the group's config per element. The
+element type it keeps is read from every branch of the type the previous
+seats produced (distributed through `infer Q`), so a slot that seats several
+groups admits each group's config.
 
 #### list options
 
@@ -12182,6 +12185,9 @@ A spread seat's parameter is the kind's own row, by name (`T.<Kind>.BuildArgs` /
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatEmission`
 
 One seat's method, its application, and its parameter-type transform.
+The method is named for the parent's key and the slot; a slot that seats
+several element groups names each method for its group's type as well
+(`sourceFile$elements$SourceFileArm1`).
 Seats compose: `emitPolymorphsOverlay` threads the parent's `strict` (and
 `coerce`) through each flatten seat then each elements seat, so a parent with
 both gets `m2(m1(F.parent, F.g1), F.g2)`. The parameter TYPE composes the
@@ -13681,7 +13687,7 @@ The object literal a node's builder and wrap pass to `seatWith`, one per seat: t
 
 ### `packages/codegen/src/emitters/factories.ts::elementConfigsOf`
 
-The elements seats of a node: each multiple slot whose elements include exactly one hoisted config-shaped group, as the slot's accessor name, the group's type and raw factory, its config keys and the type of its config object. A separated list's element slot is one when its element is such a group. The config surface takes the group's config objects in these slots and builds each through the group's factory; the node surface takes them the same way in every `$with` setter for the slot, including the setter of a slot that holds the list. The type stamp (`config` of a slot hint or a list-slot hint) comes from this one function, and the runtime spec (`element` of a list-slot spec, or an `elementsWith` call) from it together with the wrapper a list's items are (`separatedListSurface`), the same wrapper the list factory's items are built into, so a setter builds a list's items as its factory does.
+The elements seats of a node (`elementsSeatOf`): each hoisted config-shaped group a multiple slot seats, one fact per group, so a slot that seats several has several facts, as the slot's accessor name, the group's type and raw factory, its config keys and the type of its config object. A separated list's element slot is one when its element is such a group. The config surface takes the group's config objects in these slots and builds each through the group's factory; the node surface takes them the same way in every `$with` setter for the slot, including the setter of a slot that holds the list. The type stamp (`config` of a slot hint or a list-slot hint) comes from this one function, and the runtime spec (`element` of a list-slot spec, or an `elementsWith` call) from it together with the wrapper a list's items are (`separatedListSurface`), the same wrapper the list factory's items are built into, so a setter builds a list's items as its factory does.
 
 ### `packages/codegen/src/emitters/templates.ts::droppedLiteralTexts`
 
@@ -13763,7 +13769,7 @@ The storage of a refine form's narrowed slot: the kind id the narrowing literal 
 
 ### `packages/codegen/src/emitters/node-members.ts::seatedSetters`
 
-The setters of a node as its literal writes them, after its seats. A list slot's setter runs through `listSlotWith`, an elements slot's through `elementsWith`. Each key a group seat flattens onto the node gets a setter that runs `seatWith` over the seat's slot setter, and a key that spells its slot replaces that slot's own setter. A seat with no slot setter to wrap, a wrapped list owner among them, adds no keys.
+The setters of a node as its literal writes them, after its seats. A list slot's setter runs through `listSlotWith`, an elements slot's through `elementsWith`, nested once per group the slot seats, each building its own group's configs and passing the rest on. Each key a group seat flattens onto the node gets a setter that runs `seatWith` over the seat's slot setter, and a key that spells its slot replaces that slot's own setter. A seat with no slot setter to wrap, a wrapped list owner among them, adds no keys.
 
 ### `packages/codegen/src/emitters/node-members.ts::ownerViewParts`
 

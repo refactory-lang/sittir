@@ -14629,9 +14629,11 @@ export namespace ComparisonOperator {
 			| (OmitEach<NonNullable<ConfigOf<T.ComparisonOperator>>, 'comparators'> & {
 					comparators: ReadonlyArray<
 						| T.ComparisonOperatorComparator.BuildArgs[0]
-						| (NonNullable<ConfigOf<T.ComparisonOperator>> extends { readonly comparators?: infer E }
-								? E extends readonly (infer I)[]
-									? I
+						| (NonNullable<ConfigOf<T.ComparisonOperator>> extends infer Q
+								? Q extends { readonly comparators?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
 									: never
 								: never)
 					>;
@@ -14643,9 +14645,11 @@ export namespace ComparisonOperator {
 			| (OmitEach<NonNullable<T.ComparisonOperator.Loose>, 'comparators'> & {
 					comparators: ReadonlyArray<
 						| T.ComparisonOperatorComparator.LooseArgs[0]
-						| (NonNullable<T.ComparisonOperator.Loose> extends { readonly comparators?: infer E }
-								? E extends readonly (infer I)[]
-									? I
+						| (NonNullable<T.ComparisonOperator.Loose> extends infer Q
+								? Q extends { readonly comparators?: infer E }
+									? E extends readonly (infer I)[]
+										? I
+										: never
 									: never
 								: never)
 					>;

@@ -336,11 +336,11 @@ export const querySlots: QuerySlots = Object.freeze({
 	227: [['elements', 0, undefined, '_elements']],
 	236: [
 		['statement', 0, undefined, '_statement'],
-		['sourceFileText', 1, undefined, '_source_file_text']
+		['terminator', 1, undefined, '_terminator']
 	],
 	237: [
 		['topLevelDeclaration', 0, undefined, '_top_level_declaration'],
-		['sourceFileText', 1, undefined, '_source_file_text']
+		['terminator', 1, undefined, '_terminator']
 	],
 	238: [['items', 0, undefined, '_item']],
 	239: [['items', 0, undefined, '_item']],
@@ -1687,27 +1687,27 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'source_file_arm1',
 		required: [
 			['_statement', 'statement'],
-			['_source_file_text', 'sourceFileText']
+			['_terminator', 'terminator']
 		],
 		single: [
 			['_statement', 'SourceFileArm1.statement'],
-			['_source_file_text', 'SourceFileArm1.sourceFileText']
+			['_terminator', 'SourceFileArm1.terminator']
 		],
 		nodeOnly: [
 			['_statement', 'SourceFileArm1.statement', 'a built Statement', [175]],
-			['_source_file_text', 'SourceFileArm1.sourceFileText', 'buildSourceFileText(…)', [2]]
+			['_terminator', 'SourceFileArm1.terminator', 'buildSourceFileText(…)', [2]]
 		],
-		config: ['statement', 'sourceFileText']
+		config: ['statement', 'terminator']
 	},
 	237: {
 		kind: 'source_file_arm2',
 		required: [
 			['_top_level_declaration', 'topLevelDeclaration'],
-			['_source_file_text', 'sourceFileText']
+			['_terminator', 'terminator']
 		],
 		single: [
 			['_top_level_declaration', 'SourceFileArm2.topLevelDeclaration'],
-			['_source_file_text', 'SourceFileArm2.sourceFileText']
+			['_terminator', 'SourceFileArm2.terminator']
 		],
 		nodeOnly: [
 			[
@@ -1716,9 +1716,9 @@ export const structure: StructureTable = Object.freeze({
 				'a built PackageClause / FunctionDeclaration / MethodDeclaration / ImportDeclaration',
 				[133, 134, 144, 145]
 			],
-			['_source_file_text', 'SourceFileArm2.sourceFileText', 'buildSourceFileText(…)', [2]]
+			['_terminator', 'SourceFileArm2.terminator', 'buildSourceFileText(…)', [2]]
 		],
-		config: ['topLevelDeclaration', 'sourceFileText']
+		config: ['topLevelDeclaration', 'terminator']
 	},
 	238: {
 		kind: 'import_specs',

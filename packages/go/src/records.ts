@@ -541,13 +541,13 @@ export const records = {
 		words: 10,
 		builtWords: 4,
 		statement: { word: 2, width: 4, forms: 3, built: 2 },
-		source_file_text: { word: 6, width: 4, forms: 3, built: 3 }
+		terminator: { word: 6, width: 4, forms: 3, built: 3 }
 	},
 	SourceFileArm2Node: {
 		words: 9,
 		builtWords: 4,
 		top_level_declaration: { word: 2, width: 3, forms: 1, built: 2 },
-		source_file_text: { word: 5, width: 4, forms: 3, built: 3 }
+		terminator: { word: 5, width: 4, forms: 3, built: 3 }
 	},
 	ImportSpecsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	TypeParameterDeclarationsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
