@@ -650,44 +650,6 @@ impl Replaced {
         [self.node.address(), self.node.packed_site() << Self::SITE_SHIFT | self.side.code(), self.offset, self.row.0]
     }
 
-    /// `entries` as a list placed through `space`, by offset, then node,
-    /// then side, held once by the cell answered: the empty list for none.
-    ///
-    /// # Errors
-    ///
-    /// What placing the run refuses.
-    pub fn place(space: &mut dyn RecordSpace, entries: &mut [Self]) -> Result<CellWord, ArenaError> {
-        if entries.is_empty() {
-            return Ok(CellWord(0));
-        }
-        super::ListCell::word(space.push(&Self::list_words(entries)?)?)
-    }
-
-    /// `entries` written over the list `list`, which holds `held` entries,
-    /// no fewer than `entries`, its length now `entries`' and in the order
-    /// `place` gives.
-    ///
-    /// # Errors
-    ///
-    /// `ArenaError::Malformed` for more entries than `held`, and what
-    /// `words_mut` refuses.
-    pub fn write_over(space: &mut dyn RecordSpace, list: CellWord, held: usize, entries: &mut [Self]) -> Result<(), ArenaError> {
-        if entries.len() > held {
-            return Err(malformed("replaced ranges past their list", list.0));
-        }
-        let words = Self::list_words(entries)?;
-        space.words_mut(list.address(), u32::try_from(words.len()).map_err(|_| ArenaError::Full)?)?.copy_from_slice(&words);
-        Ok(())
-    }
-
-    fn list_words(entries: &mut [Self]) -> Result<Vec<u32>, ArenaError> {
-        entries.sort_by_key(|entry| (entry.offset, entry.node, entry.side.code()));
-        let mut words = Vec::with_capacity(1 + entries.len() * field::REPLACED_WORDS as usize);
-        words.push(u32::try_from(entries.len()).map_err(|_| ArenaError::Full)?);
-        words.extend(entries.iter().flat_map(|entry| entry.words()));
-        Ok(words)
-    }
-
     /// The entry `words` hold (`words`).
     ///
     /// # Errors

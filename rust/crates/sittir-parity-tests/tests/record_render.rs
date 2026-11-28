@@ -384,7 +384,7 @@ fn a_comment_inside_a_node_that_has_no_slot_for_it_renders_as_its_source_in_both
 }
 
 #[test]
-fn a_node_s_inside_is_its_own_and_its_first_item_keeps_its_leading_comment_while_a_write_of_it_is_refused_in_both_storages() {
+fn a_node_s_inside_is_its_own_and_its_first_item_keeps_its_leading_comment_while_a_write_of_it_is_refused() {
     use sittir_core::nodes::Nodes;
     use sittir_core::trivia_table::TriviaSide::{Inner, Leading};
     type TypeScript = Renders<sittir_typescript::TypeScriptGrammar, sittir_typescript::render::AnyNode>;
@@ -401,7 +401,6 @@ fn a_node_s_inside_is_its_own_and_its_first_item_keeps_its_leading_comment_while
     for written in [false, true] {
         if written {
             assert_eq!(tree.write_trivia_side(array, Inner, Vec::new()).expect_err("an inner side of a node with items"), refusal, "object storage");
-            assert_eq!(over.engine.write_read_side(name, Inner, &[]).expect_err("an inner side of a node with items").to_string(), refusal, "arena storage");
         }
         let item = first(&mut tree.nodes(), array);
         assert_eq!((tree.trivia_side(array, Inner).len(), commented(&tree.trivia_side(item, Leading))), (0, true), "object storage, written: {written}");
@@ -441,30 +440,7 @@ fn index_of<G: EngineGrammar>(tree: &ParsedTree<G>, kind: sittir_core::types::Ki
         .unwrap_or_else(|| panic!("no node {nth} of kind {kind:?}"))
 }
 
-fn line_comment(text: &str) -> Vec<sittir_core::trivia::TriviaEntry<sittir_rust::render::node::TriviaNode>> {
-    use sittir_rust::render::node::TriviaNode;
-    let comment = sittir_core::trivia::TriviaText { kind: rust_kinds::LINE_COMMENT, text: text.to_owned(), span: None, before: None, after: None };
-    [TriviaNode::Text(comment), TriviaNode::Newline].into_iter().map(|entry| sittir_core::trivia::TriviaEntry::new(SlotValue::Node(entry))).collect()
-}
-
 const EDITED: &str = "fn f() {\n    g(/* inside */);\n    h();\n}\n";
-
-#[test]
-fn an_edited_parent_renders_from_its_record_and_an_untouched_child_holding_a_comment_as_its_source() {
-    let renders = rust();
-    let mut engine = renders.engine();
-    let options = engine.options().clone();
-    let mut tree = RustRenders::parse(&mut engine, EDITED);
-    let statement = index_of(&tree, rust_kinds::EXPRESSION_STATEMENT, 1);
-    let over = renders.read(&tree);
-    let leading = sittir_core::trivia_table::TriviaSide::Leading;
-    tree.write_trivia_side(statement, leading, line_comment("// written")).expect("a side write");
-    over.engine.write_read_side(over.name(statement).expect("a statement has a record"), leading, &line_comment("// written")).expect("a side write");
-    let native = renders.native(&tree, NodeIndex::ROOT, &options, false).expect("a root").expect("a native render");
-    let record = RustRenders::record(&over, over.root, &options, false).expect("a record render");
-    assert_eq!(record, native);
-    assert!(record.contains("g(/* inside */)") && record.contains("// written"), "{record:?}");
-}
 
 #[test]
 fn an_error_node_has_a_record_and_renders_as_its_source() {

@@ -1147,7 +1147,7 @@ What the built arena of a language engine that reads trees as records is made wi
 
 ### `packages/common/src/engine.ts::builtRecordsOf`
 
-The `BuiltRecords` of a native engine that reads trees as records: its cell format, its chunks and counts, and the reads of a read's nodes that stay native, among them the write of a read node's side (`writeReadTriviaSide`). A built record's sides are read and written by the arena itself, in its chunks (`BuiltArena.writeSide`). An addon without the record codec has none of these, and is refused.
+The `BuiltRecords` of a native engine that reads trees as records: its cell format, its chunks and counts, the reads of a read's nodes that stay native, and the bytes a unit of a parsed node spans (`readUnitSpan`), which its cell does not keep. Every side, a built record's or a parsed node's, is read and written by the arena itself, in its chunks (`BuiltArena.writeSide`). An addon without the record codec has none of these, and is refused.
 
 ### `packages/common/src/engine.ts::saverOf`
 
@@ -1168,10 +1168,6 @@ Renders a read node with no tree and no built parent. Only the native hydration 
 ### `packages/common/src/engine.ts::NativeEngineLike::readSnapshotLayouts`
 
 Bound as `ReadNodes.snapshotLayouts`, so a snapshot of a read node finds its stored layouts with no tree.
-
-### `packages/common/src/engine.ts::NativeEngineLike::writeReadTriviaSide`
-
-Bound as `ReadNodes.writeTriviaSide`: a `$trivia` write to a read node keeps the side in the engine's side store under the node's name, with no tree.
 
 ### `packages/common/src/engine.ts::NativeEngineLike::readSlotLayouts`
 
@@ -1200,6 +1196,10 @@ Queues one release of the built entry at `address` in form `held`, without cross
 ### `packages/common/src/engine.ts::NativeEngineLike::crossReleases`
 
 Crosses the holds and releases waiting in JavaScript to native now, as the next engine function would, and throws a refusal one of them met, or one kept from a crossing at the end of the microtask. The built arena calls it through `BuiltRecords.cross` before it raises or checks a count while a release it handed over may still wait, so a record that release leaves unheld is refused at once, as it was when every release crossed by itself.
+
+### `packages/common/src/engine.ts::NativeEngineLike::readUnitSpan`
+
+Bound as `BuiltRecords.unitSpan`. A unit a parse kept as its kind alone has no row, so its cell names no bytes. Native parses the source again for the call, finds the unit's holder, and answers the bytes the child at the unit's site spans (`unit_span`, the one place that span is computed). `BuiltArena.writeSide` asks for it only when it writes a side of a unit, to place the side's range in the parsed node's list of replaced ranges.
 
 ### `packages/common/src/built-arena.ts::BuiltArena::node`
 
@@ -1319,7 +1319,9 @@ The little-endian `u32` at a byte offset of a string chunk's view: a source entr
 
 ### `packages/common/src/built-arena.ts::BuiltArena::writeSide`
 
-Replaces one side of a built record, its own leading, trailing or inner side, with the entries a `$trivia` write gives, written into the arena's chunks with no native call. The tree's `writeTriviaSide` calls it for a built record; a record a read left goes to the read's write instead.
+Replaces one side of a node, named by its key, with the entries a `$trivia` write gives, written into the arena's chunks. The tree's `writeTriviaSide` calls it for every node, built or parsed. Which of the two a node is comes from the record's own chunk (`reads`), not from the caller.
+
+A parsed node's side is a range of its source that the side's entries replace. The arena writes an entry into the parse's list of replaced ranges: the node, its side, the byte the side starts at, and a row holding the entries whole, with no header codes. A trailing side starts where the node ends. A leading or inner side starts where the first record the parse placed there starts, else where the node starts. A leaf's span comes from its cell, and a unit's, which no cell keeps, from native (`BuiltRecords.unitSpan`), the only native call such a write makes. A list one count holds that already has an entry for the side is written over, its row too where it can be. Any other list is written anew in a builder's chunk, holding each row it keeps once more, and the old list is given back (`held.replaced`). The parse's records keep the rows it placed. An inner side of a unit or a leaf takes no entries, and neither does the inner side of a node that is not empty.
 
 An entry is kept as a cell, the same way a cell slot keeps a value: a layout member as its unit, a record (built or a read's) as itself, and a kind with text as a leaf entry. A record takes the count its handle holds, else one more (`adopt`). A text entry holds its string chunk once more. A node a read left, named by its own record, is kept as that record with no count. Any other entry, or a node named by a site, is refused before anything is written.
 
@@ -1337,7 +1339,11 @@ Gives the units a record holds the sides that `units` lists, each found by its s
 
 For a built record, the write replaces every unit side the record had. A unit site it doesn't list loses its row, and the record's own sides and its leaf sites stay. A unit has no inside, so a unit given an inner side with entries is refused before any side is written. Each new row is written over the old row at the same site when one count holds the record's side record, and the side record of rows is written over as `writeSide` writes it.
 
-For a record a read left, each side `units` lists goes to the read's side write under the unit's key (`coordinateIndex`), and every other side of its units stays.
+For a record a read left, each side `units` lists is written as a parsed node's side under the unit's key (`coordinateIndex`, `writeSide`), and every other side of its units stays.
+
+### `packages/common/src/built-arena.ts::BuiltRecords::unitSpan`
+
+The bytes in its source of the unit a key names (`NativeEngineLike.readUnitSpan`): the one fact about a parsed node that a side write needs and the arena's words do not hold.
 
 ### `packages/common/src/create-engine.ts::storedVerifierOf`
 

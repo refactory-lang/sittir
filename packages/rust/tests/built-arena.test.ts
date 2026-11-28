@@ -15,11 +15,12 @@ type Records = ConstructorParameters<typeof BuiltArena>[0];
 const noRead = (): never => {
 	throw new Error('no read wrote into this arena');
 };
-const NO_READS: Pick<Records, 'read' | 'parse' | 'query' | 'reads'> = {
+const NO_READS: Pick<Records, 'read' | 'parse' | 'unitSpan' | 'query' | 'reads'> = {
 	read: () => undefined,
 	parse: noRead,
+	unitSpan: noRead,
 	query: { descendants: noRead, planHolds: noRead },
-	reads: { snapshotLayouts: noRead, writeTriviaSide: noRead, slotLayouts: noRead, slotSeparator: noRead, isEmpty: noRead }
+	reads: { snapshotLayouts: noRead, slotLayouts: noRead, slotSeparator: noRead, isEmpty: noRead }
 };
 type Views = ConstructorParameters<typeof BuiltArena>[3];
 type WriteLeafSites = ConstructorParameters<typeof BuiltArena>[4];

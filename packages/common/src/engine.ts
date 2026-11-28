@@ -221,8 +221,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	readPlanHolds?: NativeEngineLike['planHolds'];
 	/** `snapshotLayouts` for the node a read left in the built arena that the key `node` names, each pair's node by its key. Present when the addon carries the record codec. */
 	readSnapshotLayouts?(node: number, holderByte?: number): [number, object][];
-	/** `writeTriviaSide` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
-	writeReadTriviaSide?(node: number, side: string, entries: readonly WireNode[]): void;
+	/** The bytes in its source of the unit the key `node` names, a site of a record a read left in the built arena. Present when the addon carries the record codec. */
+	readUnitSpan?(node: number): ByteSpan;
 	/** `slotLayouts` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
 	readSlotLayouts?(node: number): SlotLayoutWire[];
 	/** `slotSeparator` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
@@ -358,7 +358,7 @@ const ENGINE_FUNCTIONS = [
 	'readDescendants',
 	'readPlanHolds',
 	'readSnapshotLayouts',
-	'writeReadTriviaSide',
+	'readUnitSpan',
 	'readSlotLayouts',
 	'readSlotSeparator',
 	'readIsEmpty',
@@ -803,7 +803,7 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSlotLayouts, readSlotSeparator, readIsEmpty } = engine;
+	const { builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readDescendants, readPlanHolds, readSnapshotLayouts, readUnitSpan, readSlotLayouts, readSlotSeparator, readIsEmpty } = engine;
 	if (
 		holdSaturated === undefined ||
 		releaseBuilt === undefined ||
@@ -815,7 +815,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		readDescendants === undefined ||
 		readPlanHolds === undefined ||
 		readSnapshotLayouts === undefined ||
-		writeReadTriviaSide === undefined ||
+		readUnitSpan === undefined ||
 		readSlotLayouts === undefined ||
 		readSlotSeparator === undefined ||
 		readIsEmpty === undefined
@@ -833,9 +833,9 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		read: (chunk) => readWords.call(engine, chunk) ?? undefined,
 		parse: (source, options) => JSON.parse(parseRecords.call(engine, source, options)) as ParsedRecords,
 		query: queryOver(readDescendants.bind(engine), readPlanHolds.bind(engine)),
+		unitSpan: (node) => readUnitSpan.call(engine, node),
 		reads: {
 			snapshotLayouts: (node, holderByte) => readSnapshotLayouts.call(engine, node, holderByte),
-			writeTriviaSide: (node, side, entries) => writeReadTriviaSide.call(engine, node, side, entries),
 			slotLayouts: (node) => readSlotLayouts.call(engine, node),
 			slotSeparator: (node) => readSlotSeparator.call(engine, node) ?? undefined,
 			isEmpty: (node) => readIsEmpty.call(engine, node)

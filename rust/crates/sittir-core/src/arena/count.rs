@@ -232,6 +232,7 @@ pub mod held {
     pub const RUN: u32 = 1;
     pub const SIDE: u32 = 2;
     pub const TEXT: u32 = 3;
+    pub const REPLACED: u32 = 4;
     /// Set beside a tag in a batch release: its caller already dropped the
     /// entry's count to zero (`BuiltChunks::release_batch`).
     pub const DROPPED: u32 = 1 << 8;
@@ -275,6 +276,7 @@ impl Held {
             held::RUN => Ok(Held::Run(at)),
             held::SIDE => Ok(Held::Side(at)),
             held::TEXT => Ok(Held::Text(at)),
+            held::REPLACED => Ok(Held::Replaced(at)),
             _ => Err(malformed("held entry tag", tag)),
         }
     }

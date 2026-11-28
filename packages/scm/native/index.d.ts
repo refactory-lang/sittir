@@ -262,9 +262,12 @@ export declare const HELD_DROPPED: number
 
 /**
  * r" The tags `releaseBuilt` reads (`count::held`): a record, a
- * r" run, a side record, a leaf entry.
+ * r" run, a side record, a leaf entry, a read's list of replaced
+ * r" ranges.
  */
 export declare const HELD_RECORD: number
+
+export declare const HELD_REPLACED: number
 
 export declare const HELD_RUN: number
 
@@ -449,6 +452,15 @@ export declare function readSnapshotLayouts(engine: object, node: number, holder
  * r" left that the key `node` names: `{ slots }`. A diagnostic.
  */
 export declare function readStoredLayout(engine: object, node: number): { slots: number }
+
+/**
+ * r" The bytes of the unit the key `node` names, a site of a
+ * r" record a read left, in that read's source, as `{ start, end }`.
+ * r" Refuses an engine already disposed, a number that is no key,
+ * r" a name whose record names no source, and a site the source's
+ * r" parse finds no unit at.
+ */
+export declare function readUnitSpan(engine: object, node: number): import('@sittir/types').ByteSpan
 
 /**
  * r" Chunk `chunk` of the built arena, which a read wrote into, with
@@ -718,14 +730,6 @@ export declare function triviaSide(treeId: TreeId, index: NodeIndex, side: strin
  * key and its item in that slot. Refuses as `triviaSide` does.
  */
 export declare function unitSides(treeId: TreeId, index: NodeIndex): import('@sittir/types').UnitSidesWire[]
-
-/**
- * r" Replaces `side` of the node a read left that the key `node`
- * r" names with `entries`, which its render then writes. Refuses
- * r" an engine already disposed, a number that is no key, a name
- * r" whose record names no source, and any other side.
- */
-export declare function writeReadTriviaSide(engine: object, node: number, side: string, entries: import('@sittir/types').WireNode[]): void
 
 /**
  * `text`, which a render interceptor produced in JavaScript,

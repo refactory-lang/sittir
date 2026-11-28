@@ -32,7 +32,6 @@ struct Case<G: EngineGrammar, N> {
     /// it was read with and no layout.
     bare: fn(&mut N),
     source: &'static str,
-    edited: &'static str,
 }
 
 impl<G: RecordGrammar + Copy, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells> Case<G, N> {
@@ -109,7 +108,6 @@ fn rust() -> Case<sittir_rust::RustGrammar, sittir_rust::render::AnyNode> {
             file.layout = None;
         },
         source: "// a file\nfn f(a: i32,  b: i32) -> i32 {\n    // leading\n    let x = g(a, b);\n    if x > 0 {\n        h(x, /* inside */ 1);\n    }\n    x\n}\n\nstruct S { a: i32, b: u8 }\n",
-        edited: "expression_statement:0",
     }
 }
 
@@ -128,7 +126,6 @@ fn python() -> Case<sittir_python::PythonGrammar, sittir_python::render::AnyNode
             module.layout = None;
         },
         source: "class C:\n    # comment\n    def f(self, a,  b):\n        if a:\n            return [a, b]\n        return None\n\n\ndef g():\n    while x:\n        y(1, 2)\n",
-        edited: "expression_statement:0",
     }
 }
 
@@ -147,30 +144,21 @@ fn typescript() -> Case<sittir_typescript::TypeScriptGrammar, sittir_typescript:
             program.layout = None;
         },
         source: "const a = [1, 2,  3]\nfunction f(x: number, y: number) {\n  // note\n  if (x) {\n    g(x, y)\n  }\n  return { x, y }\n}\nclass K {\n  m() { return 1 }\n}\n",
-        edited: "expression_statement:0",
     }
 }
 
-/// The case's root rendered from its read's records untouched; rebuilt
-/// from its read, beside its native render; and again after its edited
-/// node's own leading side is written back, as its source still: the side
-/// is a range the same entries fill, and every other byte is as it was
-/// read.
+/// The case's root rendered from its read's records untouched, and
+/// rebuilt from its read, beside its native render.
 fn renders_from_records<G: RecordGrammar + Copy, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells>(case: &Case<G, N>) {
     let options = (case.options)();
     let (tree, over) = case.read();
     assert_eq!(over.render_at(over.root, sittir_core::slot::ChangedEdges::default(), &options, false).expect("a record render"), case.source, "{}: untouched", case.name);
     let (rebuilt, native) = case.rebuilt(&tree);
     assert_eq!(rebuilt, native, "{}: rebuilt", case.name);
-    let leading = sittir_core::trivia_table::TriviaSide::Leading;
-    let name = over.name(nth_of_kind(&tree, case.edited)).expect("the edited node has a record");
-    let entries = over.engine.read_named(name, |parsed, at| parsed.trivia_side(at, leading)).expect("the records read").expect("a read wrote the record");
-    over.engine.write_read_side(name, leading, &entries).expect("the node's own side writes back");
-    assert_eq!(over.render_at(over.root, sittir_core::slot::ChangedEdges::default(), &options, false).expect("a record render"), case.source, "{}: codemod", case.name);
 }
 
 #[test]
-fn a_read_s_records_render_untouched_rebuilt_and_edited() {
+fn a_read_s_records_render_untouched_and_rebuilt() {
     renders_from_records(&rust());
     renders_from_records(&python());
     renders_from_records(&typescript());

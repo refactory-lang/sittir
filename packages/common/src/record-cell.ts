@@ -37,6 +37,7 @@ export interface RecordCodecConstants {
 	readonly HELD_RUN: number;
 	readonly HELD_SIDE: number;
 	readonly HELD_TEXT: number;
+	readonly HELD_REPLACED: number;
 	readonly HELD_DROPPED: number;
 	readonly ARENA_CHUNK_SHIFT: number;
 	readonly SIDE_FIELD_AT: number;
@@ -142,7 +143,7 @@ export interface CellFormat {
 	readonly headerWords: number;
 	readonly countOwned: number;
 	readonly countSaturated: number;
-	readonly held: { readonly record: number; readonly run: number; readonly side: number; readonly text: number; readonly dropped: number };
+	readonly held: { readonly record: number; readonly run: number; readonly side: number; readonly text: number; readonly replaced: number; readonly dropped: number };
 	readonly chunkShift: number;
 	/** The side record's `at`, its first field: a parsed node's coordinate kind and its byte span. */
 	readonly sideAt: SideField;
@@ -235,6 +236,7 @@ const CODEC_KEYS = [
 	'HELD_RUN',
 	'HELD_SIDE',
 	'HELD_TEXT',
+	'HELD_REPLACED',
 	'HELD_DROPPED',
 	'ARENA_CHUNK_SHIFT',
 	'SIDE_FIELD_AT',
@@ -301,7 +303,7 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		headerWords: codec.RECORD_HEADER_WORDS,
 		countOwned: codec.COUNT_OWNED,
 		countSaturated: codec.COUNT_SATURATED,
-		held: { record: codec.HELD_RECORD, run: codec.HELD_RUN, side: codec.HELD_SIDE, text: codec.HELD_TEXT, dropped: codec.HELD_DROPPED },
+		held: { record: codec.HELD_RECORD, run: codec.HELD_RUN, side: codec.HELD_SIDE, text: codec.HELD_TEXT, replaced: codec.HELD_REPLACED, dropped: codec.HELD_DROPPED },
 		chunkShift: codec.ARENA_CHUNK_SHIFT,
 		sideAt: { bit: codec.SIDE_FIELD_AT, words: codec.SIDE_WORDS_AT },
 		sideBeforeDelimiter: [

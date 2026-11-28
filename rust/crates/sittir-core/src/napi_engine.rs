@@ -831,7 +831,8 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub const COUNT_SATURATED: u32 = $crate::arena::count::SATURATED as u32;
             /// The tags `releaseBuilt` reads (`count::held`): a record, a
-            /// run, a side record, a leaf entry.
+            /// run, a side record, a leaf entry, a read's list of replaced
+            /// ranges.
             #[::napi_derive::napi]
             pub const HELD_RECORD: u32 = $crate::arena::count::held::RECORD;
             #[::napi_derive::napi]
@@ -840,6 +841,8 @@ macro_rules! napi_engine {
             pub const HELD_SIDE: u32 = $crate::arena::count::held::SIDE;
             #[::napi_derive::napi]
             pub const HELD_TEXT: u32 = $crate::arena::count::held::TEXT;
+            #[::napi_derive::napi]
+            pub const HELD_REPLACED: u32 = $crate::arena::count::held::REPLACED;
             /// Set beside a tag in a release batch: the caller already
             /// dropped the entry's count to zero (`releaseBuilt`).
             #[::napi_derive::napi]
@@ -1042,16 +1045,15 @@ macro_rules! napi_engine {
                 })
             }
 
-            /// Replaces `side` of the node a read left that the key `node`
-            /// names with `entries`, which its render then writes. Refuses
-            /// an engine already disposed, a number that is no key, a name
-            /// whose record names no source, and any other side.
-            #[::napi_derive::napi(ts_args_type = "engine: object, node: number, side: string, entries: import('@sittir/types').WireNode[]")]
-            pub fn write_read_trivia_side(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, node: f64, side: String, entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>) -> ::napi::Result<()> {
+            /// The bytes of the unit the key `node` names, a site of a
+            /// record a read left, in that read's source, as `{ start, end }`.
+            /// Refuses an engine already disposed, a number that is no key,
+            /// a name whose record names no source, and a site the source's
+            /// parse finds no unit at.
+            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').ByteSpan")]
+            pub fn read_unit_span(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64) -> ::napi::Result<$crate::types::Span> {
                 let engine = engine_of(engine)?;
-                let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
-                engine.write_read_side($crate::napi_engine::named_key(node)?, side, &entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                $crate::napi_engine::settle(&env, engine.written())
+                engine.read_unit_span($crate::napi_engine::named_key(node)?).map_err(|e| ::napi::Error::from_reason(e.to_string()))
             }
 
             /// `slotLayouts` for the node a read left that the key `node` names.

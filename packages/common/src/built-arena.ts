@@ -72,6 +72,7 @@ export interface BuiltRecords {
 	cross(): void;
 	read(chunk: number): ReadChunk | undefined;
 	parse(source: string, options?: ParseOptions): ParsedRecords;
+	unitSpan(key: number): ByteSpan;
 	readonly query: TreeQuery;
 	readonly reads: ReadNodes;
 }
@@ -83,7 +84,7 @@ interface CountAt {
 
 export type ReadChunk = { readonly data: WritableWords; readonly meta: Uint8Array } | { readonly bytes: Uint8Array; readonly meta: Uint8Array };
 
-export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'writeTriviaSide' | 'slotLayouts' | 'slotSeparator' | 'isEmpty'>>;
+export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'slotLayouts' | 'slotSeparator' | 'isEmpty'>>;
 
 export interface ParsedRecords {
 	readonly root: number | null;
@@ -113,6 +114,7 @@ interface ReplacedRange {
 	readonly node: number;
 	readonly site: number;
 	readonly side: number;
+	readonly offset: number;
 	readonly row: number;
 }
 
@@ -322,7 +324,7 @@ export class BuiltArena {
 	readonly #entries: (Map<string, BuiltText> | undefined)[] = [];
 	readonly #entryAt: (Map<number, BuiltText> | undefined)[] = [];
 	readonly #sourceTexts: (Map<number, string | null> | undefined)[] = [];
-	readonly #writeReadSide: ReadNodes['writeTriviaSide'];
+	readonly #unitSpan: BuiltRecords['unitSpan'];
 	readonly #writeLeafSites: WriteLeafSites;
 	readonly #parkedBy = new WeakMap<object, object>();
 	readonly #exemplars: object[] = [];
@@ -343,7 +345,7 @@ export class BuiltArena {
 	#pruneAt = DEFERRED_PRUNE;
 	#scopes = 0;
 
-	constructor({ format, owner, kinds, words, bytes, bump, release, cross, read, parse, query, reads }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
+	constructor({ format, owner, kinds, words, bytes, bump, release, cross, read, parse, unitSpan, query, reads }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
 		this.format = format;
 		this.owner = owner;
 		this.kinds = kinds;
@@ -358,7 +360,7 @@ export class BuiltArena {
 		this.#wrap = wrap;
 		this.#handle = handle;
 		this.#views = views;
-		this.#writeReadSide = reads.writeTriviaSide;
+		this.#unitSpan = unitSpan;
 		this.#writeLeafSites = writeLeafSites;
 		this.token = mintTreeToken(0);
 		this.tree = {
@@ -374,10 +376,7 @@ export class BuiltArena {
 				const entries = this.#ownSide(at, side);
 				return entries === undefined ? undefined : readEntries(this.tree, entries);
 			},
-			writeTriviaSide: (at, side, entries) => {
-				if (at < 0 || this.reads(at)) return reads.writeTriviaSide(at, side, entries);
-				this.writeSide(at, side, entries);
-			},
+			writeTriviaSide: (at, side, entries) => this.writeSide(at, side, entries),
 			unitSides: (at) => {
 				if (at < 0) return readUnits(this.tree, this.readUnitSides(at));
 				this.settle(at);
@@ -1090,9 +1089,71 @@ export class BuiltArena {
 		return entries;
 	}
 
-	/** Replaces `side` of the built record at `at` with `entries`: the gap kinds at the side's head, as many as its header keeps codes for, as those codes, and the rest as its row, none when the codes hold the whole side. */
+	/** Replaces `side` of the node the key `at` names (`keyName`) with `entries`. A built record keeps the gap kinds at the side's head, as many as its header keeps codes for, as those codes, and the rest as its row, none when the codes hold the whole side. A node a parse left keeps them as the row of an entry of its read's list of replaced ranges (`#writeReplaced`). */
 	writeSide(at: number, side: TriviaSideName, entries: readonly WireNode[]): void {
+		const { node, site } = keyName(at, this.format.nodeId);
+		if (site !== 0 || this.reads(node)) return this.#writeReplaced(at, node, site, side, entries);
 		this.#setRow(at, side, this.#headerSplit(at, side, this.#keptEntries(entries)));
+	}
+
+	/** `side` of the node a parse left that `key` names, the record at `node` or its cell at the packed `site`, replaced with `entries`: an entry of its read's list of replaced ranges whose row holds them whole, at the byte the side starts at in the source (`#sideOffset`), in place of the entry it held for the side. A list one count holds that held one is written over, its row too where it can be (`#placeRowOver`), and a row it no longer names given back; any other list is written anew, holding each row it keeps once more, and the old one given back. A cell's inner side is refused unless empty, and so is the inner side of a node that is not empty. */
+	#writeReplaced(key: number, node: number, site: number, side: TriviaSideName, entries: readonly WireNode[]): void {
+		const source = this.sourceOf(node);
+		if (side === 'inner' && site !== 0) {
+			if (entries.length > 0) throw new Error(NO_INSIDE);
+			return;
+		}
+		if (side === 'inner' && !this.tree.isEmpty!(node)) throw new Error(NOT_EMPTY);
+		const offset = this.#sideOffset(key, node, site, side);
+		const cells = this.#keptEntries(entries).map((entry) => entry.cell);
+		const read = this.#readSideOf(source);
+		const start = wordOf(read, this.format);
+		const list = this.#chunk(read, 2)[start + 1]!;
+		const code = this.format.sideCodes[side];
+		const ranges = this.#replacedOf(source);
+		const at = ranges.findIndex((range) => range.node === node && range.site === site && range.side === code);
+		const old = ranges[at];
+		const kept = ranges.filter((_, n) => n !== at);
+		const inPlace = old !== undefined && this.#countOf(list >>> 2) === 1;
+		if (!inPlace) for (const range of kept) if (range.row !== 0) this.hold(range.row >>> 2);
+		const row = this.#placeRowOver(inPlace ? old.row : undefined, cells);
+		const words = this.#replacedWords([...kept, { node, site, side: code, offset, row }]);
+		if (inPlace) {
+			this.#chunk(list >>> 2, words.length).set(words, wordOf(list >>> 2, this.format));
+			if (old.row !== 0 && old.row !== row) this.drop(old.row >>> 2, this.format.held.run);
+			return;
+		}
+		this.#chunk(read, 2)[start + 1] = builtCell(this.push(words, 1));
+		if (list !== 0) this.drop(list >>> 2, this.format.held.replaced);
+	}
+
+	/** Where `side` of the node a parse left that `key` names starts in its source: a trailing side where the node ends; a leading or inner side where the first record its parse placed there starts, else where the node starts. */
+	#sideOffset(key: number, node: number, site: number, side: TriviaSideName): number {
+		const span = site === 0 ? this.#parsedSpan(node) : this.#siteSpan(key, node, site);
+		if (side === 'trailing') return span.end;
+		const placed = this.#placedRow(this.#sideWordOf(node), site, side);
+		const first = placed === undefined || placed === 0 ? undefined : this.#rowEntries(placed).find((entry) => (entry as { readonly $record?: number }).$record !== undefined);
+		return first === undefined ? span.start : this.#parsedSpan((first as { readonly $record: number }).$record).start;
+	}
+
+	#parsedSpan(at: number): ByteSpan {
+		return (coordinateOf(readPosition(this.tree, at)) as unknown as { readonly $span: ByteSpan }).$span;
+	}
+
+	/** The bytes of the node at the packed `site` of the record a parse left at `node`: a leaf's from its cell, a unit's, which its cell keeps no span of, from the source (`unitSpan`). */
+	#siteSpan(key: number, node: number, site: number): ByteSpan {
+		const [word, item] = unpackedSite(site, this.format.nodeId);
+		const cell = this.#parsedCellAt(node, this.#cellPlace(this.kindAt(node), word), item);
+		if (cell?.form === 'unit') return this.#unitSpan(key);
+		if (cell?.form === 'parsedLeaf') return cell.span;
+		throw new Error(`the site at word ${word}, item ${item} of the record at ${node} names no leaf or unit`);
+	}
+
+	/** `ranges` as the words of a list of replaced ranges: its length, then each entry's record, its packed site above its side's code, its offset and its row, by offset, then record, then site, then side. */
+	#replacedWords(ranges: ReplacedRange[]): number[] {
+		const shift = 2 ** this.format.sideReplaced.siteShift;
+		ranges.sort((a, b) => a.offset - b.offset || a.node - b.node || a.site - b.site || a.side - b.side);
+		return [ranges.length, ...ranges.flatMap((range) => [range.node, range.site * shift + range.side, range.offset, range.row])];
 	}
 
 	/** Replaces `side` of the built leaf at each site `sites` names, `[holder, word, item]` after another, with `entries`, each site's row holding them anew. */
@@ -1111,7 +1172,7 @@ export class BuiltArena {
 				const key = coordinateIndex({ $node: at, $site: [word, unit.item] } as unknown as NodeCoordinate, this.format.nodeId);
 				for (const side of TRIVIA_SIDE_NAMES) {
 					const entries = unit[side];
-					if (entries !== undefined) this.#writeReadSide(key, side, entries);
+					if (entries !== undefined) this.writeSide(key, side, entries);
 				}
 			}
 			return;
@@ -1342,10 +1403,8 @@ export class BuiltArena {
 	}
 
 	/** The entries of the list of replaced ranges of the read whose source entry is `source`: each the record its node is kept in, its site packed (`keyName`), its side's code and its row's list cell. */
-	#replacedOf(source: number): readonly ReplacedRange[] {
-		const bytes = this.#readBytes(chunkOf(source, this.format));
-		if (bytes === undefined || bytes.length === 0) throw new Error(releasedRecord(source));
-		const read = byteWord(bytes, wordOf(source, this.format) + this.format.sourceEntry.readSideByte);
+	#replacedOf(source: number): ReplacedRange[] {
+		const read = this.#readSideOf(source);
 		if (read === 0) return [];
 		const head = this.words(read, 2);
 		const start = wordOf(read, this.format);
@@ -1359,8 +1418,15 @@ export class BuiltArena {
 			const at = first + n * entryWords;
 			const key = words[at + 1]!;
 			if ((key & slot) !== 0) throw new Error(`a replaced range at ${run} names a slot, which no write gives a read's list`);
-			return { node: words[at]!, site: key >>> siteShift, side: key & ((1 << sideBits) - 1), row: words[at + 3]! };
+			return { node: words[at]!, site: key >>> siteShift, side: key & ((1 << sideBits) - 1), offset: words[at + 2]!, row: words[at + 3]! };
 		});
+	}
+
+	/** The address of the side record of the read whose source entry is `source`, 0 for none. */
+	#readSideOf(source: number): number {
+		const bytes = this.#readBytes(chunkOf(source, this.format));
+		if (bytes === undefined || bytes.length === 0) throw new Error(releasedRecord(source));
+		return byteWord(bytes, wordOf(source, this.format) + this.format.sourceEntry.readSideByte);
 	}
 
 	/** `entry` of a side of a node of the read whose source entry is `source`, as its parse placed it: a record that read left for a node that renders as its source, no entry of `replaced` replacing its inner side, as that node's coordinate, an `ERROR` as its kind and source text; any other entry as it is. */
@@ -1375,12 +1441,17 @@ export class BuiltArena {
 
 	/** Whether the cell `place` names in the read's record at `at`, at `item` of a list, is a unit's. */
 	#readHoldsUnit(at: number, place: Extract<BuiltPlaceRow, { readonly length: 6 }>, item: number): boolean {
+		return this.#parsedCellAt(at, place, item)?.form === 'unit';
+	}
+
+	/** The cell `place` names in the read's record at `at`, at `item` of a list; none past the list's items. */
+	#parsedCellAt(at: number, place: Extract<BuiltPlaceRow, { readonly length: 6 }>, item: number): ReturnType<typeof decodeParsedCell> | undefined {
 		const [word, , width, forms, run] = place;
 		const start = wordOf(at, this.format);
-		if (run === 0) return item === 0 && decodeParsedCell(this.words(at, word + width), start + word, forms, this.format).form === 'unit';
+		if (run === 0) return item === 0 ? decodeParsedCell(this.words(at, word + width), start + word, forms, this.format) : undefined;
 		const list = decodeListCell(this, this.words(at, word + 1)[start + word]!);
-		if (item >= list.len) return false;
-		return decodeParsedCell(this.words(list.run, list.len * run), wordOf(list.run, this.format) + item * run, forms, this.format).form === 'unit';
+		if (item >= list.len) return undefined;
+		return decodeParsedCell(this.words(list.run, list.len * run), wordOf(list.run, this.format) + item * run, forms, this.format);
 	}
 
 	/** Whether a read wrote the record at `at`, as against a builder. */
@@ -1823,6 +1894,7 @@ type KeptForm = { readonly form: 'layout'; readonly kind: number } | { readonly 
 
 const NO_INSIDE = 'a record writer does not write an inner side on a node with no record, which has no inside';
 const READ_SIDE = "a record writer does not write a side of a read's node, which its read's list of replaced ranges holds";
+const NOT_EMPTY = 'a record writer does not write an inner side on a node that is not empty, whose trivia is its children\'s sides';
 const RECORD_ZERO = 'record address 0 is not one a record writer writes';
 const TRIVIA_SIDE_NAMES = ['leading', 'trailing', 'inner'] as const;
 
