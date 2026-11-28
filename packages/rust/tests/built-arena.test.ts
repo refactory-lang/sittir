@@ -6,18 +6,12 @@ import { patchCell, sideEntryOf } from '../../common/src/built-arena.ts';
 import type { RecordHandle } from '../../common/src/handle.ts';
 import { leafSitesOf, placeLeaf } from '../../common/src/built-ref.ts';
 import { PLAIN_KINDS, setTriviaOf } from '../../common/src/node-data.ts';
+import { sideUnderRows } from '../../common/src/record-cell.ts';
 import { getActiveBackend } from '../src/backend.ts';
 
 const backend = getActiveBackend();
 const format = backend.name === 'native' ? cellFormatOf(backend.native) : undefined;
 type Records = ConstructorParameters<typeof BuiltArena>[0];
-type SideStore = Records['trivia'];
-const NO_SIDES: SideStore = {
-	writeTriviaSide: () => undefined,
-	writeUnitSides: () => undefined,
-	writeLeafSide: () => undefined,
-	copySites: () => undefined
-};
 const noRead = (): never => {
 	throw new Error('no read wrote into this arena');
 };
@@ -44,9 +38,9 @@ function chunksOf() {
 	};
 }
 
-const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = NO_VIEWS, leafSites: WriteLeafSites = () => undefined, chunks: Pick<Records, 'words' | 'bytes'> = chunksOf(), read: Records['read'] = NO_READS.read): BuiltArena =>
+const arenaOf = (views: Views = NO_VIEWS, leafSites: WriteLeafSites = () => undefined, chunks: Pick<Records, 'words' | 'bytes'> = chunksOf(), read: Records['read'] = NO_READS.read): BuiltArena =>
 	new BuiltArena(
-		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunks, bump: () => undefined, release: () => [], cross: () => undefined, ...NO_READS, read, trivia },
+		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunks, bump: () => undefined, release: () => [], cross: () => undefined, ...NO_READS, read },
 		(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 		views,
@@ -134,7 +128,7 @@ describe('a built arena', () => {
 		const record = new Uint32Array(2 ** format!.chunkShift);
 		const read = { data: record, meta: new Uint8Array(metaBytes(record.length)) };
 		const arena = new BuiltArena(
-			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: () => [], cross: () => undefined, ...NO_READS, read: (chunk: number) => (made === 2 && chunk === 1 ? read : undefined), trivia: NO_SIDES },
+			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: () => [], cross: () => undefined, ...NO_READS, read: (chunk: number) => (made === 2 && chunk === 1 ? read : undefined) },
 			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 			NO_VIEWS,
@@ -154,7 +148,7 @@ describe('a built arena', () => {
 		let next = 0;
 		const words = (length: number) => ({ chunk: 1, data: new Uint32Array(length), meta: new Uint8Array(metaBytes(length)), freed: next++ === 0 ? [] : [1] });
 		const arena = new BuiltArena(
-			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: (at: number) => (released.push(at), []), cross: () => undefined, ...NO_READS, trivia: NO_SIDES },
+			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: (at: number) => (released.push(at), []), cross: () => undefined, ...NO_READS },
 			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 			NO_VIEWS,
@@ -223,7 +217,7 @@ describe('a built arena', () => {
 	it('answers a text interned before its chunk filled with its one entry, from a later chunk too', () => {
 		let made = 40;
 		const bytes = (least: number) => ({ chunk: ++made, data: new Uint8Array(Math.max(least, 32)), meta: new Uint8Array(8), freed: [] });
-		const arena = arenaOf(NO_SIDES, NO_VIEWS, () => undefined, { ...chunksOf(), bytes });
+		const arena = arenaOf(NO_VIEWS, () => undefined, { ...chunksOf(), bytes });
 		const first = arena.entry(4, 'name');
 		const later = ['aaaaaaaa', 'bbbbbbbb', 'cccccccc', 'dddddddd'].map((text) => arena.entry(4, text));
 		expect(new Set(later.map((entry) => chunkOf(entry.at, format!))).size).toBeGreaterThan(1);
@@ -236,7 +230,7 @@ describe('a built arena', () => {
 		const meta = new Uint8Array(8);
 		const marks = new Uint32Array(meta.buffer);
 		marks[1] = 8;
-		const arena = arenaOf(NO_SIDES, NO_VIEWS, () => undefined, { ...chunksOf(), bytes: () => ({ chunk: 9, data, meta, freed: [] }) });
+		const arena = arenaOf(NO_VIEWS, () => undefined, { ...chunksOf(), bytes: () => ({ chunk: 9, data, meta, freed: [] }) });
 		const entry = arena.entry(4, 'name');
 		expect([chunkOf(entry.at, format!), wordOf(entry.at, format!)]).toEqual([9, 8]);
 		expect(Array.from(data.subarray(0, 8))).toEqual(Array.from({ length: 8 }, () => 0xaa));
@@ -248,7 +242,7 @@ describe('a built arena', () => {
 		const limit = 2 ** format!.chunkShift;
 		let made = 30;
 		const bytes = (least: number) => ({ chunk: ++made, data: new Uint8Array(Math.max(least, 2 * limit + 64)), meta: new Uint8Array(8), freed: [] });
-		const arena = arenaOf(NO_SIDES, NO_VIEWS, () => undefined, { ...chunksOf(), bytes });
+		const arena = arenaOf(NO_VIEWS, () => undefined, { ...chunksOf(), bytes });
 		arena.entry(4, 'a');
 		const wide = 'x'.repeat(limit + 8);
 		const entry = arena.entry(4, wide);
@@ -260,7 +254,7 @@ describe('a built arena', () => {
 		let made = 20;
 		const asked: number[] = [];
 		const bytes = (least: number) => (asked.push(least), { chunk: ++made, data: new Uint8Array(32), meta: new Uint8Array(8), freed: [] });
-		const arena = arenaOf(NO_SIDES, NO_VIEWS, () => undefined, { ...chunksOf(), bytes });
+		const arena = arenaOf(NO_VIEWS, () => undefined, { ...chunksOf(), bytes });
 		const placed = ['aaaa', 'bbbbbbbb', 'c'.repeat(16)].map((text) => arena.entry(4, text).at);
 		expect(asked).toEqual([8, 20]);
 		expect(placed.map((at) => [chunkOf(at, format!), wordOf(at, format!)])).toEqual([
@@ -344,8 +338,7 @@ describe('a built arena', () => {
 	});
 
 	it('writes the sides of a leaf it places only when the leaf holds some', () => {
-		const written: [readonly number[], string, readonly unknown[]][] = [];
-		const arena = arenaOf({ ...NO_SIDES, writeLeafSide: (sites, side, entries) => void written.push([[...sites], side, entries]) }, NO_VIEWS, writeLeafSites);
+		const arena = arenaOf(NO_VIEWS, writeLeafSites);
 		const bare = arena.leaf(leafOf(4), 'a');
 		const sided = arena.leaf(leafOf(4), 'b');
 		setTriviaOf(sided, { leading: [3] });
@@ -357,7 +350,7 @@ describe('a built arena', () => {
 			[at, 2, 0],
 			[at, 11, 0]
 		]);
-		expect(written).toEqual([[[at, 11, 0], 'leading', [3]]]);
+		expect([arena.leafSide(at, 11, 0, 'leading'), arena.leafSide(at, 2, 0, 'leading')]).toEqual([[3], undefined]);
 	});
 
 	it('refuses a list holding a built leaf past the leaf items a list slot holds in arena storage, and takes text there', () => {
@@ -372,16 +365,14 @@ describe('a built arena', () => {
 	});
 
 	it('drafts a record of its kind at the width its builders write, and refuses a kind no builder writes', () => {
-		const arena = arenaOf(NO_SIDES, { ...NO_VIEWS, words: { 9: 13 } });
+		const arena = arenaOf({ ...NO_VIEWS, words: { 9: 13 } });
 		expect(arena.record(9).words).toBe(13);
 		expect(() => arena.record(8)).toThrow(/no width/);
 	});
 
 	it('copies a record rebuilt from a node a read left, naming it by its holder, which it holds, and packed site beside its list settings', () => {
-		const leafSided: number[][] = [];
 		const holder = readRecordIn(50);
 		const arena = arenaOf(
-			{ ...NO_SIDES, writeLeafSide: (sites) => void leafSided.push([...sites]) },
 			{ ...NO_VIEWS, words: { 9: 13 } },
 			writeLeafSites,
 			chunksOf(),
@@ -400,14 +391,16 @@ describe('a built arena', () => {
 		expect(copiedAt).not.toBe(at);
 		const [kind, side, ...cells] = placed(arena, copy, 13);
 		expect([kind, ...cells]).toEqual([9, ...placed(arena, node, 13).slice(2)]);
-		expect(Array.from(arena.words(side!, 8).subarray(wordOf(side!, format!), wordOf(side!, format!) + 8))).toEqual([
+		const under = sideUnderRows(arena, side!);
+		expect(under).not.toBe(side);
+		expect(Array.from(arena.words(under, 8).subarray(wordOf(under, format!), wordOf(under, format!) + 8))).toEqual([
 			format!.sideSides.bit | format!.sideDelimiter | format!.sideSeparatorKind,
 			holder.at, 3 * 2 ** wordBits + 21, 0, 40, 52,
 			3, 6
 		]);
 		expect(holder.counts[0]).toBe(2);
 		expect(leafSitesOf(leaf)).toEqual([at, 11, 0]);
-		expect(leafSided).toEqual([[at, 11, 0]]);
+		expect([arena.leafSide(at, 11, 0, 'leading'), arena.leafSide(copiedAt, 11, 0, 'leading')]).toEqual([[3], [3]]);
 	});
 
 	it('answers the handle of a record by its address', () => {
@@ -426,7 +419,7 @@ describe('a built arena', () => {
 	});
 
 	it('keeps the cell a copy of a built node sets to the text the node reads, when nothing read the node before the copy', () => {
-		const arena = arenaOf(NO_SIDES, { ...NO_VIEWS, words: { 9: 3 } });
+		const arena = arenaOf({ ...NO_VIEWS, words: { 9: 3 } });
 		const record = arena.draft(9, 3);
 		storeCell(arena, record, 2, 2, 'x');
 		const source = arena.view(record) as RecordHandle;
@@ -438,7 +431,7 @@ describe('a built arena', () => {
 	});
 
 	it('compares a copy of a parsed node against the read cache the node fills, when nothing read the node before the copy', () => {
-		const arena = arenaOf(NO_SIDES, { ...NO_VIEWS, words: { 9: 3 } });
+		const arena = arenaOf({ ...NO_VIEWS, words: { 9: 3 } });
 		const source = { $type: 9, $tree: {} as TreeHandle, $at: 4, $_layout: undefined, $words: undefined, $cache: undefined } as RecordHandle;
 		const copy = arena.copy(source, 9);
 		expect(source.$cache).toBeDefined();

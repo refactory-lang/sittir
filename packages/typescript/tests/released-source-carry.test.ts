@@ -1,6 +1,6 @@
-import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { BuiltArena } from '@sittir/common/engine';
 import { sidesOf, unitSidesOf } from '../../common/src/node-data.ts';
 import typescript from '../src/index.ts';
 
@@ -37,11 +37,9 @@ function edited(engine: { parse(source: string): unknown }, source = SOURCE, pic
 
 const unitShape = (node: object) => (unitSidesOf(node) ?? []).map((unit) => ({ slot: unit.slot, item: unit.item, leading: unit.leading?.length ?? 0, trailing: unit.trailing?.length ?? 0 }));
 
-const addon = createRequire(import.meta.url)('../native/index.cjs') as Record<string, (...args: unknown[]) => unknown>;
-
-const writeSide = addon.writeBuiltTriviaSide!;
+const writeSide = BuiltArena.prototype.writeSide;
 let sideWrites = 0;
-addon.writeBuiltTriviaSide = function (this: unknown, ...args: unknown[]) {
+BuiltArena.prototype.writeSide = function (this: BuiltArena, ...args: Parameters<BuiltArena['writeSide']>) {
 	sideWrites++;
 	return writeSide.apply(this, args);
 };

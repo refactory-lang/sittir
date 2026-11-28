@@ -20,12 +20,11 @@ function addon() {
 function arenaEngine() {
 	const native = nativeEngineOf(addon());
 	const format = cellFormatOf(addon());
-	const { renderBuilt, renderBuiltLeaf, writeBuiltTriviaSide, builtWords, builtBytes } = native;
+	const { renderBuilt, renderBuiltLeaf, builtWords, builtBytes } = native;
 	if (
 		format === undefined ||
 		renderBuilt === undefined ||
 		renderBuiltLeaf === undefined ||
-		writeBuiltTriviaSide === undefined ||
 		builtWords === undefined ||
 		builtBytes === undefined
 	)
@@ -51,8 +50,7 @@ function arenaEngine() {
 		builtWords,
 		renderBuilt: (address: number) => renderBuilt(native.handle, address, false, false),
 		renderBuiltLeaf: (kind: number, entry: number) => renderBuiltLeaf(native.handle, kind, entry, null, false, false),
-		dispose: () => native.dispose(),
-		writeBuiltTriviaSide
+		dispose: () => native.dispose()
 	};
 }
 
@@ -126,16 +124,6 @@ describe('a built arena rendered natively', () => {
 		owner.dispose();
 		expect(() => renderer.render(noted).toString()).toThrow(/the arena that built a side's record was released/);
 		expect(renderer.render(renderer.build.expressionStatement(renderer.build.identifier('y'))).toString()).toBe('y;');
-	});
-
-	it('writes a side of a built record by its address, refusing address 0, an address no record was written at, and any other side', () => {
-		const native = arenaEngine();
-		const { chunk } = native.words([TSKindId.ExpressionStatement, 0, TSKindId.ExpressionStatement, 0]);
-		const [one, past] = [native.at(chunk, 0), native.at(chunk, 9)];
-		native.writeBuiltTriviaSide(one, 'leading', []);
-		expect(() => native.writeBuiltTriviaSide(0, 'leading', [])).toThrow(/record address 0/);
-		expect(() => native.writeBuiltTriviaSide(past, 'leading', [])).toThrow(/past what the arena wrote/);
-		expect(() => native.writeBuiltTriviaSide(one, 'beside' as never, [])).toThrow();
 	});
 
 	it('writes a side of a built leaf at each site it names, refusing holder 0 and anything but triples before writing any', async () => {

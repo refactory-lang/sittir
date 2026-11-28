@@ -4,6 +4,7 @@ import { createEngine } from '@sittir/common';
 import { isErrorNode } from '@sittir/common/utils';
 import { builtRefOf, leafSitesOf } from '../../common/src/built-ref.ts';
 import { unitSidesOf } from '../../common/src/node-data.ts';
+import { writeUnitSides } from '../../common/src/utils.ts';
 import rust from '../src/index.ts';
 
 const addon = createRequire(import.meta.url)('../native/index.cjs') as Record<string, unknown>;
@@ -69,6 +70,59 @@ describe("a built record's side is read from its record in the arena, with no na
 		const block = rs.build.block().$trivia.trailing(error);
 		expect(block.$trivia.trailing().map((entry: { $text(): string }) => entry.$text())).toEqual(['§']);
 		expect(String(block.$render())).toBe('{} §');
+	});
+});
+
+describe("a built record's sides are written into its record in the arena, with no native call", () => {
+	it("writes a record's own side, a leaf's site and a copy's sites", async () => {
+		using rs: any = await createEngine(rust, { nodeStorage: 'arena' });
+		const comment = rs.build.lineComment(' c');
+		const leaf = rs.build.identifier('a');
+		const assignment = rs.build.assignmentExpression({ left: leaf, right: rs.build.identifier('b') });
+		const statement = rs.build.expressionStatement(assignment);
+		const before = calls;
+		statement.$trivia.leading(rs.build.layout.newline, comment);
+		leaf.$trivia.leading('/* l */');
+		const copy = assignment.$with.right(rs.build.identifier('c'));
+		expect(calls - before).toBe(0);
+		expect(shape(statement.$trivia.leading())).toEqual([rs.kinds.Newline, '// c\n']);
+		expect(String(copy.$render())).toBe('/* l */ a = c');
+	});
+
+	it("copies its source's leaf sites but not one at the word it replaces, holds each copied row once more, and writes a row the two share anew for the one written", async () => {
+		using rs: any = await createEngine(rust, { nodeStorage: 'arena' });
+		const [left, right] = [rs.build.identifier('a'), rs.build.identifier('b')];
+		const assignment = rs.build.assignmentExpression({ left, right });
+		left.$trivia.leading('/* l */');
+		right.$trivia.leading('/* r */');
+		const copy = assignment.$with.right(rs.build.identifier('c'));
+		const { arena } = builtRefOf(copy)!;
+		const [, word, item] = leafSitesOf(left)!;
+		const [, rightWord] = leafSitesOf(right)!;
+		const [from, to] = [builtRefOf(assignment)!.at!, builtRefOf(copy)!.at!];
+		expect(shape(arena.leafSide(to, word!, item!, 'leading')!)).toEqual(['/* l */']);
+		expect(arena.leafSide(to, rightWord!, 0, 'leading')).toBeUndefined();
+		arena.writeLeafSide([to, word!, item!], 'leading', [{ $type: rs.kinds.BlockComment, $record: builtRefOf(rs.build.blockComment(rs.build.blockCommentRegular(' n ')))!.at! }]);
+		expect(shape(arena.leafSide(from, word!, item!, 'leading')!)).toEqual(['/* l */']);
+		expect(shape(arena.leafSide(to, word!, item!, 'leading')!)).toEqual(['/* n */']);
+		assignment[Symbol.dispose]();
+		expect(String(copy.$render())).toBe('/* n */ a = c');
+	});
+
+	it("replaces every unit side of its record and no other record's, keeps its own sides, and refuses a unit's inner side before writing any", async () => {
+		using rs: any = await createEngine(rust, { nodeStorage: 'arena' });
+		const root = rs.parse('fn a() {}\n/* c */ ;\nfn b() {}\n');
+		const [one, other] = [root.$with.statements(...root.statements()), root.$with.statements(...root.statements())];
+		one.$trivia.leading('// own');
+		const units = (node: object) => unitSidesOf(node)!.map((unit) => ({ ...unit, leading: unit.leading === undefined ? undefined : shape(unit.leading), trailing: unit.trailing === undefined ? undefined : shape(unit.trailing) }));
+		expect(() => writeUnitSides(one, [{ slot: '_statements', item: 1, leading: [rs.build.lineComment(' a')], inner: [rs.build.lineComment(' in')] }])).toThrow(/inner side on a node with no record/);
+		expect(units(one)).toEqual([{ slot: '_statements', item: 1, leading: ['/* c */'] }]);
+		writeUnitSides(one, [{ slot: '_statements', item: 1, trailing: [rs.build.lineComment(' t')] }]);
+		expect(units(one)).toEqual([{ slot: '_statements', item: 1, trailing: ['// t\n'] }]);
+		expect(units(other)).toEqual([{ slot: '_statements', item: 1, leading: ['/* c */'] }]);
+		expect(shape(one.$trivia.leading())).toEqual(['// own\n']);
+		writeUnitSides(one, []);
+		expect(units(one)).toEqual([]);
 	});
 });
 

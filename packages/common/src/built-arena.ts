@@ -1,14 +1,14 @@
 import type { ByteSpan, CommitScope, EngineIdentity, NodeCoordinate, NodeTrivia, ParseOptions, UnitSidesWire, WireNode } from '@sittir/types';
 import { bindTree, engineOf, isLive, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered } from './identity.ts';
-import { asReadOutput, coordinateOf, holdReadCoordinate, holdReadTree, isRead, type KindView, keyName, type ReadOutput, triviaOf, unpackedSite } from './node-data.ts';
+import { asReadOutput, coordinateIndex, coordinateOf, holdReadCoordinate, holdReadTree, isRead, type KindView, keyName, type ReadOutput, triviaOf, unpackedSite } from './node-data.ts';
 import { decodeTree, isCoordinate } from './read.ts';
 import { carryTree, mintTreeToken, registerTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, TreeHandle, TriviaSideName } from './read.ts';
 import type { TreeQuery } from './query.ts';
 import { BLANK_KIND_ID } from './blank-arm.ts';
 import { checkedKindId } from './kind-id.ts';
-import { addressOf, chunkOf, decodeListCell, decodeParsedCell, decodeSideRows, decodeSideSource, headerGapKinds, headerKind, headerOf, kindField, leafItemPastNames, sideUnderRows, siteKey, siteOfKey, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
+import { addressOf, chunkOf, decodeListCell, decodeParsedCell, decodeSideRows, decodeSideSource, headerGapKinds, headerKind, headerOf, kindField, leafItemPastNames, sideUnderRows, siteKey, siteOfKey, withKind, wordOf, type CellFormat, type CellSite, type SideRows, type RecordCell } from './record-cell.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, leafSitesOf, liveRecordAt, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { cacheOf, freedRecord, recordDelimiter, recordFlag, recordSeparator, recordSlot, recordSlots, readLeaf, readPosition } from './record-view.ts';
@@ -74,12 +74,6 @@ export interface BuiltRecords {
 	parse(source: string, options?: ParseOptions): ParsedRecords;
 	readonly query: TreeQuery;
 	readonly reads: ReadNodes;
-	readonly trivia: {
-		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly WireNode[]): void;
-		writeUnitSides(at: number, units: readonly UnitSidesWire[]): void;
-		writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void;
-		copySites(from: number, to: number, skip: readonly number[]): void;
-	};
 }
 
 interface CountAt {
@@ -328,7 +322,7 @@ export class BuiltArena {
 	readonly #entries: (Map<string, BuiltText> | undefined)[] = [];
 	readonly #entryAt: (Map<number, BuiltText> | undefined)[] = [];
 	readonly #sourceTexts: (Map<number, string | null> | undefined)[] = [];
-	readonly #trivia: BuiltRecords['trivia'];
+	readonly #writeReadSide: ReadNodes['writeTriviaSide'];
 	readonly #writeLeafSites: WriteLeafSites;
 	readonly #parkedBy = new WeakMap<object, object>();
 	readonly #exemplars: object[] = [];
@@ -349,7 +343,7 @@ export class BuiltArena {
 	#pruneAt = DEFERRED_PRUNE;
 	#scopes = 0;
 
-	constructor({ format, owner, kinds, words, bytes, bump, release, cross, read, parse, query, reads, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
+	constructor({ format, owner, kinds, words, bytes, bump, release, cross, read, parse, query, reads }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
 		this.format = format;
 		this.owner = owner;
 		this.kinds = kinds;
@@ -364,7 +358,7 @@ export class BuiltArena {
 		this.#wrap = wrap;
 		this.#handle = handle;
 		this.#views = views;
-		this.#trivia = trivia;
+		this.#writeReadSide = reads.writeTriviaSide;
 		this.#writeLeafSites = writeLeafSites;
 		this.token = mintTreeToken(0);
 		this.tree = {
@@ -381,8 +375,8 @@ export class BuiltArena {
 				return entries === undefined ? undefined : readEntries(this.tree, entries);
 			},
 			writeTriviaSide: (at, side, entries) => {
-				if (at < 0) return reads.writeTriviaSide(at, side, entries);
-				trivia.writeTriviaSide(at, side, entries);
+				if (at < 0 || this.reads(at)) return reads.writeTriviaSide(at, side, entries);
+				this.writeSide(at, side, entries);
 			},
 			unitSides: (at) => {
 				if (at < 0) return readUnits(this.tree, this.readUnitSides(at));
@@ -391,7 +385,7 @@ export class BuiltArena {
 			},
 			writeUnitSides: (at, units) => {
 				this.#undefer(at);
-				trivia.writeUnitSides(at, units);
+				this.writeUnitSides(at, units);
 			}
 		};
 		registerTree(this.token, this.tree);
@@ -1096,6 +1090,213 @@ export class BuiltArena {
 		return entries;
 	}
 
+	/** Replaces `side` of the built record at `at` with `entries`: the gap kinds at the side's head, as many as its header keeps codes for, as those codes, and the rest as its row, none when the codes hold the whole side. */
+	writeSide(at: number, side: TriviaSideName, entries: readonly WireNode[]): void {
+		this.#setRow(at, side, this.#headerSplit(at, side, this.#keptEntries(entries)));
+	}
+
+	/** Replaces `side` of the built leaf at each site `sites` names, `[holder, word, item]` after another, with `entries`, each site's row holding them anew. */
+	writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void {
+		if (sites.length % 3 !== 0) throw new Error(`a leaf's sites are holder, word and item triples, not ${sites.length} numbers`);
+		for (let n = 0; n < sites.length; n += 3) if (sites[n] === 0) throw new Error(RECORD_ZERO);
+		for (let n = 0; n < sites.length; n += 3) this.#writeSiteSide(sites[n]!, sites[n + 1]!, sites[n + 2]!, side, entries);
+	}
+
+	/** Gives the units the built record at `at` holds the sides `units` gives, in place of every unit side it had. For a record a read left, each side `units` gives is written as a read node's side is, and every other side of its units stays. */
+	writeUnitSides(at: number, units: readonly UnitSidesWire[]): void {
+		const kind = this.kindAt(at);
+		const placed = units.map((unit) => ({ unit, word: this.#slotWord(kind, unit.slot) }));
+		if (this.reads(at)) {
+			for (const { unit, word } of placed) {
+				const key = coordinateIndex({ $node: at, $site: [word, unit.item] } as unknown as NodeCoordinate, this.format.nodeId);
+				for (const side of TRIVIA_SIDE_NAMES) {
+					const entries = unit[side];
+					if (entries !== undefined) this.#writeReadSide(key, side, entries);
+				}
+			}
+			return;
+		}
+		for (const { unit } of placed) if (unit.inner !== undefined && unit.inner.length > 0) throw new Error(NO_INSIDE);
+		const written = placed.flatMap(({ unit, word }) =>
+			(['leading', 'trailing'] as const).flatMap((side) => {
+				const entries = unit[side];
+				return entries === undefined ? [] : [{ key: siteKey(word, unit.item, side, this.format)!, cells: this.#keptEntries(entries).map((entry) => entry.cell) }];
+			})
+		);
+		const side = this.#sideWordOf(at);
+		const old = decodeSideRows(this, side);
+		const rows = editableRows(old);
+		const unitRows = old === undefined ? [] : old.sites.filter(([key]) => this.#siteHoldsUnit(at, kind, key));
+		rows.sites = rows.sites.filter(([key]) => !unitRows.some(([unit]) => unit === key));
+		const exclusive = old !== undefined && this.#countOf(side) === 1;
+		for (const { key, cells } of written) {
+			const was = exclusive ? unitRows.find(([unit]) => unit === key)?.[1] : undefined;
+			setRowAt(rows, key, this.#placeRowOver(was, cells));
+		}
+		this.#writeOver(at, side, old, rows);
+	}
+
+	#writeSiteSide(holder: number, word: number, item: number, side: TriviaSideName, entries: readonly WireNode[]): void {
+		if (side === 'inner') {
+			if (entries.length > 0) throw new Error(NO_INSIDE);
+			return;
+		}
+		if (this.reads(holder)) throw new Error(READ_SIDE);
+		this.#setRow(holder, siteKey(word, item, side, this.format)!, this.#keptEntries(entries).map((entry) => entry.cell));
+	}
+
+	/** `entries` as the side holds them: a layout member as its unit, a record, built or a read's, as itself, the count its handle holds moved to the side or one more taken, a node a read left named by its record as that record, and a kind with text as a leaf entry, which holds its string chunk once more. Refuses any other entry, and a node named by no record a read left, before any is written. */
+	#keptEntries(entries: readonly WireNode[]): KeptEntry[] {
+		const forms = entries.map((entry) => keptForm(entry, this));
+		const kept = forms.map((form): KeptEntry => {
+			if (form.form === 'layout') return { cell: unitCell(form.kind, this.format), layout: form.kind };
+			if (form.form === 'record') return { cell: builtCell(form.at) };
+			const entry = this.entry(form.kind === BLANK_KIND_ID ? 0 : form.kind, form.text);
+			this.holdText(entry.at);
+			return { cell: builtCell(entry.at) };
+		});
+		for (const form of forms) if (form.form === 'record' && form.adopt) this.adopt(form.at);
+		return kept;
+	}
+
+	/** `kept`, written to `side` of the record at `at`: the gap members at its head, as many as the header keeps codes for the side, set as those codes, and the rest the side's row, none when the codes hold the whole side. An inner side keeps no codes. */
+	#headerSplit(at: number, side: TriviaSideName, kept: readonly KeptEntry[]): number[] | undefined {
+		const cells = kept.map((entry) => entry.cell);
+		if (side === 'inner') return cells;
+		const { codeBits, leadingCodes, trailingCodes, gapKinds, none } = this.format.layout;
+		const [first, count] = side === 'leading' ? [0, leadingCodes] : [leadingCodes, trailingCodes];
+		const codes: number[] = [];
+		for (const { layout } of kept) {
+			if (codes.length === count || layout === undefined || layout === none) break;
+			const code = gapKinds.indexOf(layout);
+			if (code <= 0) break;
+			codes.push(code);
+		}
+		const words = this.#chunk(at, 1);
+		const start = wordOf(at, this.format);
+		const shift = this.format.kindBits + this.format.flagBits;
+		const field = (1 << codeBits) - 1;
+		let header = words[start]!;
+		for (let n = 0; n < count; n++) {
+			const bit = shift + (first + n) * codeBits;
+			header = ((header & ~(field << bit)) | ((codes[n] ?? 0) << bit)) >>> 0;
+		}
+		words[start] = header;
+		const row = cells.slice(codes.length);
+		return codes.length === 0 || row.length > 0 ? row : undefined;
+	}
+
+	/** The record at `holder` holds `cells` as the row of `slot`, its own side's or the site's whose key it is, or none, its old row written over where one count holds it (`#placeRowOver`) and its side record of rows written over (`#writeOver`). */
+	#setRow(holder: number, slot: TriviaSideName | number, cells: readonly number[] | undefined): void {
+		const side = this.#sideWordOf(holder);
+		const old = decodeSideRows(this, side);
+		const was = old !== undefined && this.#countOf(side) === 1 ? rowAt(old, slot) : undefined;
+		const rows = editableRows(old);
+		setRowAt(rows, slot, cells === undefined ? undefined : this.#placeRowOver(was, cells));
+		this.#writeOver(holder, side, old, rows);
+	}
+
+	/** The row of `cells` as a run, written over the run the list cell `old` names when one count holds it and it holds at least as many items, the counts its items held given back; else placed anew, held once. The empty row is 0. */
+	#placeRowOver(old: number | undefined, cells: readonly number[]): number {
+		if (old !== undefined && old !== 0 && cells.length > 0) {
+			const at = old >>> 2;
+			const start = wordOf(at, this.format);
+			const len = this.words(at, 1)[start]!;
+			if (this.#countOf(at) === 1 && len >= cells.length) {
+				const run = this.#chunk(at, len + 1);
+				for (let n = 1; n <= len; n++) this.dropCell(run[start + n]!, false);
+				run[start] = cells.length;
+				run.set(cells, start + 1);
+				return old;
+			}
+		}
+		if (cells.length === 0) return 0;
+		const run = this.run(cells.length);
+		run.data.set(cells, run.base + 1);
+		return builtCell(run.at);
+	}
+
+	/** The record at `at`, whose side word names `side` with the rows `old`, holds `rows`, each row new to it placed and held once. A side record of rows names the one it was written over. One held only by `at`, of the same fields, is written in place and the rows it no longer names dropped; any other is written anew, holding once more each row it keeps and the one under it, and `at`'s count of the old given back. */
+	#writeOver(at: number, side: number, old: SideRows | undefined, rows: EditableRows): void {
+		rows.next = old === undefined ? side : old.next;
+		if (old === undefined) {
+			if (holdsRows(rows)) this.#setSideWord(at, this.push(this.#rowWords(rows), 1));
+			return;
+		}
+		if (!holdsRows(rows)) {
+			if (rows.next !== 0) this.hold(rows.next);
+			this.#setSideWord(at, rows.next);
+			this.drop(side, this.format.held.side);
+			return;
+		}
+		const words = this.#rowWords(rows);
+		const was = rowCells(old);
+		const now = rowCells(rows);
+		const sameFields = words.length === this.#rowWords(old).length && old.sites.length === rows.sites.length && old.sites.every(([key], n) => rows.sites[n]![0] === key) && (['leading', 'trailing', 'inner'] as const).every((name) => (old[name] === undefined) === (rows[name] === undefined));
+		if (sameFields && this.#countOf(side) === 1) {
+			this.#chunk(side, words.length).set(words, wordOf(side, this.format));
+			for (let n = 0; n < was.length; n++) if (was[n] !== now[n] && was[n] !== 0) this.drop(was[n]! >>> 2, this.format.held.run);
+			return;
+		}
+		for (const cell of now) if (cell !== 0 && was.includes(cell)) this.hold(cell >>> 2);
+		if (rows.next !== 0) this.hold(rows.next);
+		this.#setSideWord(at, this.push(words, 1));
+		this.drop(side, this.format.held.side);
+	}
+
+	/** The words of a side record of rows: its mask, then `next`, its own sides' rows and its sites, a count then each key and row, where present. */
+	#rowWords(rows: SideRows): number[] {
+		const fields = this.format.sideRows;
+		const words = [0];
+		let mask = 0;
+		if (rows.next !== 0) {
+			mask |= fields.next;
+			words.push(rows.next);
+		}
+		for (const [bit, row] of [
+			[fields.leading, rows.leading],
+			[fields.trailing, rows.trailing],
+			[fields.inner, rows.inner]
+		] as const) {
+			if (row === undefined) continue;
+			mask |= bit;
+			words.push(row);
+		}
+		if (rows.sites.length > 0) {
+			mask |= fields.sites;
+			words.push(rows.sites.length);
+			for (const [key, cell] of rows.sites) words.push(key, cell);
+		}
+		words[0] = mask;
+		return words;
+	}
+
+	#sideWordOf(at: number): number {
+		return this.words(at, 2)[wordOf(at, this.format) + 1]!;
+	}
+
+	#setSideWord(at: number, side: number): void {
+		this.#chunk(at, 2)[wordOf(at, this.format) + 1] = side;
+	}
+
+	#countOf(at: number): number {
+		const { counts, index } = this.#countAt(at);
+		return counts[index]! & this.format.countSaturated;
+	}
+
+	/** The stamped word of the cell a record of `kind` holds `slot` in. */
+	#slotWord(kind: number, slot: string): number {
+		const place = this.#placesOf(kind).find((row): row is Extract<BuiltPlaceRow, { readonly length: 6 }> => row.length === 6 && row[5] === slot);
+		if (place === undefined) throw new Error(`a record writer does not write slot ${slot}, which a record of kind ${kind} has no cell for`);
+		return place[0];
+	}
+
+	/** Whether the site key `key` of the built record at `at`, of `kind`, names a unit's cell. */
+	#siteHoldsUnit(at: number, kind: number, key: number): boolean {
+		const { word, item } = siteOfKey(key, this.format);
+		return this.#holdsUnit(at, this.#cellPlace(kind, word), item);
+	}
+
 	/** `side` of the node a read left that `key` names (`keyName`), as its wires: the row its read's list of replaced ranges holds for the side, else the gap kinds its record's header keeps for a side of its own and the row its record's rows hold, each record its read left for a node that renders as its source named by that node (`#parsePlaced`). */
 	readSide(key: number, side: TriviaSideName): WireNode[] {
 		const { node, site } = keyName(key, this.format.nodeId);
@@ -1116,16 +1317,10 @@ export class BuiltArena {
 	readUnitSides(key: number): UnitSidesWire[] {
 		const { node, site } = keyName(key, this.format.nodeId);
 		if (site !== 0) return [];
-		const sites = new Map(this.#sitesOf(node));
-		for (const entry of this.#replacedOf(this.sourceOf(node))) {
-			if (entry.node !== node || entry.site === 0) continue;
-			const [word, item] = unpackedSite(entry.site, this.format.nodeId);
-			sites.set(siteKey(word, item, entry.side === this.format.sideCodes.trailing ? 'trailing' : 'leading', this.format)!, entry.row);
-		}
 		const kind = this.kindAt(node);
 		const units: { slot: string; item: number; leading?: WireNode[]; trailing?: WireNode[] }[] = [];
 		let last: { readonly word: number; readonly item: number } | undefined;
-		for (const [key, cell] of [...sites].sort(([a], [b]) => a - b)) {
+		for (const [key, cell] of this.#siteRows(node)) {
 			const { word, item, side } = siteOfKey(key, this.format);
 			const place = this.#cellPlace(kind, word);
 			if (!this.#readHoldsUnit(node, place, item)) continue;
@@ -1294,11 +1489,6 @@ export class BuiltArena {
 		return leafSitesOf(leaf, this.#siteAlive);
 	}
 
-	/** Replaces `side` of the built leaf at each site `sites` names, `[holder, word, item]` after another, with `entries`. */
-	writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void {
-		this.#trivia.writeLeafSide(sites, side, entries);
-	}
-
 	/** The entries a write gave `side` of the built leaf at the site `holder`, `word`, `item`, from its holder's sites; `undefined` for none. */
 	leafSide(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | undefined {
 		const key = siteKey(word, item, side, this.format);
@@ -1306,10 +1496,31 @@ export class BuiltArena {
 		return cell === undefined ? undefined : readEntries(this.tree, this.#rowEntries(cell));
 	}
 
+	/** Writes the rows of every unit and leaf site of the record at `from`, a read's with its read's list of replaced ranges in their place, at the same site of the record at `to`, except a site at a word `skip` names; each copied row is held once more. */
 	#copySites(from: number, to: number, skip: readonly number[]): void {
 		this.settle(from);
-		if (this.#sitesOf(from).length === 0) return;
-		this.#trivia.copySites(from, to, skip);
+		const own = this.#sitesOf(from);
+		if (own.length === 0) return;
+		const copied = this.#siteRows(from, own).filter(([key]) => !skip.includes(siteOfKey(key, this.format).word));
+		if (copied.length === 0) return;
+		for (const [, cell] of copied) if (cell !== 0) this.hold(cell >>> 2);
+		const side = this.#sideWordOf(to);
+		const old = decodeSideRows(this, side);
+		const rows = editableRows(old);
+		for (const [key, cell] of copied) setRowAt(rows, key, cell);
+		this.#writeOver(to, side, old, rows);
+	}
+
+	/** The rows of the sites of the record at `at`, by key in key order: for a record a read left, its read's list of replaced ranges holds a site's row in place of its own. */
+	#siteRows(at: number, own: readonly (readonly [key: number, cell: number])[] = this.#sitesOf(at)): (readonly [key: number, cell: number])[] {
+		if (!this.reads(at)) return [...own];
+		const sites = new Map(own);
+		for (const entry of this.#replacedOf(this.sourceOf(at))) {
+			if (entry.node !== at || entry.site === 0) continue;
+			const [word, item] = unpackedSite(entry.site, this.format.nodeId);
+			sites.set(siteKey(word, item, entry.side === this.format.sideCodes.trailing ? 'trailing' : 'leading', this.format)!, entry.row);
+		}
+		return [...sites].sort(([a], [b]) => a - b);
 	}
 
 	/** The sites the record at `at` holds rows for, by key in key order: none when its side record holds no rows. */
@@ -1601,6 +1812,72 @@ export function builtEntryNode(entry: BuiltEntry, table: object): object {
 function recordRefOf(entry: unknown): BuiltRecordRef | undefined {
 	const built = typeof entry === 'object' && entry !== null ? builtRefOf(entry) : undefined;
 	return built?.at === undefined ? undefined : built;
+}
+
+interface KeptEntry {
+	readonly cell: number;
+	readonly layout?: number;
+}
+
+type KeptForm = { readonly form: 'layout'; readonly kind: number } | { readonly form: 'record'; readonly at: number; readonly adopt: boolean } | { readonly form: 'text'; readonly kind: number; readonly text: string };
+
+const NO_INSIDE = 'a record writer does not write an inner side on a node with no record, which has no inside';
+const READ_SIDE = "a record writer does not write a side of a read's node, which its read's list of replaced ranges holds";
+const RECORD_ZERO = 'record address 0 is not one a record writer writes';
+const TRIVIA_SIDE_NAMES = ['leading', 'trailing', 'inner'] as const;
+
+/** How a side holds the wire `entry` (`BuiltArena.#keptEntries`). */
+function keptForm(entry: WireNode, arena: BuiltArena): KeptForm {
+	if (typeof entry === 'number') return { form: 'layout', kind: entry };
+	const value = entry as { readonly $type?: unknown; readonly $record?: unknown; readonly $node?: unknown; readonly $site?: unknown; readonly $text?: unknown };
+	if (typeof value.$record === 'number') return { form: 'record', at: value.$record, adopt: true };
+	if (typeof value.$node === 'number') {
+		if (value.$site !== undefined || typeof value.$type !== 'number' || !arena.reads(value.$node)) throw new Error('a record writer does not write a coordinate in a side naming no record a read left');
+		return { form: 'record', at: value.$node, adopt: false };
+	}
+	if (typeof value.$type === 'number' && typeof value.$text === 'string') return { form: 'text', kind: value.$type, text: value.$text };
+	throw new Error('a record writer does not write a trivia value written as no record, layout member or leaf entry');
+}
+
+interface EditableRows {
+	next: number;
+	leading: number | undefined;
+	trailing: number | undefined;
+	inner: number | undefined;
+	sites: (readonly [key: number, cell: number])[];
+}
+
+function editableRows(rows: SideRows | undefined): EditableRows {
+	return rows === undefined ? { next: 0, leading: undefined, trailing: undefined, inner: undefined, sites: [] } : { ...rows, sites: [...rows.sites] };
+}
+
+function holdsRows(rows: SideRows): boolean {
+	return rows.leading !== undefined || rows.trailing !== undefined || rows.inner !== undefined || rows.sites.length > 0;
+}
+
+/** Each row's list cell, its own sides' then its sites', empty rows among them. */
+function rowCells(rows: SideRows): number[] {
+	return [rows.leading, rows.trailing, rows.inner].filter((cell): cell is number => cell !== undefined).concat(rows.sites.map(([, cell]) => cell));
+}
+
+function rowAt(rows: SideRows, slot: TriviaSideName | number): number | undefined {
+	return typeof slot === 'number' ? rows.sites.find(([key]) => key === slot)?.[1] : rows[slot];
+}
+
+/** `rows` holds `cell` as the row of `slot`, or none; sites stay in key order. */
+function setRowAt(rows: EditableRows, slot: TriviaSideName | number, cell: number | undefined): void {
+	if (typeof slot !== 'number') {
+		rows[slot] = cell;
+		return;
+	}
+	const at = rows.sites.findIndex(([key]) => key >= slot);
+	const found = at !== -1 && rows.sites[at]![0] === slot;
+	if (cell === undefined) {
+		if (found) rows.sites.splice(at, 1);
+		return;
+	}
+	if (found) rows.sites[at] = [slot, cell];
+	else rows.sites.splice(at === -1 ? rows.sites.length : at, 0, [slot, cell]);
 }
 
 export function sideEntryOf(entry: object, arena: BuiltArena | undefined, holder: EngineIdentity | undefined): BuiltEntry | NodeCoordinate | undefined {

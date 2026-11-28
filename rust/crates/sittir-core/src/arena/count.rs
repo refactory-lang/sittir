@@ -752,39 +752,6 @@ impl BuiltChunks {
         Ok(())
     }
 
-    /// Whether the record at `from` reaches the record at `target` through
-    /// its cells, `from` itself included. A read's record is not walked: its
-    /// cells name only records of its own tree.
-    ///
-    /// # Errors
-    ///
-    /// What reading the records refuses.
-    pub fn reaches(&self, from: Address, target: Address) -> Result<bool, ArenaError> {
-        let mut stack = vec![from];
-        let mut seen = std::collections::HashSet::new();
-        while let Some(at) = stack.pop() {
-            if at == target {
-                return Ok(true);
-            }
-            if !seen.insert(at) || self.read_chunk(at.chunk()) {
-                continue;
-            }
-            let (kind, flags) = header_of(self.word(at)?, self.kind_bits);
-            if flags != 0 {
-                continue;
-            }
-            let shape = (self.shape)(kind).ok_or(malformed("record kind", u32::from(kind.0)))?;
-            built_cells(self, at, shape, Lists::Items, |_, _, word| {
-                let at = word.address();
-                if at.chunk() != 0 && self.chunk(at.chunk()).is_some() {
-                    stack.push(at);
-                }
-                Ok(())
-            })?;
-        }
-        Ok(false)
-    }
-
     /// Frees chunk `chunk` when it is sealed and holds nothing live.
     pub(super) fn seal_check(&mut self, chunk: u32) {
         if self.open.contains(&Some(chunk)) {
@@ -1093,28 +1060,5 @@ mod tests {
         let link = built.place(&[with_kind(LEAF, BITS).expect("a kind") | flag::LINK << BITS, 0, holder.0, 1, 2, 0, 0, 3], 1);
         built.release(link, false).expect("released");
         assert_eq!(built.arena.count_of(holder), Ok(1), "the read still holds it");
-    }
-
-    #[test]
-    fn a_read_s_record_a_built_record_names_is_not_walked_as_a_built_one() {
-        use crate::arena::{ReadWriter, RecordSpace};
-        let mut built = Builder::new();
-        let target = built.leaf();
-        let mut reads = ReadWriter::new(&mut built.arena);
-        let child = reads.push(&[with_kind(LEAF, BITS).expect("a kind"), 0]).expect("a read's record");
-        let parsed = reads.push(&[with_kind(PAIR, BITS).expect("a kind"), 0, with_kind(LEAF, BITS).expect("a kind"), child.0, 0, 0]).expect("a read's record");
-        let root = built.place(&[with_kind(PAIR, BITS).expect("a kind"), 0, parsed.0 << 2, 0], OWNED | 1);
-        assert_eq!(built.arena.reaches(root, target), Ok(false), "a read's record names only records of its own tree");
-        assert_eq!(built.arena.reaches(root, parsed), Ok(true));
-    }
-
-    #[test]
-    fn a_record_reaches_what_its_cells_and_lists_name() {
-        let mut built = Builder::new();
-        let (child, item) = (built.leaf(), built.leaf());
-        let list = built.run(&[item]);
-        let root = built.pair(child, list);
-        assert_eq!(built.arena.reaches(root, item), Ok(true));
-        assert_eq!(built.arena.reaches(child, root), Ok(false));
     }
 }

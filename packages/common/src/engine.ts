@@ -257,10 +257,6 @@ export interface NativeEngineLike<TNode = unknown> {
 		create: boolean,
 		options?: object
 	): boolean;
-	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly WireNode[]): void;
-	writeBuiltUnitSides?(address: number, units: readonly UnitSidesWire[]): void;
-	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void;
-	copyBuiltSites?(from: number, to: number, skip: readonly number[]): void;
 	/**
 	 * How much of its layout tree `treeId` stores apart from the options in effect when it was read:
 	 * the list slots that store a layout, and the items that store their own separator. A diagnostic.
@@ -366,11 +362,7 @@ const ENGINE_FUNCTIONS = [
 	'readSlotLayouts',
 	'readSlotSeparator',
 	'readIsEmpty',
-	'builtMemory',
-	'writeBuiltTriviaSide',
-	'writeBuiltUnitSides',
-	'writeBuiltLeafSide',
-	'copyBuiltSites'
+	'builtMemory'
 ] as const satisfies readonly (keyof NativeEngineLike)[];
 
 type TreeFunction = (typeof TREE_FUNCTIONS)[number];
@@ -811,15 +803,11 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { writeBuiltTriviaSide, writeBuiltUnitSides, writeBuiltLeafSide, copyBuiltSites, builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSlotLayouts, readSlotSeparator, readIsEmpty } = engine;
+	const { builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSlotLayouts, readSlotSeparator, readIsEmpty } = engine;
 	if (
 		holdSaturated === undefined ||
 		releaseBuilt === undefined ||
 		crossReleases === undefined ||
-		writeBuiltTriviaSide === undefined ||
-		writeBuiltUnitSides === undefined ||
-		writeBuiltLeafSide === undefined ||
-		copyBuiltSites === undefined ||
 		builtWords === undefined ||
 		builtBytes === undefined ||
 		parseRecords === undefined ||
@@ -851,12 +839,6 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 			slotLayouts: (node) => readSlotLayouts.call(engine, node),
 			slotSeparator: (node) => readSlotSeparator.call(engine, node) ?? undefined,
 			isEmpty: (node) => readIsEmpty.call(engine, node)
-		},
-		trivia: {
-			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),
-			writeUnitSides: (at, units) => writeBuiltUnitSides.call(engine, at, units),
-			writeLeafSide: (sites, side, entries) => writeBuiltLeafSide.call(engine, sites, side, entries),
-			copySites: (from, to, skip) => copyBuiltSites.call(engine, from, to, skip)
 		}
 	};
 }

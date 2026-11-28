@@ -1,0 +1,56 @@
+{
+	"about": "Side writes to a built record, which the native kept core (TriviaStore::write_kept_in) and the TypeScript built arena (BuiltArena.writeSide) both keep: each case's writes, in order, then what its record holds. codes: the gap kinds its header keeps for a side. rows: a side's row, null for none. rowsRecord: whether its side word names a side record of rows. under: the side record it names under its rows, or that its side word names with no rows: own, the side record of other fields the record held before the writes, or none.",
+	"cases": [
+		{
+			"name": "three gap members go to the header, the rest to the row",
+			"own": false,
+			"writes": [{ "side": "leading", "entries": ["newline", "newline", "newline", "newline", { "text": "// x" }] }],
+			"expect": { "codes": { "leading": ["newline", "newline", "newline"], "trailing": [] }, "rows": { "leading": ["newline", { "text": "// x" }] }, "rowsRecord": true, "under": "none" }
+		},
+		{
+			"name": "a side the header holds whole keeps no row",
+			"own": false,
+			"writes": [{ "side": "trailing", "entries": ["newline"] }],
+			"expect": { "codes": { "leading": [], "trailing": ["newline"] }, "rows": { "trailing": null }, "rowsRecord": false, "under": "none" }
+		},
+		{
+			"name": "a side replaced with nothing is written, its codes cleared",
+			"own": false,
+			"writes": [
+				{ "side": "trailing", "entries": ["newline"] },
+				{ "side": "trailing", "entries": [] }
+			],
+			"expect": { "codes": { "leading": [], "trailing": [] }, "rows": { "trailing": [] }, "rowsRecord": true, "under": "none" }
+		},
+		{
+			"name": "a write replaces the side's codes with its row",
+			"own": false,
+			"writes": [
+				{ "side": "leading", "entries": ["newline", { "text": "// x" }] },
+				{ "side": "leading", "entries": [{ "text": "// y" }] }
+			],
+			"expect": { "codes": { "leading": [], "trailing": [] }, "rows": { "leading": [{ "text": "// y" }] }, "rowsRecord": true, "under": "none" }
+		},
+		{
+			"name": "an inner side keeps no codes",
+			"own": false,
+			"writes": [{ "side": "inner", "entries": ["newline", { "text": "// i" }] }],
+			"expect": { "codes": { "leading": [], "trailing": [] }, "rows": { "inner": ["newline", { "text": "// i" }] }, "rowsRecord": true, "under": "none" }
+		},
+		{
+			"name": "a first written side is a side record of rows over the record's own",
+			"own": true,
+			"writes": [{ "side": "leading", "entries": [{ "text": "// a" }] }],
+			"expect": { "codes": { "leading": [], "trailing": [] }, "rows": { "leading": [{ "text": "// a" }] }, "rowsRecord": true, "under": "own" }
+		},
+		{
+			"name": "a record left with no row names the side record under its rows again",
+			"own": true,
+			"writes": [
+				{ "side": "leading", "entries": [{ "text": "// a" }] },
+				{ "side": "leading", "entries": ["newline"] }
+			],
+			"expect": { "codes": { "leading": ["newline"], "trailing": [] }, "rows": { "leading": null }, "rowsRecord": false, "under": "own" }
+		}
+	]
+}

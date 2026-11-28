@@ -185,14 +185,6 @@ export declare const CELL_TAG_UNIT: number
 export type ChildPosition = number
 
 /**
- * r" Writes the sides of every unit and leaf site of the built
- * r" record at `from` at the same site of the record at `to`,
- * r" except a site at a word `skip` names. Refuses address 0
- * r" as either record.
- */
-export declare function copyBuiltSites(engine: object, from: number, to: number, skip: Array<number>): void
-
-/**
  * r" The flag of a built entry's count byte the handle its
  * r" builder returned holds (`count::OWNED`).
  */
@@ -726,37 +718,6 @@ export declare function triviaSide(treeId: TreeId, index: NodeIndex, side: strin
  * key and its item in that slot. Refuses as `triviaSide` does.
  */
 export declare function unitSides(treeId: TreeId, index: NodeIndex): import('@sittir/types').UnitSidesWire[]
-
-/**
- * r" Replace `side` of the built leaf at each site `sites` names,
- * r" `[holder, word, item]` after another, with `entries`, which
- * r" `renderBuilt` then writes; a built record among them
- * r" renders as `writeTriviaSide` says. Refuses a list whose
- * r" length is not a multiple of three, holder 0 and any other
- * r" side, before writing any site.
- */
-export declare function writeBuiltLeafSide(engine: object, sites: number[], side: string, entries: import('@sittir/types').WireNode[]): void
-
-/**
- * r" Replace `side` of the built record at `address` with
- * r" `entries`, which `renderBuilt` then writes; a built record
- * r" among them renders as `writeTriviaSide` says. Refuses
- * r" address 0, an address past what the arena wrote, and any
- * r" side but `leading`, `trailing` or `inner`.
- */
-export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: import('@sittir/types').WireNode[]): void
-
-/**
- * r" The units the record at `address` in the arena this engine
- * r" built holds have the sides `units` gives (`{ slot, item,
- * r" leading?, trailing?, inner? }`), in place of every unit
- * r" side it had; `renderBuilt` then writes them, and a built
- * r" record among them renders as `writeTriviaSide` says.
- * r" Refuses an arena this engine no longer holds, an address
- * r" naming no record in it, and a slot the record's kind has no
- * r" cell for.
- */
-export declare function writeBuiltUnitSides(engine: object, address: number, units: import('@sittir/types').UnitSidesWire[]): void
 
 /**
  * r" Replaces `side` of the node a read left that the key `node`

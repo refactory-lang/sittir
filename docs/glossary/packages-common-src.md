@@ -1147,7 +1147,7 @@ What the built arena of a language engine that reads trees as records is made wi
 
 ### `packages/common/src/engine.ts::builtRecordsOf`
 
-The `BuiltRecords` of a native engine that reads trees as records: its cell format, and its trivia table of built records, which reads and writes the engine's store of written sides by record address (`builtTriviaSide`, `writeBuiltTriviaSide`). A read of a side no write gave answers `undefined`, as the table contract has it (`TreeHandle.triviaSide`), so the side falls back to the one of the node the record was rebuilt from. An addon without the record codec has no such table, and is refused.
+The `BuiltRecords` of a native engine that reads trees as records: its cell format, its chunks and counts, and the reads of a read's nodes that stay native, among them the write of a read node's side (`writeReadTriviaSide`). A built record's sides are read and written by the arena itself, in its chunks (`BuiltArena.writeSide`). An addon without the record codec has none of these, and is refused.
 
 ### `packages/common/src/engine.ts::saverOf`
 
@@ -1316,6 +1316,28 @@ One entry of a read's list of replaced ranges, as `BuiltArena.readSide` decodes 
 ### `packages/common/src/built-arena.ts::byteWord`
 
 The little-endian `u32` at a byte offset of a string chunk's view: a source entry's length and the address of its read's side record, which native writes as words into a bytes chunk.
+
+### `packages/common/src/built-arena.ts::BuiltArena::writeSide`
+
+Replaces one side of a built record, its own leading, trailing or inner side, with the entries a `$trivia` write gives, written into the arena's chunks with no native call. The tree's `writeTriviaSide` calls it for a built record; a record a read left goes to the read's write instead.
+
+An entry is kept as a cell, the same way a cell slot keeps a value: a layout member as its unit, a record (built or a read's) as itself, and a kind with text as a leaf entry. A record takes the count its handle holds, else one more (`adopt`). A text entry holds its string chunk once more. A node a read left, named by its own record, is kept as that record with no count. Any other entry, or a node named by a site, is refused before anything is written.
+
+The gap members at the head of a leading or trailing side, up to the number of codes the header keeps for it, go into the header's layout codes. The rest is the side's row, and there is no row when the codes hold the whole side. An inner side keeps no codes. The row is written over the old one when one count holds the old run and the new one is no longer; otherwise it is placed anew and the old one released. The record's side record of rows is written in place when only this record holds it and its fields stay the same. Otherwise it is written anew over the side record it names, and the old one is given back.
+
+The native kept core applies the same rules to the records it writes itself and to the sides a parse places. The shared fixture `rust/crates/sittir-core/src/arena/side-writes.json` pins both implementations to the same words.
+
+### `packages/common/src/built-arena.ts::BuiltArena::writeLeafSide`
+
+Replaces a side of a built leaf at every site it sits in. Sites arrive as `[holder, word, item]` triples. Each site gets its own row in its holder's side record of rows, keyed by the site, and the entries are kept as `writeSide` keeps them, once per site. A site keeps no header codes. A leaf has no inside, so an inner side with entries is refused and an empty one is ignored. A list that isn't triples, or a holder of address 0, is refused before any site is written, with the wording the native writer used. A holder a read left is refused: the read's list of replaced ranges holds such a side.
+
+### `packages/common/src/built-arena.ts::BuiltArena::writeUnitSides`
+
+Gives the units a record holds the sides that `units` lists, each found by its slot's storage key (the kind's place row gives the stamped word) and its item. A slot the kind has no cell for is refused.
+
+For a built record, the write replaces every unit side the record had. A unit site it doesn't list loses its row, and the record's own sides and its leaf sites stay. A unit has no inside, so a unit given an inner side with entries is refused before any side is written. Each new row is written over the old row at the same site when one count holds the record's side record, and the side record of rows is written over as `writeSide` writes it.
+
+For a record a read left, each side `units` lists goes to the read's side write under the unit's key (`coordinateIndex`), and every other side of its units stays.
 
 ### `packages/common/src/create-engine.ts::storedVerifierOf`
 

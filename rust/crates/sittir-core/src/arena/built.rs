@@ -9,26 +9,11 @@ use crate::prepare::RenderContext;
 use crate::render::{RenderError, RenderResult, RenderSink};
 use crate::slot::ChangedEdges;
 use crate::trivia::{BuiltEntry, TriviaEntry};
-use crate::trivia_store::{Place, Site, TriviaStore};
+use crate::trivia_store::TriviaStore;
 use crate::trivia_table::TriviaSide;
 use crate::types::{KindId, NodeIndex};
 
 impl<G: RecordGrammar> Engine<G> {
-    /// Replace `side` of the record at `at`, a built one or one a read left,
-    /// with `entries`, which its render then writes (`render_built`).
-    ///
-    /// # Errors
-    ///
-    /// `ArenaError::Malformed` for address 0, which names no record, and
-    /// what reading a read's record refuses.
-    pub fn write_built_trivia_side(&self, at: Address, side: TriviaSide, entries: &[TriviaEntry<G::Trivia>]) -> Result<(), ArenaError> {
-        let at = at.record()?;
-        if self.written().built().read_record(at) {
-            return self.write_read_side(crate::types::NodeId::record(at.0), side, entries);
-        }
-        self.written().write_held_side(Place::record(at), side, entries)
-    }
-
     /// Replace `side` of the node a read left that `name` names with
     /// `entries`, which its render then writes: an entry of its read's list
     /// of replaced ranges, at the offset where the side's bytes start. A
@@ -141,69 +126,9 @@ impl<G: RecordGrammar> Engine<G> {
         let index = tree.index_named(name).ok_or(ArenaError::Malformed { what: "node name", word: record.0 })?;
         Ok(Some(f(&tree, index)))
     }
-
-    /// The sides of every unit and leaf site of the built record at `from`,
-    /// written at the same site of the record at `to`, except a site at a
-    /// word `skip` names.
-    ///
-    /// # Errors
-    ///
-    /// `ArenaError::Malformed` for address 0 as either record, before any
-    /// side is copied.
-    pub fn copy_built_sites(&self, from: Address, to: Address, skip: &[u32]) -> Result<(), ArenaError> {
-        from.record()?;
-        to.record()?;
-        self.written().copy_sites(from, to, skip)
-    }
-
-    /// Replace `side` of the built leaf at each of `sites` with `entries`,
-    /// which a render of its holder then writes.
-    ///
-    /// # Errors
-    ///
-    /// `ArenaError::Malformed` for a site whose holder is address 0, before
-    /// any site is written.
-    pub fn write_built_leaf_side(&self, sites: &[Site<Address>], side: TriviaSide, entries: &[TriviaEntry<G::Trivia>]) -> Result<(), ArenaError> {
-        for site in sites {
-            site.holder.record()?;
-        }
-        sites.iter().try_for_each(|&site| self.written().write_held_side(Place::site(site), side, entries))
-    }
 }
 
 impl<G: RecordGrammar> Engine<G> {
-    /// The units the built record at `at` holds have the sides `units`
-    /// gives, in place of every unit side it had; its render then writes
-    /// them. For a record a read left, whose records stay as its parse left
-    /// them, each side `units` gives is written as `write_read_side` writes
-    /// one, and every other side of its units stays.
-    ///
-    /// # Errors
-    ///
-    /// What `ArenaRead::header_kind`, `TriviaStore::write_units` and
-    /// `write_read_side` refuse, and `ArenaError::UnknownSlot` for a slot
-    /// the record's kind has no cell for.
-    pub fn write_built_unit_sides(&self, at: Address, units: Vec<crate::layout::UnitSides<G::Trivia>>) -> Result<(), ArenaError> {
-        let kind = self.written().built().readable()?.header_kind(at, G::KIND_BITS)?;
-        let units = units
-            .into_iter()
-            .map(|unit| {
-                let word = G::slot_word(kind, &unit.slot).ok_or_else(|| ArenaError::UnknownSlot(unit.slot.clone().into_boxed_str()))?;
-                Ok((word, unit.item, unit.trivia))
-            })
-            .collect::<Result<Vec<_>, ArenaError>>()?;
-        if self.written().built().read_record(at) {
-            return units.into_iter().try_for_each(|(word, item, trivia)| {
-                let name = crate::types::NodeId::try_leaf(at.0, word, item.0).ok_or(ArenaError::Malformed { what: "unit site", word })?;
-                [(TriviaSide::Leading, trivia.leading), (TriviaSide::Trailing, trivia.trailing), (TriviaSide::Inner, trivia.inner)]
-                    .into_iter()
-                    .filter_map(|(side, entries)| Some((side, entries?)))
-                    .try_for_each(|(side, entries)| self.write_read_side(name, side, &entries))
-            });
-        }
-        self.written().write_units(at, &units)
-    }
-
     /// One batch of the walk `ParsedTree::descendants` makes under the node
     /// `from` names among the records reads left in the engine's built
     /// arena, each node it finds and its start named past the call.
