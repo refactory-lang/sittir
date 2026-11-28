@@ -1094,7 +1094,7 @@ Reads the emitted presence word and bit directly after checking the word slice. 
 
 ### `packages/common/src/record-view.ts::readLeaf`
 
-A node a read left with no record of its own, as read data. Its text comes from the arena each time it is asked (`BuiltArena.readText`), and its coordinate names it by holder and site, so a write to it finds it again. The content that shares its record's own row has no site and takes the record's stamped kind.
+A node a read left with no record of its own, as read data. Its text comes from the arena each time it is asked (`BuiltArena.readText`), with the holder's source entry found on the first ask and kept by its text reader after, as no write repoints a read record's source; each ask still refuses once the holder's chunk is freed. Its coordinate names it by holder and site, so a write to it finds it again. The content that shares its record's own row has no site and takes the record's stamped kind.
 
 ### `packages/common/src/record-view.ts::readPosition`
 
@@ -1271,7 +1271,7 @@ Arena storage's parse. The native side writes the source's records into the buil
 
 ### `packages/common/src/built-arena.ts::BuiltArena::readText`
 
-A read node's text, from its source's entry (`sourceOf`) through the view of the string chunk the read put the source in (`BuiltRecords.read`), with no native call. A node with no record of its own (`readLeaf`) and a text cell read their text through it each time they are asked. The first read of a source decodes it whole and keeps it beside its chunk's view, by source entry, until `#sweep` drops the chunk; when the decoded text is as long as its bytes the source is ASCII, every byte offset is a character offset, and a span is a slice of that text. Any other source decodes each span from its bytes. A span past the source's end, reversed, or splitting a character is refused, and so is a read whose chunk is freed.
+A read node's text, from its source's entry (`sourceOf`, or the entry its caller passes as `known`, with the record's chunk still checked live) through the view of the string chunk the read put the source in (`BuiltRecords.read`), with no native call. A node with no record of its own (`readLeaf`) and a text cell read their text through it each time they are asked. The first read of a source decodes it whole and keeps it beside its chunk's view, by source entry, until `#sweep` drops the chunk; when the decoded text is as long as its bytes the source is ASCII, every byte offset is a character offset, and a span is a slice of that text. Any other source decodes each span from its bytes. A span past the source's end, reversed, or splitting a character is refused, and so is a read whose chunk is freed.
 
 ### `packages/common/src/built-arena.ts::BuiltArena::reads`
 

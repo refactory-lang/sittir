@@ -161,7 +161,8 @@ export function rowTrivia(node: RecordPosition, wrap: (data: object, tree: TreeH
 /** The node the cell at `site` of the read's record at `holder` names, a node with no record of its own, or, with no site, the content sharing the record's own row, as read data: its kind, its text, which the arena answers each time it is asked, and its coordinate, which names it by its holder and site. */
 export function readLeaf(arena: BuiltArena, holder: number, kind: number, span: ByteSpan, site: CellSite | undefined): ReadOutput {
 	const at = site === undefined ? { $node: holder, $span: span, $type: readRow(arena.tree, holder).stamped } : { $node: holder, $site: site, $span: span, $type: kind };
-	const leaf = asReadOutput({ $type: kind, $text: () => arena.readText(holder, span), $_layout: { at: at as unknown as NodeCoordinate } });
+	let source: number | undefined;
+	const leaf = asReadOutput({ $type: kind, $text: () => arena.readText(holder, span, (source ??= arena.sourceOf(holder))), $_layout: { at: at as unknown as NodeCoordinate } });
 	holdReadTree(leaf, arena.token);
 	return leaf;
 }

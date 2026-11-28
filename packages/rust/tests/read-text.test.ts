@@ -35,6 +35,30 @@ describe.each(['object', 'arena'] as const)("a read's text, sliced from its sour
 	});
 });
 
+describe.each(['object', 'arena'] as const)("a read leaf's text after writes around it (%s storage)", (nodeStorage) => {
+	it('answers what it answered before each edit and side write of it or its holder, and refuses once its read is freed only in arena storage', async () => {
+		using rs: any = await createEngine(rust, { nodeStorage });
+		const root = rs.parse('fn f() {\n    let a = b;\n}\n');
+		const holder = root.$query().$descendants.ofType(rust.kinds.LetDeclaration).at(0);
+		const leaf = holder.name();
+		const comment = (text: string) => rs.build.lineComment(` ${text}`);
+		expect(leaf.$text()).toBe('a');
+		const valued = holder.$with.value(rs.build.identifier('z'));
+		expect(leaf.$text()).toBe('a');
+		const named = holder.$with.name(rs.build.identifier('q'));
+		expect(leaf.$text()).toBe('a');
+		holder.$trivia.leading(comment('h'));
+		expect(leaf.$text()).toBe('a');
+		leaf.$trivia.trailing(comment('l'));
+		expect(leaf.$text()).toBe('a');
+		expect(String(root.$render())).toBe('fn f() {\n    // h\n    let a // l\n    = b;\n}\n');
+		for (const node of [valued, named, root]) node[Symbol.dispose]();
+		rs.parse('fn g() {}\n');
+		if (nodeStorage === 'arena') expect(() => leaf.$text()).toThrow(/released/);
+		else expect(leaf.$text()).toBe('a');
+	});
+});
+
 type ReadArena = {
 	sourceOf(at: number): number;
 	readText(at: number, span: { readonly start: number; readonly end: number }): string;

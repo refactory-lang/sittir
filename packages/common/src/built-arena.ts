@@ -1293,9 +1293,10 @@ export class BuiltArena {
 		return this.reads(at) ? this.#readView(at, undefined) : this.#view(at, this.kindAt(at));
 	}
 
-	/** The text `span` covers in the source the read's record at `node` was read from. */
-	readText(node: number, span: { readonly start: number; readonly end: number }): string {
-		const source = this.sourceOf(node);
+	/** The text `span` covers in the source the read's record at `node` was read from, `known` that source's entry when its caller already has it. */
+	readText(node: number, span: { readonly start: number; readonly end: number }, known?: number): string {
+		if (known !== undefined && (this.#readChunk(chunkOf(node, this.format))?.length ?? 0) === 0) throw new Error(releasedRecord(node));
+		const source = known ?? this.sourceOf(node);
 		const chunk = chunkOf(source, this.format);
 		const bytes = this.#readBytes(chunk);
 		if (bytes === undefined || bytes.length === 0) throw new Error(releasedRecord(node));
