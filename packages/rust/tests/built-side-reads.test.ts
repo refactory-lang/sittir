@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { isErrorNode } from '@sittir/common/utils';
 import { builtRefOf, leafSitesOf } from '../../common/src/built-ref.ts';
 import { unitSidesOf } from '../../common/src/node-data.ts';
 import rust from '../src/index.ts';
@@ -59,6 +60,15 @@ describe("a built record's side is read from its record in the arena, with no na
 		const read = crossings(() => block.$trivia.inner());
 		expect(shape(read.value)).toEqual(['/* c */', rs.kinds.Newline]);
 		expect(read.calls).toBe(0);
+	});
+
+	it('reads an ERROR a read placed, written to a side before any build opened a string chunk, as its source text', async () => {
+		using rs: any = await createEngine(rust, { nodeStorage: 'arena' });
+		const read = rs.parse('fn f() { § }\n');
+		const error = read.$query().$descendants.ofType(rust.kinds.Block).at(0).$trivia.inner().find(isErrorNode);
+		const block = rs.build.block().$trivia.trailing(error);
+		expect(block.$trivia.trailing().map((entry: { $text(): string }) => entry.$text())).toEqual(['§']);
+		expect(String(block.$render())).toBe('{} §');
 	});
 });
 
