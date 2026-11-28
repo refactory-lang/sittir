@@ -588,7 +588,11 @@ function emitBranchFrom(
 			const numeric = soleShape !== undefined;
 			if (numeric) body.push(`  const _value = ${inputExpr};`);
 			if (forwardedTarget !== undefined) {
-				body.push(`  const _child = ${inputExpr};`);
+				if (isRequired(soleField)) {
+					body.push(`  const _child = ${inputExpr};`);
+				} else {
+					body.push(`  const _rawChild = ${inputExpr};`, `  const _child = Array.isArray(_rawChild) && _rawChild.length === 0 ? undefined : _rawChild;`);
+				}
 				if (!isRequired(soleField)) {
 					body.push(`  if (_child === undefined && options[0] !== undefined) throw new TypeError('${typeName}: options were given with no ${soleField.propertyName}; they belong to the node that ${soleField.propertyName} builds');`);
 				}

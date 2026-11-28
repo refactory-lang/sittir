@@ -12,7 +12,7 @@ import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { emitAll, type EmitAllResult } from '../emit.ts';
 import { probeDiagnostics, type TypeCheckDiagnostic } from '../../typecheck.ts';
 import { REPO_ROOT } from '../../grammars.ts';
-import { isNodeValue } from '@sittir/common/utils';
+import { configFieldOr, isNodeOfKind, isNodeValue } from '@sittir/common/utils';
 
 const tokens = [
 	"semi: () => ';'",
@@ -377,5 +377,24 @@ describe('an options-only call on a zero-argument target routes its bag to the o
 			expect(outer?.args[1]).toBe(bag);
 			expect(outer?.args[0]).not.toBe(bag);
 		}
+	});
+});
+
+describe('an empty list given for an optional forwarded child is absent in the loose coercer', () => {
+	it('builds the outer with no child for an empty list, alone or held in a config, and refuses options then', async () => {
+		const { pkg } = await emitted(optionalInner);
+		const body = `${emittedFunction(pkg.from, 'coerceToOuter')}\nreturn coerceToOuter;`;
+		const built: unknown[] = [];
+		const coerceToOuter = new Function('F', 'coerceToInner', 'configFieldOr', 'isNodeOfKind', 'TSKindId', body)(
+			{ buildOuter: (child: unknown) => built.push(child) },
+			(input: unknown) => ({ inner: input }),
+			configFieldOr,
+			isNodeOfKind,
+			new Proxy({}, { get: (_target, key) => String(key) })
+		) as (...args: unknown[]) => void;
+		coerceToOuter([]);
+		coerceToOuter({ inner: [] });
+		expect(built).toEqual([undefined, undefined]);
+		expect(() => coerceToOuter([], { innerComma: ',' })).toThrow('options were given with no inner');
 	});
 });
